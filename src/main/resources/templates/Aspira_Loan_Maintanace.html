@@ -1,0 +1,1258 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<!--
+	CREATED BY : AISHWARYA
+	DATE : 01-03-2025
+    VERSION    : 01
+-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/ASPIRA/js/jquery.min.js"></script>
+<script src="/ASPIRA/js/jquery-ui.min.js"></script>
+<style type="text/css">
+canvas#signature-pad {
+	background: #fff;
+	width: 100%;
+	height: 100%;
+	cursor: crosshair;
+}
+
+button#clear {
+	height: 100%;
+	background: #4b00ff;
+	border: 1px solid transparent;
+	color: #fff;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+button#clear span {
+	transform: rotate(90deg);
+	display: block;
+}
+
+.signature-pad {
+	margin: auto;
+	height: auto;
+}
+
+.signature-pad--body {
+	min-height: 360px;
+}
+
+.signature-pad--actions {
+	overflow: hidden;
+}
+
+.signature-pad--actions>div:first-child {
+	float: left;
+}
+
+.signature-pad--actions>div:last-child {
+	float: right;
+}
+
+.tab {
+	overflow: hidden;
+	border: 1px solid #ccc;
+	background-color: #f1f1f1;
+}
+
+canvas {
+	display: block;
+	position: relative;
+	border: 1px solid;
+}
+
+/*css style starts for the image*/
+.file-upload {
+	background-color: #ffffff;
+	width: 200px;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+.file-upload-content {
+	display: none;
+	text-align: left;
+}
+
+.image-upload-wrap {
+	margin-top: 0px;
+	margin-left: 20px;
+	width: 150px;
+	height: 150px;
+	/* border: 1px dashed #000000; */
+	position: relative;
+}
+
+.image-title-wrap {
+	padding: 0 15px 15px 15px;
+	color: #222;
+}
+
+.drag-text {
+	text-align: center;
+}
+
+.drag-text h3 {
+	font-weight: 100;
+	text-transform: uppercase;
+	color: #000000;
+	padding: 60px 0;
+}
+
+.file-upload-image {
+	max-height: 200px;
+	max-width: 200px;
+	margin: auto;
+	padding: 20px;
+}
+
+.remove-image {
+	width: 200px;
+	margin: 0;
+	color: #fff;
+	background: #cd4535;
+	border: none;
+	padding: 10px;
+	border-radius: 4px;
+	border-bottom: 4px solid #b02818;
+	transition: all .2s ease;
+	outline: none;
+	text-transform: uppercase;
+	font-weight: 700;
+}
+
+.remove-image:active {
+	border: 0;
+	transition: all .2s ease;
+}
+
+.file-upload-input {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	outline: none;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.image-upload-wrapone {
+	margin-top: 10px;
+	width: 150px;
+	height: 150px;
+	border: 1px dashed #000000;
+	position: relative;
+}
+
+.image-dropping, .image-upload-wrap:hover {
+	background-color: #ffffff;
+	border: 4px dashed #ffffff;
+}
+
+.custom-icon {
+	font-size: 20px; /* Adjust the size of the icon */
+}
+
+.myModal {
+	position: absolute;
+	width: 50%;
+	height: 50%;
+	float: top;
+}
+
+/* The Modal (background) */
+.modal {
+	display: none;
+	/* Hidden by default */
+	position: absolute;
+	/* Stay in place */
+	z-index: 1;
+	/* Sit on top */
+	padding-top: 100px;
+	/* Location of the box */
+	left: 0;
+	top: 0;
+	width: 100%;
+	/* Full width */
+	height: 100%;
+	/* Full height */
+	overflow: auto;
+	/* Enable scroll if needed */
+	background-color: rgb(0, 0, 0);
+	/* Fallback color */
+	background-color: rgba(0, 0, 0, 0.4);
+	/* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+	background-color: #fefefe;
+	margin: auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0
+		rgba(0, 0, 0, 0.19);
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 0.4s;
+	animation-name: animatetop;
+	animation-duration: 0.4s
+}
+</style>
+<style>
+#imgCapture11 img {
+	transition: box-shadow 0.3s ease;
+	/* Smooth transition */
+}
+
+#imgCapture11 img:hover {
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+	/* Adjust values for the shadow */
+}
+
+.modaldoc {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 30%;
+	width: 50%;
+	height: 100%;
+	/*  background-color: rgba(0, 0, 0, 0.7); */
+	z-index: 1;
+}
+
+.modal-contentdoc {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #fff;
+	border: 1px solid #888;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+	text-align: center;
+}
+
+.closedoc {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	font-size: 30px;
+	cursor: pointer;
+	color: white;
+}
+
+body {
+	font-size: 0.8rem;
+}
+
+.btn {
+	line-height: 0.5rem;
+}
+
+.table-bordered td, .table-bordered th {
+	font-size: smaller;
+}
+
+.container-manager {
+	width: 83.5%;
+	padding-right: 15px;
+	padding-left: 15px;
+	margin-right: auto;
+	margin-left: 17.3%;
+	margin-top: 80px;
+	margin-top: 80px;
+}
+
+.table .thead-light th {
+	color: #495057;
+	background-color: #e9ecef;
+	border-color: #dee2e6;
+	width: 23px;
+}
+
+.tablinks {
+	background-color: #f2f2f2;
+	color: #000;
+}
+
+.tablinks.active {
+	background-color: #007bff;
+	color: #fff;
+}
+
+.tab {
+	overflow: hidden;
+	border: 1px solid #ccc;
+	background-color: #f1f1f1;
+}
+
+.scroll {
+	max-height: 60vh;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+.tab button {
+	background-color: inherit;
+	float: left;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 14px 16px;
+	transition: 0.3s;
+	font-size: 17px;
+}
+
+.tab button:hover {
+	background-color: #ddd;
+}
+
+.tabcontent {
+	display: none;
+	padding: 6px 12px;
+	border: 0px solid #ccc;
+	border-top: none;
+}
+
+#myPieChart {
+	width: 100px;
+	height: 100px;
+}
+</style>
+<style>
+.modal-pass {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 40%;
+	height: 25%;
+	margin-left: 400PX;
+	margin-right: auto;
+	border-radius: 10px;
+	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+	font-family: Arial, sans-serif;
+}
+
+.close {
+	color: red;
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.close:hover, .close:focus {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+}
+</style>
+<style>
+.password-info {
+	visibility: hidden;
+	width: 320px;
+	background-color: #333;
+	color: #fff;
+	text-align: left;
+	border-radius: 10px;
+	padding: 10px;
+	position: absolute;
+	z-index: 1;
+	top: calc(100% + 10px);
+	left: 50%;
+	transform: translateX(-50%);
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+input:hover+.password-info {
+	visibility: visible;
+	opacity: 0.8;
+}
+
+.filterable .filters input[disabled] {
+	background-color: transparent;
+	border: none;
+	cursor: auto;
+	box-shadow: none;
+	padding: 0;
+	height: auto;
+}
+
+.filterable .filters input[disabled]::-webkit-input-placeholder {
+	color: #333;
+}
+
+.filterable .filters input[disabled]::-moz-placeholder {
+	color: #333;
+}
+
+.filterable .filters input[disabled]:-ms-input-placeholder {
+	color: #333;
+}
+
+.filterable .filters input[disabled]::-webkit-input-placeholder {
+	color: #333;
+}
+
+.chn {
+	box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.2);
+}
+
+.uniform-input {
+	width: 160px;
+	/* You can adjust this width to fit your layout */
+	box-sizing: border-box;
+	/* Ensures consistent sizing */
+}
+
+.radio-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 8vh;
+	/* Keeps the radio buttons centered vertically */
+}
+
+.radio-container label {
+	margin-right: 40px;
+	/* Adds space between "Retail" and "Corporate" */
+	font-size: 16px;
+}
+
+.radio-container label:last-child {
+	margin-right: 0;
+	/* Removes extra space after the last radio button */
+}
+
+.customer-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: auto;
+	/* Adjust height as needed */
+}
+
+.customer-container>div {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+}
+
+.customer-container label {
+	margin-right: 10px;
+	font-size: 16px;
+}
+
+.customer-container .col-sm-3, .customer-container .col-sm-2 {
+	display: flex;
+	align-items: center;
+}
+
+.customer-container .col-sm-3 input, .customer-container .col-sm-2 input
+	{
+	width: 100%;
+}
+</style>
+<script>
+function Home() {
+	location.href = 'Dashboard';
+}
+</script>
+<script>
+function back() {
+	window.history.back();
+}
+</script>
+<script>
+function openTab(evt, tabName) {
+    evt.preventDefault(); // Prevent default action
+    hideAllTabs(); // Hide all tabs
+    document.getElementById(tabName).style.display = 'block'; // Show the selected tab
+    const tablinks = document.getElementsByClassName("tablinks");
+    for (let i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("active"); // Remove the active class from all tabs
+    }
+    evt.currentTarget.classList.add("active"); // Add active class to the clicked tab
+    currentTab = tabName; // Update the currentTab variable
+}
+function hideAllTabs() {
+    const tabContents = document.getElementsByClassName('tabcontent');
+    for (let i = 0; i < tabContents.length; i++) {
+        tabContents[i].style.display = 'none'; // Hide all tab content
+    }
+}
+</script>
+<script>
+function ClickId(a) {
+	var id = a.getAttribute("data-id");
+	var holder_key = a.getAttribute("data-account_holderkey");
+	location.href = 'aspiraLoanMaintanace?formmode=view&id=' + id  +'&holder_key=' +holder_key;
+}
+function getRepaymentDetails() {
+	 if (event) event.preventDefault();
+	 let principleAmount = document.getElementById("Principal").value.trim();
+	 let interestRate = document.getElementById("intrest_rate").value.trim();
+	 let noOfInstallment = document.getElementById("No_of_frequency").value.trim();
+	  let remainingPrincipal = principal; 
+	
+    $.ajax({
+    	url: "./getInterestDetails?" + "&Product_value=" + principleAmount
+	+ "&int_rate=" + interestRate
+		+ "&no_of_inst=" + noOfInstallment ,
+        type: "GET",      
+        success: function (data) {
+            let trHTML = "";
+             // Start with the initial principal amount
+
+            $.each(data, function (index, entity) {
+
+				var no_of_instalment = entity.no_of_instalment;
+				var from_date = formatDate(entity.from_date);
+				var installment_date = formatDate(entity.installment_date);
+				var installment_description = entity.installment_description;
+				var installment_amt = formatNumber(entity.installment_amt);
+				var principal_amt = formatNumber(entity.principal_amt);
+				var interest_amt = formatNumber(entity.interest_amt);
+				var charges_amt = formatNumber(entity.charges_amt);
+				var principal_outstanding = formatNumber(entity.principal_outstanding);
+				
+                trHTML += '<tr id="scheduleRow" style="font-size: larger;">'
+                    + '<td>' + no_of_instalment + '</td>'  // Installment No
+                    + '<td>' + (index + 1) + '</td>'
+                    + '<td>' + 'Installment ' + (index + 1) + '</td>' // Description
+                    + '<td>' + installment_amt + '</td>'
+                    + '<td class="text-right">' + principal_amt + '</td>' // Principal Expense
+                    + '<td class="text-right">' + interest_amt + '</td>' // Interest Expense
+                    + '<td class="text-right">' + charges_amt + '</td>'
+                    + '<td class="text-right">' + principal_outstanding + '</td>' // Remaining Principal
+                    + '</tr>';
+            });
+
+            // Update the table body
+            $('#repaymentDet').empty().append(trHTML);
+            $('#demandtable').removeClass('d-none');
+            $('#demandtable1').addClass('d-none');
+        },
+        error: function () {
+            console.log("Error fetching repayment details");
+        }
+    });
+}
+</script>
+</head>
+<title>ASPIRA</title>
+<body>
+<div class="col-sm-2">
+	<div th:insert="BGLSHeaderMenu :: header"></div>
+</div>
+<!--------------------------------------------------------------User list starts---------------------------------------------------------->
+<div class="container-manager">
+	<div class="row">
+		<div class="col-sm-11 ml-5 " style="font-size: 0.8rem;">
+			<div th:if="${formmode}=='list'">
+				<div class="card">
+					<div class="card-header" style="background-color: #e9ecef; height: 50px">
+						<div class="float-left">
+							<h6 style="font-size: 1.2rem;">ASPIRA LOAN - LIST</h6>
+						</div>
+						<!--<div class="btn-group nav-buttons float-right">
+							<button type="button" class="btn btn-primary p-2" id="btnAdd"
+								onclick="addscreen();">ADD</button>
+						</div>-->
+					</div>
+					<div class="card-body" style="overflow-y: auto; border: 1px solid #ddd;">
+						<div class="table-responsive" id="cardBody">
+							<table class="table  table-bordered  table-hover table-sm"
+								style="margin-bottom: 0px; font-size: initial;" id="usertable">
+								<thead class="thead-light"
+									style="position: sticky; top: 0;background-color: #f8f9fa; z-index: 1;">
+									<tr class="filters">
+										<th style="width: 8%;">S.NO</th>
+										<th style="width: 10%;">LOAN ID</th>
+										<th>LOAN NAME</th>
+										<th>RETAILER NAME</th>
+										<th>RETAILER BRANCH ID</th>
+										<th style="width: 10%;">STATUS</th>
+									</tr>
+								</thead>
+								<tbody >
+								<tr th:each="list, iterator : ${list}" class="userlist">
+									<td style="font-size: 14px" th:text="${iterator.index +1}"></td>
+									<td style="font-size: 14px" class="text-primary" th:attr="data-id=${list?.id}, data-account_holderkey=${list?.account_holderkey}" th:text="${list?.id}"
+										onclick="ClickId(this);"></td>
+									<td style="font-size: 14px" th:text="${list?.loan_name}"></td>
+									<td style="font-size: 14px" th:text="${list?.retailer_name}">TEST</td>
+									<td style="font-size: 14px" th:text="${list?.retailer_branch}">TEST</td>
+									<td style="font-size: 14px" th:text="${list?.account_state}">TEST</td>
+								</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="card-footer text-center">
+						<button class="btn btn-primary p-2" onclick="Home();">Home</button>
+						<button class="btn btn-primary p-2" onclick="back()">Back</button>
+					</div>
+				</div>
+			</div>
+<!--------------------------------------------------------------User Add starts---------------------------------------------------------->
+<div th:if="${formmode}=='view'" class="">
+	<div class="card">
+		<div class="card-header" style="background-color: #e9ecef; height: 50px">
+			<div class="float-left">
+				<h6 style="font-size: 1.2rem;" class="ml-3">ASPIRA LOAN - VIEW</h6>
+			</div>
+		</div>
+		<div class="card-body">
+			<form action="#" th:object="${drawDownDetails}" method="post" id="drawDownDetailsAdd" autocomplete="off"
+				name="drawDownDetailsData" th:fragment="finuserapply">
+
+				<div class="tab row formline ml-3"
+					style="padding: 4px 4px; position: relative; font-size: 13px; width: 98%;">
+					<!-- Tab buttons -->
+					<div class="col-sm-1"></div>
+					<div class="col-sm-3">
+						<button class="tablinks active " id="smooth1" style="width: 200px;"
+							onclick="openTab(event, 'tab1')">Loan Details</button>
+					</div>
+					<div class="col-sm-1"></div>
+					<div class="col-sm-3">
+						<button class="tablinks" id="smooth2" style="width: 200px;"
+							onclick="openTab(event, 'tab2')">Agent Details</button>
+					</div>
+					<div class="col-sm-1"></div>
+					<div class="col-sm-3">
+						<button class="tablinks" id="smooth3" style="width: 200px;"
+							onclick="openTab(event, 'tab3')">Repayment Details</button>
+					</div>
+				</div>
+<!--------------------------------------------------------------Tab 1---------------------------------------------------------->
+<div>
+<div id="tab1" class="tabcontent" style="display: block;">
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Loan Id</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="id" name="id" th:value="${view?.id}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Loan Name</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="loan_name" name="loan_name" th:value="${view?.loan_name}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Loan Amount</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="loan_amount" name="loan_amount" th:value="${view?.loan_amount}" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Account Holder Type</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="account_holdertype" name="account_holdertype" th:value="${view?.account_holdertype}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Closed Date</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="closed_date" name="closed_date" th:value="${view?.closed_date}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Account State</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="account_state" name="account_state" th:value="${view?.account_state}" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Account Sub State</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="account_substate" name="account_substate" th:value="${view?.account_substate}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Payment Method</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="payment_method" name="payment_method" th:value="${view?.payment_method}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Interest Rate</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="interest_rate" name="interest_rate" th:value="${view?.interest_rate}" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Penalty Rate</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="penalty_rate" name="penalty_rate" th:value="${view?.penalty_rate}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Accrued Interest</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="accrued_interest" name="accrued_interest" th:value="${view?.accrued_interest}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Accrued Penalty</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="accrued_penalty" name="accrued_penalty" th:value="${view?.accrued_penalty}" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Principal Due</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="principal_due" name="principal_due" th:value="${view?.principal_due}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Principal Paid</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="principal_paid" name="principal_paid" th:value="${view?.principal_paid}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Principal Balance</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="principal_balance" name="principal_balance" th:value="${view?.principal_balance}" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Interest Due</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="interest_due" name="interest_due" th:value="${view?.interest_due}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Interest Paid</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="interest_paid" name="interest_paid" th:value="${view?.interest_paid}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Interest Balance</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="interest_balance" name="interest_balance" th:value="${view?.interest_balance}" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Interest From Arrears Balance</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="interest_fromarrearsbalance" name="interest_fromarrearsbalance" th:value="${view?.interest_fromarrearsbalance}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Interest From Arrears Due</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="interest_fromarrearsdue" name="interest_fromarrearsdue" th:value="${view?.interest_fromarrearsdue}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Interest From Arrears Paid</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="interest_fromarrearspaid" name="interest_fromarrearspaid" th:value="${view?.interest_fromarrearspaid}" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Fees Due</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="fees_due" name="fees_due" th:value="${view?.fees_due}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Fees Paid</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="fees_paid" name="fees_paid" th:value="${view?.sale_referredby}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Fees Balance</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="fees_balance" name="fees_balance" th:value="${view?.fees_balance}" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Penalty Due</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="penalty_due" name="penalty_due" th:value="${view?.penalty_due}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Penalty Paid</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="penalty_paid" name="penalty_paid" th:value="${view?.penalty_paid}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Penalty Balance</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="penalty_balance" name="penalty_balance" th:value="${view?.penalty_balance}" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Expected Disbursement Date</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="expected_disbursementdate" name="expected_disbursementdate" th:value="${view?.expected_disbursementdate}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Disbursement Date</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="disbursement_date" name="disbursement_date" th:value="${view?.disbursement_date}" readonly/>
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Grace Period</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="grace_period" name="grace_period" th:value="${view?.grace_period}" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">First Repayment Date</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="first_repaymentdate" name="first_repaymentdate" th:value="${view?.first_repaymentdate}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Repayment Installments</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="repayment_installments" name="repayment_installments" th:value="${view?.repayment_installments}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Repayment Period Count</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="repayment_periodcount" name="repayment_periodcount" th:value="${view?.repayment_periodcount}" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Repayment Schedule Method</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="repayment_schedule_method" name="repayment_schedule_method" th:value="${view?.repayment_schedule_method}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Days Late</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="days_late" name="days_late" th:value="${view?.days_late}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Days in Arrears</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="days_inarrears" name="days_inarrears" th:value="${view?.days_inarrears}" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Currency Code</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="currency_code" name="currency_code" th:value="${view?.currency_code}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Last Account Appraisal Date</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="last_account_appraisaldate" name="last_account_appraisaldate" th:value="${view?.last_account_appraisaldate}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Disposable Income</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="disposable_income" name="disposable_income" th:value="${view?.disposable_income}" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Manual Over Ride Amount</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="manualoverride_amount" name="manualoverride_amount" th:value="${view?.manualoverride_amount}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Manual Over Ride Expiry Date</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="manualoverride_expiry_date" name="manualoverride_expiry_date" th:value="${view?.manualoverride_expiry_date}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Cp Fees</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="cpfees" name="cpfees" th:value="${view?.cpfees}" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Deposit Amount</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="deposit_amount" name="deposit_amount" th:value="${view?.deposit_amount}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Total Product Price</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="total_product_price" name="total_product_price" th:value="${view?.total_product_price}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Retailer Name</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="retailer_name" name="retailer_name" th:value="${view?.retailer_name}" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Retailer Branch</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="retailer_branch" name="retailer_branch" th:value="${view?.retailer_branch}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">VG Application Id</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="vg_application_id" name="vg_application_id" th:value="${view?.vg_application_id}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Contract Signed</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="contract_signed" name="contract_signed" th:value="${view?.contract_signed}" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Date Of First Call</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="date_of_first_call" name="date_of_first_call" th:value="${view?.date_of_first_call}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Last Call Outcome</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="last_call_outcome" name="last_call_outcome" th:value="${view?.last_call_outcome}" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Ason Date</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="asondate" name="asondate" th:value="${view?.asondate}" readonly />
+		</div>
+	</div>
+	<div class="card-footer text-center mt-2">
+		<button class="btn btn-primary p-2" onclick="Home();">Home</button>
+		<button class="btn btn-primary p-2" onclick="back()">Back</button>
+	</div>
+</div>
+<!--------------------------------------------------------------Tab 2---------------------------------------------------------->
+<div id="tab2" class="tabcontent" style="display: none;">
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Sale Processed By VG Id</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="sale_processedbyvgid" th:value="${view?.sale_processedbyvgid}"
+				name="sale_processedbyvgid" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="">Sale Processed For</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="sale_processedfor" th:value="${view?.sale_processedfor}" name="sale_processedfor"
+				readonly />
+		</div>
+
+		<div class="col-sm-2">
+			<label for="">Sale Referred By</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" th:value="${view?.sale_referredby}" id="sale_referredby" name="sale_referredby"
+				readonly />
+		</div>
+
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Employment Status</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="employment_status" th:value="${view?.employment_status}" name="employment_status"
+				readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Job Title</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="job_title" th:value="${view?.job_title}" name="job_title" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Employer Name</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="employer_name" th:value="${view?.employer_name}" name="employer_name" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 10px 35px;">
+		<div class="col-sm-2">
+			<label for="inst_amount">Tuscore</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="tuscore" th:value="${view?.tuscore}" name="tuscore" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="">Tuprob Ability</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="tuprobability" th:value="${view?.tuprobability}" name="tuprobability" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Tufull Name</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="tufullname" th:value="${view?.tufullname}" name="tufullname" readonly />
+		</div>
+	</div>
+	<div class="row formline" style="padding: 1px 0px 10px 35px;">
+		<div class="col-sm-2">
+			<label for="inst_amount">Tureason1</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="tureason1" th:value="${view?.tureason1}" name="tureason1" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="">Tureason2</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="tureason2" th:value="${view?.tureason2}" name="tureason2" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="tranche_amt">Tureason3</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="tureason3" th:value="${view?.tureason3}" name="tureason3" readonly />
+		</div>
+	</div>
+	<div class="card-footer text-center">
+		<button class="btn btn-primary p-2" onclick="Home();">Home</button>
+		<button class="btn btn-primary p-2" onclick="back()">Back</button>
+	</div>
+</div>
+<!--------------------------------------------------------------Tab 3---------------------------------------------------------->
+<div id="tab3" class="tabcontent" style="display: none;">
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Customer Id</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="sale_processedbyvgid" th:value="${loan[0][0]}" name="sale_processedbyvgid" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="">Customer Name</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="sale_processedfor" th:value="${loan[0][1]}" name="sale_processedfor" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="">Date Of loan</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text"  id="sale_referredby" th:value="${#dates.format(loan[0][2], 'dd-MM-yyyy')}" name="sale_referredby" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Loan Acct No</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="sale_processedbyvgid" th:value="${loan[0][3]}" name="sale_processedbyvgid" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="">Loan Santioned</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="Principal" th:value="${loan[0][7]}" name="sale_processedfor" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="">Loan Currency</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="sale_referredby" name="sale_referredby" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Interset Rate</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="intrest_rate" th:value="${loan[0][4]}" name="sale_processedbyvgid" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="">Installment ID</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="sale_processedfor" name="sale_processedfor" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="">Installment Start Date</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="Start_date" th:value="${#dates.format(loan[0][5], 'dd-MM-yyyy')}" name="sale_referredby" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 0px 35px;">
+		<div class="col-sm-2">
+			<label for="">Installment Amount</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="sale_processedfor" name="sale_processedfor" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="">Installment (%)</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="sale_processedfor" name="sale_processedfor" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="">No of Installment</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text"  id="No_of_frequency" th:value="${loan[0][6]}" name="sale_referredby" readonly />
+		</div>
+	</div>
+	<div class="row formline mt-2" style="padding: 1px 0px 10px 35px;">
+		<div class="col-sm-2">
+			<label for="">Principal Installment Freq</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="sale_processedbyvgid" name="sale_processedbyvgid" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="">Interest Installment Freq</label>
+		</div>
+		<div class="col-sm-2">
+			<input type="text" id="sale_processedbyvgid" name="sale_processedbyvgid" readonly />
+		</div>
+		<div class="col-sm-2">
+			<label for="">Record</label>
+		</div>
+		<div class="col-sm-2">
+			<label for="delete"> <input type="checkbox" id="record" style="width: unset !important" class="mr-2">Delete</label>
+		</div>
+	</div>
+	<div class="card-footer text-center">
+		<button class="btn btn-primary p-2" onclick="Home();">Home</button>
+		<button class="btn btn-primary p-2" onclick="getRepaymentDetails(this)">Schedule</button>
+		<button class="btn btn-primary p-2" onclick="back()">Back</button>
+	</div>
+	<div class="table-responsive d-none" id="demandtable">
+		<table class="table table-bordered">
+			<thead>
+				<tr style="font-size: larger;">
+					<th style="text-align: left; width: 60px !important;">Srl.No.</th>
+					<th style="text-align: left; width: 60px !important;">Installment Date</th>
+					<th style="text-align: right; width: 60px !important;">Installment Description</th>
+					<th style="text-align: right; width: 60px !important;">Installment Amt.</th>
+					<th style="text-align: right; width: 60px !important;">Principal Amt.</th>
+					<th style="text-align: right; width: 60px !important;">Interest Amt.</th>
+					<th style="text-align: right; width: 60px !important;">Charges Amt.</th>
+					<th style="text-align: right; width: 60px !important;">Principal Outstanding</th>
+				</tr>
+			</thead>
+			<tbody id="repaymentDet" >
+				<!-- More rows can be added similarly -->
+			</tbody>
+		</table>
+	</div>
+	</div>
+</div>
+<!--------------------------------------------------------------user footer---------------------------------------------------------------------->
+<table Style="border: 1px solid #ccc; width: 100%; max-width: 100%; margin: 0 auto; box-sizing: border-box;">
+	<tr>
+		<td class="col-sm-2" style="text-align: center;">
+			<font size="2"><B>Entry User :</B></font>
+		</td>
+		<td class="col-sm-2" style="width: 112px; margin-right: 20px;"><input type="text" id="entryuser"
+				th:value="${user}" name="ub.entryuser"
+				style="border: none; outline: none; background-color: transparent; font-size: 12px;" readonly></td>
+		<td class="col-sm-2" style="text-align: center;">
+			<font size="2"><B>Modify User :</B></font>
+		</td>
+		<td class="col-sm-2" style="width: 112px;"><input type="text" id="modifyuser" th:value="${user}"
+				name="ub.modifyuser" value="MMR"
+				style="border: none; outline: none; background-color: transparent; font-size: 12px;" readonly></td>
+		<td class="col-sm-2" style="text-align: center;">
+			<font size="2"><B>Verify User :</B></font>
+		</td>
+		<td class="col-sm-2" style="width: 112px;"><input type="text" id="verifyuser" name="ub.verifyuser"
+				style="border: none; outline: none; background-color: transparent; font-size: 12px;" readonly></td>
+	</tr>
+	<tr>
+		<td style="text-align: center;">
+			<font size="2"><B>Entry Time :</B></font>
+		</td>
+		<td style="width: 112px"><input type="text" id="entrytime" name="ub.entrytime"
+				th:value="${#dates.format(currentDate, 'dd-MM-yyyy HH:mm:ss')}" readonly
+				style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;">
+		</td>
+		<td style="text-align: center;">
+			<font size="2"><B>Modify Time :</B></font>
+		</td>
+		<td style="width: 112px"><input type="text" id="modifytime" name="ub.modifytime"
+				th:value="${#dates.format(currentDate, 'dd-MM-yyyy HH:mm:ss')}"
+				style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
+				readonly></td>
+		<td style="text-align: center; font-size: 15px;">
+			<font size="2"><B>Verify Time :</B></font>
+		</td>
+		<td style="width: 112px"><input type="text" id="verifytime" name="ub.verifytime"
+				style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
+				readonly></td>
+	</tr>
+</table>
+</form>
+</div>
+</div>
+</div>
+<!--------------------------------------------------------------end---------------------------------------------------------------------->
+</div>
+</div>
+</div>
+</body>
+</html>

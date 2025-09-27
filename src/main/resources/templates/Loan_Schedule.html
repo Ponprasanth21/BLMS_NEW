@@ -1,0 +1,1656 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/ASPIRA/js/jquery.min.js"></script>
+<script src="/ASPIRA/js/jquery-ui.min.js"></script>
+	<style>
+		.modal {
+			display: none;
+			/* Hidden by default */
+			position: absolute;
+			/* Stay in place */
+			z-index: 1;
+			/* Sit on top */
+			padding-top: 100px;
+			/* Location of the box */
+			left: 0;
+			top: 0;
+			width: 100%;
+			/* Full width */
+			height: 100%;
+			/* Full height */
+			overflow: auto;
+			/* Enable scroll if needed */
+			background-color: rgb(0, 0, 0);
+			/* Fallback color */
+			background-color: rgba(0, 0, 0, 0.4);
+			/* Black w/ opacity */
+		}
+
+		.modal-header {
+			padding: 2px 16px;
+			background-color: #BBC3CB;
+			color: balck;
+		}
+
+		/* Ensure modal background is removed */
+		.modal-backdrop {
+			display: none !important;
+			/* Completely hide backdrop */
+		}
+
+		/* Optional: Prevent page from scrolling when modal is open */
+		body.modal-open {
+			overflow: hidden;
+		}
+
+		.modal-body {
+			padding: 2px 16px;
+		}
+
+		.modal-footer {
+			padding: 2px 16px;
+			background-color: #BBC3CB;
+			color: black;
+		}
+
+		/* Modal Content */
+		.modal-content {
+			background-color: #fefefe;
+			margin: auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 80%;
+			height: 0%;
+			box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			-webkit-animation-name: animatetop;
+			-webkit-animation-duration: 0.4s;
+			animation-name: animatetop;
+			animation-duration: 0.4s
+		}
+
+		body {
+			font-size: 0.8rem;
+		}
+
+		.btn {
+			line-height: 0.5rem;
+		}
+
+		.table-bordered td,
+		.table-bordered th {
+			font-size: medium;
+		}
+
+		.container-manager {
+			width: 83.5%;
+			padding-right: 15px;
+			padding-left: 15px;
+			margin-right: auto;
+			margin-left: 17.3%;
+			margin-top: 80px;
+			margin-top: 80px;
+		}
+
+		.table .thead-light th {
+			color: #495057;
+			background-color: #e9ecef;
+			border-color: #dee2e6;
+			width: 23px;
+		}
+
+		.scroll {
+			max-height: 60vh;
+			overflow-y: scroll;
+			overflow-x: hidden;
+		}
+
+		.tablinks {
+			background-color: #f1f1f1;
+			/* Default background color */
+			border: none;
+			color: black;
+			padding: 10px 20px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+			transition: background-color 0.3s;
+		}
+
+		.tablinks.active {
+			background-color: #2084a9;
+			color: white;
+		}
+
+		.tab {
+			overflow: hidden;
+			border: 1px solid #ccc;
+			background-color: #f2f2f2;
+		}
+
+		.tab button {
+			background-color: inherit;
+			float: left;
+			border: none;
+			outline: none;
+			cursor: pointer;
+			padding: 14px 56px;
+			transition: 0.3s;
+			font-size: 17px;
+		}
+
+		.tab button:hover {
+			background-color: #ddd;
+		}
+
+		.tabcontent {
+			display: none;
+			padding: 0px;
+			border-top: 1px solid #ccc;
+		}
+
+		.active {
+			background-color: #2084a9;
+		}
+
+		#myPieChart {
+			width: 100px;
+			height: 100px;
+		}
+	</style>
+	<style>
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.4);
+		}
+
+		.modal-content {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 70%;
+			height: 20%;
+			margin-left: 200px;
+		}
+
+		.modal-pass {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 40%;
+			height: 25%;
+			margin-left: 400PX;
+			margin-right: auto;
+			border-radius: 10px;
+			box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+			font-family: Arial, sans-serif;
+		}
+
+		.close {
+			color: red;
+			font-size: 28px;
+			font-weight: bold;
+		}
+
+		.close:hover,
+		.close:focus {
+			color: black;
+			text-decoration: none;
+			cursor: pointer;
+		}
+
+		.filterable .filters input[disabled] {
+			background-color: transparent;
+			border: none;
+			cursor: auto;
+			box-shadow: none;
+			padding: 0;
+			height: auto;
+		}
+
+		.filterable .filters input[disabled]::-webkit-input-placeholder {
+			color: #333;
+		}
+
+		.filterable .filters input[disabled]::-moz-placeholder {
+			color: #333;
+		}
+
+		.filterable .filters input[disabled]:-ms-input-placeholder {
+			color: #333;
+		}
+	</style>
+	<style>
+		.password-info {
+			visibility: hidden;
+			width: 320px;
+			background-color: #333;
+			color: #fff;
+			text-align: left;
+			border-radius: 10px;
+			padding: 10px;
+			position: absolute;
+			z-index: 1;
+			top: calc(100% + 10px);
+			left: 50%;
+			transform: translateX(-50%);
+			opacity: 0;
+			transition: opacity 0.3s;
+		}
+
+		input:hover+.password-info {
+			visibility: visible;
+			opacity: 0.8;
+		}
+	</style>
+	<style>
+		.table-container {
+			height: 300px;
+			/* Set the height of the scrollable area */
+			overflow-y: auto;
+			/* Enable vertical scrolling */
+			overflow-x: hidden;
+			display: block;
+		}
+
+		.fixed-header thead {
+			position: sticky;
+			top: 0;
+			background-color: #e9ecef;
+			/* Match header background */
+			z-index: 10;
+		}
+
+		.fixed-header th {
+			position: sticky;
+			top: 0;
+			background-color: #e9ecef;
+			/* Keep the header visible */
+		}
+
+		.filterable .filters input[disabled] {
+			background-color: transparent;
+			border: none;
+			cursor: auto;
+			box-shadow: none;
+			padding: 0;
+			height: auto;
+		}
+
+		.filterable .filters input[disabled]::-webkit-input-placeholder {
+			color: #333;
+		}
+
+		.filterable .filters input[disabled]::-moz-placeholder {
+			color: #333;
+		}
+
+		.filterable .filters input[disabled]:-ms-input-placeholder {
+			color: #333;
+		}
+			.big-btn {
+  font-size: 16px;
+}
+	</style>
+<style>
+ 
+#datacancel, #datacancel * {
+	box-sizing: content-box !important;
+}
+
+#SuccesPopUp, #SuccesPopUp * {
+	box-sizing: content-box !important;
+}
+
+#datacancel .modal-dialog-centered.modal-dialog-scrollable {
+	justify-content: flex-start !important;
+}
+
+#SuccesPopUp .modal-dialog-centered.modal-dialog-scrollable {
+	justify-content: flex-start !important;
+}
+</style>
+	<script>
+		function Home() {
+
+			location.href = 'Dashboard';
+		}
+
+		function back() {
+			window.history.back();
+		}
+
+		function flow(a) {
+			var act = a.getAttribute('data-act');
+			location.href = './depositsopen?formmode=flow&act=' + act;
+		}
+
+		function depositsopen() {
+			location.href = './depositsopen';
+		}
+
+		function clickMe() {
+			$('#alert').modal('show');
+		}
+
+		function openTab(evt, tabName) {
+
+			var tabcontent = document.getElementsByClassName("tabcontent");
+			for (let i = 0; i < tabcontent.length; i++) {
+				tabcontent[i].style.display = "none";
+			}
+
+			let tablinks = document.getElementsByClassName("tablinks");
+			for (let i = 0; i < tablinks.length; i++) {
+				tablinks[i].classList.remove("active");
+			}
+
+			document.getElementById(tabName).style.display = "block";
+			evt.currentTarget.classList.add("active");
+
+		}
+
+		function changeDateFormat(dateString) {
+
+			var parts = dateString.split('-');
+
+			return parts[2] + '-' + parts[1] + '-' + parts[0];
+		}
+
+		function formatDate(dateString) {
+
+			var date = new Date(dateString);
+
+			var day = date.getDate();
+			var month = date.getMonth() + 1;
+			var year = date.getFullYear();
+
+			if (day < 10) {
+				day = '0' + day;
+			}
+			if (month < 10) {
+				month = '0' + month;
+			}
+
+			return day + '-' + month + '-' + year;
+		}
+
+		function formatNumber(number) {
+			return Number(number).toLocaleString('en-US', {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			});
+		}
+
+		function depositflow(a) {
+			event.preventDefault();
+
+			var depotype = document.getElementById("deposit_type").value;
+			var depoactno = document.getElementById("depo_actno").value;
+			var depodate = changeDateFormat(document.getElementById("deposit_date").value);
+			var depoper = document.getElementById("deposit_period").value;
+			var depoamt = document.getElementById("deposit_amt").value;
+			var intrate = document.getElementById("rate_of_int").value;
+			var freq = document.getElementById("frequency").value;
+
+			console.log(depotype + " " + depoactno + " " + depodate + " " + depoper
+				+ " " + depoamt + " " + intrate + " " + freq);
+			$
+				.ajax({
+					type: "GET",
+					url: "./getDepositFlow?deposit_type=" + depotype
+						+ "&depo_actno=" + depoactno + "&deposit_date="
+						+ depodate + "&deposit_period=" + depoper
+						+ "&deposit_amt=" + depoamt + "&rate_of_int="
+						+ intrate + "&frequency=" + freq,
+					success: function (data) {
+						console.log(data);
+						var trHTML = '';
+
+						$
+							.each(
+								data,
+								function (index, entity) {
+									var flow_id = entity.flow_id;
+									var flow_code = entity.flow_code;
+									var flow_date = formatDate(entity.flow_date);
+									var flow_amount = formatNumber(entity.flow_amt);
+									var outstanding_balance = formatNumber(entity.clr_bal_amt);
+
+									trHTML += '<tr id="scheduleRow">'
+										+ '<td ><input type="text" class="border-0" name="flowId" readonly value="' + flow_id + '" /></td>'
+										+ '<td><input type="text" class="border-0" name="flowCode" readonly value="' + flow_code + '" /></td>'
+										+ '<td><input type="text" class="border-0" name="flowDate" readonly value="' + flow_date + '" /></td>'
+										+ '<td style="text-align: right;"><input type="text" class="border-0 text-right" name="flowAmount" readonly value="' + flow_amount + '" /></td>'
+										+ '<td style="text-align: right;"><input type="text" class="border-0 text-right" name="outstandingBalance" readonly value="' + outstanding_balance + '" /></td>'
+										+ '</tr>';
+								});
+
+						$('#depositflow').empty().append(trHTML);
+
+						var lastFlowAmount = $('#depositflow tr:last').find('input[name="flowAmount"]').val();
+						// Remove any commas from lastFlowAmount and assign the plain number to the input field
+						// Remove commas and the decimal point from lastFlowAmount
+						document.getElementById("maturity_amt").value = lastFlowAmount.toString().replace(/[,\.]/g, '');
+
+
+
+						// Calculate the total of the middle rows
+						var totalFlowAmount = 0;
+						var rows = $('#depositflow tr');
+						var rowCount = rows.length;
+
+						if (rowCount > 2) { // Ensure there are at least 3 rows
+							for (var i = 1; i < rowCount - 1; i++) { // Start from 1 to rowCount - 1 to skip first and last row
+								var flowAmount = parseFloat(rows.eq(i).find('input[name="flowAmount"]').val().replace(/,/g, '')); // Assuming formatNumber adds commas
+								totalFlowAmount += isNaN(flowAmount) ? 0 : flowAmount; // Sum the amounts
+							}
+						}
+						document.getElementById("int_amt").value = totalFlowAmount;
+					},
+					error: function (error) {
+						console.error(error);
+					}
+				});
+		}
+
+		function formatNumber(num) {
+			if (!num)
+				return ''; // Return empty string if num is falsy
+			return Number(num).toLocaleString('en-US', {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			});
+		}
+
+		function Submit() {
+			const depo = document.getElementById("depo_actno").value.trim();
+
+			if (depo === "") {
+				$("#alertmsg1").text(
+					"Please fill out the Deposit Account No field.");
+				$('#alert1').modal("show");
+				return;
+
+			} else {
+				$.ajax({
+					url: './depositAdd',
+					data: $("#employeeForm").serialize(),
+					type: 'POST',
+					success: function (data) {
+						//alert(data)
+						$("#alertmsg").text(data);
+						$('#alert').modal("show");
+
+					}
+				});
+			}
+		}
+
+		function custid() {
+			const selectedValue = $('#cust_id').val();
+			alert(selectedValue);
+
+			$.ajax({
+				url: './getCustId',
+				type: 'GET',
+				data: {
+					custId: selectedValue,
+
+				},
+				success: function (data) {
+					if (data && data.length > 0) {
+						console.log(data)
+						$('#branch_id').val(data[0][0] || '');
+						console.log($('#branch_id').val());
+						$('#branch_desc').val(data[0][1] || '');
+						$('#cust_name').val(data[0][2] || '');
+						$('#scheme_code').val(data[0][3] || '');
+						$('#glsh_code').val(data[0][4] || '');
+						$('#glsh_desc').val(data[0][5] || '');
+
+					} else {
+						console.error("No data received or data is empty");
+					}
+
+				}
+
+			});
+
+		}
+
+		function updateDepositPeriod() {
+			const frequency = document.getElementById('frequency').value;
+			const depositPeriod = document.getElementById('depositperiod');
+
+			if (frequency === 'Monthly') {
+				depositPeriod.placeholder = 'months';
+			} else if (frequency === 'Yearly') {
+				depositPeriod.placeholder = 'years';
+			}
+		}
+		document.addEventListener('DOMContentLoaded', () => {
+			// Set default placeholder as 'months' when the page loads.
+			document.getElementById('depositperiod').placeholder = 'months';
+		});
+
+		function updateMaturityDate() {
+			// Parse the date string into a Date object
+			const dateOfDeposit = new Date(document.getElementById('deposit_date').value);
+			console.log("Parsed date of deposit:", dateOfDeposit); // Check if this outputs a valid date
+
+			// Parse the deposit period as an integer
+			const depositPeriod = parseInt(document.getElementById('deposit_period').value, 10);
+			const frequency = document.getElementById('frequency').value;
+
+			// Ensure date is valid
+			/* if (isNaN(dateOfDeposit.getTime())) {
+				alert('Invalid deposit date');
+				return;
+			} */
+
+			// Adjust the date based on the frequency
+			if (frequency === 'Monthly') {
+				dateOfDeposit.setMonth(dateOfDeposit.getMonth() + depositPeriod);
+			} else if (frequency === 'Yearly') {
+				dateOfDeposit.setFullYear(dateOfDeposit.getFullYear() + depositPeriod);
+			}
+			console.log("Updated date of deposit (after period adjustment):", dateOfDeposit);
+
+			// Check if the date is still valid after modification
+			/*  if (isNaN(dateOfDeposit.getTime())) {
+				 alert('Invalid maturity date');
+				 return;
+			 } */
+
+			// Format the date to 'yyyy-MM-dd'
+			const year = dateOfDeposit.getFullYear();
+			const month = String(dateOfDeposit.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+			const day = String(dateOfDeposit.getDate()).padStart(2, '0');
+			const formattedMaturityDate = `${year}-${month}-${day}`;
+
+			console.log("Formatted Maturity Date:", formattedMaturityDate);
+
+			// Display the formatted maturity date
+			//alert(formattedMaturityDate);
+			document.getElementById('maturity_date').value = formattedMaturityDate;
+		}
+
+		/* function updateDemoAmt(lastFlowAmount){
+			//document.getElementById('maturity_amt').value = document.getElementById('deposit_amt').value;
+			document.getElementById("maturity_amt").value = lastFlowAmount;
+		} */
+
+	</script>
+	<script>
+		function adjustHeight() {
+			const cardBody = document.getElementById("cardBody");
+			const viewportHeight = window.innerHeight;
+			cardBody.style.maxHeight = `${viewportHeight * 0.95}px`; // Adjust 80% of the viewport height
+		}
+
+		window.addEventListener("resize", adjustHeight);
+		document.addEventListener("DOMContentLoaded", adjustHeight);
+	</script>
+
+</head>
+
+
+
+
+
+
+<script>
+	function switchToList() {
+		window.location.href = "/ASPIRA/loanSchedule?formmode=listschedule"; // Ensure this matches your controller route
+	}
+	function ClickId(a) {
+		var id = a.getAttribute("data-id");
+		var holder_key = a.getAttribute("data-account_holderkey");
+		var encoded_key = a.getAttribute("data-encoded_key");
+		location.href = 'loanSchedule?formmode=viewloanschedule1&id=' + id +
+			'&holder_key=' + holder_key +
+			'&encodedKey=' + encoded_key;
+
+	}
+
+	function thirdexceldownload() {
+		$("#alert53").modal("show");
+	}
+
+</script>
+<script type="text/javascript">
+	function submitdatas3() {
+		//	alert("hi");
+		var form = $('#reportform3')[0];
+		var data = new FormData(form);
+		// Show uploading modal with message
+		$('#normalalertvalues .modal-body').html("<h6 class='text-center'>File Uploading...</h6>");
+		$('#normalalertvalues').modal('show');
+		$.ajax({
+			type: "POST",
+			url: "uploadxmldata3",
+			data: data,
+			processData: false,
+			contentType: false,
+			success: function (response) {
+				console.log(response);
+				$('#alert53').modal('hide');
+				$('#normalalertvalues .modal-body').html("<h6 class='text-center text-success'>File uploaded successfully!</h6>");
+				showResponse(response);
+			},
+			error: function (error) {
+				showResponse("Error: " + error.responseText);
+			}
+		});
+	}
+	function showResponse(responseText) {
+		$("#alertmsg121").text(responseText);
+		$('#normalalertvalues').modal("show");
+		// Ensure any existing backdrop is removed
+		$('.modal-backdrop').remove();
+	}
+</script>
+<script>
+	$(document).ready(
+		function () {
+			$('.filterable .btn-filter').click(
+				function () {
+					var $panel = $(this).parents(
+						'.filterable'), $filters = $panel
+							.find('.filters input'), $tbody = $panel
+								.find('.table tbody');
+					if ($filters.prop('disabled') == true) {
+						$filters.prop('disabled', false);
+						$filters.first().focus();
+					} else {
+						$filters.val('').prop('disabled', true);
+						$tbody.find('.no-result').remove();
+						$tbody.find('tr').show();
+					}
+				});
+
+			$('.filterable .filters input').keyup(
+				function (e) {
+					/* Ignore tab key */
+					var code = e.keyCode || e.which;
+					if (code == '9') return;
+					/* Useful DOM data and selectors */
+					var $input = $(this), inputContent = $input
+						.val().toLowerCase(), $panel = $input
+							.parents('.filterable'), column = $panel
+								.find('.filters th')
+								.index($input.parents('th')), $table = $panel
+									.find('.table'), $rows = $table.find('tbody tr');
+					console.log($input);
+					/* Dirtiest filter function ever ;) */
+					var $filteredRows = $rows.filter(function () {
+						var value = $(this).find('td').eq(column).text().toLowerCase();
+						console.log(value);
+						return value.indexOf(inputContent) === -1;
+					});
+					/* Clean previous no-result if exist */
+					$table.find('tbody .no-result').remove();
+					/* Show all rows, hide filtered ones (never do that outside of a demo ! xD) */
+					$rows.show();
+					$filteredRows.hide();
+					/* Prepend no-result row if all rows are filtered */
+					if ($filteredRows.length === $rows.length) {
+						$table.find('tbody').prepend(
+							$('<tr class="no-result text-center"><td colspan="' + $table.find('.filters th').length + '">No result found</td></tr>'));
+					}
+				});
+		});
+</script>
+<script>
+	function schedulePreClosure() {
+		event.preventDefault();
+		var id = document.getElementById("account_id").value;
+		var element = document.getElementById("account_id");
+
+		if (element) {
+			var id = element.value.trim();
+
+			if (!id) {
+
+				$('#mypopup22').modal('show');
+				$("#popupmsg_body").html("Account number is required!...");
+			} else {
+				$.ajax({
+					type: 'GET',
+					url: './FetchLoanDetails',
+					data: {id: id}, // ✅ Passing the correct value
+					success: function (data) {
+
+						if (data.account_holderkey && data.encoded_key) {
+							var holder_key = data.account_holderkey;
+							var encodedKey = data.encoded_key;
+							var id = data.id;
+							location.href = 'loanMaster?formmode=viewloan&id=' + id +
+								'&holder_key=' + holder_key +
+								'&encodedKey=' + encodedKey;
+						} else {
+							$('#mypopup22').modal('show');
+							$("#popupmsg_body").html("No Data!...");
+						}
+
+
+					},
+					error: function () {
+						$('#errorMessage').text('Error fetching data');
+						$('#errorModal').modal('show');
+					}
+				});
+			}
+		} else {
+			alert("Element not found");
+		}
+
+
+	}
+	function ledgerPreClosure() {
+		event.preventDefault();
+		var element = document.getElementById("account_id");
+
+		if (element) {
+			var id = element.value.trim(); // Trim to remove leading/trailing spaces
+
+			if (!id) { // Checks for empty string, null, or undefined
+
+				$('#mypopup22').modal('show');
+				$("#popupmsg_body").html("Account number is required!...");
+			} else {
+				location.href = 'accountLedger2?formmode=view&acct_num='
+					+ id;
+			}
+		} else {
+			alert("Element not found");
+		}
+
+	}
+
+
+	function scheduleClosure() {
+		event.preventDefault();
+		var id = document.getElementById("account_id").value;
+		var element = document.getElementById("account_id");
+
+		if (element) {
+			var id = element.value.trim();
+
+			if (!id) {
+
+				$('#mypopup22').modal('show');
+				$("#popupmsg_body").html("Account number is required!...");
+			} else {
+				$.ajax({
+					type: 'GET',
+					url: './FetchLoanDetails',
+					data: {id: id}, // ✅ Passing the correct value
+					success: function (data) {
+
+						if (data.account_holderkey && data.encoded_key) {
+							var holder_key = data.account_holderkey;
+							var encodedKey = data.encoded_key;
+							var id = data.id;
+							location.href = 'loanSchedule?formmode=viewloanschedule1&id=' + id +
+								'&holder_key=' + holder_key +
+								'&encodedKey=' + encodedKey;
+						} else {
+							$('#mypopup22').modal('show');
+							$("#popupmsg_body").html("No Data!...");
+						}
+
+
+					},
+					error: function () {
+						$('#errorMessage').text('Error fetching data');
+						$('#errorModal').modal('show');
+					}
+				});
+			}
+		} else {
+			alert("Element not found");
+		}
+
+
+	}
+	function ledgerClosure() {
+		event.preventDefault();
+		var element = document.getElementById("account_id");
+
+		if (element) {
+			var id = element.value.trim(); // Trim to remove leading/trailing spaces
+
+			if (!id) { // Checks for empty string, null, or undefined
+
+				$('#mypopup22').modal('show');
+				$("#popupmsg_body").html("Account number is required!...");
+			} else {
+				location.href = 'accountLedger2?formmode=view&acct_num='
+					+ id;
+			}
+		} else {
+			alert("Element not found");
+		}
+
+	}
+
+
+	//schedule closure datas repaymrnt & ledger 
+
+	function schedulePreClosure() {
+		event.preventDefault();
+		var id = document.getElementById("account_id").value;
+		var element = document.getElementById("account_id");
+
+		if (element) {
+			var id = element.value.trim();
+
+			if (!id) {
+
+				$('#mypopup22').modal('show');
+				$("#popupmsg_body").html("Account number is required!...");
+			} else {
+				$.ajax({
+					type: 'GET',
+					url: './FetchLoanDetails',
+					data: {id: id}, // ✅ Passing the correct value
+					success: function (data) {
+
+						if (data.account_holderkey && data.encoded_key) {
+							var holder_key = data.account_holderkey;
+							var encodedKey = data.encoded_key;
+							var id = data.id;
+							location.href = 'loanMaster?formmode=viewloan&id=' + id +
+								'&holder_key=' + holder_key;
+						} else {
+							$('#mypopup22').modal('show');
+							$("#popupmsg_body").html("No Data!...");
+						}
+
+
+					},
+					error: function () {
+						$('#errorMessage').text('Error fetching data');
+						$('#errorModal').modal('show');
+					}
+				});
+			}
+		} else {
+			alert("Element not found");
+		}
+
+
+	}
+	function ledgerPreClosure() {
+		event.preventDefault();
+		var element = document.getElementById("account_id");
+
+		if (element) {
+			var id = element.value.trim(); // Trim to remove leading/trailing spaces
+
+			if (!id) { // Checks for empty string, null, or undefined
+
+				$('#mypopup22').modal('show');
+				$("#popupmsg_body").html("Account number is required!...");
+			} else {
+				location.href = 'accountLedger2?formmode=view&acct_num='
+					+ id;
+			}
+		} else {
+			alert("Element not found");
+		}
+
+	}
+
+
+	function scheduleClosure() {
+		event.preventDefault();
+		var id = document.getElementById("account_id").value;
+		var element = document.getElementById("account_id");
+
+		if (element) {
+			var id = element.value.trim();
+
+			if (!id) {
+
+				$('#mypopup22').modal('show');
+				$("#popupmsg_body").html("Account number is required!...");
+			} else {
+				$.ajax({
+					type: 'GET',
+					url: './FetchLoanDetails',
+					data: {id: id}, // ✅ Passing the correct value
+					success: function (data) {
+
+						if (data.account_holderkey && data.encoded_key) {
+							var holder_key = data.account_holderkey;
+							var encodedKey = data.encoded_key;
+							var id = data.id;
+							location.href = 'loanSchedule?formmode=viewloanschedule1&id=' + id +
+								'&holder_key=' + holder_key +
+								'&encodedKey=' + encodedKey;
+						} else {
+							$('#mypopup22').modal('show');
+							$("#popupmsg_body").html("No Data!...");
+						}
+
+
+					},
+					error: function () {
+						$('#errorMessage').text('Error fetching data');
+						$('#errorModal').modal('show');
+					}
+				});
+			}
+		} else {
+			alert("Element not found");
+		}
+
+
+	}
+	function ledgerClosure() {
+		event.preventDefault();
+		var element = document.getElementById("account_id");
+
+		if (element) {
+			var id = element.value.trim(); // Trim to remove leading/trailing spaces
+
+			if (!id) { // Checks for empty string, null, or undefined
+
+				$('#mypopup22').modal('show');
+				$("#popupmsg_body").html("Account number is required!...");
+			} else {
+				location.href = 'accountLedger2?formmode=view&acct_num='
+					+ id;
+			}
+		} else {
+			alert("Element not found");
+		}
+	}
+</script>
+<script th:inline="javascript">
+	document.addEventListener('DOMContentLoaded', function() {
+
+	   const fileInput = document.getElementById('fileInput');
+	    const submitBtn = document.getElementById('submitBtn');
+
+	    // Step 1: Open file chooser when submit button is clicked
+	    submitBtn.addEventListener('click', () => {
+	        fileInput.click();
+	    });
+
+	    // Step 2: When file is selected, upload it
+	    fileInput.addEventListener('change', () => {
+	        if (fileInput.files.length > 0) {
+	            submitData(fileInput.files[0]); // pass the selected file
+	        }
+	    });
+
+	    function submitData(file) {
+	        document.getElementById('loadingModal').style.display = 'flex';
+	        var form = $('#reportform_cust')[0];
+	        var data = new FormData(form);
+	        data.append("overwrite", false);
+	        data.append("fileInput", "REPAYMENT");
+	        data.append("file", file);   
+	        $.ajax({
+	            type: "POST",
+	            url: "UploadFileData",
+	            data: data,
+	            processData: false,
+	            contentType: false,
+	            success: function (response) {
+	                document.getElementById('loadingModal').style.display = 'none';
+	                console.log(response);
+	                if (response.status === "duplicate") {
+	                    $('#alertmsgpopup')
+	                        .text(`Duplicate Customer Id(s) found: ${response.id.join(", ")}. Do you want to overwrite them?`)
+	                        .css("white-space", "nowrap");
+	                    window.lastData = data; 
+	                    window.lastType = "CUSTOMER";  
+
+	                    $('#datacancel').modal("show");
+	                    return;
+	                }
+	                showResponse(response);
+	            },
+	            error: function (error) {
+	                document.getElementById('loadingModal').style.display = 'none';
+	                //showResponse("Error: " + error.responseText);
+	                
+	                let message = error.responseText;
+					    $('#Successmsgpopup').html("<h6 class='text-center'>" + message + "</h6>");
+					    $('#SuccesPopUp').modal('show'); 
+	            }
+	        });
+	    }
+	});
+	
+		function showResponse(response) { 
+			 if (response.status === 'success') {
+		    let message =
+		        "Upload Completed<br>" +
+		        "Total No of Rows Succeeded: " + response.TotalSucceeded + "<br>" +
+		        "Total No of Rows Failed: " + response.TotalFailed + "<br>" +
+		        "Total Rows Processed: " + response.TotalProcessed + "<br>";
+
+		    // ✅ Write to the same modal-body container
+		    $('#Successmsgpopup').html("<h6 class='text-center'>" + message + "</h6>");
+		    $('#SuccesPopUp').modal('show');
+			 }else{
+				  let message = "An unexpected error occurred during upload";
+				 $('#Successmsgpopup').html("<h6 class='text-center'>" + message + "</h6>");
+				    $('#SuccesPopUp').modal('show'); 
+			 }
+		}
+		function backs() {
+			$("#normalalertvalues").modal("hide");
+		}
+		
+  // DELETE REF
+ function deleteRecUpload(btn) {
+    $('#datacancel').modal('hide');
+    document.getElementById('loadingModal').style.display = 'flex';
+
+    // ✅ Reuse stored FormData
+    var formData = window.lastData;
+    if (!formData) {
+        console.error("No form data found from last upload");
+        return;
+    }
+
+    // ✅ Ensure overwrite is set to true
+    formData.set("overwrite", true);
+
+    $.ajax({
+        url: './UploadFileData',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(response) {
+            document.getElementById('loadingModal').style.display = 'none';
+            showResponse(response);
+
+        },
+        error: function(xhr, status, error) {
+            document.getElementById('loadingModal').style.display = 'none';
+            $('#alertmsg').text("Overwrite Upload failed");
+            $('#alert').modal("toggle");
+        }
+    });
+}
+
+  
+/*  function downloadExcel(type) {
+	 document.getElementById('loadingModal').style.display = 'flex';
+		const basePath = /*[[${#httpServletRequest.contextPath}]]*/ '';
+	/* 	window.location.href = basePath + '/ASPIRA/DisplayExcel?type=' + type;
+		   document.getElementById('loadingModal').style.display = 'none';
+ } */ 
+ function downloadExcel(type) {
+	    // Show loading modal
+	    document.getElementById('loadingModal').style.display = 'flex';
+
+	    const basePath = /*[[${#httpServletRequest.contextPath}]]*/ '';
+	    const url = basePath + '/DisplayExcel?type=' + type;
+
+	    $.ajax({
+	        url: url,
+	        type: 'GET',
+	        xhrFields: {
+	            responseType: 'blob' // Important to receive file as blob
+	        },
+	        success: function(blob, status, xhr) {
+	            // Get filename from response header if provided
+	            let filename = "file.xlsx";
+	            const disposition = xhr.getResponseHeader('Content-Disposition');
+	            if (disposition && disposition.indexOf('filename=') !== -1) {
+	                filename = disposition.split('filename=')[1].replace(/"/g, '');
+	            }
+
+	            // Create a link to download the blob
+	            const downloadUrl = window.URL.createObjectURL(blob);
+	            const a = document.createElement('a');
+	            a.href = downloadUrl;
+	            a.download = filename;
+	            document.body.appendChild(a);
+	            a.click();
+	            a.remove();
+	            window.URL.revokeObjectURL(downloadUrl);
+	        },
+	        error: function(err) {
+	            console.error('Download error:', err);
+	            alert('Error downloading file.');
+	        },
+	        complete: function() {
+	            // Hide loading modal after success or error
+	            document.getElementById('loadingModal').style.display = 'none';
+	        }
+	    });
+	}
+
+	</script>
+
+
+<body>
+
+	<div class="col-sm-2">
+		<div th:insert="BGLSHeaderMenu :: header"></div>
+	</div>
+	<!---------------------User List Starts------------------------------------------------------->
+	<!-- Start Content-->
+	<div class="container-manager">
+		<div class="row">
+			<div class="col-sm-11 ml-5 mt-2">
+
+				<div th:if="${formmode}=='viewloanschedule'">
+
+					<div class="card" style="border-radius: 2px">
+						<!-- Card Header -->
+						<form id="reportform_cust">
+							<input type="file" id="fileInput" name="file"
+								style="display: none" />
+						</form>
+						<div class="card-header" style="background-color: #e9ecef; height: 50px">
+							<h6 class="float-left" style="font-size: 1.2rem; color: black;">LOAN
+								SCHEDULE</h6>
+
+							<div class="btn-group nav-buttons float-right">
+							<button type="button" class="btn-primary big-btn" id="submitBtn">Upload</button>
+								<button class="btn-primary big-btn ml-1" onclick="switchToList();">List</button>
+							</div>
+
+						</div>
+
+						<form action="#" method="post" id="employeeForm" autocomplete="off">
+							<div id="tab1" class="tabcontent" style="display: block">
+								<div class="card-body">
+									<div class="border border-secondary">
+										<!-- Customer & Account Details -->
+										<div class="row formline p-2">
+											<div class="col-sm-1"></div>
+											<div class="col-sm-2 d-flex align-items-center">Customer
+												Id</div>
+											<div class="col-sm-2">
+												<input type="text" id="id" name="id"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+
+											<div class="col-sm-1"></div>
+											<div class="col-sm-2 d-flex align-items-center">Customer
+												Name</div>
+											<div class="col-sm-2">
+												<input type="text" name="cust_name" id="cust_name"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+										</div>
+
+										<div class="row formline p-2">
+											<div class="col-sm-1"></div>
+											<div class="col-sm-2 d-flex align-items-center">Account
+												Id</div>
+											<div class="col-sm-2">
+												<input type="text" name="account_id" id="account_id"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+											<div class="col-sm-1"></div>
+											<div class="col-sm-2 d-flex align-items-center">Account
+												Name</div>
+											<div class="col-sm-2">
+												<input type="text" name="account_name" id="account_name"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+										</div>
+
+										<div class="row formline p-2">
+											<div class="col-sm-1"></div>
+											<div class="col-sm-2 d-flex align-items-center">Loan
+												Amount</div>
+											<div class="col-sm-2">
+												<input type="text" name="loan_amount" id="loan_amount"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+											<div class="col-sm-1"></div>
+											<div class="col-sm-2 d-flex align-items-center">Date of
+												Loan</div>
+											<div class="col-sm-2">
+												<input type="text" id="CREATION_DATE" name="CREATION_DATE"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+							<div class="tab mt-2"
+								style="padding: 4px; display: flex; justify-content: space-around; margin-top: 10px; width: 100%; height: 43px">
+								<h6 class="float-left" style="font-size: 1.2rem; color: black;">
+									DEMAND-COLLECTION-OVERDUE</h6>
+							</div>
+
+							<!-- Loan Repayment Table -->
+							<table class="table table-bordered mt-3">
+								<thead class="thead-light">
+									<tr>
+										<th style="text-align: left;">Due Date</th>
+										<th style="text-align: right;">Principal Expenses</th>
+										<th style="text-align: right;">Interest Expenses</th>
+										<th style="text-align: right;">Fee Expenses</th>
+										<th style="text-align: right;">Penalty Expenses</th>
+										<th style="text-align: left;">Repaid Date</th>
+										<th style="text-align: right;">Principal Paid</th>
+										<th style="text-align: right;">Interest Paid</th>
+										<th style="text-align: right;">Fee Paid</th>
+										<th style="text-align: right;">Penalty Paid</th>
+										<th style="text-align: right;">Total Dues</th>
+									</tr>
+								</thead>
+								<tbody id="repaymentDet">
+
+								</tbody>
+							</table>
+						</form>
+						<div class="card-footer text-center">
+							<button class="btn-primary big-btn" onclick="Home();">Home</button>
+							<button class="btn-primary big-btn" onclick="back()">Back</button>
+						</div>
+					</div>
+				</div>
+
+				<div th:if="${formmode}=='listschedule'">
+					<div class="panel panel-primary filterable">
+						<div class="card">
+							<div class="card-header" style="background-color: #e9ecef; height: 50px">
+								<div class="float-left">
+									<h6 style="font-size: 1.2rem;">LOAN SCHEDULE - LIST</h6>
+								</div>
+								<div class="float-right">
+								
+									<button type="button"
+										class="btn-primary big-btn btn-filter">Filter</button>
+								<!-- <button type="button"
+										class="btn-primary big-btn" onclick="downloadExcel('REPAYMENT')">Download</button> -->
+								</div>
+							</div>
+							<div class="card-body" style="overflow-y: auto; border: 1px solid #ddd;">
+								<div class="table-responsive" id="cardBody">
+									<table class="table  table-bordered  table-hover table-sm"
+										style="margin-bottom: 0px; font-size: initial;" id="usertable">
+										<thead class="thead-light"
+											style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+											<tr class="filters">
+												<th style="width: 8%;"><input type="text" 
+														class="form-control font-weight-bold" placeholder="S.NO"
+														disabled></th>
+												<th style="width: 10%;"><input type="text" 
+														class="form-control font-weight-bold" placeholder="LOAN ID"
+														disabled></th>
+												<th><input type="text" 
+														class="form-control font-weight-bold" placeholder="LOAN NAME"
+														disabled></th>
+												<th><input type="text" 
+														class="form-control font-weight-bold"
+														placeholder="RETAILER NAME" disabled></th>
+												<th><input type="text" 
+														class="form-control font-weight-bold"
+														placeholder="RETAILER BRANCH ID" disabled></th>
+												<th style="width: 10%;"><input type="text" 
+														class="form-control font-weight-bold" placeholder="STATUS"
+														disabled></th>
+											</tr>
+										</thead>
+										<tbody>
+											<!-- Show rows if list has data -->
+											<th:block th:if="${list != null and #lists.size(list) > 0}">
+												<tr th:each="item, iterator : ${list}" class="userlist">
+													<td style="font-size: 14px" th:text="${iterator.index + 1}"></td>
+													<td style="font-size: 14px" class="text-primary" th:attr="data-id=${item?.id},
+										                         data-account_holderkey=${item?.account_holderkey},
+										                         data-encoded_key=${item?.encoded_key}" th:text="${item?.id}"
+														onclick="ClickId(this);"></td>
+													<td style="font-size: 14px" th:text="${item?.loan_name}"></td>
+													<td style="font-size: 14px" th:text="${item?.retailer_name}">TEST
+													</td>
+													<td style="font-size: 14px" th:text="${item?.retailer_branch}">TEST
+													</td>
+													<td style="font-size: 14px" th:text="${item?.account_state}">TEST
+													</td>
+												</tr>
+											</th:block>
+
+											<!-- Show "No data available" if list is empty -->
+											<th:block th:if="${list == null or #lists.isEmpty(list)}">
+												<tr>
+													<td colspan="6" class="text-center"
+														style="font-size: 14px; font-weight: bold; color: red;">
+														No data available
+													</td>
+												</tr>
+											</th:block>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="card-footer text-center">
+								<button class="btn-primary big-btn" onclick="Homeln();">Home</button>
+								<button class="btn-primary big-btn" onclick="back()">Back</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div th:if="${formmode}=='viewloanschedule1'">
+
+					<div class="card" style="border-radius: 2px">
+						<!-- Card Header -->
+						<div class="card-header" style="background-color: #e9ecef; height: 50px">
+							<div class="float-left">
+								<h6 style="font-size: 1.2rem;" class="ml-4">LOAN SCHEDULE
+									-VIEW</h6>
+							</div>
+							<div class="float-right">
+								<button class="btn-primary big-btn" id="repaymentschedule"
+									onclick="schedulePreClosure()">ACCOUNT</button>
+								<button class="btn-primary big-btn" id="ledgerschedule" onclick="ledgerPreClosure()">LEDGER</button>
+							</div>
+						</div>
+
+						<!-- Loan Details Section -->
+
+
+						<form action="#" method="post" id="employeeForm" autocomplete="off">
+							<div id="tab1" class="tabcontent" style="display: block">
+								<div class="card-body">
+									<div class="border border-secondary">
+										<!-- Customer & Account Details -->
+										<div class="row formline p-2">
+											<div class="col-sm-2 d-flex align-items-center">Customer
+												Id</div>
+											<div class="col-sm-2">
+												<input type="text" id="id" name="id"
+													th:value="${view[0] != null ? view[0][0] : ''}"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+
+											<div class="col-sm-2 d-flex align-items-center">Customer
+												Name</div>
+											<div class="col-sm-2">
+												<input type="text" name="cust_name" id="cust_name"
+													th:value="${view[0] != null ? view[0][2] : ''}"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+											<div class="col-sm-2 d-flex align-items-center">Date of
+												Loan</div>
+											<div class="col-sm-2">
+												<input type="text" id="CREATION_DATE" name="CREATION_DATE"
+													th:value="${view[0] != null ? #dates.format(view[0][3], 'dd-MM-yyyy') : ''}"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+										</div>
+
+										<div class="row formline p-2">
+											<div class="col-sm-2 d-flex align-items-center">Account
+												Id</div>
+											<div class="col-sm-2">
+												<input type="text" name="account_id" id="account_id"
+													th:value="${view[0] != null ? view[0][4] : ''}"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+
+											<div class="col-sm-2 d-flex align-items-center">Account
+												Name</div>
+											<div class="col-sm-2">
+												<input type="text" name="account_name" id="account_name"
+													th:value="${view[0] != null ? view[0][9] : ''}"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+											<div class="col-sm-2 d-flex align-items-center">Loan
+												Amount</div>
+											<div class="col-sm-2">
+												<input type="text" name="loan_amount" id="loan_amount"
+													th:value="${view[0] != null ? #numbers.formatDecimal(view[0][8], 1, 'COMMA', 2, 'POINT') : ''}"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+										</div>
+
+										<div class="row formline p-2">
+											<div class="col-sm-2 d-flex align-items-center">Currency</div>
+											<div class="col-sm-2">
+												<input type="text" name="cust_name" id="cust_name"
+													th:value="${view[0] != null ? view[0][10] : ''}"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+											<div class="col-sm-2 d-flex align-items-center">Outstanding
+												Balance</div>
+											<div class="col-sm-2">
+												<input type="text" id="CREATION_DATE" name="CREATION_DATE"
+													th:value="${view[0] != null ? #numbers.formatDecimal(view[0][11], 1, 'COMMA', 2, 'POINT') : ''}"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+											<div class="col-sm-2 d-flex align-items-center">Arrears
+												Age</div>
+											<div class="col-sm-2">
+												<input type="text" id="NO_OF_DAYS" name="NO_OF_DAYS"
+													th:value="${view[0] != null && view[0][16] != null ? view[0][16] : ''}"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+										</div>
+
+										<div class="row formline p-2">
+											<div class="col-sm-2 d-flex align-items-center">Demand</div>
+											<div class="col-sm-2">
+												<input type="text" id="id" name="id"
+													th:value="${view[0] != null ? #numbers.formatDecimal(view[0][17], 1, 'COMMA', 2, 'POINT') : ''}"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+
+											<div class="col-sm-2 d-flex align-items-center">Collection</div>
+											<div class="col-sm-2">
+												<input type="text" name="cust_name" id="cust_name"
+													th:value="${view[0] != null ? #numbers.formatDecimal(view[0][18], 1, 'COMMA', 2, 'POINT') : ''}"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+											<div class="col-sm-2 d-flex align-items-center">Arrears</div>
+											<div class="col-sm-2">
+												<input type="text" id="CREATION_DATE" name="CREATION_DATE"
+													th:value="${view[0] != null ? #numbers.formatDecimal(view[0][19], 1, 'COMMA', 2, 'POINT') : ''}"
+													class="form-control form-control-sm bg-white border border-dark"
+													readonly />
+											</div>
+										</div>
+
+									</div>
+								</div>
+
+							</div>
+							<div class="tab mt-2"
+								style="padding: 4px; display: flex; justify-content: space-around; margin-top: 10px; width: 100%; height: 43px">
+								<h6 class="float-left" style="font-size: 1.2rem; color: black;">
+									DEMAND-COLLECTION-OVERDUE</h6>
+							</div>
+
+							<!-- Loan Repayment Table -->
+							<div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+								<table class="table table-bordered fixed-header"
+									style="width: 100%; white-space: nowrap;">
+									<thead class="thead-light"
+										style="position: sticky; top: 0; background-color: #e9ecef; z-index: 1;">
+										<tr>
+											<th style="text-align: left;">Due Date</th>
+											<th style="text-align: left;">Principal Expenses</th>
+											<th style="text-align: left;">Interest Expenses</th>
+											<th style="text-align: left;">Fee Expenses</th>
+											<th style="text-align: left;">Penalty Expenses</th>
+											<th style="text-align: left;">Repaid Date</th>
+											<th style="text-align: left;">Principal Paid</th>
+											<th style="text-align: left;">Interest Paid</th>
+											<th style="text-align: left;">Fee Paid</th>
+											<th style="text-align: left;">Penalty Paid</th>
+											<th style="text-align: left;">Total Dues</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="list : ${dues}" class="userlist text-right">
+											<td style="font-size: 14px; text-align: left;"
+												th:text="${list[1] != null ? #dates.format(list[1], 'dd-MM-yyyy') : ''}">
+											</td>
+											<td style="font-size: 14px;"
+												th:text="${list[3] != null ? #numbers.formatDecimal(list[3], 1, 'COMMA', 2, 'POINT') : '0.00'}">
+											</td>
+											<td style="font-size: 14px;"
+												th:text="${list[6] != null ? #numbers.formatDecimal(list[6], 1, 'COMMA', 2, 'POINT') : '0.00'}">
+											</td>
+											<td style="font-size: 14px;"
+												th:text="${list[9] != null ? #numbers.formatDecimal(list[9], 1, 'COMMA', 2, 'POINT') : '0.00'}">
+											</td>
+											<td style="font-size: 14px;"
+												th:text="${list[12] != null ? #numbers.formatDecimal(list[12], 1, 'COMMA', 2, 'POINT') : '0.00'}">
+											</td>
+											<td style="font-size: 14px; text-align: left;"
+												th:text="${list[2] != null ? #dates.format(list[2], 'dd-MM-yyyy') : ''}">
+											</td>
+											<td style="font-size: 14px;"
+												th:text="${list[4] != null ? #numbers.formatDecimal(list[4], 1, 'COMMA', 2, 'POINT') : '0.00'}">
+											</td>
+											<td style="font-size: 14px;"
+												th:text="${list[7] != null ? #numbers.formatDecimal(list[7], 1, 'COMMA', 2, 'POINT') : '0.00'}">
+											</td>
+											<td style="font-size: 14px;"
+												th:text="${list[10] != null ? #numbers.formatDecimal(list[10], 1, 'COMMA', 2, 'POINT') : '0.00'}">
+											</td>
+											<td style="font-size: 14px;"
+												th:text="${list[13] != null ? #numbers.formatDecimal(list[13], 1, 'COMMA', 2, 'POINT') : '0.00'}">
+											</td>
+											<td style="font-size: 14px;" th:text="${
+												            (list[5] != null ? list[5] : 0) + 
+												            (list[8] != null ? list[8] : 0) + 
+												            (list[11] != null ? list[11] : 0) + 
+												            (list[14] != null ? list[14] : 0) != null 
+												            ? #numbers.formatDecimal(
+												                (list[5] != null ? list[5] : 0) + 
+												                (list[8] != null ? list[8] : 0) + 
+												                (list[11] != null ? list[11] : 0) + 
+												                (list[14] != null ? list[14] : 0), 
+												                1, 'COMMA', 2, 'POINT') 
+												            : '0.00'}">
+											</td>
+										</tr>
+
+
+									</tbody>
+								</table>
+							</div>
+
+						</form>
+						<div class="card-footer text-center">
+							<button class="btn-primary big-btn" onclick="Home();">Home</button>
+							<button class="btn-primary big-btn" onclick="back()">Back</button>
+						</div>
+					</div>
+
+				</div>
+
+				<!--start the -->
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Alert Modal -->
+	<div class="modal fade" data-backdrop="false" data-keyboard="false" id="alert" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body text-center">
+					<h6 id="alertmsg"></h6>
+					<button type="button" class="btn-primary big-btn" onclick="depositsopen()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+ <!-- Delete Confirmation Modal -->
+	<div class="modal fade" id="datacancel" style="background: #000000b0;margin-bottom:10px;"
+		role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+			role="document">
+			<div class="modal-content"  >
+
+				<!-- Modal Header -->
+				
+
+				<!-- Modal Body -->
+				<div class="modal-body">
+					<h5  id="alertmsgpopup" style="font-size: 17px; color: black; padding: 15px;"></h5>
+				</div>
+				<!-- Modal Footer -->
+				<div style="padding: 10px; text-align: center;">
+					<button type="button" class="btn btn-outline-dark me-3"
+						style="font-size: 16px;"  onclick="$('#datacancel').modal('hide')">Cancel</button>
+					<button type="button" class="btn btn-outline-dark me-3" id="refDelete"
+						style="font-size: 16px;" onclick="deleteRecUpload(this);"
+						th:attr="data-formmode=delete">Confirm  , OverWrite</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	
+	<!-- success pop up -->
+	<div class="modal fade" id="SuccesPopUp" style="background: #000000b0;margin-bottom:10px;"
+		role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+			role="document">
+			<div class="modal-content" style="min-height:212px;margin-left:0px;" >
+				<!-- Modal Body -->
+				<div class="modal-body">
+					<h5  id="Successmsgpopup" style="font-size: 17px; color: black; padding: 15px;"></h5>
+				</div>
+				<!-- Modal Footer -->
+				<div style="padding: 10px; text-align: center;">
+					<button type="button" class="btn btn-outline-dark me-3"
+						style="font-size: 16px;"  onclick="$('#SuccesPopUp').modal('hide')">Cancel</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	 
+	
+</body>
+
+</html>

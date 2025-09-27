@@ -1,0 +1,3414 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<!--
+	CREATED BY : PRAVEEN
+	DATE : 19-09-24
+    VERSION    : 01
+-->
+<!--
+	CREATED BY : SUIRYA K
+	DATE       : 06-11-24
+	PURPOSE    : PLUGINS TO MOVE CUSTOMER MAINTAINANCE AND UPDATE DOCUMENT MASTER
+	VERSION    : 02
+	 
+-->
+<!--
+	CREATED BY : SUIRYA K
+	DATE       : 22-09-25
+	PURPOSE    : duplicate check
+	VERSION    : 03
+	 
+-->
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="/ASPIRA/js/jquery.min.js"></script>
+	<script src="/ASPIRA/js/jquery-ui.min.js"></script>
+	<style>
+		.modal {
+			display: none;
+			/* Hidden by default */
+			position: absolute;
+			/* Stay in place */
+			z-index: 1;
+			/* Sit on top */
+			padding-top: 100px;
+			/* Location of the box */
+			left: 0;
+			top: 0;
+			width: 100%;
+			/* Full width */
+			height: 100%;
+			/* Full height */
+			overflow: auto;
+			/* Enable scroll if needed */
+			background-color: rgb(0, 0, 0);
+			/* Fallback color */
+			background-color: rgba(0, 0, 0, 0.4);
+			/* Black w/ opacity */
+		}
+
+		.modal-header {
+			padding: 2px 16px;
+			background-color: #BBC3CB;
+			color: balck;
+		}
+
+		.modal-body {
+			padding: 2px 16px;
+		}
+
+		.modal-footer {
+			padding: 2px 16px;
+			background-color: #BBC3CB;
+			color: black;
+		}
+
+		/* Modal Content */
+		.modal-content {
+			background-color: #fefefe;
+			margin: auto;
+			/* //padding: 20px; */
+			border: 1px solid #888;
+			width: 80%;
+			height: 0%;
+			box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			-webkit-animation-name: animatetop;
+			-webkit-animation-duration: 0.4s;
+			animation-name: animatetop;
+			animation-duration: 0.4s
+		}
+
+		body {
+			font-size: 0.8rem;
+		}
+
+		.btn {
+			line-height: 0.5rem;
+		}
+
+		.container-manager {
+			width: 83.5%;
+			padding-right: 15px;
+			padding-left: 15px;
+			margin-right: auto;
+			margin-left: 17.3%;
+			margin-top: 80px;
+		}
+
+		.table .thead-light th {
+			color: #495057;
+			background-color: #e9ecef;
+			border-color: #dee2e6;
+			width: 23px;
+		}
+
+		.tablinks {
+			background-color: #f2f2f2;
+			color: #000;
+		}
+
+		.tablinks.active {
+			background-color: #007bff;
+			color: #fff;
+		}
+
+		.tab {
+			overflow: hidden;
+			border: 1px solid #ccc;
+			background-color: #f1f1f1;
+		}
+
+		.scroll {
+			max-height: 60vh;
+			overflow-y: scroll;
+			overflow-x: hidden;
+		}
+
+		.tab button {
+			background-color: inherit;
+			float: left;
+			border: none;
+			outline: none;
+			cursor: pointer;
+			padding: 14px 16px;
+			transition: 0.3s;
+			font-size: 17px;
+		}
+
+		.tab button:hover {
+			background-color: #ddd;
+		}
+
+		.tabcontent {
+			display: none;
+			padding: 6px 12px;
+			border: 0px solid #ccc;
+			border-top: none;
+		}
+
+		#myPieChart {
+			width: 100px;
+			height: 100px;
+		}
+
+		.input-group-text {
+			cursor: pointer;
+		}
+
+		#eyeIcon {
+			font-size: 1.2rem;
+		}
+
+		input,
+		select {
+			width: 75% !important;
+			padding: 2px;
+		}
+
+		.mmdd {
+			height: 25px;
+			width: 35% !important;
+		}
+
+		.ml-2 {
+			margin-left: 1px;
+		}
+
+		button:focus {
+			outline: unset !important;
+			border: unset !important;
+		}
+
+		.borderRemove {
+			border: none;
+		}
+	</style>
+	<style>
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.4);
+		}
+
+		.modal-content {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 70%;
+			height: 20%;
+			/* 	margin-left: 200px; */
+		}
+
+		.modal-content {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 70%;
+			height: 20%;
+			/* 	margin-left: 200px; */
+		}
+
+		.modal-pass {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 40%;
+			height: 25%;
+			margin-left: 400PX;
+			margin-right: auto;
+			border-radius: 10px;
+			box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+			font-family: Arial, sans-serif;
+		}
+
+		.close {
+			color: red;
+			font-size: 28px;
+			font-weight: bold;
+		}
+
+		.close:hover,
+		.close:focus {
+			color: black;
+			text-decoration: none;
+			cursor: pointer;
+		}
+	</style>
+	<style>
+		.password-info {
+			visibility: hidden;
+			width: 320px;
+			background-color: #333;
+			color: #fff;
+			text-align: left;
+			border-radius: 10px;
+			padding: 10px;
+			position: absolute;
+			z-index: 1;
+			top: calc(100% + 10px);
+			left: 50%;
+			transform: translateX(-50%);
+			opacity: 0;
+			transition: opacity 0.3s;
+		}
+
+		input:hover+.password-info {
+			visibility: visible;
+			opacity: 0.8;
+		}
+
+		.filterable .filters input[disabled] {
+			background-color: transparent;
+			border: none;
+			cursor: auto;
+			box-shadow: none;
+			padding: 0;
+			height: auto;
+		}
+
+		.filterable .filters input[disabled]::-webkit-input-placeholder {
+			color: #333;
+		}
+
+		.filterable .filters input[disabled]::-moz-placeholder {
+			color: #333;
+		}
+
+		.filterable .filters input[disabled]:-ms-input-placeholder {
+			color: #333;
+		}
+
+		.big-btn {
+			font-size: 16px;
+		}
+	</style>
+	<!--  model style-->
+	<style>
+		#datacancel,
+		#datacancel * {
+			box-sizing: content-box !important;
+		}
+
+		#SuccesPopUp,
+		#SuccesPopUp * {
+			box-sizing: content-box !important;
+		}
+
+		#datacancel .modal-dialog-centered.modal-dialog-scrollable {
+			justify-content: flex-start !important;
+		}
+
+		#SuccesPopUp .modal-dialog-centered.modal-dialog-scrollable {
+			justify-content: flex-start !important;
+		}
+	</style>
+	<script>
+		$(document).ready(function () {
+			$('.dropdown-toggle').dropdown();
+		});
+	</script>
+
+	<script th:inline="javascript">
+		//Global variables to store the current customer account type and ID
+		var currentAcctType = '';
+		var currentCustomerId = '';
+
+		function confirmAndOpenTab(evt, tabName) {
+			var ca_acct_type = document.getElementById('ca_acct_type').value;
+			var customerId = document.getElementById('customer_id').value;
+
+			if (!ca_acct_type || !customerId) {
+				//  alert("Please select customer ID");
+				$("#alertmsg").text("Please select customer ID");
+				$('#alert').modal("toggle");
+			} else {
+				// Check if the account type or customer ID has changed
+				if (ca_acct_type !== currentAcctType || customerId !== currentCustomerId) {
+					// Show the confirmation dialog
+					var confirmation = confirm("Do you want to open this DOCUMENT MASTER Tab?");
+					if (confirmation) {
+						currentAcctType = ca_acct_type; // Update the current account type
+						currentCustomerId = customerId; // Update the current customer ID
+						openTabAndShowTable(evt, tabName, ca_acct_type);
+					}
+				} else {
+					openTabAndShowTable(evt, tabName, ca_acct_type);
+				}
+			}
+		}
+
+		function openTabAndShowTable(evt, tabName, ca_acct_type) {
+			if (ca_acct_type === "INDIVIDUAL" || ca_acct_type === "JOINT ACCOUNT") {
+				document.getElementById("individualTable").style.display = "block";
+				document.getElementById("corporateTable").style.display = "none";
+			} else {
+				document.getElementById("individualTable").style.display = "none";
+				document.getElementById("corporateTable").style.display = "block";
+			}
+			openTab(evt, tabName);
+		}
+
+		function openTab(evt, tabName) {
+			evt.preventDefault(); // Prevent default action
+			hideAllTabs(); // Hide all tabs
+			document.getElementById(tabName).style.display = 'block'; // Show the selected tab
+			const tablinks = document.getElementsByClassName("tablinks");
+			for (let i = 0; i < tablinks.length; i++) {
+				tablinks[i].classList.remove("active"); // Remove the active class from all tabs
+			}
+			evt.currentTarget.classList.add("active"); // Add active class to the clicked tab
+			currentTab = tabName; // Update the currentTab variable
+		}
+
+		function hideAllTabs() {
+			const tabContents = document.getElementsByClassName('tabcontent');
+			for (let i = 0; i < tabContents.length; i++) {
+				tabContents[i].style.display = 'none'; // Hide all tab content
+			}
+		}
+
+		// Initialize the first tab as active
+		document.addEventListener("DOMContentLoaded", function () {
+			hideAllTabs();
+			document.getElementById('tab1').style.display = 'block';
+		});
+
+		function home() {
+			location.href = 'ASPIRA/Dashboard';
+		}
+
+		function refreshPage1() {
+			event.preventDefault();
+			location.href = 'drawDownLoan?formmode=add';
+		}
+
+		function listPage() {
+			event.preventDefault();
+			location.href = 'drawDownLoanMaintanace?formmode=list';
+		}
+
+
+
+
+	</script>
+	<script>
+		var mrowCount = 1;
+		var mrowCountcor = 3;
+		function rowadd() {
+			if (mrowCountcor < 6) {
+
+				var table = document.getElementById("click1");
+				var row = table.insertRow();
+				//var cell1 = row.insertCell(); 
+				var cell2 = row.insertCell();
+				var cell3 = row.insertCell();
+				var cell4 = row.insertCell();
+				var cell5 = row.insertCell();
+				var cell6 = row.insertCell();
+				var cell7 = row.insertCell();
+				var cell8 = row.insertCell();
+				var cell9 = row.insertCell();
+
+				//cell1.innerHTML = '<input type="checkbox"' + mrowCount + '">'; 
+				cell2.innerHTML = '<select name="docType" id="docType' + mrowCountcor + '"  class="uniform-input pl-2" style="height: 24px" onchange="last_change_re(' + mrowCountcor + ')" >' +
+					'<option>SELECT</option>' +
+					'<option value="NIC">CUSTOMER-RETAIL-NIC</option>' +
+					'<option value="PSP">CUSTOMER-RETAIL-PSP</option>' +
+					'<option value="AGM">CUSTOMER-RETAIL-AGM</option>' +
+					'<option value="DOC">CUSTOMER-RETAIL-DOC</option>' +
+					'</select>';
+				cell3.innerHTML = '<input type="text"  name="docCode" id="docCode' + mrowCountcor + '" class="uniform-input pl-2" autocomplete="off" style="height: 24px" readonly>';
+
+				//  cell3.innerHTML = '<input type="text" name="docCode" id="docCode1' + mrowCount + '" class="uniform-input pl-2" autocomplete="off" onkeyup="this.value = this.value.toUpperCase(); handleIn(this)">';
+				cell4.innerHTML = '<input type="text" name="docDesc" id="docDesc' + mrowCountcor + '" class="uniform-input pl-2" autocomplete="off" onkeyup="this.value = this.value.toUpperCase(); handleIn(this)" readonly>';
+				cell5.innerHTML = '<input type="text" name="uniqId" id="uniqId1' + mrowCount + '" class="uniform-input pl-2" autocomplete="off" onkeyup="this.value = this.value.toUpperCase(); handleIn(this)">';
+				cell6.innerHTML = '<input type="text" name="docIssPlace" id="docIssPlace1' + mrowCount + '" class="uniform-input pl-2" autocomplete="off" onkeyup="this.value = this.value.toUpperCase(); handleIn(this)">';
+				cell7.innerHTML = '<input type="date" name="docIssDate"   id="docIssDate1' + mrowCount + '" class="uniform-input pl-2" autocomplete="off" onkeyup="this.value = this.value.toUpperCase(); handleIn(this)">';
+				cell8.innerHTML = '<input type="date" name="docExpDate"  id="docExpDate1' + mrowCount + '" class="uniform-input pl-2" autocomplete="off" autocomplete="off" onkeyup="this.value = this.value.toUpperCase(); handleIn(this)">';
+				cell9.innerHTML = '<input type="file" name="docExpDate" id="file' + mrowCount + '">';
+				mrowCountcor++;
+				mrowCount++;
+			} else {
+				alert("You can only add up to 5 rows.");
+			}
+		}
+
+		function rowdelete(ele) {
+			var table = $('#click1')[0];
+			var rowCount = table.rows.length;
+			console.log(rowCount);
+			if (rowCount <= 1) {
+				//alert("There is no row available to delete!"); 
+				return;
+			}
+			if (ele) {
+				$(ele).parent().parent().remove();
+			}
+			else {
+				table.deleteRow(rowCount - 1);
+			}
+		}
+		function rowdeletecor(ele) {
+			var table = $('#click2')[0];
+			var rowCount = table.rows.length;
+			console.log(rowCount);
+			if (rowCount <= 1) {
+				//alert("There is no row available to delete!"); 
+				return;
+			}
+			if (ele) {
+				$(ele).parent().parent().remove();
+			}
+			else {
+				table.deleteRow(rowCount - 1);
+			}
+		}
+
+		function submitfile() {
+			var cif_id = document.getElementById("customer_id").value;
+			var rec_no = document.getElementById('rec_no').value;
+			var appl_ref_no = document.getElementById("appl_ref_no").value
+			const dynamicValues = []; // Initialize the array here
+
+			// Loop through each row in the tbody with id "click1"
+			$("#click1 tr").each(function () {
+				var row = {}; // Create an object to hold the data for this row
+
+				// Get values from the current row
+				row.doctype = $(this).find("select[name='docType']").val(); // Use select directly
+				row.doccode = $(this).find("input[name='docCode']").val();
+				row.doctypesesc = $(this).find("input[name='docDesc']").val();
+				row.uniqueid = $(this).find("input[name='uniqId']").val();
+				row.placeofissue = $(this).find("input[name='docIssPlace']").val();
+				row.issuedate = $(this).find("input[name='docIssDate']").val();
+				row.exprydate = $(this).find("input[name='docExpDate']").val();
+
+				// Get the file input and extract the filename
+				const fileInput = $(this).find("input[type='file']"); // Adjust selector as necessary
+				if (fileInput.length > 0 && fileInput[0].files.length > 0) {
+					const file = fileInput[0].files[0]; // Get the file object
+					row.file = file; // Set the file object in the row
+					row.filename = file.name; // Get the filename directly from the file object
+				}
+
+				if (row.doctype || row.doccode || row.doctypesesc || row.uniqueid || row.placeofissue || row.issuedate || row.exprydate || row.filename) {
+					dynamicValues.push(row); // Push the row object to the dynamicValues array
+				} // Push the row object to the dynamicValues array
+			});
+
+			console.log(dynamicValues);
+
+			// AJAX request to submit data
+			$.ajax({
+				url: '/ASPIRA/multiline?appl_ref_no=' + appl_ref_no + "&rec_no=" + rec_no + "&cif_id=" + cif_id,
+				data: JSON.stringify(dynamicValues),
+				type: 'POST',
+				contentType: 'application/json',
+				success: function (data) {
+					imageuploadFunction(data, dynamicValues, appl_ref_no);
+
+				}
+			});
+		}
+		function zeroth_change() {
+
+			var docType0 = document.getElementById("docType00").value;
+			if (docType0 === 'BRN') {
+				$('#docCode00').val("BRN");
+				$('#docDesc00').val("BUSINESS REGISTRATION NO");
+
+			} else if (docType0 === 'COI') {
+				$('#docCode00').val("COI");
+				$('#docDesc00').val("CERTIFICATE OF REGISTRATION");
+			} else if (docType0 === 'AGM') {
+				$('#docCode00').val("AGM");
+				$('#docDesc00').val("AGREEMENT");
+			} else if (docType0 === 'DOC') {
+				$('#docCode00').val("DOC");
+				$('#docDesc00').val("DOCUMENT");
+			}
+
+		}
+		function first_change() {
+			var docType1 = document.getElementById("docType11").value;
+			if (docType1 === 'BRN') {
+				$('#docCode11').val("BRN");
+				$('#docDesc11').val("BUSINESS REGISTRATION NO");
+
+			} else if (docType1 === 'COI') {
+				$('#docCode11').val("COI");
+				$('#docDesc11').val("CERTIFICATE OF REGISTRATION");
+			} else if (docType1 === 'AGM') {
+				$('#docCode11').val("AGM");
+				$('#docDesc11').val("AGREEMENT");
+			} else if (docType1 === 'DOC') {
+				$('#docCode11').val("DOC");
+				$('#docDesc11').val("DOCUMENT");
+			}
+		}
+
+		function zeroth_change_re() {
+			var docType0 = document.getElementById("docType0").value;
+			if (docType0 === 'NIC') {
+				$('#docCode0').val("NIC");
+				$('#docDesc0').val("NATIONAL ID CARD");
+			} else if (docType0 === 'PSP') {
+				$('#docCode0').val("PSP");
+				$('#docDesc0').val("PASSPORT NO");
+			} else if (docType0 === 'AGM') {
+				$('#docCode0').val("AGM");
+				$('#docDesc0').val("AGREEMENT");
+			} else if (docType0 === 'DOC') {
+				$('#docCode0').val("DOC");
+				$('#docDesc0').val("DOCUMENT");
+			}
+		}
+		function first_change_re() {
+			var docType1 = document.getElementById("docType1").value;
+			if (docType1 === 'NIC') {
+				$('#docCode1').val("NIC");
+				$('#docDesc1').val("NATIONAL ID CARD");
+
+			} else if (docType1 === 'PSP') {
+				$('#docCode1').val("PSP");
+				$('#docDesc1').val("PASSPORT NO");
+			} else if (docType1 === 'AGM') {
+				$('#docCode1').val("AGM");
+				$('#docDesc1').val("AGREEMENT");
+			} else if (docType1 === 'DOC') {
+				$('#docCode1').val("DOC");
+				$('#docDesc1').val("DOCUMENT");
+			}
+		}
+
+
+
+		function last_change(rowCount) {
+			// This will display when the function is triggered
+
+			// Get the values of the document type and dynamically change the docCode and docDesc values.
+			var docType = document.getElementById("docType2" + rowCount).value;
+
+			// Create the dynamic IDs for docCode and docDesc
+			var docDesc = '#docDesc2' + rowCount;
+			var docCode = '#docCode2' + rowCount;
+
+			// Change values based on the selected docType
+			if (docType === 'BRN') {
+				$(docCode).val("BRN");
+				$(docDesc).val("BUSINESS REGISTRATION NO");
+			} else if (docType === 'COI') {
+				$(docCode).val("COI");
+				$(docDesc).val("CERTIFICATE OF REGISTRATION");
+			} else if (docType === 'AGM') {
+				$(docCode).val("AGM");
+				$(docDesc).val("AGREEMENT");
+			} else if (docType === 'DOC') {
+				$(docCode).val("DOC");
+				$(docDesc).val("DOCUMENT");
+			}
+		}
+
+
+		function last_change_re(rowCount) {
+
+			var docType = document.getElementById("docType" + rowCount).value;
+
+			var docDesc = '#docDesc' + rowCount;
+			var docCode = '#docCode' + rowCount;
+
+			if (docType === 'NIC') {
+				$(docCode).val("NIC");
+				$(docDesc).val("BUSINESS REGISTRATION NO");
+			} else if (docType === 'PSP') {
+				$(docCode).val("PSP");
+				$(docDesc).val("PASSPORT NO");
+			} else if (docType === 'AGM') {
+				$(docCode).val("AGM");
+				$(docDesc).val("AGREEMENT");
+			} else if (docType === 'DOC') {
+				$(docCode).val("DOC");
+				$(docDesc).val("DOCUMENT");
+			}
+		}
+		function readURL(input) {
+			var Thisinput = $(input)
+			if (input.files && input.files[0]) {
+
+				var reader = new FileReader();
+
+				reader.onload = function (e) {
+					Thisinput.closest('.file-uploadone').find('.image-upload-wrap')
+						.hide();
+
+					Thisinput.closest('.file-uploadone').find('.file-upload-image')
+						.attr('src', e.target.result);
+					Thisinput.closest('.file-uploadone').find('.file-upload-content')
+						.show();
+
+					Thisinput.closest('.file-uploadone').find('.image-title').html(
+						input.files[0].name);
+				};
+
+				reader.readAsDataURL(input.files[0]);
+
+			} else {
+				removeUpload();
+			}
+		}
+
+		function handleIn(input) {
+			// Remove special characters using regex
+			input.value = input.value.replace(/[^\w\s]/gi, '').toUpperCase();
+		}
+		function submitfileCorporate() {
+			var rec_no = document.getElementById("rec_no").value;
+			var cif_id = document.getElementById("customer_id").value;
+			var appl_ref_no = document.getElementById("appl_ref_no").value;
+
+			const dynamicValues = []; // Initialize the array here
+
+			// Loop through each row in the tbody with id "click1"
+			$("#click2 tr").each(function () {
+				var row = {}; // Create an object to hold the data for this row
+
+				// Get values from the current row
+				row.doctype = $(this).find("select[name='docType']").val(); // Use select directly
+				row.doccode = $(this).find("input[name='docCode']").val();
+				row.doctypesesc = $(this).find("input[name='docDesc']").val();
+				row.uniqueid = $(this).find("input[name='uniqId']").val();
+				row.placeofissue = $(this).find("input[name='docIssPlace']").val();
+				row.issuedate = $(this).find("input[name='docIssDate']").val();
+				row.exprydate = $(this).find("input[name='docExpDate']").val();
+
+				// Get the file input and extract the filename
+				const fileInput = $(this).find("input[type='file']"); // Adjust selector as necessary
+				if (fileInput.length > 0 && fileInput[0].files.length > 0) {
+					const file = fileInput[0].files[0]; // Get the file object
+					row.file = file; // Set the file object in the row
+					row.filename = file.name; // Get the filename directly from the file object
+				}
+
+				if (row.doctype || row.doccode || row.doctypesesc || row.uniqueid || row.placeofissue || row.issuedate || row.exprydate || row.filename) {
+					dynamicValues.push(row); // Push the row object to the dynamicValues array
+				}  // Push the row object to the dynamicValues array
+			});
+
+			console.log(dynamicValues);
+			console.log(cif_id);
+			// AJAX request to submit data
+			$.ajax({
+				url: '/ASPIRA/multiline?appl_ref_no=' + appl_ref_no + "&rec_no=" + rec_no + "&cif_id=" + cif_id,
+				data: JSON.stringify(dynamicValues),
+				type: 'POST',
+				contentType: 'application/json',
+				success: function (data) {
+					imageuploadFunction(data, dynamicValues, appl_ref_no);
+
+				}
+			});
+		}
+	</script>
+	<script>
+		function back() {
+
+			event.preventDefault();
+			window.history.back();
+		}
+	</script>
+	<script>
+		var mrowCount1cor1 = 3; // Assuming you start at row 3, you can adjust this
+		var maxRows = 5; // Maximum number of rows allowed
+
+		function rowadddcorporate() {
+			// Check if the number of rows is less than the maximum allowed
+			if (mrowCount1cor1 <= maxRows) {
+				var table = document.getElementById("click2");
+				var row = table.insertRow();
+
+				// Create cells
+				var cell2 = row.insertCell();
+				var cell3 = row.insertCell();
+				var cell4 = row.insertCell();
+				var cell5 = row.insertCell();
+				var cell6 = row.insertCell();
+				var cell7 = row.insertCell();
+				var cell8 = row.insertCell();
+				var cell9 = row.insertCell();
+
+				// Populate cells with HTML content
+				cell2.innerHTML = `<select name="docType" id="docType2${mrowCount1cor1}" class="uniform-input pl-2" style="height: 24px" onchange="last_change(${mrowCount1cor1})">
+            <option>SELECT</option>
+            <option value="BRN">CUSTOMER-CORPORATE-BRN</option>
+            <option value="COI">CUSTOMER-CORPORATE-COI</option>
+            <option value="AGM">CUSTOMER-CORPORATE-AGM</option>
+            <option value="DOC">CUSTOMER-CORPORATE-DOC</option>
+        </select>`;
+
+				cell3.innerHTML = `<input type="text" name="docCode" id="docCode2${mrowCount1cor1}" class="uniform-input pl-2" autocomplete="off" style="height: 24px" readonly>`;
+
+				cell4.innerHTML = `<input type="text" name="docDesc" id="docDesc2${mrowCount1cor1}" class="uniform-input pl-2" autocomplete="off" onkeyup="this.value = this.value.toUpperCase(); handleIn(this)" readonly>`;
+
+				cell5.innerHTML = `<input type="text" name="uniqId" id="uniqId2${mrowCount1cor1}" class="uniform-input pl-2" autocomplete="off" onkeyup="this.value = this.value.toUpperCase(); handleIn(this)">`;
+
+				cell6.innerHTML = `<input type="text" name="docIssPlace" id="docIssPlace2${mrowCount1cor1}" class="uniform-input pl-2" autocomplete="off" onkeyup="this.value = this.value.toUpperCase(); handleIn(this)">`;
+
+				cell7.innerHTML = `<input type="date" name="docIssDate" id="docIssDate2${mrowCount1cor1}" class="uniform-input pl-2" autocomplete="off" onkeyup="this.value = this.value.toUpperCase(); handleIn(this)">`;
+
+				cell8.innerHTML = `<input type="date" name="docExpDate" id="docExpDate2${mrowCount1cor1}" class="uniform-input pl-2" autocomplete="off" onkeyup="this.value = this.value.toUpperCase(); handleIn(this)">`;
+
+				cell9.innerHTML = `<input type="file" name="docExpDate" id="file2${mrowCount1cor1}">`;
+
+				// Increment the row count
+				mrowCount1cor1++;
+			} else {
+				// alert("You can only add up to 5 rows.");
+			}
+		}
+
+	</script>
+
+	<script>
+
+		//Next Tab 
+		function submitparam() {
+			event.preventDefault();
+
+			document.getElementById("tab1").style.display = "none";
+			document.getElementById("tab2").style.display = "block";
+			$("#smooth1").removeClass("active");
+			$("#smooth2").addClass("active");
+		}
+
+
+		function submitparam1() {
+			event.preventDefault();
+
+			document.getElementById("tab2").style.display = "none";
+			document.getElementById("tab3").style.display = "block";
+			$("#smooth2").removeClass("active");
+			$("#smooth3").addClass("active");
+		}
+
+
+		function submitparam2() {
+			event.preventDefault();
+
+			document.getElementById("tab3").style.display = "none";
+			document.getElementById("tab4").style.display = "block";
+			$("#smooth3").removeClass("active");
+			$("#smooth4").addClass("active");
+		}
+
+
+
+		function updateCheckboxValue() {
+			var checkbox = document.getElementById("record_flag");
+			checkbox.value = checkbox.checked ? "Y" : "N";
+		}
+
+		function updateCheckboxValue1() {
+			var checkbox = document.getElementById("record_flag_1");
+			checkbox.value = checkbox.checked ? "Y" : "N";
+		}
+
+		function refreshPage() {
+			window.location.reload();
+		}
+
+		function formatDateToYYYYMMDD(date) {
+			if (!date || !(date instanceof Date)) {
+				return '';
+			}
+			const year = date.getFullYear();
+			const month = ('0' + (date.getMonth() + 1)).slice(-2); // Months are zero-based
+			const day = ('0' + date.getDate()).slice(-2);
+			return `${day}-${month}-${year}`;
+		}
+
+
+		function imageuploadFunction(Responcedata, dynamicvalues, appl_ref_no) {
+			var formData = new FormData();
+			formData.append("unique", Responcedata);
+
+			// Show the loader before starting the image processing
+			$('#loader2').show();
+
+			// Function to process a file and return a promise
+			function processFile(value) {
+				return new Promise((resolve, reject) => {
+					if (!value.file) {
+						console.error("File object is invalid:", value);
+						return reject("Invalid file");
+					}
+
+					// Determine the file type (image, excel, pdf, etc.)
+					const fileType = value.file.type;
+
+					if (fileType.startsWith('image/')) {
+						// Process image file (JPEG, PNG, etc.)
+						var canvas = document.createElement('canvas');
+						var ctx = canvas.getContext('2d');
+						var img = new Image();
+
+						img.src = URL.createObjectURL(value.file);
+						img.onload = function () {
+							canvas.width = img.width;
+							canvas.height = img.height;
+							ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+							var dataURL = canvas.toDataURL('image/jpeg');
+
+							resolve({file: value.file, dataURL: dataURL});
+						};
+
+						img.onerror = function (error) {
+							console.error("Error loading image:", error);
+							reject(error);
+						};
+					} else {
+						// For non-image files, bypass canvas and directly resolve
+						resolve({file: value.file, dataURL: null});
+					}
+				});
+			}
+
+			// Process all files
+			Promise.all(dynamicvalues.map(processFile)).then((results) => {
+				results.forEach((result) => {
+					formData.append("files", result.file); // Append the original file
+					if (result.dataURL) {
+						formData.append("dataURL", result.dataURL); // Append dataURL for images
+					} else {
+						formData.append("dataURL", ""); // Placeholder for non-image files
+					}
+				});
+
+				formData.append("appl_ref_no", appl_ref_no);
+
+				// Make a single AJAX call
+				$.ajax({
+					url: '/ASPIRA/imageupload11',
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					success: function (response) {
+						$("#alertmsg").text(response);
+						$('#alert').modal("toggle");
+						window.location.reload();
+					},
+					error: function (xhr, status, error) {
+						console.error("Error during image upload:", status, error);
+						// Optionally show an error message to the user
+						//alert("An error occurred while uploading the images.");
+					},
+					complete: function () {
+						// Hide the loader regardless of success or error
+						//   $('#loader2').hide();
+					}
+				});
+			}).catch((error) => {
+				console.error('Error processing files:', error);
+				// Ensure the loader is hidden if there’s an error during file processing
+				$('#loader').hide();
+			});
+		}
+
+
+	</script>
+	<script>
+		function addscreen() {
+			location.href = 'drawDownLoan?formmode=add';
+		}
+
+		function inquaryeditlistz(a) {
+			event.preventDefault();
+			var loan_accountno = a.getAttribute("data-loan_accountno");
+
+			location.href = 'drawDownLoanMaintanace?formmode=view&loan_accountno='
+				+ loan_accountno;
+		}
+
+		function verifyeditlistz(a) {
+			event.preventDefault();
+			var loan_accountno = a.getAttribute("data-loan_accountno");
+
+			location.href = 'drawDownLoanMaintanace?formmode=verify&loan_accountno='
+				+ loan_accountno;
+		}
+
+		function modifyeditview(a) {
+			event.preventDefault();
+			var dd_notice_ref = a.getAttribute("data-dd_notice_ref");
+			location.href = 'LSDBDDNoticeDetails?formmode=modify&dd_notice_ref='
+				+ dd_notice_ref;
+		}
+
+		function modifyeditview1(a) {
+			event.preventDefault();
+			var dd_notice_ref = a.getAttribute("data-dd_notice_ref");
+			location.href = 'LSDBDDNoticeDetails?formmode=modify1&dd_notice_ref='
+				+ dd_notice_ref;
+		}
+
+		//deleteUnverified (Praveen)
+		function deleteUnverified(a) {
+			var dd_notice_ref = a.getAttribute('data-dd_notice_ref');
+			//location.href = 'DrawDownSyndicatedLoan?formmode=view&drawDownId='+ drawId;
+			console.log(dd_notice_ref);
+			$.ajax({
+				url: './deleteUnverifiedRecordsDDN?dd_notice_ref=' + dd_notice_ref,
+				type: 'POST',
+				success: function (responseText, statusText, xhr, $form) {
+					console.log(responseText);
+					$("#alertmsg").text(responseText);
+					$('#alert').modal("toggle");
+				},
+				error: function (error) {
+					console.log("Error fetching data: ", error);
+				}
+
+			});
+
+		}
+
+
+
+		function getRepaymentDetails(a) {
+			event.preventDefault();
+
+			var principleAmount = document.getElementById("loan_sanctioned").value.replace(/,/g, '');
+			var santionedDate = changeDateFormat(document.getElementById("date_of_loan").value);
+			var interestRate = document.getElementById("effective_interest_rate").value.replace(/,/g, '');
+
+			var installID = $("#inst_id").val();
+			var installStartDate = changeDateFormat(document.getElementById("inst_start_dt").value);
+			var pricipleFreq = document.getElementById("inst_freq").value;
+			var noOfInstallment = document.getElementById("no_of_inst").value;
+			var installAmount = document.getElementById("inst_amount").value.replace(/,/g, '');
+			var interestFreq = document.getElementById("interest_frequency").value;
+
+			console.log(principleAmount + " " + santionedDate + " " + interestRate + " " + installID + " " + installStartDate + " "
+				+ pricipleFreq + " " + noOfInstallment + " " + installAmount + " " + interestFreq);
+			$
+				.ajax({
+					type: "GET",
+					url: "./getInterestDetails?creation_Date=" + santionedDate
+						+ "&start_date=" + installStartDate + "&Product_value=" + principleAmount
+						+ "&principle_frequency=" + pricipleFreq + "&int_rate=" + interestRate
+						+ "&no_of_inst=" + noOfInstallment + "&int_amt="
+						+ installAmount + "&interestFrequency=" + interestFreq,
+					success: function (data) {
+						console.log(data);
+						var trHTML = '';
+						$
+							.each(
+								data,
+								function (index, entity) {
+
+									var no_of_instalment = entity.no_of_instalment;
+									var from_date = formatDate(entity.from_date);
+									var installment_date = formatDate(entity.installment_date);
+									var installment_description = entity.installment_description;
+									var installment_amt = formatNumber(entity.installment_amt);
+									var principal_amt = formatNumber(entity.principal_amt);
+									var interest_amt = formatNumber(entity.interest_amt);
+									var charges_amt = formatNumber(entity.charges_amt);
+									var principal_outstanding = formatNumber(entity.principal_outstanding);
+
+
+
+									trHTML += '<tr id="sechduleRow">'
+										+ '<td>' + no_of_instalment + '</td>'
+										+ '<td>' + installment_date + '</td>'
+										+ '<td>' + installment_description + '</td>'
+										+ '<td class="text-right">' + installment_amt + '</td>'
+										+ '<td class="text-right">' + principal_amt + '</td>'
+										+ '<td class="text-right">' + interest_amt + '</td>'
+										+ '<td class="text-right">' + charges_amt + '</td>'
+										+ '<td class="text-right">' + principal_outstanding + '</td>'
+										+ '</tr>';
+
+								});
+						$('#repaymentDet').empty().append(trHTML);
+						$('#demandtable').removeClass('d-none');
+						$('#demandtable1').addClass('d-none');
+
+
+					},
+					error: function (error) {
+						console.error(error);
+					}
+				});
+		}
+
+		function getFlowDetails(a) {
+			event.preventDefault();
+
+			var principleAmount = document.getElementById("loan_sanctioned").value.replace(/,/g, '');
+			var santionedDate = changeDateFormat(document.getElementById("date_of_loan").value);
+			var interestRate = document.getElementById("effective_interest_rate").value.replace(/,/g, '');
+
+			var installID = $("#inst_id").val();
+			var installStartDate = changeDateFormat(document.getElementById("inst_start_dt").value);
+			var pricipleFreq = document.getElementById("inst_freq").value;
+			var noOfInstallment = document.getElementById("no_of_inst").value;
+			var installAmount = document.getElementById("inst_amount").value.replace(/,/g, '');
+			var interestFreq = document.getElementById("interest_frequency").value;
+
+			console.log(principleAmount + " " + santionedDate + " " + interestRate + " " + installID + " " + installStartDate + " "
+				+ pricipleFreq + " " + noOfInstallment + " " + installAmount + " " + interestFreq);
+			$
+				.ajax({
+					type: "GET",
+					url: "./getFlowDetails?creation_Date=" + santionedDate
+						+ "&start_date=" + installStartDate + "&Product_value=" + principleAmount
+						+ "&principle_frequency=" + pricipleFreq + "&int_rate=" + interestRate
+						+ "&no_of_inst=" + noOfInstallment + "&int_amt="
+						+ installAmount + "&interestFrequency=" + interestFreq,
+					success: function (data) {
+						console.log(data);
+						var trHTML = '';
+						$
+							.each(
+								data,
+								function (index, entity) {
+
+
+									var flow_id = entity.flow_id;
+									var flow_date = formatDate(entity.flow_date);
+									var flow_code = entity.flow_code;
+									var flow_frq = entity.flow_frq ? entity.flow_frq : "";
+									var flow_amt = formatNumber(entity.flow_amt);
+
+
+									trHTML += '<tr id="sechduleRow">'
+
+										+ '<td>' + flow_date + '</td>'
+										+ '<td>' + flow_code + '</td>'
+										+ '<td>' + flow_frq + '</td>'
+										+ '<td class="text-right">' + flow_amt + '</td>'
+										+ '</tr>';
+
+
+
+								});
+						$('#repaymentDet1').empty().append(trHTML);
+						$('#demandtable1').removeClass('d-none');
+						$('#demandtable').addClass('d-none');
+
+					},
+					error: function (error) {
+						console.error(error);
+					}
+				});
+		}
+
+		function updateCheckboxValue() {
+			var checkbox = document.getElementById("record_flag");
+			checkbox.value = checkbox.checked ? "Y" : "N";
+		}
+
+		function updateCheckboxValue1() {
+			var checkbox = document.getElementById("record_flag_1");
+			checkbox.value = checkbox.checked ? "Y" : "N";
+		}
+
+		function refreshPage() {
+			window.location.reload();
+		}
+
+
+	</script>
+	<script>
+		function SubmitVerify(a) {
+
+			event.preventDefault();
+			/*var button = document.getElementById('verifyButton');
+			button.disabled = true;*/
+			var accountNo = a.getAttribute('data-loan_accountno');
+			var customer_id = a.getAttribute('data-customer_id');
+			console.log(customer_id + " " + accountNo);
+
+			location.href = 'ApprovalFromLease?formmode=view&customer_id=' + customer_id + '&loanAcctNo=' + accountNo;
+
+
+
+		}
+
+		function viewCustomerMaster(a) {
+
+			event.preventDefault();
+			/*var button = document.getElementById('verifyButton');
+			button.disabled = true;*/
+			var accountNo = a.getAttribute('data-loan_accountno');
+			var customer_id = a.getAttribute('data-customer_id');
+
+			console.log(customer_id + " " + accountNo);
+
+			location.href = 'CustomerMaintenanceFromLease?formmode=viewCust&customer_id=' + customer_id + '&loanAcctNo=' + accountNo;
+
+		}
+
+		function viewLoanMaster(a) {
+			event.preventDefault();
+			var accountNo = a.getAttribute('data-loan_accountno');
+			location.href = 'drawDownLoanMaintanace?formmode=view&loan_accountno=' + accountNo;
+		}
+
+
+		function formatNumber(number) {
+			return Number(number).toLocaleString('en-US', {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			});
+		}
+
+		// filter
+
+		function filterSyncRec() {
+			var filterInputSyncNo = document.getElementById("filterInputSyncNo").value
+				.toUpperCase();
+			var filterInputBorrName = document
+				.getElementById("filterInputBorrName").value.toUpperCase();
+			var table = document.getElementById("usertableSyncTab");
+			var tr = table.getElementsByTagName("tr");
+			for (var i = 0; i < tr.length; i++) {
+				var tdSyncNo = tr[i].getElementsByTagName("td")[0];
+				var tdCustomerName = tr[i].getElementsByTagName("td")[1];
+				if (tdSyncNo && tdCustomerName) {
+					var cifIdMatches = tdSyncNo.textContent.toUpperCase().indexOf(
+						filterInputSyncNo) > -1;
+					var customerNameMatches = tdCustomerName.textContent
+						.toUpperCase().indexOf(filterInputBorrName) > -1;
+					if (cifIdMatches && customerNameMatches) {
+						tr[i].style.display = "";
+					} else {
+						tr[i].style.display = "none";
+					}
+				}
+			}
+		}
+
+		function filterTranRec() {
+			var filterInputSyncNo = document.getElementById("filterInputSynNum").value
+				.toUpperCase();
+			var filterInputBorrName = document
+				.getElementById("filterInputBorrName").value.toUpperCase();
+			var filterInputTranRef = document.getElementById("filterInputTranRef").value
+				.toUpperCase();
+			var table = document.getElementById("usertableTranDet");
+			var tr = table.getElementsByTagName("tr");
+			for (var i = 0; i < tr.length; i++) {
+				var tdSyncNo = tr[i].getElementsByTagName("td")[0];
+				var tdTran = tr[i].getElementsByTagName("td")[1];
+				var tdCustomerName = tr[i].getElementsByTagName("td")[2];
+				if (tdSyncNo && tdTran && tdCustomerName) {
+					var syncMatch = tdSyncNo.textContent.toUpperCase().indexOf(
+						filterInputSyncNo) > -1;
+					var BorNameMatch = tdCustomerName.textContent.toUpperCase()
+						.indexOf(filterInputBorrName) > -1;
+					var tranMatch = tdTran.textContent.toUpperCase().indexOf(
+						filterInputTranRef) > -1;
+					if (syncMatch && BorNameMatch && tranMatch) {
+						tr[i].style.display = "";
+					} else {
+						tr[i].style.display = "none";
+					}
+				}
+			}
+		}
+	</script>
+
+	<script>
+
+
+		function downloadFile() {
+			//alert("cc");
+			$.ajax({
+				type: "POST",
+				url: "./downloadFile",
+				success: function (data) {
+					console.log(data);
+				}
+			})
+		}
+	</script>
+
+
+	<script type="text/javascript">
+		//validations 
+
+		function numberAndLetters(inputElement) {
+			inputElement.value = inputElement.value.replace(/[^0-9a-zA-Z]/g, '')
+				.toUpperCase();
+		}
+
+		function numberOnly(inputElement) {
+			inputElement.value = inputElement.value.replace(/\D/g, '');
+		}
+
+		function setOutstanding(inputElement) {
+			var loan_outstanding = document.getElementById('loan_outstanding');
+			loan_outstanding.value = inputElement.value.replace(/\D/g, '');
+		}
+
+		function calculateDrawingLimit() {
+			var marginLimit = document.getElementById('margin_limit').value;
+			var loanSanctioned = document.getElementById('loan_sanctioned').value;
+
+			// Validate the inputs
+			if (marginLimit === "" || isNaN(marginLimit)) {
+				document.getElementById('drawing_limit').value = "";
+				return;
+			}
+
+			if (loanSanctioned === "" || isNaN(loanSanctioned)) {
+				document.getElementById('drawing_limit').value = "";
+				return;
+			}
+
+
+			var drawingLimit = (parseFloat(marginLimit) / 100) * parseFloat(loanSanctioned);
+
+			// Set the calculated drawing limit
+			document.getElementById('drawing_limit').value = drawingLimit.toFixed(2);
+		}
+
+
+
+	</script>
+	<script>
+		function changeDateFormat(dateString) {
+
+			var parts = dateString.split('-');
+
+			return parts[2] + '-' + parts[1] + '-' + parts[0];
+		}
+
+		function formatDate(dateString) {
+
+			var date = new Date(dateString);
+
+
+			var day = date.getDate();
+			var month = date.getMonth() + 1;
+			var year = date.getFullYear();
+
+
+			if (day < 10) {
+				day = '0' + day;
+			}
+			if (month < 10) {
+				month = '0' + month;
+			}
+
+			return day + '-' + month + '-' + year;
+		}
+
+		//number input
+		function formatNumberWithCommas(number) {
+
+			if (!number && number !== 0) return '';
+			console.log("number : " + number);
+			let numberString = number.toString();
+			console.log("numberString : " + numberString);
+
+			let [integerPart, decimalPart] = numberString.split('.');
+
+			let lastThreeDigits = integerPart.slice(-3);
+			let otherDigits = integerPart.slice(0, -3);
+
+			if (otherDigits !== '') {
+				lastThreeDigits = ',' + lastThreeDigits;
+			}
+
+			let formattedIntegerPart = otherDigits.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + lastThreeDigits;
+
+			if (!decimalPart) {
+				decimalPart = '00';
+			}
+			let formattedNumber = formattedIntegerPart + '.' + decimalPart;
+			console.log("formattedIntegerPart : " + formattedIntegerPart);
+			console.log("decimalPart : " + decimalPart);
+
+			return formattedNumber;
+		}
+	</script>
+
+	<script>
+		//Sehdule View
+		function sechduleView(a) {
+
+			var accountNo = a.getAttribute('data-loan_accountno');
+			console.log(accountNo);
+
+			$
+				.ajax({
+					type: "GET",
+					url: "./getInterestDetailsView?accountNo=" + accountNo,
+					success: function (data) {
+						console.log(data);
+						var trHTML = '';
+						$
+							.each(
+								data,
+								function (index, entity) {
+
+									var no_of_instalment = entity.no_of_instalment;
+									var from_date = formatDate(entity.from_date);
+									var installment_date = formatDate(entity.installment_date);
+									var installment_description = entity.installment_description;
+									var installment_amt = formatNumber(entity.installment_amt);
+									var principal_amt = formatNumber(entity.principal_amt);
+									var interest_amt = formatNumber(entity.interest_amt);
+									var charges_amt = formatNumber(entity.charges_amt);
+									var principal_outstanding = formatNumber(entity.principal_outstanding);
+
+
+
+									trHTML += '<tr id="sechduleRow">'
+										+ '<td>' + no_of_instalment + '</td>'
+										+ '<td>' + installment_date + '</td>'
+										+ '<td>' + installment_description + '</td>'
+										+ '<td class="text-right">' + installment_amt + '</td>'
+										+ '<td class="text-right">' + principal_amt + '</td>'
+										+ '<td class="text-right">' + interest_amt + '</td>'
+										+ '<td class="text-right">' + charges_amt + '</td>'
+										+ '<td class="text-right">' + principal_outstanding + '</td>'
+										+ '</tr>';
+
+								});
+						$('#repaymentDet').empty().append(trHTML);
+						$('#demandtable').removeClass('d-none');
+
+
+					},
+					error: function (error) {
+						console.error(error);
+					}
+				});
+		}
+
+
+		function sechduleView1(a) {
+
+			var accountNo = a.getAttribute('data-loan_accountno');
+			console.log(accountNo);
+
+			$
+				.ajax({
+					type: "GET",
+					url: "./getdemandflow?accountNo=" + accountNo,
+					success: function (data) {
+						console.log(data);
+						var trHTML = '';
+						$
+							.each(
+								data,
+								function (index, entity) {
+
+
+									var flow_id = entity.flow_id;
+									var flow_date = formatDate(entity.flow_date);
+
+									var flow_code = entity.flow_code;
+									var flow_frq = entity.flow_frq ? entity.flow_frq : "";
+									var flow_amt = formatNumber(entity.flow_amt);
+
+
+
+
+									trHTML += '<tr id="sechduleRow">'
+										+ '<td>' + flow_date + '</td>'
+										+ '<td>' + flow_code + '</td>'
+										+ '<td>' + flow_frq + '</td>'
+										+ '<td class="text-right">' + flow_amt + '</td>'
+										+ '</tr>';
+
+								});
+						$('#repaymentDet1').empty().append(trHTML);
+						$('#demandtable1').removeClass('d-none');
+
+
+					},
+					error: function (error) {
+						console.error(error);
+					}
+				});
+		}
+
+
+		function handleRadioClick(selectedRadio) {
+			var installmentAmt = selectedRadio.getAttribute("data-installment-amt");
+			var accountValue = document.getElementById("loan_accountno").value;
+			var accountName = document.getElementById("customer_name").value;
+			var loancurrency = document.getElementById("loan_currency").value;
+
+			// Redirect to the journalEntries add page with query parameters
+			var url = 'journalEntries?formmode=add'
+				+ '&flow_amount=' + encodeURIComponent(installmentAmt)
+				+ '&account_no=' + encodeURIComponent(accountValue)
+				+ '&accountName=' + encodeURIComponent(accountName)
+				+ '&currency=' + encodeURIComponent(loancurrency);
+			location.href = url;
+		}
+
+	</script>
+	<script>
+		//Mandatory Fields Working (Praveen)
+		function commanValues() {
+			console.log("common values check");
+
+			var syn_fac_ref = $('#synd_fac_ref').val();
+			var tran_ref = $('#trnc_desc').val();
+			var notice_ref = $('#dd_notice_ref').val();
+
+			var value;
+
+			if (syn_fac_ref === "") {
+				$("#Normalalertmsg").text("Fill Syndication ref");
+				$('#normalAlert').modal("toggle");
+				value = false;
+			}
+			else if (tran_ref === "") {
+				$("#Normalalertmsg").text("Fill Tranche Ref ");
+				$('#normalAlert').modal("toggle");
+				value = false;
+			}
+			else if (notice_ref === "") {
+				$("#Normalalertmsg").text("Fill Draw Down Ref ");
+				$('#normalAlert').modal("toggle");
+				value = false;
+			}
+			else {
+				value = true;
+			}
+
+			return value;
+
+		}
+
+
+		function tab1Value() {
+
+			console.log("tab1 values check");
+
+			var notice_date = $('#dd_notice_date').val();
+			var value_date = $('#dd_value_date').val();
+			var expiry_date = $('#dd_notice_exp_date').val();
+
+
+			var value;
+
+			if (notice_date === "") {
+				$("#Normalalertmsg").text("Fill Tranche Reference");
+				$('#normalAlert').modal("toggle");
+				value = false;
+				openTab(event, 'tab1');
+			}
+			else if (value_date === "") {
+				$("#Normalalertmsg").text("Fill Role");
+				$('#normalAlert').modal("toggle");
+				value = false;
+				openTab(event, 'tab1');
+			}
+			else if (expiry_date === "") {
+				$("#Normalalertmsg").text("Fill Tranche Creation Date");
+				$('#normalAlert').modal("toggle");
+				value = false;
+				openTab(event, 'tab1');
+			}
+			else {
+				value = true;
+			}
+			return value;
+		}
+
+
+
+
+	</script>
+
+	<script>
+		function calculatePercentage(a) {
+			event.preventDefault();
+			var loanPeriod = document.getElementById('loan_period').value;
+			var loansanctioned = document.getElementById('loan_sanctioned').value;
+			var date_of_loan = document.getElementById('date_of_loan').value;
+			var expiryDateElement = document.getElementById('expiry_date');
+
+			var total;
+
+			if (loansanctioned === "") {
+
+				document.getElementById('loan_period').value = "";
+				$("#Normalalertmsg").text("Choose Santioned Amount First");
+				$('#normalAlert').modal("show");
+
+			}
+			else if (date_of_loan === "") {
+
+				document.getElementById('loan_period').value = "";
+				$("#Normalalertmsg").text("Choose Date of loan");
+				$('#normalAlert').modal("show");
+
+			}
+
+			else {
+				var amount = (loansanctioned / loanPeriod);
+				document.getElementById('inst_amount').value = amount.toFixed(2);
+
+
+				var percentage = (loansanctioned / 100);
+				total = percentage;
+				var totals = (amount / total);
+
+				document.getElementById('inst_pct').value = totals.toFixed(0);
+				document.getElementById('no_of_inst').value = loanPeriod;
+				document.getElementById('inst_id').value = '1';
+
+				var loanDate = new Date(date_of_loan);
+				loanDate.setMonth(loanDate.getMonth() + parseInt(loanPeriod));
+
+				var day = loanDate.getDate();
+				var month = (loanDate.getMonth() + 1).toString().padStart(2, '0');
+				var year = loanDate.getFullYear();
+
+				var formattedExpiryDate = day.toString().padStart(2, '0') + '-' + month + '-' + year;
+				expiryDateElement.value = formattedExpiryDate;
+
+			}
+
+
+		}
+
+		function custid() {
+			const selectedValue = $('#customer_id').val();
+
+
+			$.ajax({
+				url: './getCustId',
+				type: 'GET',
+				data: {
+					custId: selectedValue,
+
+				},
+				success: function (data) {
+					if (data && data.length > 0) {
+						console.log(data)
+						$('#branch_id').val(data[0][0] || '');
+
+						$('#branch_name').val(data[0][1] || '');
+						$('#customer_name').val(data[0][2] || '');
+
+						$('#gl_code').val(data[0][3] || '');
+						$('#gl_desc').val(data[0][4] || '');
+						$('#glsh_code').val(data[0][5] || '');
+						$('#glsh_desc').val(data[0][6] || '');
+						$('#ca_acct_type').val(data[0][7] || '');
+						$('#appl_ref_no').val(data[0][8] || '');
+						$('#rec_no').val(data[0][9] || '');
+
+					} else {
+						console.error("No data received or data is empty");
+					}
+
+				}
+
+			});
+
+		}
+
+		function addRecords(evt, tabName) {
+
+			event.preventDefault();
+
+			var leaseData = {
+
+				loanDetails: {
+					customer_id: $(
+						"select[name='customer_id']")
+						.val(),
+					customer_name: $("input[name='customer_name']").val(),
+					branch_name: $("input[name='branch_name']")
+						.val(),
+					branch_id: $(
+						"input[name='branch_id']").val(),
+					loan_type: $("select[name='loan_type']")
+						.val(),
+					gl_code: $(
+						"input[name='gl_code']").val(),
+					gl_desc: $(
+						"input[name='gl_desc']").val(),
+					glsh_code: $(
+						"input[name='glsh_code']").val(),
+					gl_desc: $(
+						"input[name='gl_desc']").val(),
+					scheme_type: $(
+						"input[name='scheme_type']").val(),
+					scheme_code: $(
+						"input[name='scheme_code']").val(),
+					loan_accountno: $("input[name='loan_accountno']")
+						.val(),
+					date_of_loan: $("input[name='date_of_loan']")
+						.val(),
+					loan_sanctioned: $("input[name='loan_sanctioned']").val().replace(/,/g, ''),
+					margin_limit: $("input[name='margin_limit']").val().replace(/,/g, ''),
+					drawing_limit: $("input[name='drawing_limit']").val().replace(/,/g, ''),
+					loan_currency: $("input[name='loan_currency']")
+						.val(),
+					disbursement: $("input[name='disbursement']").val().replace(/,/g, ''),
+					loan_outstanding: $(
+						"input[name='loan_outstanding']").val().replace(/,/g, ''),
+					loan_period: $("input[name='loan_period']").val().replace(/,/g, ''),
+					expiry_date: changeDateFormat($("input[name='expiry_date']")
+						.val()),
+					repayment_terms: $("input[name='repayment_terms']")
+						.val(),
+					recovery_method: $(
+						"select[name='recovery_method']").val(),
+					effective_interest_rate: $(
+						"input[name='effective_interest_rate']").val()
+				},
+				repaymentDetails: {
+					customer_id: $(
+						"select[name='customer_id']")
+						.val(),
+					branch_id: $("input[name='branch_id']").val(),
+					account_no: $("input[name='loan_accountno']")
+						.val(),
+					acid: $("input[name='loan_accountno']")
+						.val(),
+					inst_id: $("input[name='inst_id']")
+						.val(),
+					inst_start_dt: $("input[name='inst_start_dt']")
+						.val(),
+					inst_freq: $("select[name='inst_freq']").val(),
+					inst_amount: $("input[name='inst_amount']").val().replace(/,/g, ''),
+					no_of_inst: $("input[name='no_of_inst']").val(),
+					inst_pct: $("input[name='inst_pct']").val().replace(/%/g, ''),
+					interest_frequency: $("select[name='interest_frequency']")
+						.val(),
+					maturity_flg: 'N'
+				}
+			};
+
+			console.log(leaseData);
+
+			$.ajax({
+				type: "POST",
+				contentType: "application/json",
+				url: './addLeaseAccount',
+				data: JSON.stringify(leaseData),
+				success: function (responseText, statusText, xhr, $form) {
+					confirmAndOpenTab(evt, tabName);
+					$("#alertmsg").text(responseText);
+					$('#alert').modal("toggle");
+				},
+				error: function (error) {
+					console.error(error);
+				}
+			});
+		}
+	</script>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var dues = [[${module}]]; // Thymeleaf data injected into JavaScript
+		// Thymeleaf data injected into JavaScript
+
+		/*]]>*/
+	</script>
+	<script>
+
+		function openAccountledger(a) {
+			event.preventDefault();
+			var accountNo = a.getAttribute('data-loan_accountno');
+			console.log(accountNo);
+			location.href = 'accountLedger2?formmode=view&acct_num=' + accountNo;
+		}
+
+		function getLoanPosition(a) {
+			event.preventDefault();
+			var accountNum = a.getAttribute('data-loan_accountno');
+
+			console.log(accountNum);
+
+			/*for loan position get*/
+			$.ajax({
+				type: 'GET',
+				url: './getLoanPosition',
+				data: {
+					accountNum: accountNum
+				},
+				success: function (data) {
+					console.log(data);
+
+					var tHTML = '';
+					var tempData = [];
+					var totalFlowAmt = 0;
+					var totalAdjAmt = 0;
+					var totalOverdueAmt = 0;
+
+					if (data.length > 0) {
+						$.each(data, function (index, entity) {
+							var flow_date = entity.flow_date !== null ? formatDate(entity.flow_date) : "";
+							var flow_code = entity.flow_code !== null ? entity.flow_code : "";
+							var flow_amt = entity.flow_amt !== null ? parseFloat(entity.flow_amt) : 0.00;
+							var adj_amt = entity.adj_amt !== null ? parseFloat(entity.adj_amt) : 0.00;
+							var adj_dt = entity.adj_dt !== null ? formatDate(entity.adj_dt) : "";
+
+							var overdue_amt = (adj_amt - flow_amt) < 0 ? (flow_amt - adj_amt).toFixed(2) : "0.00";
+
+							// Store data in an array for potential combination logic
+							tempData.push({flow_date, flow_code, flow_amt, adj_amt, adj_dt, overdue_amt});
+
+							totalFlowAmt += flow_amt;
+							totalAdjAmt += adj_amt;
+							totalOverdueAmt += parseFloat(overdue_amt);
+						});
+
+						// Total row
+						tHTML += "<tr class='total-row'>"
+							+ "<td></td>"
+							+ "<td><strong>Total</strong></td>"
+							+ "<td class='text-right'><strong>" + formatNumberWithCommas(totalFlowAmt.toFixed(2)) + "</strong></td>"
+							+ "<td class='text-right'><strong>" + formatNumberWithCommas(totalAdjAmt.toFixed(2)) + "</strong></td>"
+							+ "<td></td>"
+							+ "<td class='text-right'><strong>" + formatNumberWithCommas(totalOverdueAmt.toFixed(2)) + "</strong></td>"
+							+ "</tr>";
+
+						// Generate the combined and individual rows in the same tbody
+						for (let i = 0; i < tempData.length; i++) {
+							if (i < tempData.length - 1 &&
+								tempData[i].flow_date === tempData[i + 1].flow_date &&
+								tempData[i].adj_dt === tempData[i + 1].adj_dt) {
+
+								// Combine current and next record
+								var combinedFlowAmt = (tempData[i].flow_amt + tempData[i + 1].flow_amt).toFixed(2);
+								var combinedAdjAmt = (tempData[i].adj_amt + tempData[i + 1].adj_amt).toFixed(2);
+								var combinedOverdueAmt = (parseFloat(combinedAdjAmt) - parseFloat(combinedFlowAmt) < 0) ?
+									(parseFloat(combinedFlowAmt) - parseFloat(combinedAdjAmt)).toFixed(2) : "0.00";
+
+								// Combined row with 'RIDEM' (clickable to show details)
+								tHTML += "<tr class='ridem-row' style='cursor: pointer;' onclick='toggleDetails(" + i + ")'>"
+									+ '<td>' + tempData[i].flow_date + '</td>'
+									+ '<td>RIDEM</td>'
+									+ '<td class="text-right">' + formatNumberWithCommas(combinedFlowAmt) + '</td>'
+									+ '<td class="text-right">' + formatNumberWithCommas(combinedAdjAmt) + '</td>'
+									+ '<td>' + tempData[i].adj_dt + '</td>'
+									+ '<td class="text-right">' + formatNumberWithCommas(combinedOverdueAmt) + '</td>'
+									+ "</tr>";
+
+								// Detail rows (initially hidden) for expanded view
+								tHTML += "<tr class='details-row' id='details-" + i + "-1' style='display: none;'>"
+									+ '<td >'
+									+ tempData[i].flow_date + '</td>'
+									+ '<td>' + tempData[i].flow_code + '</td>'
+									+ '<td class="text-right">' + formatNumberWithCommas(tempData[i].flow_amt) + '</td>'
+									+ '<td class="text-right">' + formatNumberWithCommas(tempData[i].adj_amt) + '</td>'
+									+ '<td>' + tempData[i].adj_dt + '</td>'
+									+ '<td class="text-right">' + formatNumberWithCommas(tempData[i].overdue_amt) + '</td>'
+									+ "</tr>";
+
+								tHTML += "<tr class='details-row' id='details-" + i + "-2' style='display: none;'>"
+									+ '<td >'
+									+ tempData[i + 1].flow_date + '</td>'
+									+ '<td>' + tempData[i + 1].flow_code + '</td>'
+									+ '<td class="text-right">' + formatNumberWithCommas(tempData[i + 1].flow_amt) + '</td>'
+									+ '<td class="text-right">' + formatNumberWithCommas(tempData[i + 1].adj_amt) + '</td>'
+									+ '<td>' + tempData[i + 1].adj_dt + '</td>'
+									+ '<td class="text-right">' + formatNumberWithCommas(tempData[i + 1].overdue_amt) + '</td>'
+									+ "</tr>";
+
+
+
+								// Skip the next item since it's already combined
+								i++;
+							} else {
+								// Add individual record if no combination
+								tHTML += "<tr>"
+									+ '<td>' + tempData[i].flow_date + '</td>'
+									+ '<td>' + tempData[i].flow_code + '</td>'
+									+ '<td class="text-right">' + formatNumberWithCommas(tempData[i].flow_amt) + '</td>'
+									+ '<td class="text-right">' + formatNumberWithCommas(tempData[i].adj_amt) + '</td>'
+									+ '<td>' + tempData[i].adj_dt + '</td>'
+									+ '<td class="text-right">' + formatNumberWithCommas(tempData[i].overdue_amt) + '</td>'
+									+ "</tr>";
+							}
+						}
+					} else {
+						tHTML = "<tr><td colspan='9'>No records available</td></tr>";
+					}
+
+					// Append all rows to a single tbody
+					$("#positionTableBody").empty().append(tHTML);
+
+				},
+				error: function () {
+					$('#errorMessage').text('Error fetching data');
+					$('#errorModal').modal('show');
+				}
+			});
+
+
+
+		}
+
+		function ClickId(a, modify = false) {
+			// If `a` is not passed, try to get the event target
+			if (!a) a = event.target;
+
+			var id = a.getAttribute("data-id");
+			var holder_key = a.getAttribute("data-account_holderkey");
+
+			// Construct base URL
+			let url = id && id.trim() !== ""
+				? `customerMaster?formmode=view&id=${id}`
+				: `customerMaster?formmode=list`;
+
+			// Append modify=true if modify is true
+			if (dues) {
+				url += "&modify=true";
+			}
+
+			// Redirect to the constructed URL
+			location.href = url;
+		}
+
+		function firstexceldownload() {
+			$("#alert33").modal("show");
+		}
+
+		function ClickId(a, mode = 'view') {
+			event.preventDefault();
+			let id = null;
+
+			if (a) {
+				console.log("Customer ID Text Content:", a.textContent.trim());
+				console.log("Customer ID Data Attribute:", a.getAttribute("data-id"));
+			}
+			// Check mode and get ID accordingly
+			if (mode === 'modify') {
+				id = document.getElementById("customer_id")
+					? document.getElementById("customer_id").value.trim()
+					: null;
+			} else {
+				// Get ID from the clicked element
+				if (!a) a = event.target;
+				while (a && !a.hasAttribute("data-id")) {
+					a = a.parentElement;
+				}
+				id = a ? a.getAttribute("data-id") : null;
+			}
+			// If mode is "verify", get the ID from customerId (fixed)
+			if (mode === 'verify' && !id) {
+				id = document.getElementById('customer_id').value;
+			}
+			// Construct the URL based on whether ID exists
+			let url = id && id !== ""
+				? `customerMaster?formmode=${mode}&id=${id}&module=${dues}`
+				: `customerMaster?formmode=list&module=${dues}`;
+			//alert(url)
+			location.href = url; // Redirect to the appropriate page
+		}
+		function submitForm() {
+			event.preventDefault();
+			var formData = $("#drawDownDetailsAdd").serializeArray();
+
+			formData.forEach(function (field) {
+				if (isDateField(field.name) && field.value) {
+
+					let date = new Date(field.value);
+					field.value = formatDateWithMidnight(date); // Ensure correct format
+				}
+			});
+
+			console.log($.param(formData)); // Debugging output
+
+			$.ajax({
+				url: './modifySubmit',
+				type: 'POST',
+				data: $.param(formData),
+				success: function (response) {
+					$("#popupmsg_body").text("Modified successfully!");
+					$("#mypopup22").modal("show");
+
+				},
+				error: function (xhr, status, error) {
+					console.log('Error: ' + xhr.responseText);
+				}
+			});
+		}
+		function BackToLoanMaint() {
+
+			window.location.href = "./customerMaster?formmode=list&module=module2";
+		}
+		// Function to check if a field is a date field
+		function isDateField(fieldName) {
+			return [
+				"creation_date", "last_modified_date", "activation_date", "approved_date",
+				"birth_date", "asondate"
+			].includes(fieldName);
+		}
+
+		// Function to format date as "dd-MM-yyyy 00:00:00"
+		function formatDateWithMidnight(date) {
+			let dd = String(date.getDate()).padStart(2, '0');
+			let MM = String(date.getMonth() + 1).padStart(2, '0');
+			let yyyy = date.getFullYear();
+			return `${dd}-${MM}-${yyyy} 00:00:00`;
+		}
+
+		function gotoverify() {
+			location.href = './customerMaster?formmode=verify&module=module2'
+		}
+
+		function verifyUser(userId) {
+			event.preventDefault();
+			fetch('./verifyUserById', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: new URLSearchParams({UserId: userId})
+			})
+				.then(response => response.text())
+				.then(data => {
+					$("#popupmsg_body").text("Verified successfully!");
+					$("#mypopup22").modal("show");
+
+
+					//	alert("verified SuccesFully")
+				})
+				.catch(error => {
+					console.error("Error verifying user:", error);
+
+
+				});
+		}
+		document.addEventListener("DOMContentLoaded", function () {
+			let form = document.getElementById("drawDownDetailsAdd");
+
+			if (form) {
+				let dateInputs = form.querySelectorAll("input[type='date']");
+
+				dateInputs.forEach(input => {
+					if (!input.value) {
+						changeToTextField(input);
+					}
+
+					input.addEventListener("focus", function () {
+						changeToDateField(input);
+					});
+
+					input.addEventListener("blur", function () {
+						if (!input.value) {
+							changeToTextField(input);
+						}
+					});
+				});
+
+				function changeToTextField(input) {
+					input.type = "text";
+					input.placeholder = "";
+				}
+
+				function changeToDateField(input) {
+					input.type = "date";
+				}
+			}
+		});
+
+
+		function viewscreen(a) {
+			var id = a.getAttribute("data-id");
+			var holder_key = a.getAttribute("data-account_holderkey");
+			location.href = `./customerMaster?formmode=view&module=${dues}&id=` + id;
+		}
+
+	</script>
+	<script th:inline="javascript">
+		document.addEventListener('DOMContentLoaded', function () {
+
+			const fileInput = document.getElementById('fileInput');
+			const submitBtn = document.getElementById('submitBtn');
+
+			// Step 1: Open file chooser when submit button is clicked
+			submitBtn.addEventListener('click', () => {
+				fileInput.click();
+			});
+
+			// Step 2: When file is selected, upload it
+			fileInput.addEventListener('change', () => {
+				if (fileInput.files.length > 0) {
+					submitData(fileInput.files[0]); // pass the selected file
+				}
+			});
+
+			function submitData(file) {
+				document.getElementById('loadingModal').style.display = 'flex';
+				var form = $('#reportform_cust')[0];
+				var data = new FormData(form);
+				data.append("overwrite", false);
+				data.append("fileInput", "CUSTOMER");
+				data.append("file", file);
+				$.ajax({
+					type: "POST",
+					url: "UploadFileData",
+					data: data,
+					processData: false,
+					contentType: false,
+					success: function (response) {
+						document.getElementById('loadingModal').style.display = 'none';
+						console.log(response);
+						if (response.status === "duplicate") {
+							$('#alertmsgpopup')
+								.text(`Duplicate Customer Id(s) found: ${response.id.join(", ")}. Do you want to overwrite them?`)
+								.css("white-space", "nowrap");
+							window.lastData = data;
+							window.lastType = "CUSTOMER";
+
+							$('#datacancel').modal("show");
+							return;
+						}
+						showResponse(response);
+					},
+					error: function (error) {
+						document.getElementById('loadingModal').style.display = 'none';
+						showResponse("Error: " + error.responseText);
+					}
+				});
+			}
+		});
+
+		function showResponse(response) {
+			let message =
+				"Upload Completed<br>" +
+				"Total No of Rows Succeeded: " + response.TotalSucceeded + "<br>" +
+				"Total No of Rows Failed: " + response.TotalFailed + "<br>" +
+				"Total Rows Processed: " + response.TotalProcessed + "<br>";
+
+			// ✅ Write to the same modal-body container
+			$('#Successmsgpopup').html("<h6 class='text-center'>" + message + "</h6>");
+			$('#SuccesPopUp').modal('show');
+		}
+		function backs() {
+			$("#normalalertvalues").modal("hide");
+		}
+
+		// DELETE REF
+		function deleteRecUpload(btn) {
+			$('#datacancel').modal('hide');
+			document.getElementById('loadingModal').style.display = 'flex';
+
+			// ✅ Reuse stored FormData
+			var formData = window.lastData;
+			if (!formData) {
+				console.error("No form data found from last upload");
+				return;
+			}
+
+			// ✅ Ensure overwrite is set to true
+			formData.set("overwrite", true);
+
+			$.ajax({
+				url: './UploadFileData',
+				type: 'POST',
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function (response) {
+					document.getElementById('loadingModal').style.display = 'none';
+					showResponse(response);
+
+				},
+				error: function (xhr, status, error) {
+					document.getElementById('loadingModal').style.display = 'none';
+					$('#alertmsg').text("Overwrite Upload failed");
+					$('#alert').modal("toggle");
+				}
+			});
+		}
+
+	</script>
+
+	<script type="text/javascript">
+		document.addEventListener('DOMContentLoaded', function () {
+			handleFilterChange(); // Automatically apply the filter on page load
+		});
+
+		function handleFilterChange() {
+			var a = document.getElementById('approvedfilter').value;
+
+			if (a === 'ALL') {
+				$.ajax({
+					url: './AllApprovedCust',
+					type: 'GET',
+					success: function (data) {
+						updateTable(data);
+						console.log("data" + data);
+					},
+					error: function (err) {
+						console.error('Error fetching data:', err);
+					}
+				});
+			} else if (a === 'NOTAPPROVED') {
+				$.ajax({
+					url: './NotApprovedCust',
+					type: 'GET',
+					success: function (data) {
+						updateTable(data);
+						console.log("data" + data);
+					},
+					error: function (err) {
+						console.error('Error fetching data:', err);
+					}
+				});
+			} else if (a === 'APPROVED') {
+				$.ajax({
+					url: './ApprovedCust',
+					type: 'GET',
+					success: function (data) {
+						updateTable(data);
+						console.log("data" + data);
+					},
+					error: function (err) {
+						console.error('Error fetching data:', err);
+					}
+				});
+			}
+		}
+
+		function updateTable(data) {
+			// Clear the table body before appending new rows
+			$('#usertable').empty();
+
+			if (data.length === 0) {
+				// If no data is returned, append a row with "No data available"
+				const noDataRow = `
+            <tr style="font-size:14px">
+                <td colspan="6" style="text-align:center; color: red;">No data available</td>
+            </tr>
+        `;
+				$('#usertable').append(noDataRow);
+			} else {
+				// Iterate over the data if available
+				data.forEach((item, index) => {
+					// Format the date manually since JavaScript does not support Thymeleaf
+					let birthDate = item?.birth_date
+						? new Date(item.birth_date).toLocaleDateString('en-GB', {
+							day: '2-digit', month: '2-digit', year: 'numeric'
+						}).replace(/\//g, '-')  // Replace '/' with '-'
+						: '05-12-1920';
+
+					const row = `
+            <tr style="font-size:14px" class="userlist">
+                <td>${index + 1}</td>
+                <td class="text-primary"
+                    data-id="${item?.customer_id || ''}"
+                    data-account_holderkey="${item?.customer_id || ''}"
+                    onclick="viewscreen(this);">
+                    ${item?.customer_id || ''}
+                </td>
+                <td>${(item?.first_name || '') + ' ' + (item?.last_name || '')}</td>
+                <td>${birthDate}</td>
+                <td>${item?.assigned_branch_key || ''}</td>
+                <td>${item?.client_state || ''}</td>
+            </tr>
+        `;
+
+					// Append the new row to the table body
+					$('#usertable').append(row);
+				});
+			}
+
+		}
+
+		function getAcctDetails() {
+			var id = document.getElementById('customer_id').value;
+			var tableContainer = document.getElementById('tableContainer');
+
+			$.ajax({
+				url: './getAccDet',
+				data: {id: id},
+				type: 'GET',
+				success: function (data) {
+					console.log("Data received:", data);
+
+					// Clear previous rows
+					$('#loanTable').empty();
+
+					// Check if data is available
+					if (data.length > 0) {
+						data.forEach(function (item) {
+							var row = `
+ <tr>
+                <td   ><a href="http://localhost:9091/ASPIRA/
+									loanMaster?formmode=viewloan&id=${item[1]}&
+									holder_key=${item[0]}">${item[1]}</a></td>
+                <td>${item[2]}</td>
+                <td>${(item[3])}</td>
+                <td style="text-align:right;">${formatNumber(item[4])}</td>
+                <td style="text-align:right;">${formatNumber(item[5])}</td>
+            </tr>
+                    `;
+							$('#loanTable').append(row);
+						});
+
+						// Show the table if data exists
+						tableContainer.style.display = 'block';
+					} else {
+						$('#loanTable').append(`
+                    <tr>
+                        <td colspan="5" class="text-center">No records found!</td>
+                    </tr>
+                `);
+
+						// Show empty table with message
+						tableContainer.style.display = 'block';
+					}
+				},
+				error: function (err) {
+					console.error('Error fetching data:', err);
+
+					// Hide the table in case of error
+					tableContainer.style.display = 'none';
+				}
+			});
+		}
+
+		// ✅ Format date to dd-MM-yyyy
+		function formatDate(dateString) {
+			if (!dateString) return '-';
+			const date = new Date(dateString);
+			const day = String(date.getDate()).padStart(2, '0');
+			const month = String(date.getMonth() + 1).padStart(2, '0');
+			const year = date.getFullYear();
+			return `${day}-${month}-${year}`;
+		}
+
+		// ✅ Format number to #,##0.00 format
+		function formatNumber(number) {
+			if (number === null || number === undefined || isNaN(number)) {
+				return '-';
+			}
+			return Number(number).toLocaleString('en-US', {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2,
+			});
+		}
+
+
+
+
+	</script>
+	<script>
+		$(document)
+			.ready(
+				function () {
+					$('.filterable .btn-filter')
+						.click(
+							function () {
+								var $panel = $(this).parents(
+									'.filterable'), $filters = $panel
+										.find('.filters input'), $tbody = $panel
+											.find('.table tbody');
+								if ($filters.prop('disabled') == true) {
+									$filters
+										.prop('disabled', false);
+									$filters.first().focus();
+								} else {
+									$filters.val('').prop(
+										'disabled', true);
+									$tbody.find('.no-result')
+										.remove();
+									$tbody.find('tr').show();
+								}
+							});
+
+					$('.filterable .filters input')
+						.keyup(
+							function (e) {
+								/* Ignore tab key */
+								var code = e.keyCode || e.which;
+								if (code == '9')
+									return;
+								/* Useful DOM data and selectors */
+								var $input = $(this), inputContent = $input
+									.val().toLowerCase(), $panel = $input
+										.parents('.filterable'), column = $panel
+											.find('.filters th')
+											.index($input.parents('th')), $table = $panel
+												.find('.table'), $rows = $table
+													.find('tbody tr');
+								/* Dirtiest filter function ever ;) */
+								var $filteredRows = $rows
+									.filter(function () {
+										var value = $(this)
+											.find('td').eq(
+												column)
+											.text()
+											.toLowerCase();
+										return value
+											.indexOf(inputContent) === -1;
+									});
+								/* Clean previous no-result if exist */
+								$table.find('tbody .no-result')
+									.remove();
+								/* Show all rows, hide filtered ones (never do that outside of a demo ! xD) */
+								$rows.show();
+								$filteredRows.hide();
+								/* Prepend no-result row if all rows are filtered */
+								if ($filteredRows.length === $rows.length) {
+									$table
+										.find('tbody')
+										.prepend(
+											$('<tr class="no-result text-center"><td colspan="'
+												+ $table
+													.find('.filters th').length
+												+ '">No result found</td></tr>'));
+								}
+							});
+				});
+	</script>
+
+	<script>
+		function adjustHeight() {
+			const cardBody = document.getElementById("cardBody");
+			const viewportHeight = window.innerHeight;
+			cardBody.style.maxHeight = `${viewportHeight * 0.95}px`; // Adjust 80% of the viewport height
+		}
+
+		window.addEventListener("resize", adjustHeight);
+		document.addEventListener("DOMContentLoaded", adjustHeight);
+
+		//EXCEL FILE DOWNLOAD
+		function downloadExcel(type) {
+			// Show loading modal
+			document.getElementById('loadingModal').style.display = 'flex';
+
+			const basePath = /*[[${#httpServletRequest.contextPath}]]*/ '';
+			const url = basePath + '/ASPIRA/DisplayExcel?type=' + type;
+
+			$.ajax({
+				url: url,
+				type: 'GET',
+				xhrFields: {
+					responseType: 'blob' // Important to receive file as blob
+				},
+				success: function (blob, status, xhr) {
+					// Get filename from response header if provided
+					let filename = "file.xlsx";
+					const disposition = xhr.getResponseHeader('Content-Disposition');
+					if (disposition && disposition.indexOf('filename=') !== -1) {
+						filename = disposition.split('filename=')[1].replace(/"/g, '');
+					}
+
+					// Create a link to download the blob
+					const downloadUrl = window.URL.createObjectURL(blob);
+					const a = document.createElement('a');
+					a.href = downloadUrl;
+					a.download = filename;
+					document.body.appendChild(a);
+					a.click();
+					a.remove();
+					window.URL.revokeObjectURL(downloadUrl);
+				},
+				error: function (err) {
+					console.error('Download error:', err);
+					alert('Error downloading file.');
+				},
+				complete: function () {
+					// Hide loading modal after success or error
+					document.getElementById('loadingModal').style.display = 'none';
+				}
+			});
+		}
+
+	</script>
+
+</head>
+<title>ASPIRA</title>
+
+<body>
+	<div class="col-sm-2">
+		<div th:insert="BGLSHeaderMenu :: header"></div>
+	</div>
+	<div class="container-manager">
+		<div class="row">
+			<div class="col-sm-11 ml-5 mt-2">
+
+
+				<div th:if="${formmode}=='list'">
+					<div class="card w-100 border panel panel-primary filterable">
+						<div class="card-header" style="background-color: #e9ecef; height: 50px">
+							<div class="float-left">
+								<!-- <h6 style="font-size: 1.2rem;">CUSTOMER MAINTENANCE - LIST</h6> -->
+								<h6 style="font-size: 1.2rem;" th:if="${formmode}=='list' and ${module == 'module1'}">
+									CUSTOMER
+									MASTER - LIST</h6>
+								<h6 style="font-size: 1.2rem;" th:if="${formmode}=='list' and ${module == 'module2'}">
+									CUSTOMER
+									MAINTENANCE - LIST</h6>
+							</div>
+
+							<button type="button" class="btn-primary big-btn float-right"
+								onclick="downloadExcel('CUSTOMER')">Download</button>
+							<button class="btn-primary big-btn btn-filter float-right"style="margin-right: 5px;">Filter</button>
+							<div class="float-right mr-4"
+								th:style="${module == 'module2'} ? 'display:block;' : 'display:none;'">
+
+								<select class="form-control-sm bg-white ml-2 w-100" id="approvedfilter"
+									onchange="handleFilterChange()" style="background-color: #e3e3e4; width:">
+									<option value="ALL">All</option>
+									<option value="NOTAPPROVED" selected>UnVerified</option>
+									<option value="APPROVED" selected>Verified</option>
+								</select>
+							</div>
+
+						</div>
+						<div class="card-body" style="overflow-y: auto; border: 1px solid #ddd;">
+							<div class="table-responsive" id="cardBody">
+								<table class="table  table-bordered  table-hover table-sm"
+									style="margin-bottom: 0px; font-size: initial;">
+									<thead class="thead-light"
+										style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+										<tr class="filters">
+											<th style="width: 2%"><input type="text" class="form-control"
+													placeholder="S.NO" disabled></th>
+											<th style="width: 4%"><input type="text" class="form-control"
+													placeholder="CUSTOMER ID" disabled></th>
+											<th style="width: 10%"><input type="text" class="form-control"
+													placeholder="CUSTOMER NAME" disabled></th>
+											<th style="width: 5%"><input type="text" class="form-control"
+													placeholder="DOB" disabled></th>
+											<th style="width: 5%"><input type="text" class="form-control"
+													placeholder="BRANCH ID" disabled></th>
+											<th style="width: 5%"><input type="text" class="form-control"
+													placeholder="STATUS" disabled></th>
+										</tr>
+									</thead>
+									<tbody th:if="${formmode}=='list' and ${module == 'module1'}">
+										<tr th:each="list, iterator : ${list}" class="userlist">
+											<td style="font-size: 14px" th:text="${iterator.index +1}"></td>
+											<td style="font-size: 14px" class="text-primary"
+												th:attr="data-id=${list?.customer_id}" th:text="${list?.customer_id}"
+												onclick="ClickId(this);">
+											</td>
+											<td style="font-size: 14px"
+												th:text="${list?.first_name + ' ' + list?.last_name}"></td>
+											<td style="font-size: 14px"
+												th:text="${#dates.format(list?.birth_date, 'dd-MM-yyyy')}"></td>
+											<td style="font-size: 14px" th:text="${list?.assigned_branch_key}"></td>
+											<td style="font-size: 14px" th:text="${list?.client_state}"></td>
+
+										</tr>
+									</tbody>
+									<tbody th:if="${formmode}=='list' and ${module == 'module2'}" id="usertable">
+										<!-- <tr th:each="list, iterator : ${list}" class="userlist">
+												<td style="font-size: 14px" th:text="${iterator.index +1}"></td>
+
+											
+												<td style="font-size: 14px" class="text-primary"
+													th:attr="data-id=${list?.customer_id}"
+													th:text="${list?.customer_id}" onclick="ClickId(this);">
+												</td>
+
+												<td style="font-size: 14px"
+													th:text="${list?.first_name + ' ' + list?.last_name}"></td>
+												<td style="font-size: 14px"
+													th:text="${#dates.format(list?.birth_date, 'dd-MM-yyyy')}"></td>
+												<td style="font-size: 14px"
+													th:text="${list?.assigned_branch_key}"></td>
+												<td style="font-size: 14px" th:text="${list?.client_state}"></td>
+
+												
+											</tr> -->
+									</tbody>
+
+								</table>
+							</div>
+						</div>
+						<div class="card-footer text-center">
+							<button class="btn-primary big-btn" onclick="home();">Home</button>
+							<button class="btn-primary big-btn" onclick="back()">Back</button>
+						</div>
+					</div>
+				</div>
+
+
+				<div th:if="${formmode}=='view'or ${formmode}=='modify' or ${formmode}=='verify'">
+					<div class="card">
+						<div class="card-header" style="background-color: #e9ecef; height: 50px">
+							<div class="float-left">
+								<h6 style="font-size: 1.2rem;" th:if="${formmode}=='view' and ${module == 'module1'}">
+									CUSTOMER
+									MASTER - VIEW</h6>
+								<h6 style="font-size: 1.2rem;" th:if="${formmode}=='view' and ${module == 'module2'}">
+									CUSTOMER
+									MAINTENANCE - VIEW</h6>
+								<h6 style="font-size: 1.2rem;" th:if="${formmode}=='verify' and ${module == 'module2'}">
+									CUSTOMER
+									MAINTENANCE - VERIFY</h6>
+								<h6 style="font-size: 1.2rem;" th:if="${formmode}=='modify' and ${module == 'module2'}">
+									CUSTOMER
+									MAINTENANCE - MODIFY</h6>
+							</div>
+
+							<div class=" btn-group nav-buttons  float-right">
+
+								<button class="btn-primary big-btn" onclick="getAcctDetails();">Account
+									Details</button>
+							</div>
+
+							<div class="btn-group nav-buttons float-right">
+								<button class="btn-primary big-btn" th:if="${module} == 'module1'  and ${formmode}==''"
+									onclick="Uploadloan();">Upload</button>
+							</div>
+
+
+						</div>
+						<div class="card-body p-0">
+
+							<form action="#" method="post" id="drawDownDetailsAdd" autocomplete="off"
+								name="drawDownDetailsData" th:fragment="finuserapply">
+								<fieldset th:disabled="${formmode} != 'modify'">
+									<div class="">
+										<div class="row formline mt-2 ml-2">
+											<div class="col-sm-2"></div>
+											<div class="col-sm-2">
+												<label>Customer Id</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="text" name="customer_id"
+													th:value="${customer?.customer_id}" id="customer_id" readonly />
+											</div>
+											<div class="col-sm-2">
+												<label>Customer Name</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="text"
+													th:value="${customer?.first_name + ' ' + customer?.last_name}"
+													readonly />
+											</div>
+										</div>
+
+										<div class="row formline mt-2 ml-2">
+											<div class="col-sm-2"></div>
+											<div class="col-sm-2">
+												<label>First Name</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="text" name="first_name" th:value="${customer?.first_name}"
+													id="first_name" />
+											</div>
+											<div class="col-sm-2">
+												<label>Last Name</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="text" name="last_name" th:value="${customer?.last_name}"
+													id="last_name" />
+											</div>
+										</div>
+
+										<div class="row formline mt-2 ml-2">
+											<div class="col-sm-2"></div>
+											<div class="col-sm-2">
+												<label>Gender</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="text" name="gender" th:value="${customer?.gender}"
+													id="gender" />
+											</div>
+											<div class="col-sm-2">
+												<label>Date of Birth</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="date" name="birth_date"
+													th:value="${#dates.format(customer?.birth_date, 'yyyy-MM-dd')}"
+													id="dob" />
+											</div>
+
+										</div>
+
+										<div class="row formline mt-2 ml-2">
+											<div class="col-sm-2"></div>
+											<div class="col-sm-2">
+												<label>Branch</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="text" name="assigned_branch_key"
+													th:value="${customer?.assigned_branch_key}" id="branch" />
+											</div>
+											<div class="col-sm-2">
+												<label>Client Role Key</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="text" name="client_role_key"
+													th:value="${customer?.client_role_key}" id="client_role_key" />
+											</div>
+										</div>
+
+										<div class="row formline mt-2 ml-2">
+											<div class="col-sm-2"></div>
+											<div class="col-sm-2">
+												<label>Creation Date</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="date" name="creation_date"
+													th:value="${customer?.creation_date != null ? #dates.format(customer.creation_date, 'yyyy-MM-dd') : ''}"
+													id="creation_date" />
+											</div>
+											<div class="col-sm-2">
+												<label>Approval Date</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="date" name="approved_date"
+													th:value="${customer?.approved_date != null ? #dates.format(customer.approved_date, 'yyyy-MM-dd') : ''}"
+													id="approval_date" />
+											</div>
+										</div>
+
+										<div class="row formline mt-2 ml-2">
+											<div class="col-sm-2"></div>
+											<div class="col-sm-2">
+												<label>Last Modification Date</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="date" name="last_modified_date"
+													th:value="${customer?.last_modified_date != null ? #dates.format(customer.last_modified_date, 'yyyy-MM-dd') : ''}"
+													id="modification_date" />
+											</div>
+											<div class="col-sm-2">
+												<label>Activation Date</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="date" name="activation_date"
+													th:value="${customer?.activation_date != null ? #dates.format(customer.activation_date, 'yyyy-MM-dd') : ''}"
+													id="activation_date" />
+											</div>
+										</div>
+
+
+										<div class="row formline mt-2 ml-2">
+											<div class="col-sm-2"></div>
+											<div class="col-sm-2">
+												<label>Mobile No</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="text" name="mobile_phone"
+													th:value="${customer?.mobile_phone}" id="mobile_no" />
+											</div>
+											<div class="col-sm-2">
+												<label>Email Id</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="email" name="email_address"
+													th:value="${customer?.email_address}" id="email_id" />
+											</div>
+										</div>
+
+										<div class="row formline mt-2 ml-2">
+											<div class="col-sm-2"></div>
+											<div class="col-sm-2">
+												<label>Address 1</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="text" name="address_line1"
+													th:value="${customer?.address_line1}" id="address_1" />
+											</div>
+											<div class="col-sm-2">
+												<label>Address 2</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="text" name="address_line2"
+													th:value="${customer?.address_line2}" id="address_2" />
+											</div>
+										</div>
+
+										<div class="row formline mt-2 ml-2">
+											<div class="col-sm-2"></div>
+											<div class="col-sm-2">
+												<label>City</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="text" name="city" th:value="${customer?.city}" id="city" />
+											</div>
+											<div class="col-sm-2">
+												<label>Suburb</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="text" name="suburb" th:value="${customer?.suburb}"
+													id="suburb" />
+											</div>
+										</div>
+
+										<div class="row formline mt-2 ml-2">
+											<div class="col-sm-2"></div>
+											<div class="col-sm-2">
+												<label>Loan Cycle</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="text" name="loan_cycle" th:value="${customer?.loan_cycle}"
+													id="loan_cycle" />
+											</div>
+											<div class="col-sm-2">
+												<label>Group Loan Cycle</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="text" name="group_loan_cycle"
+													th:value="${customer?.group_loan_cycle}" id="group_loan_cycle" />
+											</div>
+										</div>
+
+										<div class="row formline mt-2 ml-2">
+											<div class="col-sm-2"></div>
+											<div class="col-sm-2">
+												<label>Assigned User</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="text" name="assigned_user_key"
+													th:value="${customer?.assigned_user_key}" id="assigned_user" />
+											</div>
+											<div class="col-sm-2">
+												<label>As On Date</label>
+											</div>
+											<div class="col-sm-2">
+												<input type="date" name="asondate"
+													th:value="${customer?.asondate != null ? #dates.format(customer.asondate, 'yyyy-MM-dd') : ''}"
+													id="as_on_date" />
+											</div>
+
+										</div>
+									</div>
+								</fieldset>
+								<div class="table table-bordered table-sm mt-3" id="tableContainer"
+									style="display: none;">
+									<table class="table table-bordered" style="width: 100%; white-space: nowrap;">
+										<thead class="thead-light">
+											<tr>
+												<th style="text-align: left;">Account Number</th>
+												<th style="text-align: left;">Account Name</th>
+												<th style="text-align: left;">Date of Loan</th>
+												<th style="text-align: center;">Loan Amount</th>
+												<th style="text-align: center;">Loan Balance</th>
+											</tr>
+										</thead>
+										<tbody id="loanTable">
+											<!-- Rows will be appended dynamically -->
+										</tbody>
+									</table>
+								</div>
+								<div class="card-footer text-center mt-2">
+									<button class="btn-primary big-btn" onclick="home();">Home</button>
+
+									<button th:if="${module} == 'module2'   and ${formmode}=='verify'"
+										class="btn-primary big-btn"
+										th:onclick="verifyUser([[${customer?.customer_id}]])">Submit</button>
+									<button th:if="${module} == 'module2' and ${formmode}=='view' and !${Boolean}"
+										class="btn-primary big-btn" th:value=${Boolean}
+										onclick="ClickId(null, 'modify')">Modify</button>
+									<button class="btn-primary big-btn" onclick="ClickId(null,'verify');"
+										th:if="${module} == 'module2' and ${Boolean} and ${formmode}=='view'">Verify</button>
+									<button class="btn-primary big-btn" th:if="${formmode} == 'modify'"
+										onclick="submitForm();">submit</button>
+									<button class="btn-primary big-btn" onclick="back();">Back</button>
+								</div>
+								<table
+									Style="border: 1px solid #ccc; width: 100%; max-width: 100%; margin: 0 auto; box-sizing: border-box;">
+									<tr>
+										<td class="col-sm-2" style="text-align: center;">
+											<font size="2"><B>Entry User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px; margin-right: 20px;"><input
+												type="text" id="entryuser" name="ub.entryuser" value="System"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px;"
+												readonly></td>
+										<td class="col-sm-2" style="text-align: center;">
+											<font size="2"><B>Modify User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px;"><input type="text" id="modifyuser"
+												name="ub.modifyuser" value="System"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px;"
+												readonly></td>
+										<td class="col-sm-2" style="text-align: center;">
+											<font size="2"><B>Verify User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px;"><input type="text" id="verifyuser"
+												name="ub.verifyuser" value="System"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px;"
+												readonly></td>
+									</tr>
+									<tr>
+										<td style="text-align: center;">
+											<font size="2"><B>Entry
+													Time :</B></font>
+										</td>
+										<td style="width: 112px"><input type="text" id="entrytime" name="ub.entrytime"
+												th:value="${#dates.format(customer?.creation_date, 'dd-MM-yyyy HH:mm:ss')}"
+												readonly
+												style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;">
+										</td>
+										<td style="text-align: center;">
+											<font size="2"><B>Modify
+													Time :</B></font>
+										</td>
+										<!-- th:value="${#dates.format(#dates.createNow(), 'dd-MM-yyyy HH:mm:ss')}" -->
+
+										<td style="width: 112px" th:if="${formmode != 'modify'}"><input type="text"
+												id="modifytime" name="ub.modifytime"
+												th:value="${#dates.format(customer?.last_modified_date, 'dd-MM-yyyy HH:mm:ss')}"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
+												readonly></td>
+										<td style="width: 112px" th:if="${formmode == 'modify'}"><input type="text"
+												id="modifytime" name="ub.modifytime"
+												th:value="${#dates.format(#dates.createNow(), 'dd-MM-yyyy HH:mm:ss')}"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
+												readonly></td>
+
+
+										<td style="text-align: center; font-size: 15px;">
+											<font size="2"><B>Verify Time :</B></font>
+										</td>
+										<td style="width: 112px" th:if="${formmode != 'verify'}"><input type="text"
+												id="verifytime" name="ub.verifytime"
+												th:value="${#dates.format(customer?.approved_date, 'dd-MM-yyyy HH:mm:ss')}"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
+												readonly></td>
+										<td style="width: 112px" th:if="${formmode == 'verify'}"><input type="text"
+												id="verifytime" name="ub.verifytime"
+												th:value="${#dates.format(#dates.createNow(), 'dd-MM-yyyy HH:mm:ss')}"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
+												readonly></td>
+
+									</tr>
+								</table>
+
+							</form>
+
+						</div>
+					</div>
+
+
+				</div>
+
+				<div th:if="${formmode}=='home'">
+					<div class="card">
+						<form id="reportform_cust">
+							<input type="file" id="fileInput" name="file" style="display: none" />
+						</form>
+						<div class="card-header" style="background-color: #e9ecef; height: 50px">
+							<div class="float-left">
+								<h6 style="font-size: 1.2rem;" class="ml-3">CUSTOMER MASTER</h6>
+							</div>
+							<div class="btn-group nav-buttons float-right ml-1">
+								<button class="btn-primary big-btn" onclick="ClickId();">List</button>
+							</div>
+							<div class="btn-group nav-buttons float-right">
+								<button type="button" class="btn-primary big-btn" id="submitBtn">Upload</button>
+							</div>
+						</div>
+						<div class="card-body">
+							<form action="#" method="post" id="drawDownDetailsAdd" autocomplete="off"
+								name="drawDownDetailsData" th:fragment="finuserapply">
+								<div class="">
+									<div class="row formline mt-2 ml-2">
+										<div class="col-sm-2"></div>
+										<div class="col-sm-2">
+											<label>Customer Id</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="customer_id" id="customer_id" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Customer Name</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" readonly />
+										</div>
+									</div>
+
+									<div class="row formline mt-2 ml-2">
+										<div class="col-sm-2"></div>
+										<div class="col-sm-2">
+											<label>First Name</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="first_name" />
+										</div>
+										<div class="col-sm-2">
+											<label>Last Name</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="last_name" />
+										</div>
+									</div>
+
+									<div class="row formline mt-2 ml-2">
+										<div class="col-sm-2"></div>
+										<div class="col-sm-2">
+											<label>Gender</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="gender" />
+										</div>
+										<div class="col-sm-2">
+											<label>Date of Birth</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="dob" />
+										</div>
+									</div>
+
+									<div class="row formline mt-2 ml-2">
+										<div class="col-sm-2"></div>
+										<div class="col-sm-2">
+											<label>Branch</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="branch" />
+										</div>
+										<div class="col-sm-2">
+											<label>Client Role Key</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="client_role_key" id="client_role_key" />
+										</div>
+									</div>
+
+									<div class="row formline mt-2 ml-2">
+										<div class="col-sm-2"></div>
+										<div class="col-sm-2">
+											<label>Creation Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="creation_date" />
+										</div>
+										<div class="col-sm-2">
+											<label>Approval Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="approval_date" />
+										</div>
+									</div>
+
+									<div class="row formline mt-2 ml-2">
+										<div class="col-sm-2"></div>
+										<div class="col-sm-2">
+											<label>Last Modification Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="modification_date" id="modification_date" />
+										</div>
+										<div class="col-sm-2">
+											<label>Activation Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="activation_date" id="activation_date" />
+										</div>
+									</div>
+
+									<div class="row formline mt-2 ml-2">
+										<div class="col-sm-2"></div>
+										<div class="col-sm-2">
+											<label>Mobile No</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="mobile_no" id="mobile_no" />
+										</div>
+										<div class="col-sm-2">
+											<label>Email Id</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="email" name="email_id" id="email_id" />
+										</div>
+									</div>
+
+									<div class="row formline mt-2 ml-2">
+										<div class="col-sm-2"></div>
+										<div class="col-sm-2">
+											<label>Address 1</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="address_1" id="address_1" />
+										</div>
+										<div class="col-sm-2">
+											<label>Address 2</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="address_2" id="address_2" />
+										</div>
+									</div>
+
+									<div class="row formline mt-2 ml-2">
+										<div class="col-sm-2"></div>
+										<div class="col-sm-2">
+											<label>City</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="city" id="city" />
+										</div>
+										<div class="col-sm-2">
+											<label>Suburb</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="suburb" id="suburb" />
+										</div>
+									</div>
+
+									<div class="row formline mt-2 ml-2">
+										<div class="col-sm-2"></div>
+										<div class="col-sm-2">
+											<label>Loan Cycle</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="loan_cycle" id="loan_cycle" />
+										</div>
+										<div class="col-sm-2">
+											<label>Group Loan Cycle</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="group_loan_cycle" id="group_loan_cycle" />
+										</div>
+									</div>
+
+									<div class="row formline mt-2 ml-2">
+										<div class="col-sm-2"></div>
+										<div class="col-sm-2">
+											<label>Assigned User</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="assigned_user" id="assigned_user" />
+										</div>
+										<div class="col-sm-2">
+											<label>As On Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="as_on_date" id="as_on_date" />
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="card-footer text-center mt-2">
+							<button class="btn-primary big-btn" onclick="home();">Home</button>
+							<button class="btn-primary big-btn" onclick="back();">Back</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Model Boxes -->
+
+
+	<div class="modal fade" data-backdrop="false" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true"
+		id="mypopup22">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="popupmsg_body"></p>
+					<button type="button" class="btn-primary big-btn" data-dismiss="modal"
+						onclick="BackToLoanMaint();">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" data-backdrop="false" data-keyboard="false" style="padding-right: 850px" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" data-backdrop="false" data-keyboard="false" id="alert1">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg1"></p>
+					<button type="button" class="btn-primary big-btn" data-dismiss="modal"
+						onclick="listPage();">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Get Normal Alerts -->
+	<!--<div class="modal fade" data-backdrop="static" data-keyboard="false" id="normalAlert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="Normalalertmsg"></p>
+					<button type="button" class="btn-primary big-btn" data-dismiss="modal"
+						onclick="$('#normalAlert').modal('hide');">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>-->
+
+	<div class="modal fade" data-backdrop="false" data-keyboard="false" id="normalAlert" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content"
+				style="position: fixed; left: 50%; transform: translate(-50%, 0%); width: 30%; height: 25%;">
+				<div class="modal-header">
+					<h5 class="modal-title">Alerts</h5>
+
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+						onclick="$('#normalalert').modal('hide')">×</button>
+				</div>
+				<div class="modal-body" style="text-align: center;">
+					<h6 id="Normalalertmsg"></h6>
+					<button type="button" class="btn-primary big-btn" data-dismiss="modal"
+						onclick="$('#normalalert').modal('hide')">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="scheduleModal" class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" style="width: 1300px; margin-left: -400px;">
+				<div class="modal-header">
+					<h5 class="modal-title" style="text-align: center;">DEMAND
+						SCHEDULE DETAILS</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"
+						onclick="$('#scheduleModal').modal('hide');">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<!--<div class="d-flex mt-2 mb-2">
+						<div>
+							<label style="font-size: 13px; font-weight: 500;">SYNDICATION
+								REF NO</label>
+						</div>
+						<div class="ml-3">
+							<input class="" type="text" id="sync_ref_num" readonly />
+						</div>
+						<div class="ml-3">
+							<label style="font-size: 13px; font-weight: 500;">TRANCHE
+								REF</label>
+						</div>
+						<div class="ml-3">
+							<input class="" type="text" id="tranche_reff" readonly />
+						</div>
+						<div class="ml-3">
+							<label style="font-size: 13px; font-weight: 500;">BORROWER
+								NAME</label>
+						</div>
+						<div class="ml-3">
+							<input class="" type="text" id="borrower_name" readonly />
+						</div>
+					</div>-->
+
+
+				</div>
+				<div class="modal-footer d-flex justify-content-center">
+					<!--<button type="button" class="btn-primary big-btn active" onclick="sechduleSubmit();">Submit</button>-->
+					<button type="button" class="btn-primary big-btn active"
+						onclick="$('#scheduleModal').modal('hide');">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Sechdule Modal view -->
+	<div id="scheduleModalView" class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1"
+		role="dialog">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" style="width: 1300px; margin-left: -400px;">
+				<div class="modal-header">
+					<h5 class="modal-title" style="text-align: center;">SCHEDULE
+						PAYMENT DETAILS</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"
+						onclick="$('#scheduleModalView').modal('hide');">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<!--<div class="d-flex mt-2 mb-2">
+						<div>
+							<label style="font-size: 13px; font-weight: 500;">SYNDICATION
+								REF NO</label>
+						</div>
+						<div class="ml-3">
+							<input class="" type="text" id="sync_ref_num" readonly />
+						</div>
+						<div class="ml-3">
+							<label style="font-size: 13px; font-weight: 500;">TRANCHE
+								REF</label>
+						</div>
+						<div class="ml-3">
+							<input class="" type="text" id="tranche_reff" readonly />
+						</div>
+						<div class="ml-3">
+							<label style="font-size: 13px; font-weight: 500;">BORROWER
+								NAME</label>
+						</div>
+						<div class="ml-3">
+							<input class="" type="text" id="borrower_name" readonly />
+						</div>
+					</div>-->
+
+					<div class="table-responsive">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th style="white-space: nowrap; width: 100px;">SCHEDULE NO</th>
+									<th style="white-space: nowrap; width: 100px;">ORIGINAL
+										DEMAND DATE</th>
+									<th style="white-space: nowrap; width: 100px;">DEMAND DATE</th>
+									<th style="white-space: nowrap; width: 100px;">DEMAND TYPE</th>
+									<th style="white-space: nowrap; width: 100px;">DEMAND ID</th>
+									<th style="white-space: nowrap; width: 100px;">DEMAND
+										AMOUNT</th>
+									<th style="white-space: nowrap; width: 100px;">INSTALMENT
+										NO</th>
+									<th style="white-space: nowrap; width: 100px;">REMARKS</th>
+								</tr>
+							</thead>
+							<tbody id="sehduleViewDetails">
+
+								<!-- More rows can be added similarly -->
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="modal-footer d-flex justify-content-center">
+
+					<button type="button" class="btn-primary big-btn active"
+						onclick="$('#scheduleModalView').modal('hide');">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" data-backdrop="false" data-keyboard="false" id="mypopup2" tabindex="-1" role="dialog"
+		aria-hidden="true" style="padding-right: 800px">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content" style="width: 120%; height: 25%">
+				<div class="card">
+					<!-- Header with Alert Message -->
+					<div class="modal-header">
+						<h5 class="modal-title" id="popupAlert" style="font-size: 13px">Alert
+							Message</h5>
+						<!-- Alert message will appear here -->
+					</div>
+
+					<!-- Body with Response -->
+					<div class="modal-body"
+						style="text-align: center; display: flex; justify-content: center; align-items: center; height: 100px; overflow-y: auto; font-weight: bold; font-size: 15px">
+						<h6 id="popupmsg"></h6>
+						<!-- Response will be displayed here -->
+					</div>
+
+					<!-- Footer with Close Button -->
+					<div class="modal-footer">
+						<button type="button" class="btn-primary big-btn" data-dismiss="modal"
+							onclick="openCity(event, 'india');">Close</button>
+						<!-- Calls goBack function -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="customConfirmModal" class="modal">
+		<div class="modal-content">
+			<p>Do you want to open this DOCUMENT MASTER Tab?</p>
+			<button id="confirmYes" class="btn">Yes</button>
+			<button id="confirmNo" class="btn">No</button>
+		</div>
+	</div>
+
+
+
+	<div class="modal fade" data-backdrop="false" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true"
+		id="normalalertvalues">
+		<form action="#" th:object="${reportform}" method="post" enctype="multipart/form-data" id="reportform2">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document"
+				style="max-width: 600px; height: auto;">
+				<div class="modal-content" style="width: 100%; height: 100%;">
+					<!-- Modal Header -->
+					<div class="modal-header" style="justify-content: center; width: 100%; padding: 10px;">
+						<h5 class="modal-title" id="popupAlert" style="font-size: 18px;">
+							CUSTOMER MASTER - UPLOAD</h5>
+					</div>
+
+					<!-- Modal Body -->
+					<div class="modal-body d-flex flex-row align-items-center justify-content-center"
+						style="text-align: center; flex-grow: 1; min-height: 100px; padding: 10px;">
+						<h6 id="alertmsg11" class="text-center text-primary"></h6>
+					</div>
+
+					<!-- Modal Footer -->
+					<div class="modal-footer d-flex justify-content-center" style="width: 100%; padding: 10px;">
+						<button type="button" class="btn-primary big-btn" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- Delete Confirmation Modal -->
+	<div class="modal fade" id="datacancel" style="background: #000000b0;margin-bottom:10px;" role="dialog"
+		aria-labelledby="deleteModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+			<div class="modal-content">
+
+				<!-- Modal Header -->
+
+
+				<!-- Modal Body -->
+				<div class="modal-body">
+					<h5 id="alertmsgpopup" style="font-size: 17px; color: black; padding: 15px;"></h5>
+				</div>
+				<!-- Modal Footer -->
+				<div style="padding: 10px; text-align: center;">
+					<button type="button" class="btn btn-outline-dark me-3" style="font-size: 16px;"
+						onclick="$('#datacancel').modal('hide')">Cancel</button>
+					<button type="button" class="btn btn-outline-dark me-3" id="refDelete" style="font-size: 16px;"
+						onclick="deleteRecUpload(this);" th:attr="data-formmode=delete">Confirm , OverWrite</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- success pop up -->
+	<div class="modal fade" id="SuccesPopUp" style="background: #000000b0;margin-bottom:10px;" role="dialog"
+		aria-labelledby="deleteModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+			<div class="modal-content" style="min-height:212px;">
+				<!-- Modal Body -->
+				<div class="modal-body">
+					<h5 id="Successmsgpopup" style="font-size: 17px; color: black; padding: 15px;"></h5>
+				</div>
+				<!-- Modal Footer -->
+				<div style="padding: 10px; text-align: center;">
+					<button type="button" class="btn btn-outline-dark me-3" style="font-size: 16px;"
+						onclick="$('#SuccesPopUp').modal('hide')">Cancel</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+</body>
+
+</html>
