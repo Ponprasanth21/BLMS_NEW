@@ -1,0 +1,253 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/ASPIRA/js/jquery.min.js"></script>
+<script src="/ASPIRA/js/jquery-ui.min.js"></script>
+<style>
+.btn {
+	line-height: 0.5rem;
+}
+
+.table-bordered td, .table-bordered th {
+	font-size: smaller;
+}
+
+.container-manager {
+	width: 83.5%;
+	padding-right: 15px;
+	padding-left: 15px;
+	margin-right: auto;
+	margin-left: 17.3%;
+	margin-top: 80px;
+	margin-top: 80px;
+}
+
+.table .thead-light th {
+	color: #495057;
+	background-color: #e9ecef;
+	border-color: #dee2e6;
+	width: 23px;
+}
+.table-responsive {
+	max-height: 600px;
+	overflow-y: auto;
+}
+</style>
+<style>
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.4);
+	margin-left: 350px;
+}
+
+.modal-content {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 70%;
+	height: 50%;
+	margin-left: 200px;
+}
+
+.modal-pass {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 40%;
+	height: 25%;
+	margin-left: 400PX;
+	margin-right: auto;
+	border-radius: 10px;
+	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+	/* Adding shadow for depth */
+	font-family: Arial, sans-serif; /* Using a more common font */
+}
+
+.close {
+	color: red;
+	font-size: 28px;
+	font-weight: bold;
+}
+</style>
+<style>
+.password-info {
+	visibility: hidden;
+	width: 320px;
+	background-color: #333;
+	color: #fff;
+	text-align: left;
+	border-radius: 10px;
+	padding: 10px;
+	position: absolute;
+	z-index: 1;
+	top: calc(100% + 10px);
+	left: 50%;
+	transform: translateX(-50%);
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+input:hover+.password-info {
+	visibility: visible;
+	opacity: 0.8;
+}
+</style>
+
+<script>
+	function Home() {
+
+		location.href = 'Dashboard';
+	}
+
+	function Back() {
+		window.history.back();
+	}
+	.big-btn {
+		  font-size: 16px;
+		}
+</script>
+
+</head>
+
+
+<body>
+
+	<div class="col-sm-2">
+		<div th:insert="BGLSHeaderMenu :: header"></div>
+	</div>
+	<!---------------------User List Starts------------------------------------------------------->
+	<!-- Start Content-->
+	
+
+	<div class="container-manager">
+		<div class="row">
+			<div class="col-sm-11 ml-5 mt-2">
+
+				<div th:if="${formmode}=='list'">
+					<div class="card w-100 border">
+						<div class="card-header" style="background-color: #e9ecef">
+							<div class="float-left">
+								<h4 >TRIAL BALANCE - REPORTS</h4>
+									
+							</div>
+						
+									
+											
+					
+						</div>
+							<div class= card-body>
+										<label>ACCOUNT LIST</label> <input type="text" id="gross_sal">
+									
+
+									</div>	
+						
+						<div class="table-responsive" >
+							<table class="table  table-bordered  table-hover table-sm"
+								style="margin-bottom: 0px; font-size: initial;" id="usertable">
+								<thead class="thead-light" >
+									<tr>
+										<th style="text-align: center">CLASSIFICATION</th>
+										<th style="text-align: center;">GL CODE</th>
+										<th style="text-align: center">DESCRIPTION </th>
+										<th style="text-align: center">SUB HEAD</th>
+										<th style="text-align: center">DESCRIPTION</th>
+										<th style="text-align: center">ACCOUNT NUM	</th>
+										<th style="text-align: center">ACCOUNT NAME</th>
+										<th style="text-align: center">CURRENCY</th>
+										<th style="text-align: center">CREDITS</th>
+										<th style="text-align: center">DEBITS</th>
+									
+									</tr>
+								</thead>
+								<tbody id="placelist">
+									<tr th:each="chartacc : ${chartaccount}">
+										<td th:text="${chartacc?.classification}"></td>
+										<td th:text="${chartacc?.gl_code}" style="text-align: right;"></td>
+										<td th:text="${chartacc?.glsh_code}"
+											style="text-align: right;"></td>
+										<td th:text="${chartacc?.acct_num}" style="text-align: right;"></td>
+										<td th:text="${chartacc?.acct_name}"></td>
+										<td th:text="${chartacc?.acct_crncy}"></td>
+										<td th:text="${chartacc?.cr_amt}" style="text-align: right;"></td>
+										<td th:text="${chartacc?.dr_amt}" style="text-align: right;"></td>
+										<td th:text="${chartacc?.acct_bal}" style="text-align: right;"></td>
+										<th:block th:switch="${chartacc.entity_flg}">
+											<td th:case="'Y'" style="color: green;">Active</td>
+											<td th:case="'N'" style="color: red;">UnActive</td>
+										</th:block>
+										<td>
+											<div class="dropdown action-dropdown">
+												<button class="btn btn-action dropdown-toggle btn-sm" style="padding:0px"
+													type="button" id="dropdownMenuButton" title="Action"
+													data-toggle="dropdown" aria-haspopup="true"
+													aria-expanded="false">Action</button>
+
+												<div class="dropdown-menu" style="padding:0px"
+													aria-labelledby="dropdownMenuButton">
+													<!-- Modify -->
+													<a class="dropdown-item modify-item"
+														th:attr="data-attr=${chartacc?.acct_num}" title="Modify"
+														onclick="modifyuser(this)">Modify</a>
+
+													<div class="dropdown-divider"></div>
+
+													<!-- Verify -->
+													<a class="dropdown-item verify-item"
+														th:attr="data-attr=${chartacc?.acct_num}" title="Verify"
+														onclick="verifyuser(this)">Verify</a>
+
+													<div class="dropdown-divider"></div>
+
+													<!-- Delete -->
+													<a class="dropdown-item delete-item"
+														th:attr="data-attribute=${chartacc?.acct_num}"
+														title="Delete" onclick="deleteuser(this)">Delete</a>
+
+													<div class="dropdown-divider"></div>
+
+													<!-- View -->
+													<a class="dropdown-item view-item"
+														th:attr="data-attr=${chartacc?.acct_num}" title="View"
+														onclick="enquiryuser(this)">View</a>
+												</div>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+							<div class="card-footer text-center border-top-0"
+									style="background-color: #e9ecef">
+									<button type="button" class="btn-primary big-btn"
+										id="btnHome" onclick="home();">Home</button>
+									<button type="button" class="btn-primary big-btn"
+										id="btnBack" onclick="back();">Back</button>
+								</div>
+					
+					</div>
+
+				</div>
+			</div>
+			
+			</div>
+			</div>
+		</div>
+		
+
+
+
+</body>
+</html>

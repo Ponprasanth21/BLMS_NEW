@@ -15,68 +15,67 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
+import oracle.jdbc.pool.OracleDataSource;
 
 @Configuration
 @EnableTransactionManagement
 @ConfigurationProperties("datasrc")
-@EnableJpaRepositories(basePackages = "com.bornfire.entities", entityManagerFactoryRef = "datasrc", transactionManagerRef = "datasrcTransactionManager")
+@EnableJpaRepositories(
+        basePackages = "com.bornfire.entities",
+        entityManagerFactoryRef = "datasrc",
+        transactionManagerRef = "datasrcTransactionManager")
 public class BGLSDataSource {
 
-	@NotNull
-	private String username;
-	@NotNull
-	private String password;
-	@NotNull
-	private String url;
+    @NotNull
+    private String username;
+    @NotNull
+    private String password;
+    @NotNull
+    private String url;
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	
-	@Bean
+    @Bean
     public LocalSessionFactoryBean datasrc() throws SQLException {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(srcdataSource());
         sessionFactory.setPackagesToScan("com.bornfire.entities");
         sessionFactory.setHibernateProperties(hibernateProperties());
- 
         return sessionFactory;
     }
-	
-	private Properties hibernateProperties() {
+
+    private Properties hibernateProperties() {
         Properties properties = new Properties();
-        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.SQLServerDialect");
+        // ✅ Use Oracle dialect instead of SQL Server
+        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.Oracle12cDialect");
         properties.setProperty("hibernate.hbm2ddl.auto", "update");
         properties.setProperty("hibernate.show_sql", "false");
         return properties;
     }
 
     @Bean
-    public DataSource srcdataSource() {
-        SQLServerDataSource dataSource = new SQLServerDataSource();
+    public DataSource srcdataSource() throws SQLException {
+        OracleDataSource dataSource = new OracleDataSource();
         dataSource.setUser(username);
-        System.out.println(username);
         dataSource.setPassword(password);
         dataSource.setURL(url);
         return dataSource;
     }
 
-	@Bean
-	public PlatformTransactionManager datasrcTransactionManager() throws SQLException {
-
-		JpaTransactionManager transactionManager = new JpaTransactionManager();
-		transactionManager.setEntityManagerFactory(datasrc().getObject());
-		return transactionManager;
-	}
-	
+    @Bean
+    public PlatformTransactionManager datasrcTransactionManager() throws SQLException {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(datasrc().getObject());
+        return transactionManager;
+    }
 }

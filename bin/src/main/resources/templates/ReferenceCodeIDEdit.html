@@ -1,0 +1,510 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/ASPIRA/js/jquery.min.js"></script>
+<script src="/ASPIRA/js/jquery-ui.min.js"></script>
+<style>
+.btn {
+	line-height: 0.5rem;
+}
+
+.table-bordered td, .table-bordered th {
+	font-size: smaller;
+}
+.filterable .filters input[disabled]::-webkit-input-placeholder {
+	color: #333;
+}
+
+.filterable .filters input[disabled]::-moz-placeholder {
+	color: #333;
+}
+
+.filterable .filters input[disabled]:-ms-input-placeholder {
+	color: #333;
+}
+.filterable .filters input[disabled] {
+	background-color: transparent;
+	border: none;
+	cursor: auto;
+	box-shadow: none;
+	padding: 0;
+	height: auto;
+}
+
+.container-manager {
+	width: 83.5%;
+	padding-right: 15px;
+	padding-left: 15px;
+	margin-right: auto;
+	margin-left: 17.3%;
+	margin-top: 80px;
+	margin-top: 80px;
+}
+
+.table .thead-light th {
+	color: #495057;
+	background-color: #e9ecef;
+	border-color: #dee2e6;
+	width: 23px;
+}
+</style>
+<style>
+.modal {
+	display: none;
+	/* Hidden by default */
+	position: absolute;
+	/* Stay in place */
+	z-index: 1;
+	/* Location of the box */
+	left: 0;
+	top: 0;
+	width: 100%;
+	/* Full width */
+	height: 100%;
+	/* Full height */
+	overflow: auto;
+	/* Enable scroll if needed */
+	background-color: rgb(0, 0, 0);
+	/* Fallback color */
+	background-color: rgba(0, 0, 0, 0.4);
+	/* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+	background-color: #fefefe;
+	margin: auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 100%;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0
+		rgba(0, 0, 0, 0.19);
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 0.4s;
+	animation-name: animatetop;
+	animation-duration: 0.4s
+}
+
+.modal-pass {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 40%;
+	height: 25%;
+	margin-left: 400PX;
+	margin-right: auto;
+	border-radius: 10px;
+	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+	/* Adding shadow for depth */
+	font-family: Arial, sans-serif; /* Using a more common font */
+}
+
+.close {
+	color: red;
+	font-size: 28px;
+	font-weight: bold;
+}
+</style>
+<style>
+.password-info {
+	visibility: hidden;
+	width: 320px;
+	background-color: #333;
+	color: #fff;
+	text-align: left;
+	border-radius: 10px;
+	padding: 10px;
+	position: absolute;
+	z-index: 1;
+	top: calc(100% + 10px);
+	left: 50%;
+	transform: translateX(-50%);
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+input:hover+.password-info {
+	visibility: visible;
+	opacity: 0.8;
+}
+
+.tablinks.active {
+	background-color: #007bff;
+	color: #fff;
+}
+.big-btn {
+  font-size: 16px;
+}
+</style>
+
+<style>
+.hover-underline:hover {
+	text-decoration: underline;
+	text-decoration-color: #007bff;
+	cursor: pointer;
+	/* Sets underline color to blue */
+}
+</style>
+
+<script>
+
+
+    function Home() {
+		location.href = 'Dashboard';
+	}
+
+	function Back() {
+		window.history.back();
+	}
+
+
+    function updateTypeDescription() {
+		const selectedValue = $('#ref_type').val();
+		//alert(selectedValue);
+
+		$.ajax({
+			url : './getTypeDescription',
+			type : 'GET',
+			data : {
+				refType : selectedValue,
+
+			},
+			success : function(data) {
+				//alert(data);
+
+				var values = data.split(" - ");
+
+				// Set values to respective fields
+				$('#ref_type_desc').val(values[0] || "");
+				$('#module_id').val(values[1] || "");
+			},
+		});
+
+	}
+
+function Submit() {
+    $.ajax({
+        url: './refUpdate',
+        data: $("#refForm").serialize(),
+        type: 'POST',
+        success: function (data) {
+            $("#alertmsg").text(data);
+            $('#alert').modal('show');
+
+            // Redirect when user clicks OK
+            $("#alertOkBtn").off("click").on("click", function() {
+    $('#alert').modal('hide');                // hide modal
+    window.location.href = '../refCodeMain?formmode=list';  // redirect to your page
+});
+
+        },
+        error: function (xhr, status, error) {
+            $("#alertmsg").text("Error while updating: " + error);
+            $('#alert').modal('show');
+        }
+    });
+}
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    // List of types
+    const refTypes = [
+        "A01","A02","A03","A04","A05","A06","A07","A08","A09","A10",
+        "A11","A12","A13","A14","A15","A16","A17","A18","A19","A20",
+        "A21","A22","A23","A24","A25","A26","A27","A28","A29","A30",
+        "A31","A32","EMP_PRO_01","EMP_PRO_02","EMP_PRO_03","EMP_PRO_04","EMP_PRO_05","EMP_PRO_06","EMP_PRO_07","EMP_PRO_08","EMP_PRO_09",
+		"EMP_PRO_10"
+    ];
+
+    // Mapping type → description
+    // Mapping type → description
+const refTypeDescriptions = {
+    "A01": "A01 description",
+    "A02": "A02 description",
+    "A03": "A03 description",
+    "A04": "A04 description",
+    "A05": "A05 description",
+    "A06": "A06 description",
+    "A07": "A07 description",
+    "A08": "A08 description",
+    "A09": "A09 description",
+    "A10": "A10 description",
+    "A11": "A11 description",
+    "A12": "A12 description",
+    "A13": "A13 description",
+    "A14": "A14 description",
+    "A15": "A15 description",
+    "A16": "A16 description",
+    "A17": "A17 description",
+    "A18": "A18 description",
+    "A19": "A19 description",
+    "A20": "A20 description",
+    "A21": "A21 description",
+    "A22": "A22 description",
+    "A23": "A23 description",
+    "A24": "A24 description",
+    "A25": "A25 description",
+    "A26": "A26 description",
+    "A27": "A27 description",
+    "A28": "A28 description",
+    "A29": "A29 description",
+    "A30": "A30 description",
+    "A31": "A31 description",
+    "A32": "A32 description",
+
+    "EMP_PRO_01": "Employee Process 01",
+    "EMP_PRO_02": "Employee Process 02",
+    "EMP_PRO_03": "Employee Process 03",
+    "EMP_PRO_04": "Employee Process 04",
+    "EMP_PRO_05": "Employee Process 05",
+    "EMP_PRO_06": "Employee Process 06",
+    "EMP_PRO_07": "Employee Process 07",
+    "EMP_PRO_08": "Employee Process 08",
+    "EMP_PRO_09": "Employee Process 09",
+    "EMP_PRO_10": "Employee Process 10"
+};
+
+
+    const select = document.getElementById("ref_type");
+    const descInput = document.getElementById("ref_type_desc");
+
+    // Populate select with options
+    refTypes.forEach(type => {
+        const opt = document.createElement("option");
+        opt.value = type;
+        opt.text = type;
+        select.appendChild(opt);
+    });
+
+    // On change, update description
+    select.addEventListener("change", function () {
+        const chosen = this.value;
+        descInput.value = refTypeDescriptions[chosen] || "";
+    });
+});
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-2">
+				<div th:insert="BGLSHeaderMenu :: header"></div>
+			</div>
+			<div class="col-sm-10">
+				<div class="container-fluid content">
+					<div class="card w-100 border">
+                    <div class="card">
+						<div class="card-header"
+							style="background-color: #e9ecef; height: 50px">
+
+							<div class="float-left">
+								<h6 style="font-size: 1.2rem; color: black;">REFERENCE CODE
+									MAINTENANCE - MODIFY</h6>
+							</div>
+						</div>
+
+						<div class="card-body">
+							<form class="border border-secondary" action="#" method="post"
+								id="refForm" autocomplete="off">
+								<div class="row formline" style="padding: 10px 0px 2px 0px;">
+
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2 d-flex align-items-center">Reference
+										Type</div>
+
+
+									<div class="col-sm-2 d-flex align-items-center">
+
+										<!-- <select name="ref_type" id="ref_type" 
+                                                onchange="updateTypeDescription()"
+                                                class="form-control form-control-sm bg-white border border-dark">
+                                            <option value="">Select</option>
+                                            <th:block th:each="code : ${refType}">
+                                                <option th:value="${code}" 
+                                                        th:text="${code}" 
+                                                        th:selected="${code == refdetails.ref_type}">
+                                                </option>
+                                            </th:block>
+                                        </select> -->
+
+
+										<select name="ref_type" id="ref_type"
+												class="form-control form-control-sm bg-white border border-dark"
+												>
+											<option value="">Select</option>
+										</select>
+
+										<script th:inline="javascript">
+											const ref_type = /*[[${refdetails.ref_type}]]*/ '';
+
+											document.addEventListener("DOMContentLoaded", function () {
+												const select = document.getElementById('ref_type');
+
+												if (ref_type) {
+													select.value = ref_type;
+												}
+											});
+										</script>
+
+									</div>
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2 d-flex align-items-center">Type
+										Descriptions</div>
+									<div class="col-sm-2 d-flex align-items-center">
+
+										<input type="text" name="ref_type_desc" id="ref_type_desc"
+											class="form-control form-control-sm bg-white border border-dark"
+                                            th:value="${refdetails.ref_type_desc}" />
+
+									</div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2 d-flex align-items-center">Reference
+										Id</div>
+
+
+									<div class="col-sm-2 d-flex align-items-center">
+										<input type="text" name="ref_id" id="ref_id"
+											class="form-control form-control-sm bg-white border border-dark"
+                                            th:value="${refdetails.ref_id}"
+											required readonly/>
+
+									</div>
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2 d-flex align-items-center">Reference
+										Descriptions</div>
+									<div class="col-sm-2 d-flex align-items-center">
+
+										<input type="text" name="ref_id_desc" id="ref_id_desc"
+											class="form-control form-control-sm bg-white border border-dark" 
+                                            th:value="${refdetails.ref_id_desc}"/>
+
+									</div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 10px 0px;">
+
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2 d-flex align-items-center">Module</div>
+
+
+									<div class="col-sm-2 d-flex align-items-center">
+										<input type="text" name="module_id" id="module_id"
+											class="form-control form-control-sm bg-white border border-dark"
+                                            th:value="${refdetails.module_id}"
+											required />
+
+									</div>
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2 d-flex align-items-center">Remarks</div>
+									<div class="col-sm-2 d-flex align-items-center">
+
+										<input type="text" name="remarks" id="remarks"
+											class="form-control form-control-sm bg-white border border-dark" 
+                                            th:value="${refdetails.remarks}"/>
+
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="card-footer text-center"
+							style="background-color: #e9ecef;">
+
+
+							<button class="btn-primary big-btn" onclick="Home();">Home</button>
+							<button class="btn-primary big-btn" onclick="Submit();">Submit</button>
+							<button class="btn-primary big-btn" onclick="Back();">Back</button>
+
+						</div>
+
+					</div>
+
+<!-- end -->
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+
+	<div class="modal fade" data-backdrop="false" data-keyboard="false"
+		id="alert2" tabindex="-7" role="dialog" aria-hidden="true">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+
+				<div class="modal-body" style="text-align: center;">
+					<h6 id="alertmsg2"></h6>
+					<button type="button" class="btn-primary big-btn"
+						onclick="navigateToMainlist(this)">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" data-backdrop="false" data-keyboard="false"
+		id="alert" tabindex="-7" role="dialog" aria-hidden="true">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+
+				<div class="modal-body" style="text-align: center;">
+					<h6 id="alertmsg"></h6>
+					<button type="button" class="btn-primary big-btn" id="alertOkBtn"
+						onclick="$('#alert').modal('hide')">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" data-backdrop="false" data-keyboard="false"
+		id="alert1" tabindex="-7" role="dialog" aria-hidden="true">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+
+				<div class="modal-body" style="text-align: center;">
+					<h6 id="alertmsg1"></h6>
+					<button type="button" class="btn-primary big-btn"
+						onclick="$('#alert1').modal('hide')">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+
+
+</body>
+</html>

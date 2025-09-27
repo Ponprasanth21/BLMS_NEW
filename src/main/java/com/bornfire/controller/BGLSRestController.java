@@ -136,8 +136,6 @@ import com.bornfire.services.LoginServices;
 import com.bornfire.services.RepaymentScheduleServices;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
-import com.microsoft.sqlserver.jdbc.SQLServerDataTable;
-import com.microsoft.sqlserver.jdbc.SQLServerException;
 
 @RestController
 @Transactional

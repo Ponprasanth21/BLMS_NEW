@@ -49,7 +49,7 @@ List<BGLSAuditTable> getauditListLocalvals(Date fromDateToUse);
 	List<BGLSAuditTable> getauditListLocalvalues(Date audit_date);
 	
     ////Generate Request_UUID
-	@Query(value = "SELECT NEXT VALUE FOR BGLS_AUDIT_SEQ", nativeQuery = true)
+	@Query(value = "SELECT BGLS_AUDIT_SEQ.NEXTVAL FROM DUAL", nativeQuery = true)
 	Long getAuditRefUUID();
 	
 	@Query(value="SELECT DISTINCT(branch_des) FROM BGLS_USER_PROFILE_TABLE where BRANCH_ID =?1 AND DEL_FLG='N'", nativeQuery = true)

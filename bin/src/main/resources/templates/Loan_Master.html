@@ -1,0 +1,2336 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<!--
+	CREATED BY : Nithya
+	DATE : 11-03-25
+    VERSION    : 01
+-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/ASPIRA/js/jquery.min.js"></script>
+<script src="/ASPIRA/js/jquery-ui.min.js"></script>
+	<style>
+		.modal {
+			display: none;
+			/* Hidden by default */
+			position: absolute;
+			/* Stay in place */
+			z-index: 1;
+			/* Sit on top */
+			padding-top: 100px;
+			/* Location of the box */
+			left: 0;
+			top: 0;
+			width: 100%;
+			/* Full width */
+			height: 100%;
+			/* Full height */
+			overflow: auto;
+			/* Enable scroll if needed */
+			background-color: rgb(0, 0, 0);
+			/* Fallback color */
+			background-color: rgba(0, 0, 0, 0.4);
+			/* Black w/ opacity */
+		}
+
+		.modal-header {
+			padding: 2px 16px;
+			background-color: #BBC3CB;
+			color: balck;
+		}
+
+		/* Ensure modal background is removed */
+		.modal-backdrop {
+			display: none !important;
+			/* Completely hide backdrop */
+		}
+
+		/* Optional: Prevent page from scrolling when modal is open */
+		body.modal-open {
+			overflow: hidden;
+		}
+
+		.modal-body {
+			padding: 2px 16px;
+		}
+
+		.modal-footer {
+			padding: 2px 16px;
+			background-color: #BBC3CB;
+			color: black;
+		}
+
+		/* Modal Content */
+		.modal-content {
+			background-color: #fefefe;
+			margin: auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 80%;
+			height: 0%;
+			box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			-webkit-animation-name: animatetop;
+			-webkit-animation-duration: 0.4s;
+			animation-name: animatetop;
+			animation-duration: 0.4s
+		}
+
+		body {
+			font-size: 0.8rem;
+		}
+
+		.btn {
+			line-height: 0.5rem;
+		}
+
+		.table-bordered td,
+		.table-bordered th {
+			font-size: smaller;
+		}
+
+		.container-manager {
+			width: 83.5%;
+			padding-right: 15px;
+			padding-left: 15px;
+			margin-right: auto;
+			margin-left: 17.3%;
+			margin-top: 80px;
+			margin-top: 80px;
+		}
+
+		.table .thead-light th {
+			color: #495057;
+			background-color: #e9ecef;
+			border-color: #dee2e6;
+			width: 23px;
+		}
+
+		.tablinks {
+			background-color: #f2f2f2;
+			color: #000;
+		}
+
+		.tablinks.active {
+			background-color: #007bff;
+			color: #fff;
+		}
+
+		.tab {
+			overflow: hidden;
+			border: 1px solid #ccc;
+			background-color: #f1f1f1;
+		}
+
+		.scroll {
+			max-height: 60vh;
+			overflow-y: scroll;
+			overflow-x: hidden;
+		}
+
+		.tab button {
+			background-color: inherit;
+			float: left;
+			border: none;
+			outline: none;
+			cursor: pointer;
+			padding: 14px 16px;
+			transition: 0.3s;
+			font-size: 17px;
+		}
+
+		.tab button:hover {
+			background-color: #ddd;
+		}
+
+		.tabcontent {
+			display: none;
+			padding: 6px 12px;
+			border: 0px solid #ccc;
+			border-top: none;
+		}
+
+		#myPieChart {
+			width: 100px;
+			height: 100px;
+		}
+
+		.input-group-text {
+			cursor: pointer;
+		}
+
+		#eyeIcon {
+			font-size: 1.2rem;
+		}
+
+		input,
+		select {
+			width: 75% !important;
+			padding: 2px;
+		}
+
+		.mmdd {
+			height: 25px;
+			width: 35% !important;
+		}
+
+		.ml-2 {
+			margin-left: 1px;
+		}
+
+		button:focus {
+			outline: unset !important;
+			border: unset !important;
+		}
+
+		.borderRemove {
+			border: none;
+		}
+	</style>
+	<style>
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.4);
+		}
+
+		.modal-content {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 70%;
+			height: 20%;
+			margin-left: 200px;
+		}
+
+		.modal-pass {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 40%;
+			height: 25%;
+			margin-left: 400PX;
+			margin-right: auto;
+			border-radius: 10px;
+			box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+			font-family: Arial, sans-serif;
+		}
+
+		.close {
+			color: red;
+			font-size: 28px;
+			font-weight: bold;
+		}
+
+		.close:hover,
+		.close:focus {
+			color: black;
+			text-decoration: none;
+			cursor: pointer;
+		}
+
+		.filterable .filters input[disabled] {
+			background-color: transparent;
+			border: none;
+			cursor: auto;
+			box-shadow: none;
+			padding: 0;
+			height: auto;
+		}
+
+		.filterable .filters input[disabled]::-webkit-input-placeholder {
+			color: #333;
+		}
+
+		.filterable .filters input[disabled]::-moz-placeholder {
+			color: #333;
+		}
+
+		.filterable .filters input[disabled]:-ms-input-placeholder {
+			color: #333;
+		}
+			.big-btn {
+  font-size: 16px;
+}
+	</style>
+	<style>
+		.password-info {
+			visibility: hidden;
+			width: 320px;
+			background-color: #333;
+			color: #fff;
+			text-align: left;
+			border-radius: 10px;
+			padding: 10px;
+			position: absolute;
+			z-index: 1;
+			top: calc(100% + 10px);
+			left: 50%;
+			transform: translateX(-50%);
+			opacity: 0;
+			transition: opacity 0.3s;
+		}
+
+		input:hover+.password-info {
+			visibility: visible;
+			opacity: 0.8;
+		}
+	</style>
+
+	<script>
+		function back() {
+			event.preventDefault();
+			window.history.back();
+		}
+
+		function Homeln() {
+
+			location.href = 'Dashboard';
+		}
+	</script>
+<style>
+ 
+#datacancel, #datacancel * {
+	box-sizing: content-box !important;
+}
+
+#SuccesPopUp, #SuccesPopUp * {
+	box-sizing: content-box !important;
+}
+
+#datacancel .modal-dialog-centered.modal-dialog-scrollable {
+	justify-content: flex-start !important;
+}
+
+#SuccesPopUp .modal-dialog-centered.modal-dialog-scrollable {
+	justify-content: flex-start !important;
+}
+</style>
+
+	<script type="text/javascript">
+		//validations 
+
+		function numberAndLetters(inputElement) {
+			inputElement.value = inputElement.value.replace(/[^0-9a-zA-Z]/g, '')
+				.toUpperCase();
+		}
+
+		function numberOnly(inputElement) {
+			inputElement.value = inputElement.value.replace(/\D/g, '');
+		}
+
+		function handleIn(input) {
+			// Remove special characters using regex
+			input.value = input.value.replace(/[^\w\s]/gi, '').toUpperCase();
+		}
+	</script>
+	<script>
+		function ClickId(a) {
+			var id = a.getAttribute("data-id");
+			var holder_key = a.getAttribute("data-account_holderkey");
+			location.href = 'loanMaster?formmode=viewloan&id=' + id
+				+ '&holder_key=' + holder_key;
+		}
+
+		function ListLoan() {
+			location.href = 'loanMaster?formmode=list';
+		}
+
+		function secondexceldownload() {
+			$("#alert533").modal("show");
+		}
+	</script>
+	<script th:inline="javascript">
+
+			 function downloadExcel(type) {
+	    // Show loading modal
+	    document.getElementById('loadingModal').style.display = 'flex';
+
+	    const basePath = /*[[${#httpServletRequest.contextPath}]]*/ '';
+		console.log(basePath)
+		console.log(basePath+'/DisplayExcel')
+	    const url = basePath + '/DisplayExcel?type=' + type;
+
+	    $.ajax({
+	        url: url,
+	        type: 'GET',
+	        xhrFields: {
+	            responseType: 'blob' // Important to receive file as blob
+	        },
+	        success: function(blob, status, xhr) {
+	            // Get filename from response header if provided
+	            let filename = "file.xlsx";
+	            const disposition = xhr.getResponseHeader('Content-Disposition');
+	            if (disposition && disposition.indexOf('filename=') !== -1) {
+	                filename = disposition.split('filename=')[1].replace(/"/g, '');
+	            }
+
+	            // Create a link to download the blob
+	            const downloadUrl = window.URL.createObjectURL(blob);
+	            const a = document.createElement('a');
+	            a.href = downloadUrl;
+	            a.download = filename;
+	            document.body.appendChild(a);
+	            a.click();
+	            a.remove();
+	            window.URL.revokeObjectURL(downloadUrl);
+	        },
+	        error: function(err) {
+	            console.error('Download error:', err);
+	            alert('Error downloading file.');
+	        },
+	        complete: function() {
+	            // Hide loading modal after success or error
+	            document.getElementById('loadingModal').style.display = 'none';
+	        }
+	    });
+	}
+
+	document.addEventListener('DOMContentLoaded', function() {
+
+	   const fileInput = document.getElementById('fileInput');
+	    const submitBtn = document.getElementById('submitBtn');
+
+	    // Step 1: Open file chooser when submit button is clicked
+	    submitBtn.addEventListener('click', () => {
+	        fileInput.click();
+	    });
+
+	    // Step 2: When file is selected, upload it
+	    fileInput.addEventListener('change', () => {
+	        if (fileInput.files.length > 0) {
+	            submitData(fileInput.files[0]); // pass the selected file
+	        }
+	    });
+
+	    function submitData(file) {
+	        document.getElementById('loadingModal').style.display = 'flex';
+	        var form = $('#reportform_cust')[0];
+	        var data = new FormData(form);
+	        data.append("overwrite", false);
+	        data.append("fileInput", "LOAN");
+	        data.append("file", file);   
+	        $.ajax({
+	            type: "POST",
+	            url: "UploadFileData",
+	            data: data,
+	            processData: false,
+	            contentType: false,
+	            success: function (response) {
+	                document.getElementById('loadingModal').style.display = 'none';
+	                console.log(response);
+	                if (response.status === "duplicate") {
+	                    $('#alertmsgpopup')
+	                        .text(`Duplicate Customer Id(s) found: ${response.id.join(", ")}. Do you want to overwrite them?`)
+	                        .css("white-space", "nowrap");
+	                    window.lastData = data; 
+	                    window.lastType = "CUSTOMER";  
+
+	                    $('#datacancel').modal("show");
+	                    return;
+	                }
+	                showResponse(response);
+	            },
+	            error: function (error) {
+	                document.getElementById('loadingModal').style.display = 'none';
+	                showResponse("Error: " + error.responseText);
+	            }
+	        });
+	    }
+	});
+	
+		function showResponse(response) { 
+		    let message =
+		        "Upload Completed<br>" +
+		        "Total No of Rows Succeeded: " + response.TotalSucceeded + "<br>" +
+		        "Total No of Rows Failed: " + response.TotalFailed + "<br>" +
+		        "Total Rows Processed: " + response.TotalProcessed + "<br>";
+
+		    // ✅ Write to the same modal-body container
+		    $('#Successmsgpopup').html("<h6 class='text-center'>" + message + "</h6>");
+		    $('#SuccesPopUp').modal('show');
+		}
+		function backs() {
+			$("#normalalertvalues").modal("hide");
+		}
+		
+  // DELETE REF
+ function deleteRecUpload(btn) {
+    $('#datacancel').modal('hide');
+    document.getElementById('loadingModal').style.display = 'flex';
+
+    // ✅ Reuse stored FormData
+    var formData = window.lastData;
+    if (!formData) {
+        console.error("No form data found from last upload");
+        return;
+    }
+
+    // ✅ Ensure overwrite is set to true
+    formData.set("overwrite", true);
+
+    $.ajax({
+        url: './UploadFileData',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(response) {
+            document.getElementById('loadingModal').style.display = 'none';
+            showResponse(response);
+
+        },
+        error: function(xhr, status, error) {
+            document.getElementById('loadingModal').style.display = 'none';
+            $('#alertmsg').text("Overwrite Upload failed");
+            $('#alert').modal("toggle");
+        }
+    });
+}
+
+	</script>
+
+	<script>
+
+		$(document)
+			.ready(
+				function () {
+					$('.filterable .btn-filter')
+						.click(
+							function () {
+								var $panel = $(this).parents(
+									'.filterable'), $filters = $panel
+										.find('.filters input'), $tbody = $panel
+											.find('.table tbody');
+								if ($filters.prop('disabled') == true) {
+									$filters
+										.prop('disabled', false);
+									$filters.first().focus();
+								} else {
+									$filters.val('').prop(
+										'disabled', true);
+									$tbody.find('.no-result')
+										.remove();
+									$tbody.find('tr').show();
+								}
+							});
+
+					$('.filterable .filters input')
+						.keyup(
+							function (e) {
+								/* Ignore tab key */
+								var code = e.keyCode || e.which;
+								if (code == '9')
+									return;
+								/* Useful DOM data and selectors */
+								var $input = $(this), inputContent = $input
+									.val().toLowerCase(), $panel = $input
+										.parents('.filterable'), column = $panel
+											.find('.filters th')
+											.index($input.parents('th')), $table = $panel
+												.find('.table'), $rows = $table
+													.find('tbody tr');
+								console.log($input);
+								/* Dirtiest filter function ever ;) */
+								var $filteredRows = $rows
+									.filter(function () {
+										var value = $(this)
+											.find('td').eq(
+												column)
+											.text()
+											.toLowerCase();
+										console.log(value);
+										return value
+											.indexOf(inputContent) === -1;
+									});
+								/* Clean previous no-result if exist */
+								$table.find('tbody .no-result')
+									.remove();
+								/* Show all rows, hide filtered ones (never do that outside of a demo ! xD) */
+								$rows.show();
+								$filteredRows.hide();
+								/* Prepend no-result row if all rows are filtered */
+								if ($filteredRows.length === $rows.length) {
+									$table
+										.find('tbody')
+										.prepend(
+											$('<tr class="no-result text-center"><td colspan="'
+												+ $table
+													.find('.filters th').length
+												+ '">No result found</td></tr>'));
+								}
+							});
+				});
+	</script>
+	<script>
+		function schedulePreClosure() {
+			event.preventDefault();
+			var id = document.getElementById("id").value;
+			var element = document.getElementById("id");
+
+			if (element) {
+				var id = element.value.trim();
+
+				if (!id) {
+
+					$('#mypopup22').modal('show');
+					$("#popupmsg_body").html("Account number is required!...");
+				} else {
+					$
+						.ajax({
+							type: 'GET',
+							url: './FetchLoanDetails',
+							data: {
+								id: id
+							}, // ✅ Passing the correct value
+							success: function (data) {
+
+								if (data.account_holderkey && data.encoded_key) {
+									var holder_key = data.account_holderkey;
+									var encodedKey = data.encoded_key;
+									var id = data.id;
+									location.href = 'loanSchedule?formmode=viewloanschedule1&id='
+										+ id
+										+ '&holder_key='
+										+ holder_key
+										+ '&encodedKey=' + encodedKey;
+								} else {
+									$('#mypopup22').modal('show');
+									$("#popupmsg_body").html("No Data!...");
+								}
+
+							},
+							error: function () {
+								$('#errorMessage').text('Error fetching data');
+								$('#errorModal').modal('show');
+							}
+						});
+				}
+			} else {
+				alert("Element not found");
+			}
+
+		}
+		function ledgerPreClosure() {
+			event.preventDefault();
+			var element = document.getElementById("id");
+
+			if (element) {
+				var id = element.value.trim(); // Trim to remove leading/trailing spaces
+
+				if (!id) { // Checks for empty string, null, or undefined
+
+					$('#mypopup22').modal('show');
+					$("#popupmsg_body").html("Account number is required!...");
+				} else {
+					location.href = 'accountLedger2?formmode=view&acct_num=' + id;
+				}
+			} else {
+				alert("Element not found");
+			}
+
+		}
+
+		function scheduleClosure() {
+			event.preventDefault();
+			var id = document.getElementById("id").value;
+			var element = document.getElementById("id");
+
+			if (element) {
+				var id = element.value.trim();
+
+				if (!id) {
+
+					$('#mypopup22').modal('show');
+					$("#popupmsg_body").html("Account number is required!...");
+				} else {
+					$
+						.ajax({
+							type: 'GET',
+							url: './FetchLoanDetails',
+							data: {
+								id: id
+							}, // ✅ Passing the correct value
+							success: function (data) {
+
+								if (data.account_holderkey && data.encoded_key) {
+									var holder_key = data.account_holderkey;
+									var encodedKey = data.encoded_key;
+									var id = data.id;
+									location.href = 'loanSchedule?formmode=viewloanschedule1&id='
+										+ id
+										+ '&holder_key='
+										+ holder_key
+										+ '&encodedKey=' + encodedKey;
+								} else {
+									$('#mypopup22').modal('show');
+									$("#popupmsg_body").html("No Data!...");
+								}
+
+							},
+							error: function () {
+								$('#errorMessage').text('Error fetching data');
+								$('#errorModal').modal('show');
+							}
+						});
+				}
+			} else {
+				alert("Element not found");
+			}
+
+		}
+		function ledgerClosure() {
+			event.preventDefault();
+			var element = document.getElementById("id");
+
+			if (element) {
+				var id = element.value.trim(); // Trim to remove leading/trailing spaces
+
+				if (!id) { // Checks for empty string, null, or undefined
+
+					$('#mypopup22').modal('show');
+					$("#popupmsg_body").html("Account number is required!...");
+				} else {
+					location.href = 'accountLedger2?formmode=view&acct_num=' + id;
+				}
+			} else {
+				alert("Element not found");
+			}
+
+		}
+
+		//schedule closure datas repaymrnt & ledger 
+
+		function schedulePreClosure() {
+			event.preventDefault();
+			var id = document.getElementById("id").value;
+			var element = document.getElementById("id");
+
+			if (element) {
+				var id = element.value.trim();
+
+				if (!id) {
+
+					$('#mypopup22').modal('show');
+					$("#popupmsg_body").html("Account number is required!...");
+				} else {
+					$
+						.ajax({
+							type: 'GET',
+							url: './FetchLoanDetails',
+							data: {
+								id: id
+							}, // ✅ Passing the correct value
+							success: function (data) {
+
+								if (data.account_holderkey && data.encoded_key) {
+									var holder_key = data.account_holderkey;
+									var encodedKey = data.encoded_key;
+									var id = data.id;
+									location.href = 'loanSchedule?formmode=viewloanschedule1&id='
+										+ id
+										+ '&holder_key='
+										+ holder_key
+										+ '&encodedKey=' + encodedKey;
+								} else {
+									$('#mypopup22').modal('show');
+									$("#popupmsg_body").html("No Data!...");
+								}
+
+							},
+							error: function () {
+								$('#errorMessage').text('Error fetching data');
+								$('#errorModal').modal('show');
+							}
+						});
+				}
+			} else {
+				alert("Element not found");
+			}
+
+		}
+		function ledgerPreClosure() {
+			event.preventDefault();
+			var element = document.getElementById("id");
+
+			if (element) {
+				var id = element.value.trim(); // Trim to remove leading/trailing spaces
+
+				if (!id) { // Checks for empty string, null, or undefined
+
+					$('#mypopup22').modal('show');
+					$("#popupmsg_body").html("Account number is required!...");
+				} else {
+					location.href = 'accountLedger2?formmode=view&acct_num=' + id;
+				}
+			} else {
+				alert("Element not found");
+			}
+
+		}
+
+		function scheduleClosure() {
+			event.preventDefault();
+			var id = document.getElementById("id").value;
+			var element = document.getElementById("id");
+
+			if (element) {
+				var id = element.value.trim();
+
+				if (!id) {
+
+					$('#mypopup22').modal('show');
+					$("#popupmsg_body").html("Account number is required!...");
+				} else {
+					$
+						.ajax({
+							type: 'GET',
+							url: './FetchLoanDetails',
+							data: {
+								id: id
+							}, // ✅ Passing the correct value
+							success: function (data) {
+
+								if (data.account_holderkey && data.encoded_key) {
+									var holder_key = data.account_holderkey;
+									var encodedKey = data.encoded_key;
+									var id = data.id;
+									location.href = 'loanSchedule?formmode=viewloanschedule1&id='
+										+ id
+										+ '&holder_key='
+										+ holder_key
+										+ '&encodedKey=' + encodedKey;
+								} else {
+									$('#mypopup22').modal('show');
+									$("#popupmsg_body").html("No Data!...");
+								}
+
+							},
+							error: function () {
+								$('#errorMessage').text('Error fetching data');
+								$('#errorModal').modal('show');
+							}
+						});
+				}
+			} else {
+				alert("Element not found");
+			}
+
+		}
+		function ledgerClosure() {
+			event.preventDefault();
+			var element = document.getElementById("id");
+
+			if (element) {
+				var id = element.value.trim(); // Trim to remove leading/trailing spaces
+
+				if (!id) { // Checks for empty string, null, or undefined
+
+					$('#mypopup22').modal('show');
+					$("#popupmsg_body").html("Account number is required!...");
+				} else {
+					location.href = 'accountLedger2?formmode=view&acct_num=' + id;
+				}
+			} else {
+				alert("Element not found");
+			}
+
+		}
+	</script>
+	<script>
+		function adjustHeight() {
+			const cardBody = document.getElementById("cardBody");
+			const viewportHeight = window.innerHeight;
+			cardBody.style.maxHeight = `${viewportHeight * 0.95}px`; // Adjust 80% of the viewport height
+		}
+
+		window.addEventListener("resize", adjustHeight);
+		document.addEventListener("DOMContentLoaded", adjustHeight);
+	</script>
+	
+</head>
+<title>ASPIRA</title>
+
+<body>
+	<div class="col-sm-2">
+		<div th:insert="BGLSHeaderMenu :: header"></div>
+	</div>
+	<div class="container-manager">
+		<div class="row">
+			<div class="col-sm-11 ml-5 mt-2">
+
+
+				<div th:if="${formmode}=='list'">
+					<div class="panel panel-primary filterable">
+						<div class="card">
+							<div class="card-header" style="background-color: #e9ecef; height: 50px">
+								<div class="float-left">
+									<h6 style="font-size: 1.2rem;">LOAN MASTER - LIST</h6>
+								</div>
+								<div class="float-right">
+									<button type="button"
+										class="btn-primary big-btn btn-filter">Filter</button>
+										<button type="button" class="btn-primary big-btn" onclick="downloadExcel('LOAN')">Download</button>
+								</div>
+							</div>
+							<div class="card-body" style="overflow-y: auto; border: 1px solid #ddd;">
+								<div class="table-responsive" id="cardBody">
+									<table class="table  table-bordered  table-hover table-sm"
+										style="margin-bottom: 0px; font-size: initial;" id="usertable">
+										<thead class="thead-light"
+											style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+											<tr class="filters">
+												<th style="width: 8%;"><input type="text" style="width: 80px"
+														class="form-control font-weight-bold" placeholder="S.NO"
+														disabled></th>
+												<th style="width: 10%;"><input type="text" style="width: 80px"
+														class="form-control font-weight-bold" placeholder="LOAN ID"
+														disabled></th>
+												<th><input type="text" style="width: 80px"
+														class="form-control font-weight-bold" placeholder="LOAN NAME"
+														disabled></th>
+												<th><input type="text" style="width: 80px"
+														class="form-control font-weight-bold"
+														placeholder="RETAILER NAME" disabled></th>
+												<th><input type="text" style="width: 80px"
+														class="form-control font-weight-bold"
+														placeholder="RETAILER BRANCH ID" disabled></th>
+												<th style="width: 10%;"><input type="text" style="width: 80px"
+														class="form-control font-weight-bold" placeholder="STATUS"
+														disabled></th>
+											</tr>
+										</thead>
+										<tbody>
+											<th:block th:if="${list != null and #lists.size(list) > 0}">
+												<tr th:each="item, iterator : ${list}" class="userlist">
+													<td style="font-size: 14px" th:text="${iterator.index + 1}"></td>
+													<td style="font-size: 14px" class="text-primary"
+														th:attr="data-id=${item?.id}, data-account_holderkey=${item?.account_holderkey}"
+														th:text="${item?.id}" onclick="ClickId(this);"></td>
+													<td style="font-size: 14px" th:text="${item?.loan_name}"></td>
+													<td style="font-size: 14px" th:text="${item?.retailer_name}">TEST
+													</td>
+													<td style="font-size: 14px" th:text="${item?.retailer_branch}">TEST
+													</td>
+													<td style="font-size: 14px" th:text="${item?.account_state}">TEST
+													</td>
+												</tr>
+											</th:block>
+
+											<th:block th:if="${list == null or #lists.isEmpty(list)}">
+												<tr>
+													<td colspan="6" class="text-center"
+														style="font-size: 14px; font-weight: bold; color: red;">
+														No data available
+													</td>
+												</tr>
+											</th:block>
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="card-footer text-center">
+								<button class="btn-primary big-btn" onclick="Homeln();">Home</button>
+								<button class="btn-primary big-btn" onclick="back()">Back</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div th:if="${formmode}=='viewloan'" class="mt-2">
+					<div class="card">
+						<div class="card-header" style="background-color: #e9ecef; height: 50px">
+							<div class="float-left">
+								<h6 style="font-size: 1.2rem;" class="ml-4">LOAN MASTER -
+									VIEW</h6>
+							</div>
+							<div class="float-right">
+								<button class="btn-primary big-btn" id="repaymentschedule"
+									onclick="schedulePreClosure()">SCHEDULER</button>
+								<button class="btn-primary big-btn" id="ledgerschedule" onclick="ledgerPreClosure()">LEDGER</button>
+							</div>
+						</div>
+						<div class="card-body">
+							<form action="#" th:object="${drawDownDetails}" method="post" id="drawDownDetailsAdd"
+								autocomplete="off" name="drawDownDetailsData" th:fragment="finuserapply">
+
+								<div class="">
+									<div class="ml-4">
+										<h6 style="font-size: 1.0rem; font-weight: bold;">LOAN
+											DETAILS</h6>
+									</div>
+									<div class="row formline mt-2  ml-2">
+										<div class="col-sm-2">
+											<label>Customer Id</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" th:value="${loan[0][0]}" name="customer_id"
+												id="customer_id" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Customer Name</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" th:value="${loan[0][1]}" name="employer_name"
+												id="employer_name" readonly />
+										</div>
+
+										<div class="col-sm-2">
+											<label>Customer Status</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="account_state" id="account_state"
+												th:value="${view?.account_state}" readonly />
+										</div>
+									</div>
+									<div class="row formline  ml-2 mt-1">
+
+										<div class="col-sm-2">
+											<label>Account Type</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="account_holdertype" id="account_holdertype"
+												th:value="${view?.account_holdertype}" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Loan No</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" th:value="${view?.id}" name="id" id="id" readonly />
+										</div>
+
+										<div class="col-sm-2">
+											<label>Loan Name</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" th:value="${view?.loan_name}" name="loan_name"
+												id="loan_name" readonly />
+										</div>
+									</div>
+									<div class="row formline  ml-2 mt-1">
+
+										<div class="col-sm-2">
+											<label>Assigned Branch</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" th:value="${view?.assigned_branchkey}"
+												name="assigned_branchkey" id="assigned_branchkey" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Open Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text"
+												th:value="${#dates.format(view?.creation_date, 'dd-MM-yyyy')}"
+												name="creation_date" id="creation_date" readonly />
+										</div>
+
+										<div class="col-sm-2">
+											<label> Approval Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="approved_date" id="approved_date"
+												th:value="${#dates.format(view?.approved_date, 'dd-MM-yyyy')}"
+												readonly />
+										</div>
+									</div>
+									<div class="row formline  ml-2 mt-1">
+
+										<div class="col-sm-2">
+											<label>Last Modified Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text"
+												th:value="${#dates.format(view?.last_modified_date, 'dd-MM-yyyy')}"
+												name="last_modified_date" id="last_modified_date" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Last Review Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text"
+												th:value="${#dates.format(view?.closed_date, 'dd-MM-yyyy')}"
+												name="closed_date" id="closed_date" readonly />
+										</div>
+
+										<div class="col-sm-2">
+											<label> Account Status </label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" th:value="${view?.account_state}" name="account_state"
+												id="account_state" readonly />
+										</div>
+									</div>
+									<div class="row formline  ml-2  mt-1">
+										<div class="col-sm-2">
+											<label>Currency Code</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="currency_code" id="currency_code" value="KES"
+												readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Loan Amount</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="loan_amount"
+												th:value="${view?.loan_amount == 0 ? '0.00' :#numbers.formatDecimal(view?.loan_amount, 0, 'COMMA', 2, 'POINT')}"
+												id="loan_amount" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Sub Status</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" th:value="${view?.account_substate}"
+												name="account_substate" id="account_substate" readonly />
+										</div>
+									</div>
+									<div class="row formline ml-2  mt-1">
+										<div class="col-sm-2">
+											<label>Payment Method</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="payment_method" th:value="${view?.payment_method}"
+												id="payment_method" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Penalty Rate</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="penalty_rate" id="penalty_rate"
+												th:value="${view?.penalty_rate}" oninput="numberOnly(this);" readonly />
+										</div>
+
+										<div class="col-sm-2">
+											<label>Rate of Interest</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="interest_rate" id="interest_rate"
+												th:value="${view?.interest_rate}" oninput="numberOnly(this);"
+												readonly />
+
+										</div>
+									</div>
+									<div class="row formline ml-2  mt-1">
+										<div class="col-sm-2 ">
+											<label>Disbursement Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="disbursement_date"
+												th:value="${#dates.format(view?.expected_disbursementdate, 'dd-MM-yyyy')}"
+												name="disbursement_date" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>First Payment Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="first_repaymentdate"
+												th:value="${#dates.format(view?.first_repaymentdate, 'dd-MM-yyyy')}"
+												name="first_repaymentdate" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Remarks 1</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id=" " readonly name=" " />
+										</div>
+									</div>
+									<div class="row formline ml-2  mt-1">
+										<div class="col-sm-2">
+											<label>Repayment Method</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="repayment_schedule_method"
+												th:value="${view?.repayment_schedule_method}"
+												id="repayment_schedule_method" readonly />
+										</div>
+										<div class="col-sm-2 ">
+											<label>Repayment Instalments</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="repayment_installments"
+												th:value="${view?.repayment_installments}" readonly
+												name="repayment_installments" />
+										</div>
+										<div class="col-sm-2">
+											<label>Remarks 2</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id=" " readonly name=" " />
+										</div>
+									</div>
+
+
+									<div class="row formline ml-2  mt-1">
+										<div class="col-sm-2">
+											<label>Principal Due</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="principal_due"
+												th:value="${view?.principal_due == 0 ? '0.00' :#numbers.formatDecimal(view?.principal_due, 0, 'COMMA', 2, 'POINT')}"
+												readonly name="principal_due" />
+										</div>
+										<div class="col-sm-2">
+											<label>Principal Paid</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text"
+												th:value="${view?.principal_paid == 0 ? '0.00' :#numbers.formatDecimal(view?.principal_paid, 0, 'COMMA', 2, 'POINT')}"
+												name="principal_paid" id="principal_paid" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Principal Balance</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="principal_balance"
+												th:value="${view?.principal_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.principal_balance, 0, 'COMMA', 2, 'POINT')}"
+												readonly name="principal_balance" />
+										</div>
+									</div>
+									<div class="row formline ml-2  mt-1">
+										<div class="col-sm-2 ">
+											<label>Interest Due</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="interest_due"
+												th:value="${view?.interest_due == 0 ? '0.00' :#numbers.formatDecimal(view?.interest_due, 0, 'COMMA', 2, 'POINT')}"
+												name="interest_due" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Interest Paid</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="interest_paid"
+												th:value="${view?.interest_paid == 0 ? '0.00' :#numbers.formatDecimal(view?.interest_paid, 0, 'COMMA', 2, 'POINT')}"
+												name="interest_paid" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Interest Balance</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="interest_balance"
+												th:value="${view?.interest_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.interest_balance, 0, 'COMMA', 2, 'POINT')}"
+												name="interest_balance" readonly />
+										</div>
+									</div>
+									<div class="row formline ml-2  mt-1">
+										<div class="col-sm-2">
+											<label>Fee Due</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="fees_due" id="fees_due"
+												th:value="${view?.fees_due == 0 ? '0.00' :#numbers.formatDecimal(view?.fees_due, 0, 'COMMA', 2, 'POINT')}"
+												readonly />
+										</div>
+										<div class="col-sm-2 ">
+											<label>Fee Paid</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="fees_paid"
+												th:value="${view?.fees_paid == 0 ? '0.00' :#numbers.formatDecimal(view?.fees_paid, 0, 'COMMA', 2, 'POINT')}"
+												name="fees_paid" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Fee Balance</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="fees_balance"
+												th:value="${view?.fees_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.fees_balance, 0, 'COMMA', 2, 'POINT')}"
+												name="fees_balance" readonly />
+										</div>
+									</div>
+									<div class="row formline ml-2  mt-1">
+										<div class="col-sm-2">
+											<label>Penalty Due</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="penalty_due"
+												th:value="${view?.penalty_due == 0 ? '0.00' :#numbers.formatDecimal(view?.penalty_due, 0, 'COMMA', 2, 'POINT')}"
+												name="penalty_due" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Penalty Paid</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="penalty_paid" id="penalty_paid"
+												th:value="${view?.penalty_paid == 0 ? '0.00' :#numbers.formatDecimal(view?.penalty_paid, 0, 'COMMA', 2, 'POINT')}"
+												readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Penalty Balance</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="penalty_balance"
+												th:value="${view?.penalty_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.penalty_balance, 0, 'COMMA', 2, 'POINT')}"
+												name="penalty_balance" readonly />
+										</div>
+									</div>
+								</div>
+								<div class="">
+									<div class="ml-4 mt-2">
+										<h6 style="font-size: 1.0rem; font-weight: bold;">ADDITIONAL
+											DETAILS</h6>
+									</div>
+									<div class="row formline mt-2  ml-2">
+										<div class="col-sm-2">
+											<label>Sales Processed By VGID</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" th:value="${view?.sale_processedbyvgid}"
+												name="sale_processedbyvgid" id="sale_processedbyvgid" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Sales Processed For</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" th:value="${view?.sale_processedfor}"
+												name="sale_processedfor" id="sale_processedfor" readonly />
+										</div>
+
+										<div class="col-sm-2">
+											<label>Sales Referred By</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" th:value="${view?.sale_referredby}"
+												name="sale_referredby" id="sale_referredby" readonly />
+										</div>
+									</div>
+									<div class="row formline  ml-2 mt-1">
+
+										<div class="col-sm-2">
+											<label>Employment Status</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="employment_status"
+												th:value="${view?.employment_status}" id="employment_status" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Job Title</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="job_title" id="job_title"
+												th:value="${view?.job_title}" readonly />
+										</div>
+
+										<div class="col-sm-2">
+											<label>Employer Name</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="employer_name" th:value="${view?.employer_name}"
+												id="employer_name" readonly />
+										</div>
+									</div>
+									<div class="row formline  ml-2 mt-1">
+
+										<div class="col-sm-2">
+											<label>TU Core</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" th:value="${view?.tuscore}" name="tuscore" id="tuscore"
+												readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>TU Probability</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" th:value="${view?.tuprobability}" name="tuprobability"
+												id="tuprobability" readonly />
+										</div>
+
+										<div class="col-sm-2">
+											<label>TU Full Name</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="tufullname" id="tufullname" readonly />
+										</div>
+									</div>
+									<div class="row formline  ml-2 mt-1">
+
+										<div class="col-sm-2">
+											<label>TU Reasons</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" th:value="${view?.tufullname}" name="tufullname"
+												id="tufullname" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Tureason 1</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="tureason1" th:value="${view?.tureason1}"
+												name="tureason1" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Tureason 2</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="tureason2" th:value="${view?.tureason2}"
+												name="tureason2" readonly />
+										</div>
+									</div>
+
+								</div>
+								<div class="row formline mt-1  ml-2">
+									<div class="col-sm-2">
+										<label>Disposable Income</label>
+									</div>
+									<div class="col-sm-2">
+
+										<input type="text" name="disposable_income" id="disposable_income"
+											th:value="${view?.disposable_income == 0 ? '0.00' :#numbers.formatDecimal(view?.disposable_income, 0, 'COMMA', 2, 'POINT')}"
+											readonly />
+									</div>
+									<div class="col-sm-2">
+										<label>Manual Override Amount</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text"
+											th:value="${view?.manualoverride_amount == 0 ? '0.00' :#numbers.formatDecimal(view?.manualoverride_amount, 0, 'COMMA', 2, 'POINT')}"
+											name="manualoverride_amount" id="manualoverride_amount" readonly />
+									</div>
+
+									<div class="col-sm-2">
+										<label>Manual Override Expiry Date</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text"
+											th:value="${#dates.format(view?.manualoverride_expiry_date, 'dd-MM-yyyy')}"
+											name="manualoverride_expiry_date" id="manualoverride_expiry_date"
+											readonly />
+									</div>
+								</div>
+								<div class="row formline  ml-2 mt-1">
+
+									<div class="col-sm-2">
+										<label>CP Fees</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name="cpfees"
+											th:value="${view?.cpfees == 0 ? '0.00' :#numbers.formatDecimal(view?.cpfees, 0, 'COMMA', 2, 'POINT')}"
+											id="cpfees" readonly />
+									</div>
+									<div class="col-sm-2">
+										<label>Deposit Amount</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text"
+											th:value="${view?.deposit_amount == 0 ? '0.00' :#numbers.formatDecimal(view?.deposit_amount, 0, 'COMMA', 2, 'POINT')}"
+											name="deposit_amount" id="deposit_amount" readonly />
+									</div>
+
+									<div class="col-sm-2">
+										<label>Total Product Price</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name="total_product_price" id="total_product_price"
+											th:value="${view?.total_product_price == 0 ? '0.00' :#numbers.formatDecimal(view?.total_product_price, 0, 'COMMA', 2, 'POINT')}"
+											readonly />
+									</div>
+								</div>
+								<div class="row formline  ml-2 mt-1">
+
+									<div class="col-sm-2">
+										<label>Retailer Name</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" th:value="${view?.retailer_name}" name="retailer_name"
+											id="retailer_name" readonly />
+									</div>
+									<div class="col-sm-2">
+										<label>Retailer Branch</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" th:value="${view?.retailer_branch}" name="retailer_branch"
+											id="retailer_branch" readonly />
+									</div>
+
+									<div class="col-sm-2">
+										<label>VG Application Id</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" th:value="${view?.vg_application_id}"
+											name="vg_application_id" id="vg_application_id" readonly />
+									</div>
+								</div>
+								<div class="row formline  ml-2 mt-1">
+
+									<div class="col-sm-2">
+										<label>Contract Signed</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" th:value="${view?.contract_signed}" name="contract_signed"
+											id="contract_signed" readonly />
+									</div>
+									<div class="col-sm-2">
+										<label>Date of First Call</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name="date_of_first_call"
+											th:value="${#dates.format(view?.date_of_first_call, 'dd-MM-yyyy')}"
+											id="date_of_first_call" readonly />
+									</div>
+
+									<div class="col-sm-2">
+										<label>Last Call Outcome</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" th:value="${view?.last_call_outcome}"
+											name="last_call_outcome" id="last_call_outcome" readonly />
+									</div>
+								</div>
+								<div class="row formline  ml-2  mt-1">
+									<div class="col-sm-2">
+										<label>As On Date</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" th:value="${#dates.format(view?.asondate, 'dd-MM-yyyy')}"
+											name="asondate" id="asondate" readonly />
+									</div>
+									<div class="col-sm-2">
+										<label>Remarks 1</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name=" " id=" " readonly />
+									</div>
+									<div class="col-sm-2">
+										<label>Remarks 2</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name=" " id=" " readonly />
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="card-footer text-center mt-4">
+							<button class="btn-primary big-btn" onclick="Homeln();">Home</button>
+							<button class="btn-primary big-btn" onclick="back();">Back</button>
+						</div>
+						<table
+							Style="border: 1px solid #ccc; width: 100%; max-width: 100%; margin: 0 auto; box-sizing: border-box;">
+							<tr>
+								<td class="col-sm-2" style="text-align: center;">
+									<font size="2"><B>Entry User :</B></font>
+								</td>
+								<td class="col-sm-2" style="width: 112px; margin-right: 20px;"><input type="text"
+										id="entryuser" name="ub.entryuser" value="System"
+										style="border: none; outline: none; background-color: transparent; font-size: 12px;"
+										readonly></td>
+								<td class="col-sm-2" style="text-align: center;">
+									<font size="2"><B>Modify User :</B></font>
+								</td>
+								<td class="col-sm-2" style="width: 112px;"><input type="text" id="modifyuser"
+										name="ub.modifyuser" value="System"
+										style="border: none; outline: none; background-color: transparent; font-size: 12px;"
+										readonly></td>
+								<td class="col-sm-2" style="text-align: center;">
+									<font size="2"><B>Verify User :</B></font>
+								</td>
+								<td class="col-sm-2" style="width: 112px;"><input type="text" id="verifyuser"
+										name="ub.verifyuser" value="System"
+										style="border: none; outline: none; background-color: transparent; font-size: 12px;"
+										readonly></td>
+							</tr>
+							<tr>
+								<td style="text-align: center;">
+									<font size="2"><B>Entry
+											Time :</B></font>
+								</td>
+								<td style="width: 112px"><input type="text" id="entrytime" name="ub.entrytime"
+										th:value="${#dates.format(view?.creation_date, 'dd-MM-yyyy HH:mm:ss')}" readonly
+										style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;">
+								</td>
+								<td style="text-align: center;">
+									<font size="2"><B>Modify
+											Time :</B></font>
+								</td>
+								<td style="width: 112px"><input type="text" id="modifytime" name="ub.modifytime"
+										th:value="${#dates.format(view?.last_modified_date, 'dd-MM-yyyy HH:mm:ss')}"
+										style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
+										readonly></td>
+								<td style="text-align: center; font-size: 15px;">
+									<font size="2"><B>Verify Time :</B></font>
+								</td>
+								<td style="width: 112px"><input type="text" id="verifytime" name="ub.verifytime"
+										th:value="${#dates.format(view?.approved_date, 'dd-MM-yyyy HH:mm:ss')}"
+										style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
+										readonly></td>
+							</tr>
+						</table>
+					</div>
+				</div>
+
+				<div th:if="${formmode}=='loanscrn'" class="mt-2">
+
+					<div class="card">
+					<form id="reportform_cust">
+							<input type="file" id="fileInput" name="file"
+								style="display: none" />
+						</form>
+						<div class="card-header" style="background-color: #e9ecef; height: 50px">
+							<div class="float-left">
+								<h6 style="font-size: 1.2rem;" class="ml-4">LOAN MASTER</h6>
+							</div>
+							<div class="btn-group nav-buttons float-right">
+								<button type="button" class="btn-primary big-btn" id="submitBtn">Upload</button>
+								<button class="btn-primary big-btn ml-1" onclick="ListLoan();">List</button>
+							</div>
+						</div>
+						<div class="card-body">
+							<form action="#" th:object="${drawDownDetails}" method="post" id="drawDownDetailsAdd"
+								autocomplete="off" name="drawDownDetailsData" th:fragment="finuserapply">
+
+								<div class="">
+									<div class="ml-4">
+										<h6 style="font-size: 1.0rem; font-weight: bold;">LOAN
+											DETAILS</h6>
+									</div>
+									<div class="row formline mt-2  ml-2">
+										<div class="col-sm-2">
+											<label>Customer Id</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="customer_id" id="customer_id" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Customer Name</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="employer_name" id="employer_name" readonly />
+										</div>
+
+										<div class="col-sm-2">
+											<label>Customer Status</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="account_state" id="account_state" readonly />
+										</div>
+									</div>
+									<div class="row formline  ml-2 mt-1">
+
+										<div class="col-sm-2">
+											<label>Account Type</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="account_holdertype" id="account_holdertype"
+												readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Loan No</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" th:value="${view?.id}" name="id" id="id" readonly />
+										</div>
+
+										<div class="col-sm-2">
+											<label>Loan Name</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="loan_name" id="loan_name" readonly />
+										</div>
+									</div>
+									<div class="row formline  ml-2 mt-1">
+
+										<div class="col-sm-2">
+											<label>Assigned Branch</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="assigned_branchkey" id="assigned_branchkey"
+												readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Open Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="creation_date" id="creation_date" readonly />
+										</div>
+
+										<div class="col-sm-2">
+											<label> Approval Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="approved_date" id="approved_date" readonly />
+										</div>
+									</div>
+									<div class="row formline  ml-2 mt-1">
+
+										<div class="col-sm-2">
+											<label>Last Modified Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="last_modified_date" id="last_modified_date"
+												readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Last Review Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="closed_date" id="closed_date" readonly />
+										</div>
+
+										<div class="col-sm-2">
+											<label> Account Status </label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="account_state" id="account_state" readonly />
+										</div>
+									</div>
+									<div class="row formline  ml-2  mt-1">
+										<div class="col-sm-2">
+											<label>Currency Code</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="currency_code" id="currency_code" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Loan Amount</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="loan_amount" id="loan_amount" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Sub Status</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="account_substate" id="account_substate" readonly />
+										</div>
+									</div>
+									<div class="row formline ml-2  mt-1">
+										<div class="col-sm-2">
+											<label>Payment Method</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="payment_method" id="payment_method" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Penalty Rate</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="penalty_rate" id="penalty_rate"
+												oninput="numberOnly(this);" readonly />
+										</div>
+
+										<div class="col-sm-2">
+											<label>Rate of Interest</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="interest_rate" id="interest_rate"
+												oninput="numberOnly(this);" readonly />
+
+										</div>
+									</div>
+									<div class="row formline ml-2  mt-1">
+										<div class="col-sm-2 ">
+											<label>Disbursement Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="disbursement_date" name="disbursement_date"
+												readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>First Payment Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="first_repaymentdate" name="first_repaymentdate"
+												readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Remarks 1</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id=" " readonly name=" " />
+										</div>
+									</div>
+									<div class="row formline ml-2  mt-1">
+										<div class="col-sm-2">
+											<label>Repayment Method</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="repayment_schedule_method"
+												id="repayment_schedule_method" readonly />
+										</div>
+										<div class="col-sm-2 ">
+											<label>Repayment Instalments</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="repayment_installments" readonly
+												name="repayment_installments" />
+										</div>
+										<div class="col-sm-2">
+											<label>Remarks 2</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id=" " readonly name=" " />
+										</div>
+									</div>
+
+
+									<div class="row formline ml-2  mt-1">
+										<div class="col-sm-2">
+											<label>Principal Due</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="principal_due" readonly name="principal_due" />
+										</div>
+										<div class="col-sm-2">
+											<label>Principal Paid</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="principal_paid" id="principal_paid" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Principal Balance</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="principal_balance" readonly
+												name="principal_balance" />
+										</div>
+									</div>
+									<div class="row formline ml-2  mt-1">
+										<div class="col-sm-2 ">
+											<label>Interest Due</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="interest_due" name="interest_due" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Interest Paid</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="interest_paid" name="interest_paid" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Interest Balance</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="interest_balance" name="interest_balance" readonly />
+										</div>
+									</div>
+									<div class="row formline ml-2  mt-1">
+										<div class="col-sm-2">
+											<label>Fee Due</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="fees_due" id="fees_due" readonly />
+										</div>
+										<div class="col-sm-2 ">
+											<label>Fee Paid</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="fees_paid" name="fees_paid" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Fee Balance</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="fees_balance" name="fees_balance" readonly />
+										</div>
+									</div>
+									<div class="row formline ml-2  mt-1">
+										<div class="col-sm-2">
+											<label>Penalty Due</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="penalty_due" name="penalty_due" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Penalty Paid</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="penalty_paid" id="penalty_paid" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Penalty Balance</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="penalty_balance" name="penalty_balance" readonly />
+										</div>
+									</div>
+								</div>
+								<div class="">
+									<div class="ml-4 mt-2">
+										<h6 style="font-size: 1.0rem; font-weight: bold;">ADDITIONAL
+											DETAILS</h6>
+									</div>
+									<div class="row formline mt-2  ml-2">
+										<div class="col-sm-2">
+											<label>Sales Processed By VGID</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="sale_processedbyvgid" id="sale_processedbyvgid"
+												readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Sales Processed For</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="sale_processedfor" id="sale_processedfor"
+												readonly />
+										</div>
+
+										<div class="col-sm-2">
+											<label>Sales Referred By</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="sale_referredby" id="sale_referredby" readonly />
+										</div>
+									</div>
+									<div class="row formline  ml-2 mt-1">
+
+										<div class="col-sm-2">
+											<label>Employment Status</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="employment_status" id="employment_status"
+												readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Job Title</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="job_title" id="job_title" readonly />
+										</div>
+
+										<div class="col-sm-2">
+											<label>Employer Name</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="employer_name" id="employer_name" readonly />
+										</div>
+									</div>
+									<div class="row formline  ml-2 mt-1">
+
+										<div class="col-sm-2">
+											<label>TU Core</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="tuscore" id="tuscore" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>TU Probability</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="tuprobability" id="tuprobability" readonly />
+										</div>
+
+										<div class="col-sm-2">
+											<label>TU Full Name</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="tufullname" id="tufullname" readonly />
+										</div>
+									</div>
+									<div class="row formline  ml-2 mt-1">
+
+										<div class="col-sm-2">
+											<label>TU Reasons</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="tufullname" id="tufullname" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Tureason 1</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="tureason1" name="tureason1" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Tureason 2</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="tureason2" name="tureason2" readonly />
+										</div>
+									</div>
+
+								</div>
+								<div class="row formline mt-1  ml-2">
+									<div class="col-sm-2">
+										<label>Disposable Income</label>
+									</div>
+									<div class="col-sm-2">
+
+										<input type="text" name="disposable_income" id="disposable_income" readonly />
+									</div>
+									<div class="col-sm-2">
+										<label>Manual Override Amount</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name="manualoverride_amount" id="manualoverride_amount"
+											readonly />
+									</div>
+
+									<div class="col-sm-2">
+										<label>Manual Override Expiry Date</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name="manualoverride_expiry_date"
+											id="manualoverride_expiry_date" readonly />
+									</div>
+								</div>
+								<div class="row formline  ml-2 mt-1">
+
+									<div class="col-sm-2">
+										<label>CP Fees</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name="cpfees" id="cpfees" readonly />
+									</div>
+									<div class="col-sm-2">
+										<label>Deposit Amount</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name="deposit_amount" id="deposit_amount" readonly />
+									</div>
+
+									<div class="col-sm-2">
+										<label>Total Product Price</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name="total_product_price" id="total_product_price"
+											readonly />
+									</div>
+								</div>
+								<div class="row formline  ml-2 mt-1">
+
+									<div class="col-sm-2">
+										<label>Retailer Name</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name="retailer_name" id="retailer_name" readonly />
+									</div>
+									<div class="col-sm-2">
+										<label>Retailer Branch</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name="retailer_branch" id="retailer_branch" readonly />
+									</div>
+
+									<div class="col-sm-2">
+										<label>VG Application Id</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name="vg_application_id" id="vg_application_id" readonly />
+									</div>
+								</div>
+								<div class="row formline  ml-2 mt-1">
+
+									<div class="col-sm-2">
+										<label>Contract Signed</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name="contract_signed" id="contract_signed" readonly />
+									</div>
+									<div class="col-sm-2">
+										<label>Date of First Call</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name="date_of_first_call" id="date_of_first_call" readonly />
+									</div>
+
+									<div class="col-sm-2">
+										<label>Last Call Outcome</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name="last_call_outcome" id="last_call_outcome" readonly />
+									</div>
+								</div>
+								<div class="row formline  ml-2  mt-1">
+									<div class="col-sm-2">
+										<label>As On Date</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name="asondate" id="asondate" readonly />
+									</div>
+									<div class="col-sm-2">
+										<label>Remarks 1</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name=" " id=" " readonly />
+									</div>
+									<div class="col-sm-2">
+										<label>Remarks 2</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" name=" " id=" " readonly />
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="card-footer text-center mt-4">
+							<button class="btn-primary big-btn" onclick="Homeln();">Home</button>
+
+							<button class="btn-primary big-btn" onclick="back();">Back</button>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Model Boxes -->
+
+
+	<div class="modal fade" data-backdrop="false" data-keyboard="false" style="padding-right: 850px" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+					<button type="button" class="btn-primary big-btn" data-dismiss="modal"
+						onclick="refreshPage1()">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" data-backdrop="false" data-keyboard="false" id="alert1">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg1"></p>
+					<button type="button" class="btn-primary big-btn" data-dismiss="modal" onclick="listPage();">Ok</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Get Normal Alerts -->
+	<!--<div class="modal fade" data-backdrop="static" data-keyboard="false" id="normalAlert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-body" style="text-align: center">
+					<p id="Normalalertmsg"></p>
+					<button type="button" class="btn-primary big-btn" data-dismiss="modal"
+						onclick="$('#normalAlert').modal('hide');">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>-->
+
+	<div class="modal fade" data-backdrop="false" data-keyboard="false" id="normalAlert" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content"
+				style="position: fixed; left: 50%; transform: translate(-50%, 0%); width: 30%; height: 25%;">
+				<div class="modal-header">
+					<h5 class="modal-title">Alerts</h5>
+
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+						onclick="$('#normalalert').modal('hide')">Ã—</button>
+				</div>
+				<div class="modal-body" style="text-align: center;">
+					<h6 id="Normalalertmsg"></h6>
+					<button type="button" class="btn-primary big-btn" data-dismiss="modal"
+						onclick="$('#normalalert').modal('hide')">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="scheduleModal" class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" style="width: 1300px; margin-left: -400px;">
+				<div class="modal-header">
+					<h5 class="modal-title" style="text-align: center;">DEMAND
+						SCHEDULE DETAILS</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"
+						onclick="$('#scheduleModal').modal('hide');">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<!--<div class="d-flex mt-2 mb-2">
+						<div>
+							<label style="font-size: 13px; font-weight: 500;">SYNDICATION
+								REF NO</label>
+						</div>
+						<div class="ml-3">
+							<input class="" type="text" id="sync_ref_num" readonly />
+						</div>
+						<div class="ml-3">
+							<label style="font-size: 13px; font-weight: 500;">TRANCHE
+								REF</label>
+						</div>
+						<div class="ml-3">
+							<input class="" type="text" id="tranche_reff" readonly />
+						</div>
+						<div class="ml-3">
+							<label style="font-size: 13px; font-weight: 500;">BORROWER
+								NAME</label>
+						</div>
+						<div class="ml-3">
+							<input class="" type="text" id="borrower_name" readonly />
+						</div>
+					</div>-->
+
+
+				</div>
+				<div class="modal-footer d-flex justify-content-center">
+					<!--<button type="button" class="btn-primary big-btn active" onclick="sechduleSubmit();">Submit</button>-->
+					<button type="button" class="btn-primary big-btn active"
+						onclick="$('#scheduleModal').modal('hide');">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Sechdule Modal view -->
+	<div id="scheduleModalView" class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1"
+		role="dialog">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" style="width: 1300px; margin-left: -400px;">
+				<div class="modal-header">
+					<h5 class="modal-title" style="text-align: center;">SCHEDULE
+						PAYMENT DETAILS</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"
+						onclick="$('#scheduleModalView').modal('hide');">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<!--<div class="d-flex mt-2 mb-2">
+						<div>
+							<label style="font-size: 13px; font-weight: 500;">SYNDICATION
+								REF NO</label>
+						</div>
+						<div class="ml-3">
+							<input class="" type="text" id="sync_ref_num" readonly />
+						</div>
+						<div class="ml-3">
+							<label style="font-size: 13px; font-weight: 500;">TRANCHE
+								REF</label>
+						</div>
+						<div class="ml-3">
+							<input class="" type="text" id="tranche_reff" readonly />
+						</div>
+						<div class="ml-3">
+							<label style="font-size: 13px; font-weight: 500;">BORROWER
+								NAME</label>
+						</div>
+						<div class="ml-3">
+							<input class="" type="text" id="borrower_name" readonly />
+						</div>
+					</div>-->
+
+					<div class="table-responsive">
+						<table class="table table-bordered">
+							<thead>
+								<tr>
+									<th style="white-space: nowrap; width: 100px;">SCHEDULE NO</th>
+									<th style="white-space: nowrap; width: 100px;">ORIGINAL
+										DEMAND DATE</th>
+									<th style="white-space: nowrap; width: 100px;">DEMAND DATE</th>
+									<th style="white-space: nowrap; width: 100px;">DEMAND TYPE</th>
+									<th style="white-space: nowrap; width: 100px;">DEMAND ID</th>
+									<th style="white-space: nowrap; width: 100px;">DEMAND
+										AMOUNT</th>
+									<th style="white-space: nowrap; width: 100px;">INSTALMENT
+										NO</th>
+									<th style="white-space: nowrap; width: 100px;">REMARKS</th>
+								</tr>
+							</thead>
+							<tbody id="sehduleViewDetails">
+
+								<!-- More rows can be added similarly -->
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="modal-footer d-flex justify-content-center">
+
+					<button type="button" class="btn-primary big-btn active"
+						onclick="$('#scheduleModalView').modal('hide');">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" data-backdrop="false" data-keyboard="false" id="mypopup2" tabindex="-1" role="dialog"
+		aria-hidden="true" style="padding-right: 800px">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content" style="width: 120%; height: 25%">
+				<div class="card">
+					<!-- Header with Alert Message -->
+					<div class="modal-header">
+						<h5 class="modal-title" id="popupAlert" style="font-size: 13px">Alert
+							Message</h5>
+						<!-- Alert message will appear here -->
+					</div>
+
+					<!-- Body with Response -->
+					<div class="modal-body"
+						style="text-align: center; display: flex; justify-content: center; align-items: center; height: 100px; overflow-y: auto; font-weight: bold; font-size: 15px">
+						<h6 id="popupmsg"></h6>
+						<!-- Response will be displayed here -->
+					</div>
+
+					<!-- Footer with Close Button -->
+					<div class="modal-footer">
+						<button type="button" class="btn-primary big-btn" data-dismiss="modal"
+							onclick="openCity(event, 'india');">Close</button>
+						<!-- Calls goBack function -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	 <!-- Delete Confirmation Modal -->
+	<div class="modal fade" id="datacancel" style="background: #000000b0;margin-bottom:10px;"
+		role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+			role="document">
+			<div class="modal-content" style="margin-left:0px;"  >
+
+				<!-- Modal Header -->
+				
+
+				<!-- Modal Body -->
+				<div class="modal-body">
+					<h5  id="alertmsgpopup" style="font-size: 17px; color: black; padding: 15px;"></h5>
+				</div>
+				<!-- Modal Footer -->
+				<div style="padding: 10px; text-align: center;">
+					<button type="button" class="btn btn-outline-dark me-3"
+						style="font-size: 16px;"  onclick="$('#datacancel').modal('hide')">Cancel</button>
+					<button type="button" class="btn btn-outline-dark me-3" id="refDelete"
+						style="font-size: 16px;" onclick="deleteRecUpload(this);"
+						th:attr="data-formmode=delete">Confirm  , OverWrite</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	
+	<!-- success pop up -->
+	<div class="modal fade" id="SuccesPopUp" style="background: #000000b0;margin-bottom:10px;"
+		role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+			role="document">
+			<div class="modal-content" style="min-height:212px;margin-left:0px;" >
+				<!-- Modal Body -->
+				<div class="modal-body">
+					<h5  id="Successmsgpopup" style="font-size: 17px; color: black; padding: 15px;"></h5>
+				</div>
+				<!-- Modal Footer -->
+				<div style="padding: 10px; text-align: center;">
+					<button type="button" class="btn btn-outline-dark me-3"
+						style="font-size: 16px;"  onclick="$('#SuccesPopUp').modal('hide')">Cancel</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	 
+	
+</body>
+
+</html>

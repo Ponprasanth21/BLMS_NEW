@@ -115,7 +115,7 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
 			public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 				String userid = authentication.getName();
 				String password = authentication.getCredentials().toString();
-
+				System.out.println("sdfsdf");
 				Optional<UserProfile> up = userProfileRep.findById(userid);
 
 				try {
@@ -153,7 +153,11 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
 						 * throw new LockedException("Login Not Allowed");
 						 * 
 						 * }
-						 */ if (!PasswordEncryption.validatePassword(password, usr.getPassword())) {
+						 */ 
+						System.out.println("ddddddddddd");
+						System.out.println(PasswordEncryption.validatePassword(password, usr.getPassword()));
+						if (!PasswordEncryption.validatePassword(password, usr.getPassword())) {
+							System.out.println("________________ddddddddddd");
 
 							logger.info("Passing Userid :" + userid);
 
@@ -167,6 +171,7 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
 							throw new BadCredentialsException("Authentication failed");
 
 						} else {
+							System.out.println("))))))))))))))))))))");
 
 							return new UsernamePasswordAuthenticationToken(userid, password, Collections.emptyList());
 
@@ -227,6 +232,7 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
 			public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 					Authentication authentication) throws IOException, ServletException {
 				String auditID = sequence.generateRequestUUId();
+				
 				Optional<UserProfile> up = userProfileRep.findById(authentication.getName());
 				
 				BGLS_Control_Table up1 = bGLS_CONTROL_TABLE_REP.getTranDate();

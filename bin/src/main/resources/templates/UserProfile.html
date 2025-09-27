@@ -1,0 +1,4190 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<!--
+	CREATED BY : PRAVEEN
+	DATE : 19-09-24
+-->
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> -->
+<script src="/ASPIRA/js/jquery.min.js"></script>
+<script src="/ASPIRA/js/jquery-ui.min.js"></script>
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="../static/css/bootstrap.min.css">
+<link rel="stylesheet" href="../static/css/fontawesome.min.css">
+	<style>
+		body {
+			font-size: 0.8rem;
+		}
+
+		.btn {
+			line-height: 0.5rem;
+		}
+
+		.table-bordered td,
+		.table-bordered th {
+			font-size: smaller;
+		}
+
+		.container-manager {
+			width: 83.5%;
+			padding-right: 15px;
+			padding-left: 15px;
+			margin-right: auto;
+			margin-left: 17.3%;
+			margin-top: 80px;
+			margin-top: 80px;
+		}
+
+		.table .thead-light th {
+			color: #495057;
+			background-color: #e9ecef;
+			border-color: #dee2e6;
+			width: 23px;
+		}
+
+
+		.tablinks {
+			background-color: #f2f2f2;
+			color: #000;
+		}
+
+
+		.tablinks.active {
+			background-color: #007bff;
+			color: #fff;
+
+		}
+
+		.tab {
+			overflow: hidden;
+			border: 1px solid #ccc;
+			background-color: #f1f1f1;
+		}
+
+		.scroll {
+			max-height: 60vh;
+			overflow-y: scroll;
+			overflow-x: hidden;
+		}
+
+
+		.tab button {
+			background-color: inherit;
+			float: left;
+			border: none;
+			outline: none;
+			cursor: pointer;
+			padding: 14px 16px;
+			transition: 0.3s;
+			font-size: 17px;
+		}
+
+		.tab button:hover {
+			background-color: #ddd;
+		}
+
+
+		.tabcontent {
+			display: none;
+			padding: 6px 12px;
+			border: 0px solid #ccc;
+			border-top: none;
+		}
+
+		#myPieChart {
+			width: 100px;
+			height: 100px;
+		}
+
+		.input-group-text {
+			cursor: pointer;
+		}
+
+		#eyeIcon {
+			font-size: 1.2rem;
+		}
+	</style>
+	<style>
+
+		  .toggle-btn {
+    border:none;
+    background:transparent;
+    cursor:pointer;
+    padding:4px;
+  }
+
+  .toggle-btn svg { width:20px; height:20px; }
+
+  .eye-open { display:block; }
+  .eye-closed { display:none; }
+
+  .toggle-btn.active .eye-open { display:none; }
+  .toggle-btn.active .eye-closed { display:block; }
+
+		.info-icon {
+  color: white;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+  align-content: center;
+  background: black;
+  border-radius: 50%;
+  position: relative;
+  display: inline-block;
+  cursor: default;
+}
+
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.4);
+			margin-left: 350px;
+
+		}
+
+		.modal-content {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 70%;
+			height: 50%;
+			margin-left: 200px;
+		}
+
+		.modal-pass {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 40%;
+			height: 25%;
+			margin-left: 400PX;
+			margin-right: auto;
+			border-radius: 10px;
+			box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+
+			font-family: Arial, sans-serif;
+
+		}
+
+
+		.close {
+			color: red;
+			font-size: 28px;
+			font-weight: bold;
+		}
+
+		.close:hover,
+		.close:focus {
+			color: black;
+			text-decoration: none;
+			cursor: pointer;
+		}
+	</style>
+	<style>
+		.password-info {
+			visibility: hidden;
+			width: 320px;
+			background-color: #333;
+			color: #fff;
+			text-align: left;
+			border-radius: 10px;
+			padding: 10px;
+			position: absolute;
+			z-index: 1;
+			top: calc(100% + 10px);
+			left: 50%;
+			transform: translateX(-50%);
+			opacity: 0;
+			transition: opacity 0.3s;
+		}
+
+		input:hover+.password-info {
+			visibility: visible;
+			opacity: 0.8;
+		}
+.big-btn {
+  font-size: 16px;
+}
+	</style>
+
+	<script>
+
+		function accessechecking(element){
+		var idName = element.id;
+			console.log(idName);
+    if(idName == "admin" ){
+        if($("#admin").is(":checked")){
+            $("#orgnaization_details").prop("checked", true); 
+            $("#user_controls").prop("checked", true); 
+            $("#reference_code_maintenance").prop("checked", true); 
+            $("#audit_trail").prop("checked", true); 
+        }else{
+            $("#orgnaization_details").prop("checked", false); 
+            $("#user_controls").prop("checked", false); 
+            $("#reference_code_maintenance").prop("checked", false); 
+            $("#audit_trail").prop("checked", false); 
+        }
+        
+    }else if(idName == "migration"){
+        if($("#migration").is(":checked")){
+            $("#customer_master").prop("checked", true); 
+            $("#loan_master").prop("checked", true); 
+            $("#loan_schedule_migration").prop("checked", true); 
+            $("#transaction_migration").prop("checked", true); 
+			$("#balance_sheets").prop("checked", true); 
+        }else{
+            $("#customer_master").prop("checked", false); 
+            $("#loan_master").prop("checked", false); 
+            $("#loan_schedule_migration").prop("checked", false); 
+            $("#transaction_migration").prop("checked", false); 
+			$("#balance_sheets").prop("checked", false); 
+        }
+    }else if(idName == "loan_operation"){
+        if($("#loan_operation").is(":checked")){
+            $("#loan_operation_ls").prop("checked", true); 
+            $("#loan_closure").prop("checked", true); 
+        }else{
+            $("#loan_operation_ls").prop("checked", false); 
+            $("#loan_closure").prop("checked", false); 
+        }
+    }else if(idName == "transaction_maintenance"){
+        if($("#transaction_maintenance").is(":checked")){
+            $("#journal_entries").prop("checked", true); 
+            $("#account_ledger_posting").prop("checked", true); 
+            $("#account_ledger").prop("checked", true); 
+            $("#trial_balance_t").prop("checked", true); 
+            $("#profit_and_loss_account_t").prop("checked", true); 
+        }else{
+            $("#journal_entries").prop("checked", false); 
+            $("#account_ledger_posting").prop("checked", false); 
+            $("#account_ledger").prop("checked", false); 
+            $("#trial_balance_t").prop("checked", false); 
+            $("#profit_and_loss_account_t").prop("checked", false); 
+        }
+    }else if(idName == "collection_process"){
+        if($("#collection_process").is(":checked")){
+            $("#participating_banks").prop("checked", true); 
+            $("#loan_collecting").prop("checked", true); 
+        }else{
+            $("#participating_banks").prop("checked", false); 
+            $("#loan_collecting").prop("checked", false); 
+        }
+    }else if(idName == "batch_job_execution"){
+        if($("#batch_job_execution").is(":checked")){
+            $("#batch_job").prop("checked", true); 
+        }else{
+            $("#batch_job").prop("checked", false); 
+        }
+    }else if(idName == "inquiries_and_reports"){
+        if($("#inquiries_and_reports").is(":checked")){
+            $("#account_balance_inq").prop("checked", true); 
+            $("#interset_summary_inq").prop("checked", true); 
+            $("#journal_book").prop("checked", true); 
+            $("#account_ledgers_i").prop("checked", true); 
+            $("#trial_balance_i").prop("checked", true); 
+            $("#general_ledger").prop("checked", true); 
+            $("#profit_and_loss_account_i").prop("checked", true); 
+            $("#balance_sheet").prop("checked", true); 
+        }else{
+            $("#account_balance_inq").prop("checked", false); 
+            $("#interset_summary_inq").prop("checked", false); 
+            $("#journal_book").prop("checked", false); 
+            $("#account_ledgers_i").prop("checked", false); 
+            $("#trial_balance_i").prop("checked", false); 
+            $("#general_ledger").prop("checked", false); 
+            $("#profit_and_loss_account_i").prop("checked", false); 
+            $("#balance_sheet").prop("checked", false); 
+        }
+    }
+}
+
+		$(function () {
+
+			$("#disableDate, #disableTilDate, #passExDate, #acctexpiryDate").datepicker({
+				dateFormat: "dd-mm-yy",
+				changeMonth: true,
+				changeYear: true,
+				minDate: 0
+			});
+
+
+			$("#disableDate").on("change", function () {
+				var disableDate = $(this).datepicker("getDate");
+				if (disableDate) {
+					$("#disableTilDate").datepicker("option", "minDate", disableDate);
+
+
+				}
+			});
+
+
+			$("#disableTilDate").on("change", function () {
+				var disableDate = $("#disableDate").datepicker("getDate");
+				var disableTilDate = $(this).datepicker("getDate");
+
+				if (!disableDate) {
+					alert("Please choose Disable Date first.");
+					$(this).val("");
+				} else if (disableTilDate && disableTilDate < disableDate) {
+					alert("Disable Til Date cannot be earlier than Disable Date.");
+					$(this).val("");
+				}
+			});
+		});
+	</script>
+
+
+	<script>
+		function Home() {
+
+			location.href = 'Dashboard';
+		}
+
+		function Back() {
+			window.history.back();
+		}
+
+
+
+	</script>
+	<script>
+		function adduser() {
+			event.preventDefault();
+			location.href = 'userProfile?formmode=add';
+		}
+
+
+		function enquiryuser(a) {
+			event.preventDefault();
+			var userId = a.getAttribute('data-userId');
+			location.href = 'userProfile?formmode=view&userid=' + userId;
+		}
+
+
+		function verifyuser(a) {
+			event.preventDefault();
+			var userId = a.getAttribute('data-userId');
+			location.href = 'userProfile?formmode=verify&userid=' + userId;
+		}
+
+		function modifyuser(a) {
+			event.preventDefault();
+			var userId = a.getAttribute('data-userId');
+			location.href = 'userProfile?formmode=modify&userid=' + userId;
+		}
+
+		function deleteuser(a) {
+			event.preventDefault();
+			var userId = a.getAttribute('data-userId');
+			location.href = 'userProfile?formmode=delete&userid=' + userId;
+		}
+
+
+		function deleteUnverifiedUser(a) {
+			event.preventDefault();
+			var userId = a.getAttribute('data-userId');
+			location.href = 'userProfile?formmode=deleteUnverified&userid=' + userId;
+		}
+
+
+
+
+		function goToList() {
+
+			location.href = './userProfile?formmode=list';
+		}
+
+
+	</script>
+
+	<script>
+		function roledesc() {
+
+			var roleid = $("#roleId").find(':selected').val();
+
+			if (roleid == 'ADM') {
+				$("#roleDesc").val("ADMIN");
+			} else if (roleid == 'GEN') {
+				$("#roleDesc").val("GENERAL_USER");
+			}
+			$(this).find(':selected').text();
+
+		}
+
+		/*Praveen*/
+		function letterOnly(input) {
+
+			var cleanValue = input.value.replace(/[^a-zA-Z\s]/g, '');
+
+			cleanValue = cleanValue.toUpperCase();
+			input.value = cleanValue;
+		}
+
+		/*Praveen*/
+		function letterAndNumbers(input) {
+
+			var cleanValue = input.value.replace(/[^a-zA-Z0-9]/g, '');
+
+			cleanValue = cleanValue.toUpperCase();
+			input.value = cleanValue;
+		}
+
+		/*Praveen*/
+		function phoneNumber(input) {
+
+			var cleanValue = input.value.replace(/\D/g, '');
+
+			cleanValue = cleanValue.substring(0, 8);
+			input.value = cleanValue;
+		}
+
+  $(document).on("click","#pwd-toggle", function(){
+	console.log("sfdsf");
+    var pwdInput = $("#password");
+    var btn = $(this);
+
+    if(pwdInput.attr("type") === "password"){
+      pwdInput.attr("type", "text");
+      btn.addClass("active").attr("aria-label", "Hide password");
+    } else {
+      pwdInput.attr("type", "password");
+      btn.removeClass("active").attr("aria-label", "Show password");
+    }
+  });
+
+//   // Function to toggle visibility
+//   function togglePassword() {
+// 	console.log("sfdsf");
+// 	var pwdInput = document.getElementById("password");
+//   var toggleBtn = document.getElementById("pwd-toggle");
+//     if (pwdInput.type === "password") {
+//       pwdInput.type = "text";
+//     //   toggleBtn.classList.add("active");
+// 	  $("#password").addClass('active');
+//       toggleBtn.setAttribute("aria-label", "Hide password");
+//     } else {
+//       pwdInput.type = "password";
+//     //   toggleBtn.classList.remove("active");
+// 	  $("#password").removeClass('active');
+//       toggleBtn.setAttribute("aria-label", "Show password");
+//     }
+//   }
+
+  // Event listener for click
+//   toggleBtn.addEventListener("click", togglePassword);
+
+		/*Praveen*/
+		function emailCheck(input) {
+			var email = input.value;
+			var emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!emailFormat.test(email)) {
+				document.getElementById('email-error').textContent = 'Invalid email format.';
+
+			} else {
+				document.getElementById('email-error').textContent = '';
+				input.setCustomValidity('');
+			}
+		}
+
+		/*Praveen*/
+		function valueCheck() {
+
+
+			var userId = $('#userid').val();
+			var acctExpDate = $('#acctexpiryDate').val();
+			var passExDate = $('#passExDate').val();
+			var roleId = $('#roleId').val();
+			var value;
+
+			if (userId === "") {
+				$("#normalalertmsg").text("Fill User Id");
+				$('#normalalert').modal('show');
+				value = false;
+			} else if (acctExpDate === "") {
+				$("#normalalertmsg").text("Fill Account Expiry Date");
+				$('#normalalert').modal('show');
+				value = false;
+			}else if (passExDate === "") {
+				$("#normalalertmsg").text("Fill Password Expiry Date");
+				$('#normalalert').modal('show');
+				value = false;
+			}else if (roleId === "") {
+				$("#normalalertmsg").text("Fill Role ID");
+				$('#normalalert').modal('show');
+				value = false;
+			}
+
+			else {
+				value = true;
+			}
+			return value;
+		}
+
+		function openAccessModal(a) {
+			var roleId = $('#roleId').val();
+			if (roleId === '') {
+				$("#normalalertmsg").text("Fill Role Id");
+				$('#normalalert').modal('show');
+			} else{
+				$('#finusers').modal('show');
+			}
+		}
+
+		function openAccessModalView(a) {
+			$('#finusers').modal('show');
+
+		}
+
+
+
+
+	</script>
+	<script>
+		/*add function*/
+		function submitform() {
+			event.preventDefault();
+
+
+
+			if (valueCheck()) {
+
+				// accessRoleUpdate();
+
+				document.getElementById("btnSubmit").disabled = true;
+
+				var formmode = "add";
+
+				var disableStart = $('#disableDate').val();
+				if (disableStart != "") {
+					var parts = disableStart.split("-");
+					var day = parts[0];
+					var month = parts[1];
+					var year = parts[2];
+					var disableStartDate = year + "-" + month + "-" + day;
+				} else {
+					var disableStartDate = "";
+				}
+
+
+				var disableEnd = $('#disableTilDate').val();
+				if (disableEnd != "") {
+					var parts = disableEnd.split("-");
+					var day = parts[0];
+					var month = parts[1];
+					var year = parts[2];
+					var disableEndDate = year + "-" + month + "-" + day;
+				} else {
+					var disableEndDate = "";
+				}
+
+				var passExpiry = $('#passExDate').val();
+				if (passExpiry != "") {
+					var parts = passExpiry.split("-");
+					var day = parts[0];
+					var month = parts[1];
+					var year = parts[2];
+					var passwordExpiryDate = year + "-" + month + "-" + day;
+				} else {
+					var passwordExpiryDate = "";
+				}
+
+				var acctExpiry = $('#acctexpiryDate').val();
+				if (acctExpiry != "") {
+					var parts = acctExpiry.split("-");
+					var day = parts[0];
+					var month = parts[1];
+					var year = parts[2];
+					var accountExpiryDate = year + "-" + month + "-" + day;
+				} else {
+					var accountExpiryDate = "";
+				}
+console.log($('#day_end_operation_user').val() +" -----------44444444444;")
+				var userProfile = {
+
+					userid: $('#userid').val(), 
+					user_id: $('#userid').val(), // For access 
+					username: $('#username').val(),
+					branch_id: $('#branch_id').val(),
+					branch_des: $('#branch_des').val(),
+					mob_number: $('#mobNo').val(),
+					email_id: $('#emailId').val(),
+					disable_start_date: disableStartDate,
+					disable_end_date: disableEndDate,
+					password: $('#password').val(),
+					pass_exp_date: passwordExpiryDate,
+					user_status: $('#userStatus').val(),
+					login_status: $('#loginStatus').val(),
+					role_id: $('#roleId').val(),
+					acc_exp_date: accountExpiryDate,
+					role_desc: $('#roleDesc').val(),
+					permissions: $('#permission').val(),
+					work_class: $('#work_class').val(),
+					acct_access_code: $('#acct_access_code').val(),
+					doc_access_code: $('#doc_access_code').val(),
+					remarks: $('#remarks').val(),
+					admin: $('#admin').is(':checked') ? 'Y' : 'N',
+					orgnaization_details: $('#orgnaization_details').is(':checked') ? 'Y' : 'N',
+					head_office: $('#head_office').is(':checked') ? 'Y' : 'N',
+					calender_maintance: $('#calender_maintance').is(':checked') ? 'Y' : 'N',
+					branches: $('#branches').is(':checked') ? 'Y' : 'N',
+					exception: $('#exception').is(':checked') ? 'Y' : 'N',
+					user_controls: $('#user_controls').is(':checked') ? 'Y' : 'N',
+					user_profile: $('#user_profile').is(':checked') ? 'Y' : 'N',
+					employee_profile: $('#employee_profile').is(':checked') ? 'Y' : 'N',
+					reference_code_maintenance: $('#reference_code_maintenance').is(':checked') ? 'Y' : 'N',
+					reference_code: $('#reference_code').is(':checked') ? 'Y' : 'N',
+					gl_structure: $('#gl_structure').is(':checked') ? 'Y' : 'N',
+					scheme_codes: $('#scheme_codes').is(':checked') ? 'Y' : 'N',
+					chart_of_accounts: $('#chart_of_accounts').is(':checked') ? 'Y' : 'N',
+					account_ledgers: $('#account_ledgers').is(':checked') ? 'Y' : 'N',
+					audit_trail: $('#audit_trail').is(':checked') ? 'Y' : 'N',
+					user_activities: $('#user_activities').is(':checked') ? 'Y' : 'N',
+					business_activity: $('#business_activity').is(':checked') ? 'Y' : 'N',
+					// budget_controls: $('#budget_controls').is(':checked') ? 'Y' : 'N',
+					migration: $('#migration').is(':checked') ? 'Y' : 'N',
+					customer_master: $('#customer_master').is(':checked') ? 'Y' : 'N',
+					loan_master: $('#loan_master').is(':checked') ? 'Y' : 'N',
+					loan_schedule_migration: $('#loan_schedule_migration').is(':checked') ? 'Y' : 'N',
+					transaction_migration: $('#transaction_migration').is(':checked') ? 'Y' : 'N',
+					loan_operation: $('#loan_operation').is(':checked') ? 'Y' : 'N',
+					loan_operation_ls: $('#loan_operation_ls').is(':checked') ? 'Y' : 'N',
+					loan_closure: $('#loan_closure').is(':checked') ? 'Y' : 'N',
+
+					day_end_operation: $('#day_end_operation_user').is(':checked') ? 'Y' : 'N',
+					customer_maintenance: $('#customer_maintenance').is(':checked') ? 'Y' : 'N',
+					loan_maintanace: $('#loan_maintanace').is(':checked') ? 'Y' : 'N',
+
+					participating_banks: $('#participating_banks').is(':checked') ? 'Y' : 'N',
+					loan_collecting: $('#loan_collecting').is(':checked') ? 'Y' : 'N',
+					collection_process: $('#collection_process').is(':checked') ? 'Y' : 'N',
+					maintenance: $('#maintenance').is(':checked') ? 'Y' : 'N',
+					customer_master_maintenance: $('#customer_master_maintenance').is(':checked') ? 'Y' : 'N',
+					account_master_maintenance: $('#account_master_maintenance').is(':checked') ? 'Y' : 'N',
+					lease_accounts: $('#lease_accounts').is(':checked') ? 'Y' : 'N',
+					deposit_accounts_c: $('#deposit_accounts_c').is(':checked') ? 'Y' : 'N',
+					office_accounts: $('#office_accounts').is(':checked') ? 'Y' : 'N',
+					document_maintenance: $('#document_maintenance').is(':checked') ? 'Y' : 'N',
+					kyc_norms: $('#kyc_norms').is(':checked') ? 'Y' : 'N',
+					transaction_maintenance: $('#transaction_maintenance').is(':checked') ? 'Y' : 'N',
+					journal_entries: $('#journal_entries').is(':checked') ? 'Y' : 'N',
+					account_ledger_posting: $('#account_ledger_posting').is(':checked') ? 'Y' : 'N',
+					account_ledger: $('#account_ledger').is(':checked') ? 'Y' : 'N',
+					trial_balance_t: $('#trial_balance_t').is(':checked') ? 'Y' : 'N',
+					profit_and_loss_account_t: $('#profit_and_loss_account_t').is(':checked') ? 'Y' : 'N',
+					lease_loans: $('#lease_loans').is(':checked') ? 'Y' : 'N',
+					account_maintenance_l: $('#account_maintenance_l').is(':checked') ? 'Y' : 'N',
+					account_statements_l: $('#account_statements_l').is(':checked') ? 'Y' : 'N',
+					flow_details_l: $('#flow_details_l').is(':checked') ? 'Y' : 'N',
+					deposit_accounts: $('#deposit_accounts').is(':checked') ? 'Y' : 'N',
+					account_maintenance_d: $('#account_maintenance_d').is(':checked') ? 'Y' : 'N',
+					account_statements_d: $('#account_statements_d').is(':checked') ? 'Y' : 'N',
+					flow_details_d: $('#flow_details_d').is(':checked') ? 'Y' : 'N',
+
+					inquiries_and_reports: $('#inquiries_and_reports').is(':checked') ? 'Y' : 'N',
+					journal_book: $('#journal_book').is(':checked') ? 'Y' : 'N',
+					account_balance_inq: $('#account_balance_inq').is(':checked') ? 'Y' : 'N',
+					interset_summary_inq: $('#interset_summary_inq').is(':checked') ? 'Y' : 'N',
+					account_ledgers_i: $('#account_ledgers_i').is(':checked') ? 'Y' : 'N',
+					trial_balance_i: $('#trial_balance_i').is(':checked') ? 'Y' : 'N',
+					general_ledger: $('#general_ledger').is(':checked') ? 'Y' : 'N',
+					profit_and_loss_account_i: $('#profit_and_loss_account_i').is(':checked') ? 'Y' : 'N',
+					balance_sheet: $('#balance_sheet').is(':checked') ? 'Y' : 'N',
+					balance_sheets: $('#balance_sheets').is(':checked') ? 'Y' : 'N',
+					batch_job_execution: $('#batch_job_execution').is(':checked') ? 'Y' : 'N',
+					batch_job: $('#batch_job_execution').is(':checked') ? 'Y' : 'N'
+				};
+
+				console.log(userProfile);
+				document.getElementById('loadingModal').style.display = 'flex';
+				$.ajax({
+					type: "POST",
+					contentType: "application/json",
+					url: './createUser?formmode=' + formmode + '&accountExpiryDate=' + accountExpiryDate,
+					data: JSON.stringify(userProfile),
+					success: function (responseText, statusText, xhr, $form) {
+
+						$.ajax({
+							type: "POST",
+							contentType: "application/json",
+							url: './accessRoleSubmit',
+							data: JSON.stringify(userProfile),
+							success: function (responseText1, statusText, xhr, $form) {
+								document.getElementById('loadingModal').style.display = 'none';
+								$('#Successmsgpopup').html("<h6 class='text-center'>" + responseText + "</h6>");
+								$('#SuccesPopUp').modal('show');
+								// $("#alertmsg").text(responseText);
+								// $('#alert').modal("toggle");
+
+							},
+							error: function (error) {
+								console.error(error);
+							}
+						});
+					},
+					error: function (error) {
+						console.error(error);
+					}
+				});
+
+			} else {
+
+				event.preventDefault();
+
+			}
+
+
+
+
+
+		}
+
+		/*verify function*/
+		function verifyData(a) {
+			event.preventDefault();
+			document.getElementById("btnSubmit").disabled = true;
+			var userId = a.getAttribute('data-userId');
+			document.getElementById('loadingModal').style.display = 'flex';
+			$.ajax({
+				type: "POST",
+				url: './verifyUser?userId=' + userId,
+				success: function (responseText, statusText, xhr, $form) {
+
+					document.getElementById('loadingModal').style.display = 'none';
+					$('#Successmsgpopup').html("<h6 class='text-center'>" + responseText + "</h6>");
+					$('#SuccesPopUp').modal('show');
+				},
+				error: function (error) {
+					console.error(error);
+				}
+			});
+
+		}
+
+
+
+		/*modify function*/
+		function modifySubmit() {
+
+		if (valueCheck()) {
+			event.preventDefault();
+
+
+			//document.getElementById("btnSubmit").disabled = true;
+
+			var formmode = "modify";
+
+			var disableStart = $('#disableDate').val();
+			if (disableStart != "") {
+				var parts = disableStart.split("-");
+				var day = parts[0];
+				var month = parts[1];
+				var year = parts[2];
+				var disableStartDate = year + "-" + month + "-" + day;
+			} else {
+				var disableStartDate = "";
+			}
+
+
+			var disableEnd = $('#disableTilDate').val();
+			if (disableEnd != "") {
+				var parts = disableEnd.split("-");
+				var day = parts[0];
+				var month = parts[1];
+				var year = parts[2];
+				var disableEndDate = year + "-" + month + "-" + day;
+			} else {
+				var disableEndDate = "";
+			}
+
+			var passExpiry = $('#passExDate').val();
+			if (passExpiry != "") {
+				var parts = passExpiry.split("-");
+				var day = parts[0];
+				var month = parts[1];
+				var year = parts[2];
+				var passwordExpiryDate = year + "-" + month + "-" + day;
+			} else {
+				var passwordExpiryDate = "";
+			}
+
+			var acctExpiry = $('#acctexpiryDate').val();
+			if (acctExpiry != "") {
+				var parts = acctExpiry.split("-");
+				var day = parts[0];
+				var month = parts[1];
+				var year = parts[2];
+				var accountExpiryDate = year + "-" + month + "-" + day;
+			} else {
+				var accountExpiryDate = "";
+			}
+console.log($('#day_end_operation_user').val() +" -----------###########;")
+console.log($('#day_end_operation_user').is(':checked') +" ------@@@@@@@@@@@;")
+			var userProfile = {
+
+				userid: $('#userid').val(),
+				user_id: $('#userid').val(), // For access 
+				username: $('#username').val(),
+				branch_id: $('#branch_id').val(),
+				branch_des: $('#branch_des').val(),
+				mob_number: $('#mobNo').val(),
+				email_id: $('#emailId').val(),
+				disable_start_date: disableStartDate,
+				disable_end_date: disableEndDate,
+				password: $('#password').val(),
+				pass_exp_date: passwordExpiryDate,
+				user_status: $('#userStatus').val(),
+				login_status: $('#loginStatus').val(),
+				role_id: $('#roleId').val(),
+				acc_exp_date: accountExpiryDate,
+				role_desc: $('#roleDesc').val(),
+				permissions: $('#permission').val(),
+				work_class: $('#work_class').val(),
+				acct_access_code: $('#acct_access_code').val(),
+				doc_access_code: $('#doc_access_code').val(),
+				remarks: $('#remarks').val(),
+
+				admin: $('#admin').is(':checked') ? 'Y' : 'N',
+					orgnaization_details: $('#orgnaization_details').is(':checked') ? 'Y' : 'N',
+					head_office: $('#head_office').is(':checked') ? 'Y' : 'N',
+					calender_maintance: $('#calender_maintance').is(':checked') ? 'Y' : 'N',
+					branches: $('#branches').is(':checked') ? 'Y' : 'N',
+					exception: $('#exception').is(':checked') ? 'Y' : 'N',
+					user_controls: $('#user_controls').is(':checked') ? 'Y' : 'N',
+					user_profile: $('#user_profile').is(':checked') ? 'Y' : 'N',
+					employee_profile: $('#employee_profile').is(':checked') ? 'Y' : 'N',
+					reference_code_maintenance: $('#reference_code_maintenance').is(':checked') ? 'Y' : 'N',
+					reference_code: $('#reference_code').is(':checked') ? 'Y' : 'N',
+					gl_structure: $('#gl_structure').is(':checked') ? 'Y' : 'N',
+					scheme_codes: $('#scheme_codes').is(':checked') ? 'Y' : 'N',
+					chart_of_accounts: $('#chart_of_accounts').is(':checked') ? 'Y' : 'N',
+					account_ledgers: $('#account_ledgers').is(':checked') ? 'Y' : 'N',
+					audit_trail: $('#audit_trail').is(':checked') ? 'Y' : 'N',
+					user_activities: $('#user_activities').is(':checked') ? 'Y' : 'N',
+					business_activity: $('#business_activity').is(':checked') ? 'Y' : 'N',
+					// budget_controls: $('#budget_controls').is(':checked') ? 'Y' : 'N',
+					migration: $('#migration').is(':checked') ? 'Y' : 'N',
+					customer_master: $('#customer_master').is(':checked') ? 'Y' : 'N',
+					loan_master: $('#loan_master').is(':checked') ? 'Y' : 'N',
+					loan_schedule_migration: $('#loan_schedule_migration').is(':checked') ? 'Y' : 'N',
+					transaction_migration: $('#transaction_migration').is(':checked') ? 'Y' : 'N',
+					loan_operation: $('#loan_operation').is(':checked') ? 'Y' : 'N',
+					loan_operation_ls: $('#loan_operation_ls').is(':checked') ? 'Y' : 'N',
+					loan_closure: $('#loan_closure').is(':checked') ? 'Y' : 'N',
+
+					day_end_operation: $('#day_end_operation_user').is(':checked') ? 'Y' : 'N',
+					customer_maintenance: $('#customer_maintenance').is(':checked') ? 'Y' : 'N',
+					loan_maintanace: $('#loan_maintanace').is(':checked') ? 'Y' : 'N',
+
+					participating_banks: $('#participating_banks').is(':checked') ? 'Y' : 'N',
+					loan_collecting: $('#loan_collecting').is(':checked') ? 'Y' : 'N',
+					collection_process: $('#collection_process').is(':checked') ? 'Y' : 'N',
+					maintenance: $('#maintenance').is(':checked') ? 'Y' : 'N',
+					customer_master_maintenance: $('#customer_master_maintenance').is(':checked') ? 'Y' : 'N',
+					account_master_maintenance: $('#account_master_maintenance').is(':checked') ? 'Y' : 'N',
+					lease_accounts: $('#lease_accounts').is(':checked') ? 'Y' : 'N',
+					deposit_accounts_c: $('#deposit_accounts_c').is(':checked') ? 'Y' : 'N',
+					office_accounts: $('#office_accounts').is(':checked') ? 'Y' : 'N',
+					document_maintenance: $('#document_maintenance').is(':checked') ? 'Y' : 'N',
+					kyc_norms: $('#kyc_norms').is(':checked') ? 'Y' : 'N',
+					transaction_maintenance: $('#transaction_maintenance').is(':checked') ? 'Y' : 'N',
+					journal_entries: $('#journal_entries').is(':checked') ? 'Y' : 'N',
+					account_ledger_posting: $('#account_ledger_posting').is(':checked') ? 'Y' : 'N',
+					account_ledger: $('#account_ledger').is(':checked') ? 'Y' : 'N',
+					trial_balance_t: $('#trial_balance_t').is(':checked') ? 'Y' : 'N',
+					profit_and_loss_account_t: $('#profit_and_loss_account_t').is(':checked') ? 'Y' : 'N',
+					lease_loans: $('#lease_loans').is(':checked') ? 'Y' : 'N',
+					account_maintenance_l: $('#account_maintenance_l').is(':checked') ? 'Y' : 'N',
+					account_statements_l: $('#account_statements_l').is(':checked') ? 'Y' : 'N',
+					flow_details_l: $('#flow_details_l').is(':checked') ? 'Y' : 'N',
+					deposit_accounts: $('#deposit_accounts').is(':checked') ? 'Y' : 'N',
+					account_maintenance_d: $('#account_maintenance_d').is(':checked') ? 'Y' : 'N',
+					account_statements_d: $('#account_statements_d').is(':checked') ? 'Y' : 'N',
+					flow_details_d: $('#flow_details_d').is(':checked') ? 'Y' : 'N',
+
+					inquiries_and_reports: $('#inquiries_and_reports').is(':checked') ? 'Y' : 'N',
+					journal_book: $('#journal_book').is(':checked') ? 'Y' : 'N',
+					account_balance_inq: $('#account_balance_inq').is(':checked') ? 'Y' : 'N',
+					interset_summary_inq: $('#interset_summary_inq').is(':checked') ? 'Y' : 'N',
+					account_ledgers_i: $('#account_ledgers_i').is(':checked') ? 'Y' : 'N',
+					trial_balance_i: $('#trial_balance_i').is(':checked') ? 'Y' : 'N',
+					general_ledger: $('#general_ledger').is(':checked') ? 'Y' : 'N',
+					profit_and_loss_account_i: $('#profit_and_loss_account_i').is(':checked') ? 'Y' : 'N',
+					balance_sheet: $('#balance_sheet').is(':checked') ? 'Y' : 'N',
+					balance_sheets: $('#balance_sheets').is(':checked') ? 'Y' : 'N',
+					batch_job_execution: $('#batch_job_execution').is(':checked') ? 'Y' : 'N',
+					batch_job: $('#batch_job_execution').is(':checked') ? 'Y' : 'N'
+			};
+
+			console.log(userProfile);
+			document.getElementById('loadingModal').style.display = 'flex';
+			$.ajax({
+				type: "POST",
+				contentType: "application/json",
+				url: './mosifyUser?formmode=' + formmode + '&accountExpiryDate=' + accountExpiryDate,
+				data: JSON.stringify(userProfile),
+				success: function (responseText, statusText, xhr, $form) {
+					$.ajax({
+							type: "POST",
+							contentType: "application/json",
+							url: './accessRoleSubmit',
+							data: JSON.stringify(userProfile),
+							success: function (responseText1, statusText, xhr, $form) {
+								document.getElementById('loadingModal').style.display = 'none';
+								$('#Successmsgpopup').html("<h6 class='text-center'>" + responseText + "</h6>");
+								$('#SuccesPopUp').modal('show');
+
+							},
+							error: function (error) {
+								console.error(error);
+							}
+						});
+				},
+				error: function (error) {
+					console.error(error);
+				}
+			});
+		}else {
+
+			event.preventDefault();
+
+		}
+
+		}
+
+		/*Delete verified User*/
+		function deleteRecord(a) {
+			event.preventDefault();
+			var userId = a.getAttribute('data-userId');
+			var deleteType = a.getAttribute('data-flag');
+			document.getElementById('loadingModal').style.display = 'flex';
+			$.ajax({
+				type: "POST",
+				url: './deleteUser?deleteType=' + deleteType + '&userid=' + userId,
+				success: function (responseText, statusText, xhr, $form) {
+
+					document.getElementById('loadingModal').style.display = 'none';
+					$('#Successmsgpopup').html("<h6 class='text-center'>" + responseText + "</h6>");
+					$('#SuccesPopUp').modal('show');
+				},
+				error: function (error) {
+					console.error(error);
+				}
+			});
+		}
+
+		/*Delete Unverified User*/
+		function deleteUnverifiedRecord(a) {
+			event.preventDefault();
+			var userId = a.getAttribute('data-userId');
+			var deleteType = a.getAttribute('data-flag');
+			document.getElementById('loadingModal').style.display = 'flex';
+			$.ajax({
+				type: "POST",
+				url: './deleteUser?deleteType=' + deleteType + '&userid=' + userId,
+				success: function (responseText, statusText, xhr, $form) {
+
+					document.getElementById('loadingModal').style.display = 'none';
+					$('#Successmsgpopup').html("<h6 class='text-center'>" + responseText + "</h6>");
+					$('#SuccesPopUp').modal('show');
+				},
+				error: function (error) {
+					console.error(error);
+				}
+			});
+		}
+
+		// function accessRoleUpdate() {
+		// 	event.preventDefault();
+
+		// 	var roleId = $('#roleId').val();
+		// 	// if (roleId === 'ADM') {
+		// 	// 	console.log("ADMIN");
+		// 		var accessRole = {
+		// 			user_id: $('#userid').val(),
+		// 			role_id: $('#roleId').val(),
+		// 			role_desc: $('#roleDesc').val(),
+		// 			permissions: $('#permission').val(),
+		// 			work_class: $('#work_class').val(),
+		// 			admin: $('#admin').is(':checked') ? 'Y' : 'N',
+		// 			orgnaization_details: $('#orgnaization_details').is(':checked') ? 'Y' : 'N',
+		// 			head_office: $('#head_office').is(':checked') ? 'Y' : 'N',
+		// 			calender_maintance: $('#calender_maintance').is(':checked') ? 'Y' : 'N',
+		// 			branches: $('#branches').is(':checked') ? 'Y' : 'N',
+		// 			exception: $('#exception').is(':checked') ? 'Y' : 'N',
+		// 			user_controls: $('#user_controls').is(':checked') ? 'Y' : 'N',
+		// 			user_profile: $('#user_profile').is(':checked') ? 'Y' : 'N',
+		// 			employee_profile: $('#employee_profile').is(':checked') ? 'Y' : 'N',
+		// 			reference_code_maintenance: $('#reference_code_maintenance').is(':checked') ? 'Y' : 'N',
+		// 			reference_code: $('#reference_code').is(':checked') ? 'Y' : 'N',
+		// 			gl_structure: $('#gl_structure').is(':checked') ? 'Y' : 'N',
+		// 			scheme_codes: $('#scheme_codes').is(':checked') ? 'Y' : 'N',
+		// 			chart_of_accounts: $('#chart_of_accounts').is(':checked') ? 'Y' : 'N',
+		// 			account_ledgers: $('#account_ledgers').is(':checked') ? 'Y' : 'N',
+		// 			audit_trail: $('#audit_trail').is(':checked') ? 'Y' : 'N',
+		// 			user_activities: $('#user_activities').is(':checked') ? 'Y' : 'N',
+		// 			business_activity: $('#business_activity').is(':checked') ? 'Y' : 'N',
+		// 			// budget_controls: $('#budget_controls').is(':checked') ? 'Y' : 'N',
+		// 			migration: $('#migration').is(':checked') ? 'Y' : 'N',
+		// 			customer_master: $('#customer_master').is(':checked') ? 'Y' : 'N',
+		// 			loan_master: $('#loan_master').is(':checked') ? 'Y' : 'N',
+		// 			loan_schedule_migration: $('#loan_schedule_migration').is(':checked') ? 'Y' : 'N',
+		// 			transaction_migration: $('#transaction_migration').is(':checked') ? 'Y' : 'N',
+		// 			loan_operation: $('#loan_operation').is(':checked') ? 'Y' : 'N',
+		// 			loan_operation_ls: $('#loan_operation_ls').is(':checked') ? 'Y' : 'N',
+		// 			loan_closure: $('#loan_closure').is(':checked') ? 'Y' : 'N',
+
+		// 			day_end_operation: $('#day_end_operation').is(':checked') ? 'Y' : 'N',
+		// 			customer_maintenance: $('#customer_maintenance').is(':checked') ? 'Y' : 'N',
+		// 			loan_maintanace: $('#loan_maintanace').is(':checked') ? 'Y' : 'N',
+
+		// 			participating_banks: $('#participating_banks').is(':checked') ? 'Y' : 'N',
+		// 			loan_collecting: $('#loan_collecting').is(':checked') ? 'Y' : 'N',
+		// 			collection_process: $('#collection_process').is(':checked') ? 'Y' : 'N',
+		// 			maintenance: $('#maintenance').is(':checked') ? 'Y' : 'N',
+		// 			customer_master_maintenance: $('#customer_master_maintenance').is(':checked') ? 'Y' : 'N',
+		// 			account_master_maintenance: $('#account_master_maintenance').is(':checked') ? 'Y' : 'N',
+		// 			lease_accounts: $('#lease_accounts').is(':checked') ? 'Y' : 'N',
+		// 			deposit_accounts_c: $('#deposit_accounts_c').is(':checked') ? 'Y' : 'N',
+		// 			office_accounts: $('#office_accounts').is(':checked') ? 'Y' : 'N',
+		// 			document_maintenance: $('#document_maintenance').is(':checked') ? 'Y' : 'N',
+		// 			kyc_norms: $('#kyc_norms').is(':checked') ? 'Y' : 'N',
+		// 			transaction_maintenance: $('#transaction_maintenance').is(':checked') ? 'Y' : 'N',
+		// 			journal_entries: $('#journal_entries').is(':checked') ? 'Y' : 'N',
+		// 			account_ledger_posting: $('#account_ledger_posting').is(':checked') ? 'Y' : 'N',
+		// 			account_ledger: $('#account_ledger').is(':checked') ? 'Y' : 'N',
+		// 			trial_balance_t: $('#trial_balance_t').is(':checked') ? 'Y' : 'N',
+		// 			profit_and_loss_account_t: $('#profit_and_loss_account_t').is(':checked') ? 'Y' : 'N',
+		// 			lease_loans: $('#lease_loans').is(':checked') ? 'Y' : 'N',
+		// 			account_maintenance_l: $('#account_maintenance_l').is(':checked') ? 'Y' : 'N',
+		// 			account_statements_l: $('#account_statements_l').is(':checked') ? 'Y' : 'N',
+		// 			flow_details_l: $('#flow_details_l').is(':checked') ? 'Y' : 'N',
+		// 			deposit_accounts: $('#deposit_accounts').is(':checked') ? 'Y' : 'N',
+		// 			account_maintenance_d: $('#account_maintenance_d').is(':checked') ? 'Y' : 'N',
+		// 			account_statements_d: $('#account_statements_d').is(':checked') ? 'Y' : 'N',
+		// 			flow_details_d: $('#flow_details_d').is(':checked') ? 'Y' : 'N',
+
+		// 			inquiries_and_reports: $('#inquiries_and_reports').is(':checked') ? 'Y' : 'N',
+		// 			journal_book: $('#journal_book').is(':checked') ? 'Y' : 'N',
+		// 			account_balance_inq: $('#account_balance_inq').is(':checked') ? 'Y' : 'N',
+		// 			interset_summary_inq: $('#interset_summary_inq').is(':checked') ? 'Y' : 'N',
+		// 			account_ledgers_i: $('#account_ledgers_i').is(':checked') ? 'Y' : 'N',
+		// 			trial_balance_i: $('#trial_balance_i').is(':checked') ? 'Y' : 'N',
+		// 			general_ledger: $('#general_ledger').is(':checked') ? 'Y' : 'N',
+		// 			profit_and_loss_account_i: $('#profit_and_loss_account_i').is(':checked') ? 'Y' : 'N',
+		// 			balance_sheet: $('#balance_sheet').is(':checked') ? 'Y' : 'N'
+
+
+
+		// 		}
+
+		// 		console.log(accessRole);
+
+				// $.ajax({
+				// 	type: "POST",
+				// 	contentType: "application/json",
+				// 	url: './accessRoleSubmit',
+				// 	data: JSON.stringify(accessRole),
+				// 	success: function (responseText, statusText, xhr, $form) {
+
+				// 		console.log(responseText);
+
+				// 	},
+				// 	error: function (error) {
+				// 		console.error(error);
+				// 	}
+				// });
+		// 	// } else {
+		// 	// 	console.log("GENERAL");
+		// 	// 	var accessRole = {
+		// 	// 		user_id: $('#userid').val(),
+		// 	// 		role_id: $('#roleId').val(),
+		// 	// 		role_desc: $('#roleDesc').val(),
+		// 	// 		permissions: $('#permission').val(),
+		// 	// 		work_class: $('#work_class').val(),
+		// 	// 		admin: $('#adming').is(':checked') ? 'Y' : 'N',
+		// 	// 		orgnaization_details: $('#orgnaization_detailsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		head_office: $('#head_officeg').is(':checked') ? 'Y' : 'N',
+		// 	// 		calender_maintance: $('#calender_maintanceg').is(':checked') ? 'Y' : 'N',
+		// 	// 		branches: $('#branchesg').is(':checked') ? 'Y' : 'N',
+		// 	// 		exception: $('#exceptiong').is(':checked') ? 'Y' : 'N',
+		// 	// 		user_controls: $('#user_controlsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		user_profile: $('#user_profileg').is(':checked') ? 'Y' : 'N',
+		// 	// 		employee_profile: $('#employee_profileg').is(':checked') ? 'Y' : 'N',
+		// 	// 		reference_code_maintenance: $('#reference_code_maintenanceg').is(':checked') ? 'Y' : 'N',
+		// 	// 		reference_code: $('#reference_codeg').is(':checked') ? 'Y' : 'N',
+		// 	// 		gl_structure: $('#gl_structureg').is(':checked') ? 'Y' : 'N',
+		// 	// 		scheme_codes: $('#scheme_codesg').is(':checked') ? 'Y' : 'N',
+		// 	// 		chart_of_accounts: $('#chart_of_accountsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_ledgers: $('#account_ledgersg').is(':checked') ? 'Y' : 'N',
+		// 	// 		audit_trail: $('#audit_trailg').is(':checked') ? 'Y' : 'N',
+		// 	// 		user_activities: $('#user_activitiesg').is(':checked') ? 'Y' : 'N',
+		// 	// 		business_activity: $('#business_activityg').is(':checked') ? 'Y' : 'N',
+		// 	// 		// budget_controls: $('#budget_controlsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		migration: $('#migrationg').is(':checked') ? 'Y' : 'N',
+		// 	// 		customer_master: $('#customer_masterg').is(':checked') ? 'Y' : 'N',
+		// 	// 		loan_master: $('#loan_masterg').is(':checked') ? 'Y' : 'N',
+		// 	// 		loan_schedule_migration: $('#loan_schedule_migrationg').is(':checked') ? 'Y' : 'N',
+		// 	// 		transaction_migration: $('#transaction_migrationg').is(':checked') ? 'Y' : 'N',
+		// 	// 		loan_operation: $('#loan_operationg').is(':checked') ? 'Y' : 'N',
+		// 	// 		loan_operation_ls: $('#loan_operation_lsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		loan_closure: $('#loan_closureg').is(':checked') ? 'Y' : 'N',
+
+		// 	// 		day_end_operation: $('#day_end_operationg').is(':checked') ? 'Y' : 'N',
+		// 	// 		customer_maintenance: $('#customer_maintenanceg').is(':checked') ? 'Y' : 'N',
+		// 	// 		loan_maintanace: $('#loan_maintanaceg').is(':checked') ? 'Y' : 'N',
+
+		// 	// 		collection_process: $('#collection_processg').is(':checked') ? 'Y' : 'N',
+		// 	// 		loan_collecting: $('#loan_collectingg').is(':checked') ? 'Y' : 'N',
+		// 	// 		participating_banks: $('#participating_banksg').is(':checked') ? 'Y' : 'N',
+		// 	// 		maintenance: $('#maintenanceg').is(':checked') ? 'Y' : 'N',
+		// 	// 		customer_master_maintenance: $('#customer_master_maintenanceg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_master_maintenance: $('#account_master_maintenanceg').is(':checked') ? 'Y' : 'N',
+		// 	// 		lease_accounts: $('#lease_accountsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		deposit_accounts_c: $('#deposit_accounts_cg').is(':checked') ? 'Y' : 'N',
+		// 	// 		office_accounts: $('#office_accountsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		document_maintenance: $('#document_maintenanceg').is(':checked') ? 'Y' : 'N',
+		// 	// 		kyc_norms: $('#kyc_normsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		transaction_maintenance: $('#transaction_maintenanceg').is(':checked') ? 'Y' : 'N',
+		// 	// 		journal_entries: $('#journal_entriesg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_ledger_posting: $('#account_ledger_postingg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_ledger: $('#account_ledgerg').is(':checked') ? 'Y' : 'N',
+		// 	// 		trial_balance_t: $('#trial_balance_tg').is(':checked') ? 'Y' : 'N',
+		// 	// 		profit_and_loss_account_t: $('#profit_and_loss_account_tg').is(':checked') ? 'Y' : 'N',
+		// 	// 		lease_loans: $('#lease_loansg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_maintenance_l: $('#account_maintenance_lg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_statements_l: $('#account_statements_lg').is(':checked') ? 'Y' : 'N',
+		// 	// 		flow_details_l: $('#flow_details_lg').is(':checked') ? 'Y' : 'N',
+		// 	// 		deposit_accounts: $('#deposit_accountsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_maintenance_d: $('#account_maintenance_dg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_statements_d: $('#account_statements_dg').is(':checked') ? 'Y' : 'N',
+		// 	// 		flow_details_d: $('#flow_details_dg').is(':checked') ? 'Y' : 'N',
+
+		// 	// 		inquiries_and_reports: $('#inquiries_and_reportsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		journal_book: $('#journal_bookg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_balance_inq: $('#account_balance_inqg').is(':checked') ? 'Y' : 'N',
+		// 	// 		interset_summary_inq: $('#interset_summary_inqg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_ledgers_i: $('#account_ledgers_ig').is(':checked') ? 'Y' : 'N',
+		// 	// 		trial_balance_i: $('#trial_balance_ig').is(':checked') ? 'Y' : 'N',
+		// 	// 		general_ledger: $('#general_ledgerg').is(':checked') ? 'Y' : 'N',
+		// 	// 		profit_and_loss_account_i: $('#profit_and_loss_account_ig').is(':checked') ? 'Y' : 'N',
+		// 	// 		balance_sheet: $('#balance_sheetg').is(':checked') ? 'Y' : 'N'
+
+
+
+		// 	// 	}
+
+		// 	// 	console.log(accessRole);
+
+		// 	// 	$.ajax({
+		// 	// 		type: "POST",
+		// 	// 		contentType: "application/json",
+		// 	// 		url: './accessRoleSubmit',
+		// 	// 		data: JSON.stringify(accessRole),
+		// 	// 		success: function (responseText, statusText, xhr, $form) {
+
+		// 	// 			console.log(responseText);
+
+		// 	// 		},
+		// 	// 		error: function (error) {
+		// 	// 			console.error(error);
+		// 	// 		}
+		// 	// 	});
+		// 	// }
+
+		// }
+
+
+	</script>
+	<script>
+
+		function openEmployeeProfile(a) {
+			event.preventDefault();
+			var userButton = document.getElementById("userButton");
+			userButton.classList.remove("active");
+
+			var employeeButton = document.getElementById("employeeButton");
+			employeeButton.classList.add("active");
+
+			location.href = './employeeProfile?formmode=list';
+		}
+	</script>
+	<script>
+		function userIdModal(a) {
+			//alert("hihihi")
+			
+			$('#userModal').modal('show');
+
+		}
+
+		function setUserData(a) {
+			var employee_id = a.getAttribute("data-employee_id");
+			var employee_name = a.getAttribute("data-employee_name");
+			var branch_id = a.getAttribute("data-branch_id");
+			var branch_desc = a.getAttribute("data-branch_desc");
+			$("#userid").val(employee_id);
+			$("#username").val(employee_name);
+			$("#branch_id").val(branch_id);
+			$("#branch_des").val(branch_desc);
+			
+			$('#userModal').modal('hide');
+			
+		}
+	</script>
+
+
+
+
+
+</head>
+
+
+<body>
+
+	<div class="col-sm-2">
+		<div th:insert="BGLSHeaderMenu :: header"></div>
+	</div>
+	<!---------------------User List Starts------------------------------------------------------->
+	<!-- Start Content-->
+	<div class="container-manager">
+
+
+
+		<div class="row">
+
+
+			<div class="col-sm-11 ml-5 mt-2" style="font-size: 0.8rem;">
+
+
+				<!-- ------------------------------------User profile List---------------------------------- -->
+				<div th:if="${formmode}=='list'">
+
+
+					<div class="card w-100 border">
+
+						<div class="card-header" style="background-color: #e9ecef; height: 50px">
+							<div class="float-left">
+								<h6 style="font-size: 1.2rem;">USER PROFILE - LIST </h6>
+							</div>
+							<div class="btn-group nav-buttons float-right">
+								<button type="button" class="btn-primary big-btn" id="btnAdd"
+									onclick="adduser();">Create User</button>
+
+							</div>
+
+
+						</div>
+						<div class="mt-3"
+							style="padding: 4px 4px; position: relative; display: flex; justify-content: space-around; width: 100%;">
+							<!-- Tab buttons -->
+							<button class="tablinks active rounded-pill" id="userButton"
+								style="font-size: 16px; padding: 4px 8px; height:40%;width:30%;">User
+								Profile</button>
+							<button class="tablinks rounded-pill" id="employeeButton"
+								onclick="openEmployeeProfile(this);"
+								style="font-size: 16px; padding: 4px 8px; height: 40%;width:30%;">Employee
+								Profile</button>
+
+						</div>
+						<div class="card-body">
+
+
+							<div class="table-responsive">
+								<table class="table  table-bordered  table-hover table-sm"
+									style="margin-bottom: 0px; font-size: initial;" id="usertable">
+									<thead class="thead-light">
+
+
+										<tr>
+
+											<th>USER ID</th>
+											<th>USER NAME</th>
+
+											<th>STATUS</th>
+											<th>SELECT</th>
+										</tr>
+									</thead>
+									<tbody id="placelist">
+										<tr th:each="userProfile : ${userProfiles}"
+											th:attr="data-userid=${userProfile.userid}" th:id="${userProfile.userid}"
+											class="userlist">
+
+											<td><a href="#" th:text="${userProfile.userid}"
+													th:data-userId="${userProfile.userid}"
+													onclick="enquiryuser(this)">View</a></td>
+
+											<!--<td  th:text="${userProfile.userid}">
+												456</td>-->
+											<td style="width: 40%;" th:text="${userProfile.username}">TEST</td>
+
+											<th:block th:switch="${userProfile?.auth_flg}" style="text-align: center;">
+												<td th:case="'N'" style="color: green;">Verified</td>
+												<td th:case="'Y'" style="color: red;">UnVerified</td>
+												<td th:case="*" style="color: red;">UnVerified</td>
+											</th:block>
+											<td>
+												<div class="dropdown action-dropdown">
+													<button class="btn btn-action dropdown-toggle" style="padding:0px"
+														type="button" id="dropdownMenuButton" title="Action"
+														data-toggle="dropdown" aria-haspopup="true"
+														aria-expanded="false">Action</button>
+
+													<div class="dropdown-menu" style="padding:0px"
+														aria-labelledby="dropdownMenuButton">
+														<a class="dropdown-item view-item"  
+															th:attr="data-userId=${userProfile?.userid}" title="View"
+															onclick="enquiryuser(this)">View</a>
+
+														<a class="dropdown-item verify-item" style="border-top: 1px solid #dee2e6;" th:if='${userProfile?.modify_flg == "N" and userProfile?.auth_flg == "Y" and userProfile?.entry_user != session.USERID}'
+															th:attr="data-userId=${userProfile?.userid}"															
+															 title="Verify"
+															onclick="verifyuser(this)">Verify</a>
+
+														<!-- <a class="dropdown-item delete-item" style="border-top: 1px solid #dee2e6;" th:if='${userProfile?.auth_flg == "N" and userProfile?.modify_flg == "Y" and userProfile?.entry_user == session.USERID}'
+															th:attr="data-userId=${userProfile?.userid}"
+															title="Delete"
+															onclick="deleteUnverifiedUser(this)">Delete</a> -->
+
+														<a class="dropdown-item modify-item" style="border-top: 1px solid #dee2e6;"  th:if='${userProfile?.auth_flg == "N" and userProfile?.modify_flg == "Y" and userProfile?.entry_user == session.USERID}'
+															th:attr="data-userId=${userProfile?.userid}"
+															title="Modify"
+															onclick="modifyuser(this)">Modify</a>
+
+
+														<a class="dropdown-item delete-item" style="border-top: 1px solid #dee2e6;" th:if='${userProfile?.auth_flg == "N" and userProfile?.modify_flg == "Y" and userProfile?.entry_user == session.USERID}'
+															th:attr="data-userId=${userProfile?.userid}"
+															 title="Delete"
+															onclick="deleteuser(this)">Delete</a>
+													</div>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="card-footer text-center"
+							style="background-color: #e9ecef">
+
+
+							<button class="btn-primary big-btn" onclick="Home();">Home</button>
+							<button class="btn-primary big-btn" onclick="Back();">Back</button>
+
+						</div>
+					</div>
+
+
+				</div>
+
+				<!-- ------------------------------------user profile add---------------------------------- -->
+				<div th:if="${formmode}=='add'">
+
+
+					<div class="card w-100 border">
+
+						<div class="card-header" style="background-color: #e9ecef; height: 50px">
+							<div class="float-left">
+								<h6 style="font-size: 1.5rem;">USER PROFILE-ADD</h6>
+
+							</div>
+
+
+						</div>
+						<div class="card-body">
+
+							<form class=" border border-secondary" action="#" method="post" autocomplete="off"
+								id="userProfile">
+
+
+								<div class="row formline" style="padding: 15px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">
+										<label for="userId">User Id <b style="color: red">*</b></label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" id="userid"
+											class="form-control form-control-sm bg-white border border-dark"
+											name="userid" autocomplete="off" required readonly />
+										<i id="searchIcon" class="info-icon position-absolute"
+											onclick="userIdModal();"
+											style="right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer;">i</i>
+									</div>
+									<div class="col-sm-1">
+
+										<a th:if="${formmode}=='add'" href="#"><i class="fas fa-search searchico"
+												data-toggle="modal" data-target="#finusers" id="iconacc" hidden></i></a>
+									</div>
+									<div class="col-sm-2">
+										<label for="username">User Name</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" id="username" name="username" oninput="letterOnly(this);"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="false" required />
+									</div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">
+										<label for="branch_id">Branch Id</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" id="branch_id"
+											class="form-control form-control-sm bg-white border border-dark"
+											name="branch_id" autocomplete="off" required readonly />
+
+									</div>
+									<div class="col-sm-1">
+									</div>
+									<div class="col-sm-2">
+										<label for="branch_des">Branch Des</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" id="branch_des" name="branch_des"
+											class="form-control form-control-sm bg-white border border-dark" required
+											readonly />
+									</div>
+								</div>
+
+
+
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Mobile No</label>
+									<div class="col-sm-2">
+										<input type="text" id="mobNo" maxlength="8" name="mob_number"
+											oninput="phoneNumber(this);"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required />
+									</div>
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Email Id</label>
+									<div class="col-sm-2">
+										<input type="email" id="emailId" name="email_id" oninput="emailCheck(this);"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required />
+										<div id="email-error" style="color: red;"></div>
+									</div>
+
+								</div>
+
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">User Disable Date</label>
+									<div class="col-sm-2">
+										<input type="text" id="disableDate" name="disable_start_date"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" placeholder="dd-mm-yyyy" required />
+									</div>
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">User Disable Till Date</label>
+									<div class="col-sm-2">
+										<input type="text" name="disable_end_date" id="disableTilDate" placeholder="dd-mm-yyyy"
+											class="form-control form-control-sm bg-white border border-dark" required />
+									</div>
+
+								</div>
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Password</label>
+									<div class="col-sm-2">
+
+										<input type="password" id="password" name="password" value="Bornfire@123"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" readonly />
+										<button type="button" id="pwd-toggle" class="toggle-btn position-absolute" aria-label="Show password" style="right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+    <!-- Open Eye -->
+    <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12s3.75-7.5 9.75-7.5 9.75 7.5 9.75 7.5-3.75 7.5-9.75 7.5S2.25 12 2.25 12z"></path>
+      <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"></circle>
+    </svg>
+
+    <!-- Closed Eye -->
+    <svg class="eye-closed" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18M9.88 9.88a3 3 0 104.24 4.24M6.1 6.1C4.27 7.57 2.93 9.6 2.25 12c1.5 4.5 6 7.5 9.75 7.5 1.5 0 2.88-.37 4.1-1.02"></path>
+    </svg>
+  </button>
+
+									</div>
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">Password Expiry Date <b style="color: red">*</b> </label>
+									<div class="col-sm-2">
+										<input type="text" id="passExDate" name="pass_exp_date" placeholder="dd-mm-yyyy"
+											class="form-control form-control-sm bg-white border border-dark" required />
+									</div>
+									<div class="col-sm-1"></div>
+								</div>
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">User Status</label>
+									<div class="col-sm-2">
+										<select id="userStatus" name="user_status"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required>
+
+											<option value="Active">Active</option>
+											<option value="Inactive">Inactive</option>
+										</select>
+									</div>
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">Login Status</label>
+									<div class="col-sm-2">
+										<select id="loginStatus" name="login_status"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required>
+
+											<option value="Active">Active</option>
+											<option value="Inactive">Inactive</option>
+
+										</select>
+									</div>
+
+								</div>
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">Account Expiry Date <b style="color: red">*</b></label>
+									<div class="col-sm-2">
+										<input type="text" id="acctexpiryDate" name="acc_exp_date" placeholder="dd-mm-yyyy"
+											class="form-control form-control-sm bg-white border border-dark" required />
+									</div>
+
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">Login Flag</label>
+									<div class="col-sm-2">
+										<input id="login_flg" name="login_flg" value="N"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required readonly>
+
+									</div>
+
+								</div>
+								<div class="row formline" style="padding: 0px 0px 10px 0px;">
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">Account Access Code</label>
+									<div class="col-sm-2">
+
+										<select id="acct_access_code" name="acct_access_code"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required>
+
+											<option value="ALL">All</option>
+											<option value="LOAN">Loan</option>
+
+										</select>
+									</div>
+
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">Document Access Code</label>
+									<div class="col-sm-2">
+										<select id="doc_access_code" name="doc_access_code"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required>
+
+											<option value="ALL">All</option>
+											<option value="LOAN">Loan</option>
+
+										</select>
+									</div>
+
+								</div>
+
+								<div class="card-header"
+									style="background-color: #e9ecef; height: 50px; padding: 11px 15px;">
+									<div class="float-left" style="padding-left: 100px;">
+										<h6 style="font-size: 1.5rem;">ROLE AND RIGHTS</h6>
+
+
+									</div>
+
+
+								</div>
+
+
+								<div class="row formline mt-3" style="padding: 0px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Role Id <b style="color: red">*</b></label>
+									<div class="col-sm-2">
+										<select id="roleId" name="role_id"
+											class="form-control form-control-sm bg-white border border-dark"
+											onchange="roledesc();" autocomplete="off" required>
+											<option value="">Select</option>
+											<option value="ADM">ADM</option>
+											<option value="GEN">GEN</option>
+
+										</select>
+									</div>
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">Role Description</label>
+									<div class="col-sm-2">
+										<input type="text" id="roleDesc" readonly name="role_desc"
+											class="form-control form-control-sm bg-white border border-dark" />
+									</div>
+
+								</div>
+
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">Permissions</label>
+									<div class="col-sm-2">
+										<select id="permission" name="permissions"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required>
+											<option value="">Select</option>
+											<option value="R">Read</option>
+											<option value="W">Write</option>
+										</select>
+									</div>
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">Work Class</label>
+									<div class="col-sm-2">
+										<select id="work_class" name="work_class"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required>
+											<option value="">Select</option>
+											<option value="M">Maker</option>
+											<option value="C">Checker</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="row formline " style="padding: 0px 0px 10px 0px;">
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Access Control</label>
+									<div class="col-sm-2">
+										<a href="#">
+											<img style="width: 16px; height: 16px;" title="Search"
+												th:src="@{/images/searchicon.png}" class="searchico"
+												onclick="openAccessModal(this);" id="iconacc" alt="Search">
+										</a>
+
+									</div>
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">Remarks </label>
+									<div class="col-sm-2">
+										<input type="text" id="remarks" name="remarks"
+											class="form-control form-control-sm bg-white border border-dark" />
+									</div>
+
+								</div>
+
+							</form>
+
+
+						</div>
+
+
+						<div class="card-footer text-center mt-3">
+
+
+
+
+							<button type="button" class="btn-primary big-btn" id="btnHome"
+								onclick="Home();">Home</button>
+							<button type="button" class="btn-primary big-btn" id="btnSubmit"
+								onclick="submitform();">Submit</button>
+							<button type="button" class="btn-primary big-btn" id="btnBack"
+								onclick="Back();">Back</button>
+
+
+						</div>
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table  table-bordered  table-hover table-sm"
+									style="margin-bottom: 0px; font-size: initial;">
+									<tr>
+										<td class="col-sm-2" style="text-align: right;">
+											<font size="2"><B>Entry User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px; margin-right: 20px;">
+											<input type="text" id="entryuser" name="ub.entryuser" th:value="${user}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled>
+										</td>
+										<td class="col-sm-2" style="text-align: right;">
+											<font size="2"><B>Modify User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px;"><input type="text" name="ub.modifyuser" id="modifyuser" th:value="${user}"
+												
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled>
+										</td>
+										<td class="col-sm-2" style="text-align: right;">
+											<font size="2"><B> Verify User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px;"><input type="text" id="verifyuser"
+												
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled>
+										</td>
+
+									</tr>
+									<tr>
+										<td style="text-align: right;">
+											<font size="2"><B>Entry
+													Time :</B></font>
+										</td>
+										<td style="width: 112px"><input type="text" id="entrytime" name="ub.entrytime"
+												th:value="${#dates.format(currentDate, 'dd-MM-yyyy HH:mm:ss')}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px; "
+												disabled>
+										</td>
+										<td style="text-align: right;">
+											<font size="2"><B>Modify Time :</B></font>
+										</td>
+										<td style="width: 112px"><input type="text" id="modifytime" name="ub.modifytime" th:value="${#dates.format(currentDate, 'dd-MM-yyyy HH:mm:ss')}"
+												style="width: 115px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled>
+										</td>
+										<td style="text-align: right;">
+											<font size="2"><B> Verify
+													Time :</B></font>
+										</td>
+										<td style="width: 112px"><input type="text" id="verifytime" name="ub.verifytime"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled>
+										</td>
+
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+
+				<!-- ------------------------------------user profile VIEW---------------------------------- -->
+				<div
+					th:if="${formmode}=='view' or ${formmode}=='verify' or ${formmode}=='delete' or ${formmode}=='deleteUnverified'">
+
+
+					<div class="card w-100 border">
+
+						<div class="card-header" style="background-color: #e9ecef; height: 50px">
+							<div class="float-left" th:if="${formmode}=='view'">
+								<h6 style="font-size: 1.5rem;">USER PROFILE - VIEW</h6>
+
+							</div>
+							<div class="float-left" th:if="${formmode}=='verify'">
+								<h6 style="font-size: 1.5rem;">USER PROFILE - VERIFY</h6>
+
+							</div>
+							<div class="float-left" th:if="${formmode}=='delete' or ${formmode}=='deleteUnverified' ">
+								<h6 style="font-size: 1.5rem;">USER PROFILE - DELETE</h6>
+
+							</div>
+							<div class="btn-group nav-buttons float-right">
+								<button type="button" class="btn-primary big-btn" id="btnAdd"
+									onclick="goToList();">List</button>
+
+							</div>
+
+
+						</div>
+						<div class="card-body">
+
+							<form class=" border border-secondary" action="#" method="post" autocomplete="off"
+								id="userProfile">
+
+
+								<div class="row formline" style="padding: 15px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">
+										<label for="userId">User Id <b style="color: red">*</b></label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" id="userid" oninput="letterAndNumbers(this);"
+											th:value="${userProfile?.userid}"
+											class="form-control form-control-sm bg-white border border-dark"
+											name="userid" autocomplete="off" required readonly />
+									</div>
+									<div class="col-sm-1">
+
+										<a th:if="${formmode}=='add'" href="#"><i class="fas fa-search searchico"
+												data-toggle="modal" data-target="#finusers" id="iconacc" hidden></i></a>
+									</div>
+									<div class="col-sm-2">
+										<label for="username">User Name</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" th:value="${userProfile?.username}" id="username"
+											name="username" oninput="letterOnly(this);"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="false" required readonly />
+									</div>
+								</div>
+								
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Branch Id</label>
+									<div class="col-sm-2">
+										<input type="text" th:value="${userProfile?.branch_id}" id="branch_id"
+											 name="branch_id"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required readonly />
+									</div>
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Branch Desc</label>
+									<div class="col-sm-2">
+										<input type="text" th:value="${userProfile?.branch_des}" id="branch_des"
+											name="branch_des"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required readonly />
+									
+									</div>
+
+								</div>
+
+
+
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Mobile No</label>
+									<div class="col-sm-2">
+										<input type="text" th:value="${userProfile?.mob_number}" id="mobNo"
+											maxlength="8" name="mob_number"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required readonly />
+									</div>
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Email Id</label>
+									<div class="col-sm-2">
+										<input type="email" th:value="${userProfile?.email_id}" id="emailId"
+											name="email_id"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required readonly />
+										<div id="email-error" style="color: red;"></div>
+									</div>
+
+								</div>
+
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">User Disable Date</label>
+
+									<div class="col-sm-2">
+										<input type="text"
+											th:value="${#dates.format(userProfile?.disable_start_date, 'dd-MM-yyyy')}"
+											id="disableDate" name="disable_start_date"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" placeholder="dd-mm-yyyy" required disabled />
+									</div>
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">User Disable Till Date</label>
+									<div class="col-sm-2">
+										<input type="text"
+											th:value="${#dates.format(userProfile?.disable_end_date, 'dd-MM-yyyy')}"
+											name="disable_end_date" id="disableTilDate" placeholder="dd-mm-yyyy"
+											class="form-control form-control-sm bg-white border border-dark" required
+											disabled />
+									</div>
+
+								</div>
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Password</label>
+									<div class="col-sm-2">
+
+										<input type="password" id="password" name="password" value="Bornfire@123"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" readonly />
+										<button type="button" id="pwd-toggle" class="toggle-btn position-absolute" aria-label="Show password" style="right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+    <!-- Open Eye -->
+    <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12s3.75-7.5 9.75-7.5 9.75 7.5 9.75 7.5-3.75 7.5-9.75 7.5S2.25 12 2.25 12z"></path>
+      <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"></circle>
+    </svg>
+
+    <!-- Closed Eye -->
+    <svg class="eye-closed" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18M9.88 9.88a3 3 0 104.24 4.24M6.1 6.1C4.27 7.57 2.93 9.6 2.25 12c1.5 4.5 6 7.5 9.75 7.5 1.5 0 2.88-.37 4.1-1.02"></path>
+    </svg>
+  </button>
+
+									</div>
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">Password Expiry Date <b style="color: red">*</b></label>
+
+									<div class="col-sm-2">
+										<input type="text"
+											th:value="${#dates.format(userProfile?.pass_exp_date, 'dd-MM-yyyy')}"
+											id="passExDate" name="pass_exp_date" placeholder="dd-mm-yyyy"
+											class="form-control form-control-sm bg-white border border-dark" required
+											disabled />
+									</div>
+									<div class="col-sm-1"></div>
+								</div>
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">User Status</label>
+									<div class="col-sm-2">
+										<input type="text" id="userStatus" name="user_status"
+											th:value="${userProfile?.user_status}"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" readonly />
+										<!--<select id="userStatus" name="user_status"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required disabled>
+
+											<option value="Active"
+												th:selected="${userProfile?.user_status == 'Active'}">Active</option>
+											<option value="Inactive"
+												th:selected="${userProfile?.user_status == 'Inactive'}">Inactive
+											</option>
+										</select>-->
+									</div>
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">Login Status</label>
+									<div class="col-sm-2">
+
+										<input type="text" id="loginStatus" name="login_status"
+											th:value="${userProfile?.login_status}"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" readonly />
+										<!--<select id="loginStatus" name="login_status"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required disabled>
+
+											<option value="Active"
+												th:selected="${userProfile?.login_status == 'Active'}">Active</option>
+											<option value="Inactive"
+												th:selected="${userProfile?.login_status == 'Inactive'}">Inactive
+											</option>
+
+										</select>-->
+									</div>
+
+								</div>
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">Account Expiry Date <b style="color: red">*</b></label>
+									<div class="col-sm-2">
+										<input type="text" id="acctexpiryDate" name="acc_exp_date"
+											th:value="${#dates.format(userProfile?.acc_exp_date, 'dd-MM-yyyy')}" placeholder="dd-mm-yyyy"
+											class="form-control form-control-sm bg-white border border-dark" required
+											disabled />
+									</div>
+
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">Login Flag</label>
+									<div class="col-sm-2">
+										<input id="login_flg" name="login_flg" th:value="${userProfile?.login_flg}"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required readonly>
+
+									</div>
+
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 10px 0px;">
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">Account Access Code</label>
+									<div class="col-sm-2">
+
+										<input id="acct_access_code" name="acct_access_code"
+											th:value="${userProfile?.acct_access_code}"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required readonly>
+
+										<!--<select id="acct_access_code" name="acct_access_code"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required>
+
+											<option value="ALL">All</option>
+											<option value="LOAN">Loan</option>
+
+										</select>-->
+									</div>
+
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">Document Access Code</label>
+									<div class="col-sm-2">
+
+										<input id="doc_access_code" name="doc_access_code"
+											th:value="${userProfile?.doc_access_code}"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required readonly>
+										<!--<select id="doc_access_code" name="doc_access_code"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required>
+
+											<option value="ALL">All</option>
+											<option value="LOAN">Loan</option>
+
+										</select>-->
+									</div>
+
+								</div>
+
+
+
+								<div class="card-header"
+									style="background-color: #e9ecef; height: 50px; padding: 11px 15px;">
+									<div class="float-left" style="padding-left: 100px;">
+										<h6 style="font-size: 1.5rem;">ROLE AND RIGHTS</h6>
+
+
+									</div>
+
+
+								</div>
+
+
+								<div class="row formline mt-3" style="padding: 0px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Role Id <b style="color: red">*</b></label>
+									<div class="col-sm-2">
+										<select id="roleId" name="role_id"
+											class="form-control form-control-sm bg-white border border-dark"
+											onchange="roledesc();" autocomplete="off" required disabled>
+											<option value="">Select</option>
+											<option value="ADM" th:selected="${userProfile?.role_id == 'ADM'}">ADM
+											</option>
+											<option value="GEN" th:selected="${userProfile?.role_id == 'GEN'}">GEN
+											</option>
+
+										</select>
+									</div>
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">Role Description</label>
+									<div class="col-sm-2">
+										<input th:value="${userProfile?.role_desc}" type="text" id="roleDesc"
+											name="role_desc"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+									</div>
+
+								</div>
+
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">Permissions</label>
+									<div class="col-sm-2">
+										<select id="permission" name="permissions"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required disabled>
+											<option value="">Select</option>
+											<option value="R" th:selected="${userProfile?.permissions == 'R'}">Read
+											</option>
+											<option value="W" th:selected="${userProfile?.permissions == 'W'}">Write
+											</option>
+										</select>
+									</div>
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">Work Class</label>
+									<div class="col-sm-2">
+										<select id="work_class" name="work_class"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required disabled>
+											<option value="">Select</option>
+											<option value="M" th:selected="${userProfile?.work_class == 'M'}">Maker
+											</option>
+											<option value="C" th:selected="${userProfile?.work_class == 'C'}">Checker
+											</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 10px 0px;">
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Access Control</label>
+									<div class="col-sm-2">
+										<a href="#">
+											<img style="width: 16px; height: 16px;" title="Search"
+												th:src="@{/images/searchicon.png}" class="searchico"
+												onclick="openAccessModalView(this);" id="iconacc" alt="Search">
+										</a>
+
+									</div>
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">Remarks </label>
+									<div class="col-sm-2">
+										<input type="text" id="remarks" name="remarks"
+											th:value="${userProfile?.remarks}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+									</div>
+
+								</div>
+
+							</form>
+						</div>
+
+						<div class="card-footer text-center mt-3">
+
+
+
+
+							<button type="button" class="btn-primary big-btn" id="btnHome"
+								onclick="Home();">Home</button>
+							<button type="button" th:if="${formmode}=='verify'" class="btn-primary big-btn"
+								id="btnSubmit" th:attr="data-userId=${userProfile?.userid}"
+								onclick="verifyData(this);">Verify</button>
+							<button type="button" th:if="${formmode}=='delete'" class="btn-primary big-btn"
+								id="btnSubmit"
+								th:attr="data-userId=${userProfile?.userid},data-flag=${userProfile?.entity_flg}"
+								onclick="deleteRecord(this);">Delete</button>
+							<!-- <button type="button" th:if="${formmode}=='deleteUnverified'"
+								class="btn-primary big-btn" id="btnSubmit"
+								th:attr="data-userId=${userProfile?.userid},data-flag=${userProfile?.entity_flg}"
+								onclick="deleteUnverifiedRecord(this);">Delete</button> -->
+							<button type="button" class="btn-primary big-btn" id="btnBack"
+								onclick="Back();">Back</button>
+
+
+						</div>
+
+						<div class="card-body">
+
+							<div class="table-responsive">
+								<table class="table  table-bordered  table-hover table-sm"
+									style="margin-bottom: 0px; font-size: initial;">
+									<tr>
+										<td class="col-sm-2" style="text-align: right;">
+											<font size="2"><B>Entry User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px;">
+											<input type="text" id="entryuser" name="ub.entryuser"
+												th:value="${userProfile?.entry_user}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled>
+										</td>
+										<td class="col-sm-2" style="text-align: right;">
+											<font size="2"><B>Modify User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px;"><input type="text" id="modify_user"
+												name="ub.modify_user" th:value="${userProfile?.modify_user}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled>
+										</td>
+										<td class="col-sm-2" style="text-align: right;">
+											<font size="2"><B> Verify User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px;"><input type="text" id="verifyuser"
+												name="ub.verifyuser" th:value="${userProfile?.auth_user}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled>
+										</td>
+
+									</tr>
+									<tr>
+										<td style="text-align: right;">
+											<font size="2"><B>Entry
+													Time :</B></font>
+										</td>
+										<td style="width: 112px"><input type="text" id="entrytime" name="ub.entrytime"
+												th:value="${#dates.format(userProfile?.entry_time, 'dd-MM-yyyy')}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled>
+										</td>
+										<td style="text-align: right;">
+											<font size="2"><B>Modify Time :</B></font>
+										</td>
+										<td style="width: 112px"><input type="text" id="modifytime" name="ub.modifytime"
+												th:value="${#dates.format(userProfile?.modify_time, 'dd-MM-yyyy')}"
+												style="width: 115px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled>
+										</td>
+										<td style="text-align: right;">
+											<font size="2"><B> Verify
+													Time :</B></font>
+										</td>
+										<td style="width: 112px"><input type="text" id="verifytime" name="ub.verifytime"
+												th:value="${#dates.format(userProfile?.auth_time, 'dd-MM-yyyy')}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px; "
+												disabled>
+										</td>
+
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+
+				<!-- ------------------------------------user profile MODIFY---------------------------------- -->
+				<div th:if="${formmode}=='modify'">
+
+
+					<div class="card w-100 border">
+
+						<div class="card-header" style="background-color: #e9ecef; height: 50px">
+							<div class="float-left">
+								<h6 style="font-size: 1.5rem;">USER PROFILE - MODIFY</h6>
+
+							</div>
+							<div class="btn-group nav-buttons float-right">
+								<button type="button" class="btn btn-xs btn-primary btns p-2" id="btnAdd"
+									onclick="goToList();">List</button>
+
+							</div>
+
+
+						</div>
+						<div class="card-body">
+
+							<form class=" border border-secondary" action="#" method="post" autocomplete="off"
+								id="userProfile">
+
+
+								<div class="row formline" style="padding: 15px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">
+										<label for="userId">User Id <b style="color: red">*</b></label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" id="userid" oninput="letterAndNumbers(this);"
+											th:value="${userProfile?.userid}"
+											class="form-control form-control-sm bg-white border border-dark"
+											name="userid" autocomplete="off" required readonly />
+									</div>
+									<div class="col-sm-1">
+
+										<a th:if="${formmode}=='add'" href="#"><i class="fas fa-search searchico"
+												data-toggle="modal" data-target="#finusers" id="iconacc" hidden></i></a>
+									</div>
+									<div class="col-sm-2">
+										<label for="username">User Name</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" th:value="${userProfile?.username}" id="username"
+											name="username" oninput="letterOnly(this);"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="false" required readonly />
+									</div>
+								</div>
+
+
+	<div class="row formline" style="padding: 0px 0px 2px 0px;">
+
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Branch Id</label>
+									<div class="col-sm-2">
+										<input type="text" th:value="${userProfile?.branch_id}" id="branch_id"
+											 name="branch_id"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required readonly />
+									</div>
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Branch Desc</label>
+									<div class="col-sm-2">
+										<input type="text" th:value="${userProfile?.branch_des}" id="branch_des"
+											name="branch_des"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required readonly />
+									
+									</div>
+
+								</div>
+
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Mobile No</label>
+									<div class="col-sm-2">
+										<input type="text" th:value="${userProfile?.mob_number}" id="mobNo"
+											maxlength="8" name="mob_number" oninput="phoneNumber(this);"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required />
+									</div>
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Email Id</label>
+									<div class="col-sm-2">
+										<input type="email" th:value="${userProfile?.email_id}" id="emailId"
+											name="email_id" oninput="emailCheck(this);"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required />
+										<div id="email-error" style="color: red;"></div>
+									</div>
+
+								</div>
+
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">User Disable Date</label>
+
+									<div class="col-sm-2">
+										<input type="text"
+											th:value="${#dates.format(userProfile?.disable_start_date, 'dd-MM-yyyy')}"
+											id="disableDate" name="disable_start_date"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" placeholder="dd-mm-yyyy" required />
+									</div>
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">User Disable Till Date</label>
+									<div class="col-sm-2">
+										<input type="text"
+											th:value="${#dates.format(userProfile?.disable_end_date, 'dd-MM-yyyy')}"
+											name="disable_end_date" id="disableTilDate"
+											class="form-control form-control-sm bg-white border border-dark" placeholder="dd-mm-yyyy" required />
+									</div>
+
+								</div>
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Password</label>
+									<div class="col-sm-2">
+
+										<input type="password" id="password" name="password" value="Bornfire@123"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" readonly />
+<button type="button" id="pwd-toggle" class="toggle-btn position-absolute" aria-label="Show password" style="right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+    <!-- Open Eye -->
+    <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12s3.75-7.5 9.75-7.5 9.75 7.5 9.75 7.5-3.75 7.5-9.75 7.5S2.25 12 2.25 12z"></path>
+      <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"></circle>
+    </svg>
+
+    <!-- Closed Eye -->
+    <svg class="eye-closed" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l18 18M9.88 9.88a3 3 0 104.24 4.24M6.1 6.1C4.27 7.57 2.93 9.6 2.25 12c1.5 4.5 6 7.5 9.75 7.5 1.5 0 2.88-.37 4.1-1.02"></path>
+    </svg>
+  </button>
+
+									</div>
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">Password Expiry Date <b style="color: red">*</b></label>
+
+									<div class="col-sm-2">
+										<input type="text"
+											th:value="${#dates.format(userProfile?.pass_exp_date, 'dd-MM-yyyy')}"
+											id="passExDate" name="pass_exp_date" placeholder="dd-mm-yyyy"
+											class="form-control form-control-sm bg-white border border-dark" required />
+									</div>
+									<div class="col-sm-1"></div>
+								</div>
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">User Status</label>
+									<div class="col-sm-2">
+										<!--<input type="text" id="userStatus" name="user_status"
+											th:value="${userProfile?.user_status}"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" readonly />-->
+										<select id="userStatus" name="user_status"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required>
+
+											<option value="Active"
+												th:selected="${userProfile?.user_status == 'Active'}">Active</option>
+											<option value="Inactive"
+												th:selected="${userProfile?.user_status == 'Inactive'}">Inactive
+											</option>
+										</select>
+									</div>
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">Login Status</label>
+									<div class="col-sm-2">
+
+										<!--<input type="text" id="loginStatus" name="login_status"
+											th:value="${userProfile?.login_status}"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" readonly />-->
+										<select id="loginStatus" name="login_status"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required>
+
+											<option value="Active"
+												th:selected="${userProfile?.login_status == 'Active'}">Active</option>
+											<option value="Inactive"
+												th:selected="${userProfile?.login_status == 'Inactive'}">Inactive
+											</option>
+
+										</select>
+									</div>
+
+								</div>
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">Account Expiry Date <b style="color: red">*</b></label>
+									<div class="col-sm-2">
+										<input type="text" id="acctexpiryDate" name="acc_exp_date" placeholder="dd-mm-yyyy"
+											th:value="${#dates.format(userProfile?.acc_exp_date, 'dd-MM-yyyy')}"
+											class="form-control form-control-sm bg-white border border-dark" required />
+									</div>
+
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">Login Flag</label>
+									<div class="col-sm-2">
+										<input id="login_flg" name="login_flg" th:value="${userProfile?.login_flg}"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required readonly>
+
+									</div>
+
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 10px 0px;">
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">Account Access Code</label>
+									<div class="col-sm-2">
+
+										<!--<input id="acct_access_code" name="acct_access_code"
+											th:value="${userProfile?.acct_access_code}"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required readonly>-->
+
+										<select id="acct_access_code" name="acct_access_code"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required>
+
+											<option th:selected="${userProfile?.acct_access_code == 'ALL'}" value="ALL">
+												All</option>
+											<option th:selected="${userProfile?.acct_access_code == 'LOAN'}"
+												value="LOAN">Loan</option>
+
+										</select>
+									</div>
+
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">Document Access Code</label>
+									<div class="col-sm-2">
+
+										<!--<input id="doc_access_code" name="doc_access_code"
+											th:value="${userProfile?.doc_access_code}"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required readonly>-->
+										<select id="doc_access_code" name="doc_access_code"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required>
+
+											<option th:selected="${userProfile?.doc_access_code == 'ALL'}" value="ALL">
+												All</option>
+											<option th:selected="${userProfile?.doc_access_code == 'ALL'}" value="LOAN">
+												Loan</option>
+
+										</select>
+									</div>
+
+								</div>
+
+								<div class="card-header"
+									style="background-color: #e9ecef; height: 50px; padding: 11px 15px;">
+									<div class="float-left" style="padding-left: 100px;">
+										<h6 style="font-size: 1.5rem;">ROLE AND RIGHTS</h6>
+
+
+									</div>
+
+
+								</div>
+
+
+								<div class="row formline mt-3" style="padding: 0px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Role Id <b style="color: red">*</b></label>
+									<div class="col-sm-2">
+										<select id="roleId" name="role_id"
+											class="form-control form-control-sm bg-white border border-dark"
+											onchange="roledesc();" autocomplete="off" required>
+											<option value="">Select</option>
+											<option value="ADM" th:selected="${userProfile?.role_id == 'ADM'}">ADM
+											</option>
+											<option value="GEN" th:selected="${userProfile?.role_id == 'GEN'}">GEN
+											</option>
+
+										</select>
+									</div>
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">Role Description</label>
+									<div class="col-sm-2">
+										<input th:value="${userProfile?.role_desc}" type="text" id="roleDesc"
+											name="role_desc"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+									</div>
+
+								</div>
+
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 0px;">
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">Permissions</label>
+									<div class="col-sm-2">
+										<select id="permission" name="permissions"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required>
+											<option value="">Select</option>
+											<option value="R" th:selected="${userProfile?.permissions == 'R'}">Read
+											</option>
+											<option value="W" th:selected="${userProfile?.permissions == 'W'}">Write
+											</option>
+										</select>
+									</div>
+									<div class="col-sm-1"></div>
+
+									<label class="col-sm-2">Work Class</label>
+									<div class="col-sm-2">
+										<select id="work_class" name="work_class"
+											class="form-control form-control-sm bg-white border border-dark"
+											autocomplete="off" required>
+											<option value="">Select</option>
+											<option value="M" th:selected="${userProfile?.work_class == 'M'}">Maker
+											</option>
+											<option value="C" th:selected="${userProfile?.work_class == 'C'}">Checker
+											</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 10px 0px;">
+									<div class="col-sm-1"></div>
+
+
+									<label class="col-sm-2">Access Control</label>
+									<div class="col-sm-2">
+										<a href="#">
+											<img style="width: 16px; height: 16px;" title="Search"
+												th:src="@{/images/searchicon.png}" class="searchico"
+												onclick="openAccessModal(this);" id="iconacc" alt="Search">
+										</a>
+
+									</div>
+									<div class="col-sm-1"></div>
+									<label class="col-sm-2">Remarks </label>
+									<div class="col-sm-2">
+										<input type="text" id="remarks" name="remarks"
+											th:value="${userProfile?.remarks}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+									</div>
+
+								</div>
+
+
+							</form>
+						</div>
+
+						<div class="card-footer text-center mt-3">
+
+
+
+
+							<button type="button" class="btn-primary big-btn" id="btnHome"
+								onclick="Home();">Home</button>
+							<button type="button" class="btn-primary big-btn" id="btnSubmit"
+								onclick="modifySubmit();">Modify</button>
+							<button type="button" class="btn-primary big-btn" id="btnBack"
+								onclick="Back();">Back</button>
+
+
+						</div>
+
+						<div class="card-body">
+
+							<div class="table-responsive">
+								<table class="table  table-bordered  table-hover table-sm"
+									style="margin-bottom: 0px; font-size: initial;">
+									<tr>
+										<td class="col-sm-2" style="text-align: right;">
+											<font size="2"><B>Entry User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px;">
+											<input type="text" id="entryuser" name="ub.entryuser"
+												th:value="${userProfile?.entry_user}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled>
+										</td>
+										<td class="col-sm-2" style="text-align: right;">
+											<font size="2"><B>Modify User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px;"><input type="text" id="modifyuser"
+												name="ub.modifyuser" th:value="${userProfile?.modify_user}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled>
+										</td>
+										<td class="col-sm-2" style="text-align: right;">
+											<font size="2"><B> Verify User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px;"><input type="text" id="verifyuser"
+												name="ub.verifyuser" th:value="${userProfile?.auth_user}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled>
+										</td>
+
+									</tr>
+									<tr>
+										<td style="text-align: right;">
+											<font size="2"><B>Entry
+													Time :</B></font>
+										</td>
+										<td style="width: 112px"><input type="text" id="entrytime" name="ub.entrytime"
+												th:value="${#dates.format(userProfile?.entry_time, 'dd-MM-yyyy')}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled>
+										</td>
+										<td style="text-align: right;">
+											<font size="2"><B>Modify Time :</B></font>
+										</td>
+										<td style="width: 112px"><input type="text" id="modifytime" name="ub.modifytime"  
+												th:value="${#dates.format(userProfile?.modify_time, 'dd-MM-yyyy')}"
+												style="width: 115px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled>
+										</td>
+										<td style="text-align: right;">
+											<font size="2"><B> Verify
+													Time :</B></font>
+										</td>
+										<td style="width: 112px"><input type="text" id="verifytime" name="ub.verifytime"
+												th:value="${#dates.format(userProfile?.auth_time, 'dd-MM-yyyy')}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px; "
+												disabled>
+										</td>
+
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+
+
+			</div>
+
+
+
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+
+	<!-- <div class="modal fade" data-backdrop="false" data-keyboard="false" id="alert" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content"
+				style="position: fixed; left: 50%; transform: translate(-50%, 0%); width: 30%;height: 25%;">
+				<div class="modal-header">
+					<h5 class="modal-title">Alerts</h5>
+
+					<button type="button" class="btn-primary big-btn" data-dismiss="modal" aria-hidden="true"
+						onclick="goToList();">×</button>
+				</div>
+				<div class="modal-body" style="text-align: center;">
+					<h6 id="alertmsg"></h6>
+					<button type="button" class="btn-primary big-btn" data-dismiss="modal"
+						onclick="goToList();">Close</button>
+				</div>
+			</div>
+		</div>
+	</div> -->
+
+	<div class="modal fade bd-example-modal-sm" tabindex="-1" id="alert" style="display: none;margin: auto;" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content" style="margin: auto;">
+      <div class="modal-header">
+        <h5 class="modal-title">Alert</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="btn-primary big-btn" data-dismiss="modal" aria-hidden="true"
+						onclick="goToList();">×</button>
+        </button>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <h6 id="alertmsg"></h6>
+					<button type="button" class="btn-primary big-btn" data-dismiss="modal"
+						onclick="goToList();">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+	<!-- <div class="modal fade" data-backdrop="false" data-keyboard="false" id="normalalert" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content"
+				style="position: fixed; left: 50%; transform: translate(-50%, 0%); width: 30%;height:25%;">
+				<div class="modal-header">
+					<h5 class="modal-title">Alerts</h5>
+
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+						onclick="$('#normalalert').modal('hide')">×</button>
+				</div>
+				<div class="modal-body" style="text-align: center;">
+					<h6 id="normalalertmsg"></h6>
+					<button type="button" class="btn-primary big-btn" data-dismiss="modal"
+						onclick="$('#normalalert').modal('hide')">Close</button>
+				</div>
+			</div>
+		</div>
+	</div> -->
+
+<div class="modal fade bd-example-modal-sm" tabindex="-1" id="normalalert" style="display: none;margin: auto;" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content" style="margin: auto;width: 600px;" >
+      <div class="modal-header">
+        <h5 class="modal-title">Alert</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <h6 id="normalalertmsg"></h6>
+		<button type="button" class="btn-primary big-btn" data-dismiss="modal"
+						onclick="$('#normalalert').modal('hide')">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" th:if="${formmode}=='not_equal'" id="finusersview" data-backdrop="false" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+			style="max-width: 800px;max-height: 160vh;">
+			<div class="modal-content" style="border: 2px solid black;height: 160vh;">
+				<!-- Modal Header -->
+				<div class="modal-header" style="background-color: #e6eaed;">
+					<h4 class="modal-title" style="color: black;">User Access Modules </h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+				<!-- Modal body -->
+				<div class="modal-body">
+					
+					
+					
+								<li><input type="checkbox" id="admin" name="admin"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="admin">Admin
+							</label>
+							<ul>
+								<li><input type="checkbox" id="orgnaization_details"  name="orgnaization_details"
+										style="margin-right: 10px; margin-top: 10px" checked />
+									<label for="orgnaization_details">Oraganization Details
+									</label>
+								</li>
+								<li><input type="checkbox" id="usercontrol" name="usercontrol"
+										style="margin-right: 10px; margin-top: 10px" checked />
+									<label for="usercontrol">user control
+									</label>
+								</li>
+								<li><input type="checkbox" id="parameters"  name="parameters"
+										style="margin-right: 10px; margin-top: 10px" checked />
+									<label for="parameters">parameters
+									</label>
+								</li>
+									<li><input type="checkbox" id="audit_trail"  name="audit_trail"
+										style="margin-right: 10px; margin-top: 10px" checked />
+									<label for="audit_trail">Audit Trail
+									</label>
+								</li>
+							</ul>
+						</li>
+
+					
+						<!-- <li><input type="checkbox" id="day_end_operation" name="day_end_operation"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="day_end_operation"> Day End Operation
+							</label>
+							</li> -->
+			
+						<li><input type="checkbox" id="customer_onbording"  name="customer_onbording"
+								style="margin-right: 10px" checked /> <label for="customer_onbording">Customer Onbording</label>
+							<ul>
+								<li><input type="checkbox" id="minimal_data"  name="minimal_data"
+										style="margin-right: 10px; margin-top: 10px" checked />
+									<label for="minimal_data">Minimal Data
+									</label>
+								</li>
+								<li><input type="checkbox" id="kyc_compliance"  name="kyc_compliance"
+										style="margin-right: 10px; margin-top: 10px" checked />
+									<label for="kyc_compliance">KYC Compilance
+									</label>
+								</li>
+								<li><input type="checkbox" id="compliance_department" value='Y'
+								name="compliance_department" style="margin-right: 10px" checked />
+								 <label
+								for="compliance_department">Compliance Department</label>
+								</li>
+								<li><input type="checkbox" id="hold_reject"  name="hold_reject"
+										style="margin-right: 10px; margin-top: 10px" checked />
+									<label for="hold_reject">Hold And Reject
+									</label>
+								</li>
+								<li><input type="checkbox" id="Customer_detail_for_collection"  name="Customer_detail_for_collection"
+										style="margin-right: 10px; margin-top: 10px" checked />
+									<label for="Customer_detail_for_collection">Customer Detail For Collection
+									</label>
+								</li>
+								
+
+							</ul>
+						</li>
+						<li><input type="checkbox" id="customer_maker" value='Y'
+								name="customer_maker" style="margin-right: 10px" checked /> <label
+								for="customer_maker">Customer Maker</label>
+							<ul>
+								<li><input type="checkbox" id="Customer_maintenance"  name="Customer_maintenance"
+										style="margin-right: 10px; margin-top: 10px" checked />
+									<label for="Customer_maintenance">Customer Maintanance</label>
+									</label>
+								</li>
+					
+							</ul>
+						</li>
+
+						<li><input type="checkbox" id="Lease_loans" value='Y' name="Lease_loans"
+								style="margin-right: 10px" checked />
+							<label for="Lease_loans">Lease Loans</label>
+							<ul>
+								<li><input type="checkbox" id="lease_account_open" 
+										name="lease_account_open" style="margin-right: 10px; margin-top: 10px"
+										checked />
+									<label for="lease_account_open">Lease Account Open
+									</label>
+								</li>
+								<li><input type="checkbox" id="lease_loan_maintanance"  name="lease_loan_maintanance"
+										style="margin-right: 10px; margin-top: 10px" checked />
+									<label for="lease_loan_maintanance">Lease Loan Maintanance
+									</label>
+								</li>
+								<li><input type="checkbox" id="lease_operation" value='Y' name="lease_operation"
+								style="margin-right: 10px" checked/>
+							<label for="lease_operation">Lease Operation</label>
+						</li>
+						
+								<li><input type="checkbox" id="colleateral_inventary_master" value='Y' name="colleateral_inventary_master"
+								style="margin-right: 10px" checked/>
+							<label for="colleateral_inventary_master">Colleateral Inventary Master</label>
+						</li>
+								<li><input type="checkbox" id="colletral_flow_control" value='Y' name="colletral_flow_control"
+								style="margin-right: 10px"checked />
+							<label for="colletral_flow_control">Colleateral Flow Control</label>
+						</li>
+								<li><input type="checkbox" id="depreciation_flow_control" value='Y' name="depreciation_flow_control"
+								style="margin-right: 10px" checked/>
+							<label for="depreciation_flow_control">Depreciation Flow Control</label>
+						</li>
+								<li><input type="checkbox" id="colleateral_management" value='Y' name="colleateral_management"
+								style="margin-right: 10px" checked/>
+							<label for="colleateral_management">Colleateral Management</label>
+						</li>
+						
+									<li><input type="checkbox" id="colleateral_maintance" value='Y' name="colleateral_maintance"
+								style="margin-right: 10px" checked/>
+							<label for="colleateral_maintance">Colleateral Maintance</label>
+						</li>
+									<li><input type="checkbox" id="lease_loan_maintance" value='Y' name="lease_loan_maintance"
+								style="margin-right: 10px" checked/>
+							<label for="lease_loan_maintance">Lease Loan Maintance</label>
+						</li>
+						
+									<li><input type="checkbox" id="dscr_ration" value='Y' name="dscr_ration"
+								style="margin-right: 10px" checked/>
+							<label for="dscr_ration">Dscr Ratio</label>
+						</li>
+								
+
+							</ul>
+						</li>
+						
+
+
+				
+	<li><input type="checkbox" id="transaction_maintanance" value='Y' name="transaction_maintanance"
+								style="margin-right: 10px" checked />
+							<label for="transaction_maintanance">Transaction Maintanance</label>
+					<ul>
+						<li><input type="checkbox" id="journal_entries" 
+								name="journal_entries" style="margin-right: 10px; margin-top: 10px" checked/>
+							<label for="journal_entries">Journal Entries</label>
+						</li>
+						<li><input type="checkbox" id="account_ledger_posting" 
+								name="account_ledger_posting" style="margin-right: 10px; margin-top: 10px" checked/> <label
+								for="account_ledger_posting">
+								Account Ledger Posting</label></li>
+
+						<li><input type="checkbox" id="account_ledger"  name="account_ledger"
+								style="margin-right: 10px; margin-top: 10px" checked/> <label for="account_ledger">
+								Account Ledger</label></li>
+
+						<li><input type="checkbox" id="trial_balance"  name="trial_balance"
+								style="margin-right: 10px; margin-top: 10px" checked/> <label for="trial_balance">
+								Trail Balance>
+
+						<li><input type="checkbox" id="Profit_and_lose"  name="Profit_and_lose"
+								style="margin-right: 10px; margin-top: 10px" checked/> <label for="Profit_and_lose">
+								Profit And Lose Account</label></li>
+
+						<!-- <li><input type="checkbox" id="day_end_operation"  name="day_end_operation"
+								style="margin-right: 10px; margin-top: 10px" checked/> <label for="day_end_operation">
+								Day End Operation</label></li> -->
+
+					</ul>
+					</li>
+
+					<li><input type="checkbox" id="collection_process"  name="collection_process"
+								style="margin-right: 10px; margin-top: 10px" checked/> <label for="collection_process">
+								Collection Process</label>
+
+
+					<ul>
+						<li><input type="checkbox" id="participating_banks"  name="participating_banks"
+								style="margin-right: 10px; margin-top: 10px"checked /> <label for="participating_banks">Participating Banks
+								
+							</label></li>
+
+						<li><input type="checkbox" id="loan_collecting"  name="loan_collecting"
+								style="margin-right: 10px; margin-top: 10px"checked /> <label
+								for="loan_collecting">Loan Collection</label>
+
+						</li>
+
+						
+
+					</ul>
+					
+					</li>
+
+<li><input type="checkbox" id="batch_job_execution"  name="batch_job_execution"
+								style="margin-right: 10px; margin-top: 10px" checked/> <label
+								for="batch_job_execution">Batch Job Execution</label>
+
+					<ul>
+						<li><input type="checkbox" id="batch_job"  name="batch_job"
+								style="margin-right: 10px; margin-top: 10px" checked/> <label
+								for="batch_job">Batch Job
+							</label></li>
+					
+
+					
+
+					</ul>
+					</li>
+
+				<li><input type="checkbox" id="inquries_and_report"  name="batch_job"
+								style="margin-right: 10px; margin-top: 10px" checked/> <label
+								for="inquries_and_report"> Inquires And Report
+							</label>
+
+					<ul>
+						<li><input type="checkbox" id="account_balance"  name="account_balance"
+								style="margin-right: 10px; margin-top: 10px"  checked/> <label
+								for="account_balance">Account Balance
+							</label></li>
+						<li><input type="checkbox" id="interset_summary"  name="interset_summary"
+								style="margin-right: 10px; margin-top: 10px" checked/> <label
+								for="interset_summary">Interest Summary</label>
+						</li>
+
+						<li><input type="checkbox" id="jounal_book"  name="jounal_book"
+								style="margin-right: 10px; margin-top: 10px"  /> <label for="jounal_book">Journal
+								Book</label>
+						</li>
+							<li><input type="checkbox" id="account_ledger" name="account_ledger"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="account_ledger">Account Ledger
+								Book</label>
+						</li>
+							<li><input type="checkbox" id="trial_balance"  name="trial_balance"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="trial_balance">Trial Balance
+								</label>
+						</li>
+							<li><input type="checkbox" id="general_ledger"  name="general_ledger"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="general_ledger">Journal Ledger
+								</label>
+						</li>
+							<li><input type="checkbox" id="profit_and_lost" name="profit_and_lost"
+								style="margin-right: 10px; margin-top: 10px"/> <label for="profit_and_lost">Profit And Lost Account
+								</label>
+						</li>
+							<li><input type="checkbox" id="balance_sheet"  name="balance_sheet"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="balance_sheet">Balance Sheet
+								</label>
+						</li>
+
+					</ul>
+					</li>
+
+
+
+					
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" th:if="${formmode}=='not_equal'" id="finusersview1" data-backdrop="false" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+			style="max-width: 800px;max-height: 160vh;">
+			<div class="modal-content" style="border: 2px solid black;height: 160vh;">
+				<!-- Modal Header -->
+				<div class="modal-header" style="background-color: #e6eaed;">
+					<h4 class="modal-title" style="color: black;">User Access Modules </h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+				<!-- Modal body -->
+				<div class="modal-body">
+					<input type="checkbox" id="" name="admin" style="margin-right: 10px"
+						  th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.admin == 'Y'}" disabled />Admin
+
+					<ul>
+						<li><input type="checkbox" id="" name="orgnaization_details"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.orgnaization_details == 'Y'}" disabled /> <label
+								for="orgnaization_details">Oraganization Details
+							</label>
+							<ul>
+								<li><input type="checkbox" id="" value="Y" name="head_office"
+										style="margin-right: 10px; margin-top: 10px"
+										th:checked="${access?.head_office == 'Y'}" disabled />
+									<label for="head_office">Head Office
+									</label>
+								</li>
+								<li><input type="checkbox" id="" name="branches"
+										style="margin-right: 10px; margin-top: 10px"
+										th:checked="${access?.branches == 'Y'}" disabled />
+									<label for="branches">Branches
+									</label>
+								</li>
+								<li><input type="checkbox" id="" name="calender_maintance"
+										style="margin-right: 10px; margin-top: 10px"
+										th:checked="${access?.calender_maintance == 'Y'}" disabled />
+									<label for="calender_maintance">Calendar Maintenance 
+									</label>
+								</li>
+								<li><input type="checkbox" id="" value="Y" name="exception"
+										style="margin-right: 10px; margin-top: 10px"
+										th:checked="${access?.exception == 'Y'}" disabled />
+									<label for="exception">Exception
+									</label>
+								</li>
+							</ul>
+						</li>
+						<li><input type="checkbox" id="" value="Y" name="user_controls"
+								style="margin-right: 10px" th:checked="${access?.user_controls == 'Y'}" disabled />
+							<label for="user_controls">User Control</label>
+							<ul>
+								<li><input type="checkbox" id="" value="Y" name="user_profile"
+										style="margin-right: 10px; margin-top: 10px"
+										th:checked="${access?.user_profile == 'Y'}" disabled />
+									<label for="user_profile">User Profile
+									</label>
+								</li>
+								<li><input type="checkbox" id="" value="Y" name="employee_profile"
+										style="margin-right: 10px; margin-top: 10px"
+										th:checked="${access?.employee_profile == 'Y'}" disabled />
+									<label for="employee_profile">Employee Profile
+									</label>
+								</li>
+
+							</ul>
+						</li>
+						<li><input type="checkbox" id="" value='Y'
+								name="reference_code_maintenance" style="margin-right: 10px"
+								th:checked="${access?.reference_code_maintenance == 'Y'}" disabled /> <label
+								for="reference_code_maintenance">Parameters</label>
+							<ul>
+								<li><input type="checkbox" id="" value="Y" name="reference_code"
+										style="margin-right: 10px; margin-top: 10px"
+										th:checked="${access?.reference_code == 'Y'}" disabled />
+									<label for="reference_code">Reference Code Maintanance</label>
+									</label>
+								</li>
+								<li><input type="checkbox" id="" value="Y" name="gl_structure"
+										style="margin-right: 10px; margin-top: 10px"
+										th:checked="${access?.gl_structure == 'Y'}" disabled />
+									<label for="gl_structure">GL Structure
+									</label>
+								</li>
+								<li><input type="checkbox" id="" value="Y" name="scheme_codes"
+										style="margin-right: 10px; margin-top: 10px"
+										th:checked="${access?.scheme_codes == 'Y'}" disabled />
+									<label for="scheme_codes">Scheme Code
+									</label>
+								</li>
+								<li><input type="checkbox" id="" value="Y" name="chart_of_accounts"
+										style="margin-right: 10px; margin-top: 10px"
+										th:checked="${access?.chart_of_accounts == 'Y'}" disabled />
+									<label for="chart_of_accounts">Chart of Accounts
+									</label>
+								</li>
+								<li><input type="checkbox" id="" value="Y" name="account_ledgers"
+										style="margin-right: 10px; margin-top: 10px"
+										th:checked="${access?.account_ledgers == 'Y'}" disabled />
+									<label for="account_ledgers">Account Ledgers
+									</label>
+								</li>
+							</ul>
+						</li>
+
+						<li><input type="checkbox" id="" value='Y' name="audit_trail"
+								style="margin-right: 10px" th:checked="${access?.audit_trail == 'Y'}" disabled />
+							<label for="audit_trail">Audit Trial</label>
+							<ul>
+								<li><input type="checkbox" id="" value="Y"
+										name="user_activities" style="margin-right: 10px; margin-top: 10px"
+										th:checked="${access?.user_activities == 'Y'}" disabled />
+									<label for="user_activities">User Activities
+									</label>
+								</li>
+								<li><input type="checkbox" id="" value="Y" name="business_activity"
+										style="margin-right: 10px; margin-top: 10px"
+										th:checked="${access?.business_activity == 'Y'}" disabled />
+									<label for="business_activity">Buisness Activity
+									</label>
+								</li>
+
+							</ul>
+						</li>
+						<!-- <li><input type="checkbox" id="" value='Y' name="budget_controls"
+								style="margin-right: 10px" th:checked="${access?.budget_controls == 'Y'}" disabled />
+							<label for="budget_controls">Budget Control</label>
+						</li> -->
+					</ul>
+
+					<input type="checkbox" id="" value="Y" name="migration"
+						style="margin-right: 10px" th:checked="${access?.migration == 'Y'}"
+						disabled />Migration
+
+					<ul>
+						<li><input type="checkbox" id="" value="Y" name="customer_master"
+								style="margin-right: 10px; margin-top: 10px" th:checked="${access?.customer_master == 'Y'}"
+								disabled /> <label for="customer_master">Customer Master
+							</label></li>
+						<li><input type="checkbox" id="" value="Y" name="loan_master"
+								style="margin-right: 10px; margin-top: 10px" th:checked="${access?.loan_master == 'Y'}"
+								disabled /> <label for="loan_master">Loan Master</label>
+						</li>
+
+						<li><input type="checkbox" id="" value="Y" name="loan_schedule_migration"
+								style="margin-right: 10px; margin-top: 10px" th:checked="${access?.loan_schedule_migration == 'Y'}"
+								disabled /> <label for="loan_schedule_migration">Loan Schedule
+							</label></li>
+						<li><input type="checkbox" id="" value="Y" name="transaction_migration"
+								style="margin-right: 10px; margin-top: 10px" th:checked="${access?.transaction_migration == 'Y'}"
+								disabled /> <label for="transaction_migration">Transaction</label>
+						</li>
+						<li><input type="checkbox" id="" value="Y" name="balance_sheets"
+														style="margin-right: 10px; margin-top: 10px" th:checked="${access?.balance_sheets == 'Y'}"
+														disabled /> <label for="balance_sheets">Balance sheets</label>
+												</li>
+
+					</ul>
+<div>
+					<!-- <input type="checkbox" id="" value="Y" name="day_end_operation"
+						style="margin-right: 10px" th:checked="${access?.day_end_operation == 'Y'}"
+						disabled /><label> Day End Operation </label>   <br> -->
+
+					<input type="checkbox" id="" value="Y" name="customer_maintenance"
+					style="margin-right: 10px" th:checked="${access?.customer_maintenance == 'Y'}"
+					disabled /><label> Customer Maintanance</label>   <br>
+
+					<input type="checkbox" id="" value="Y" name="loan_maintanace"
+					style="margin-right: 10px" th:checked="${access?.loan_maintanace == 'Y'}"
+					disabled /><label> Loan Maintanance</label>   <br>
+</div>				
+
+					<input type="checkbox" id="" value="Y" name="loan_operation"
+						style="margin-right: 10px" th:checked="${access?.loan_operation == 'Y'}"
+						disabled />Loan Operation
+
+					<ul>
+						<li><input type="checkbox" id="" value="Y" name="loan_operation_ls"
+								style="margin-right: 10px; margin-top: 10px" th:checked="${access?.loan_operation_ls == 'Y'}"
+								disabled /> <label for="loan_operation_ls">Loan Operation
+							</label></li>
+						<li><input type="checkbox" id="" value="Y" name="loan_closure"
+								style="margin-right: 10px; margin-top: 10px" th:checked="${access?.loan_closure == 'Y'}"
+								disabled /> <label for="loan_closure">Loan Closure</label>
+						</li>
+					</ul>
+
+					<!-- <input type="checkbox" id="" value='Y' name="maintenance" style="margin-right: 10px"
+						th:checked="${access?.maintenance == 'Y'}" disabled />Maintanance -->
+
+					<!-- <ul>
+						<li><input type="checkbox" id="" value="Y"
+								name="customer_master_maintenance" style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.customer_master_maintenance == 'Y'}" disabled />
+							<label for="customer_master_maintenance">Customer Master Maintanance</label>
+						</li>
+						<li><input type="checkbox" id="" value="Y"
+								name="account_master_maintenance" style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.account_master_maintenance == 'Y'}" disabled /> <label
+								for="account_master_maintenance">
+								Account Master Maintenance</label></li>
+
+						<li><input type="checkbox" id="" value="Y" name="lease_accounts"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.lease_accounts == 'Y'}" disabled /> <label for="lease_accounts">
+								Lease Accounts</label></li>
+
+						<li><input type="checkbox" id="" value="Y" name="deposit_accounts_c"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.deposit_accounts_c == 'Y'}" disabled /> <label
+								for="deposit_accounts_c">
+								Deposit Accounts</label></li>
+
+						<li><input type="checkbox" id="" value="Y" name="office_accounts"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.office_accounts == 'Y'}" disabled /> <label for="office_accounts">
+								Office Accounts</label></li>
+
+						<li><input type="checkbox" id="" value="Y" name="document_maintenance"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.document_maintenance == 'Y'}" disabled /> <label
+								for="document_maintenance">
+								Document Maintenance</label></li>
+
+						<li><input type="checkbox" id="" value="Y" name="kyc_norms"
+								style="margin-right: 10px; margin-top: 10px" th:checked="${access?.kyc_norms == 'Y'}"
+								disabled /> <label for="kyc_norms">
+								KYC Norms</label></li>
+
+					</ul> -->
+
+					<input type="checkbox" id="" value="Y" name="transaction_maintenance"
+						style="margin-right: 10px" th:checked="${access?.transaction_maintenance == 'Y'}"
+						disabled />Transaction Maintenance
+
+					<ul>
+						<li><input type="checkbox" id="" value="Y" name="journal_entries"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.journal_entries == 'Y'}" disabled /> <label
+								for="journal_entries">Journal
+								Entries
+							</label></li>
+
+						<li><input type="checkbox" id="" value="Y" name="account_ledger_posting"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.account_ledger_posting == 'Y'}" disabled /> <label
+								for="account_ledger_posting">Account Ledger Posting</label>
+
+						</li>
+
+						<li><input type="checkbox" id="" value="Y" name="account_ledger"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.account_ledger == 'Y'}" disabled /> <label
+								for="account_ledger">Account
+								Ledger</label>
+
+						</li>
+						<li><input type="checkbox" id="" value="Y" name="trial_balance_t"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.trial_balance_t == 'Y'}" disabled /> <label
+								for="trial_balance_t">Trial
+								Balance</label>
+
+						</li>
+						<li><input type="checkbox" id="" value="Y"
+								name="profit_and_loss_account_t" style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.profit_and_loss_account_t == 'Y'}" disabled /> <label
+								for="profit_and_loss_account_t">Profit and Loss Account</label>
+
+						</li>
+
+					</ul>
+
+
+					<input type="checkbox" id="" value="Y" name="collection_process" style="margin-right: 10px"
+						th:checked="${access?.collection_process == 'Y'}" disabled />Collection Process
+
+					<ul>
+						<li><input type="checkbox" id="" value="Y" name="participating_banks"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.participating_banks == 'Y'}" disabled /> <label
+								for="participating_banks">Participating Banks
+							</label></li>
+						<li><input type="checkbox" id="" value="Y" name="loan_collecting"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.loan_collecting == 'Y'}" disabled /> <label
+								for="loan_collecting">Loan Collection</label>
+						</li>
+
+					</ul>
+
+					<input type="checkbox" id="" value="Y" name="deposit_accounts"
+						style="margin-right: 10px" th:checked="${access?.deposit_accounts == 'Y'}" disabled />Deposit
+					Accounts
+
+					<ul>
+						<li><input type="checkbox" id="" value="Y" name="account_maintenance_d"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.account_maintenance_d == 'Y'}" disabled /> <label
+								for="account_maintenance_d">Account Maintenace
+							</label></li>
+						<li><input type="checkbox" id="" value="Y" name="account_statements_d"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.account_statements_d == 'Y'}" disabled /> <label
+								for="account_statements_d">Account Statements</label>
+						</li>
+
+						<li><input type="checkbox" id="" value="Y" name="flow_details_d"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.flow_details_d == 'Y'}" disabled /> <label
+								for="flow_details_d">Flow
+								Details</label>
+						</li>
+
+					</ul>
+
+					<input type="checkbox" id="" value="Y" name="inquiries_and_reports"
+						style="margin-right: 10px" th:checked="${access?.inquiries_and_reports == 'Y'}"
+						disabled />Inquiries & Reports
+
+					<ul>
+						<li><input type="checkbox" id="" value="Y" name="account_balance_inq"
+								style="margin-right: 10px; margin-top: 10px" th:checked="${access?.account_balance_inq == 'Y'}"
+								disabled /> <label for="account_balance_inq">Account Balance
+							</label></li>
+							<li><input type="checkbox" id="" value="Y" name="interset_summary_inq"
+								style="margin-right: 10px; margin-top: 10px" th:checked="${access?.interset_summary_inq == 'Y'}"
+								disabled /> <label for="interset_summary_inq">Interest Summary
+							</label></li>
+
+						<li><input type="checkbox" id="" value="Y" name="journal_book"
+								style="margin-right: 10px; margin-top: 10px" th:checked="${access?.journal_book == 'Y'}"
+								disabled /> <label for="journal_book">Journal Book
+							</label></li>
+						<li><input type="checkbox" id="" value="Y" name="account_ledgers_i"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.account_ledgers_i == 'Y'}" disabled /> <label
+								for="account_ledgers_i">Account
+								Ledgers</label>
+						</li>
+
+						<li><input type="checkbox" id="" value="Y" name="trial_balance_i"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.trial_balance_i == 'Y'}" disabled /> <label
+								for="trial_balance_i">Trial
+								Balance</label>
+						</li>
+
+						<li><input type="checkbox" id="" value="Y" name="general_ledger"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.general_ledger == 'Y'}" disabled /> <label
+								for="general_ledger">General
+								Ledger</label>
+						</li>
+
+						<li><input type="checkbox" id="" value="Y"
+								name="profit_and_loss_account_i" style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.profit_and_loss_account_i == 'Y'}" disabled /> <label
+								for="profit_and_loss_account_i">Profit and Loss Account</label>
+						</li>
+
+						<li><input type="checkbox" id="" value="Y" name="balance_sheet"
+								style="margin-right: 10px; margin-top: 10px"
+								th:checked="${access?.balance_sheet == 'Y'}" disabled /> <label
+								for="balance_sheet">Balance
+								Sheet</label>
+						</li>
+
+					</ul>
+
+
+					<div>
+						<button type="button" class="btn-primary big-btn" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" th:if="${formmode}=='not_equal'" id="generalusers" data-backdrop="false" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+			style="max-width: 800px;max-height: 160vh;">
+			<div class="modal-content" style="border: 2px solid black;height: 160vh;">
+				<!-- Modal Header -->
+				<div class="modal-header" style="background-color: #e6eaed;">
+					<h4 class="modal-title" style="color: black;">User Access Modules </h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+				<!-- Modal body -->
+				<div class="modal-body">
+					<input type="checkbox" id="adming" name="admin" style="margin-right: 10px" />Admin
+
+					<ul>
+						<li><input type="checkbox" id="orgnaization_detailsg" name="orgnaization_details"
+								style="margin-right: 10px; margin-top: 10px" /> <label
+								for="orgnaization_details">Oraganization Details
+							</label>
+							<ul>
+								<li><input type="checkbox" id="head_officeg" value="Y" name="head_office"
+										style="margin-right: 10px; margin-top: 10px" />
+									<label for="head_office">Head Office
+									</label>
+								</li>
+								<li><input type="checkbox" id="branchesg" name="branches"
+										style="margin-right: 10px; margin-top: 10px" />
+									<label for="branches">Branches
+									</label>
+								</li>
+								<!-- <li><input type="checkbox" id="" name="calender_maintance"
+										style="margin-right: 10px; margin-top: 10px"
+										th:checked="${access?.calender_maintance == 'Y'}" disabled />
+									<label for="calender_maintance">Calendar Maintenance 
+									</label>
+								</li> -->
+								<li><input type="checkbox" id="calender_maintanceg" value="Y" name="calender_maintance"
+										style="margin-right: 10px; margin-top: 10px" />
+									<label for="calender_maintance">Calender Maintance
+									</label>
+								</li>
+								<li><input type="checkbox" id="exceptiong" value="Y" name="exception"
+										style="margin-right: 10px; margin-top: 10px" />
+									<label for="exception">Exception
+									</label>
+								</li>
+							</ul>
+						</li>
+						<li><input type="checkbox" id="user_controlsg" value="Y" name="user_controls"
+								style="margin-right: 10px" /> <label for="user_controls">User Control</label>
+							<ul>
+								<li><input type="checkbox" id="user_profileg" value="Y" name="user_profile"
+										style="margin-right: 10px; margin-top: 10px" />
+									<label for="user_profile">User Profile
+									</label>
+								</li>
+								<li><input type="checkbox" id="employee_profileg" value="Y" name="employee_profile"
+										style="margin-right: 10px; margin-top: 10px" />
+									<label for="employee_profile">Employee Profile
+									</label>
+								</li>
+
+							</ul>
+						</li>
+						<li><input type="checkbox" id="reference_code_maintenanceg" value='Y'
+								name="reference_code_maintenance" style="margin-right: 10px" /> <label
+								for="reference_code_maintenance">Parameters</label>
+							<ul>
+								<li><input type="checkbox" id="reference_codeg" value="Y" name="reference_code"
+										style="margin-right: 10px; margin-top: 10px" />
+									<label for="reference_code">Reference Code Maintanance</label>
+									</label>
+								</li>
+								<li><input type="checkbox" id="gl_structureg" value="Y" name="gl_structure"
+										style="margin-right: 10px; margin-top: 10px" />
+									<label for="gl_structure">GL Structure
+									</label>
+								</li>
+								<li><input type="checkbox" id="scheme_codesg" value="Y" name="scheme_codes"
+										style="margin-right: 10px; margin-top: 10px" />
+									<label for="scheme_codes">Scheme Code
+									</label>
+								</li>
+								<li><input type="checkbox" id="chart_of_accountsg" value="Y" name="chart_of_accounts"
+										style="margin-right: 10px; margin-top: 10px" />
+									<label for="chart_of_accounts">Chart of Accounts
+									</label>
+								</li>
+								<li><input type="checkbox" id="account_ledgersg" value="Y" name="account_ledgers"
+										style="margin-right: 10px; margin-top: 10px" />
+									<label for="account_ledgers">Account Ledgers
+									</label>
+								</li>
+							</ul>
+						</li>
+
+						<li><input type="checkbox" id="audit_trailg" value='Y' name="audit_trail"
+								style="margin-right: 10px" />
+							<label for="audit_trail">Audit Trial</label>
+							<ul>
+								<li><input type="checkbox" id="user_activitiesg" value="Y"
+										name="user_activities" style="margin-right: 10px; margin-top: 10px" />
+									<label for="user_activities">User Activities
+									</label>
+								</li>
+								<li><input type="checkbox" id="business_activityg" value="Y"
+										name="business_activity" style="margin-right: 10px; margin-top: 10px" />
+									<label for="business_activity">Buisness Activity
+									</label>
+								</li>
+
+							</ul>
+						</li>
+						<!-- <li><input type="checkbox" id="budget_controlsg" value='Y' name="budget_controls"
+								style="margin-right: 10px" checked />
+							<label for="budget_controls">Budget Control</label>
+						</li> -->
+					</ul>
+
+					<input type="checkbox" id="migrationg" value="Y" name="migration"
+						style="margin-right: 10px" checked />Migration
+
+					<ul>
+						<li><input type="checkbox" id="customer_masterg" value="Y" name="customer_master"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label for="customer_masterg">Customer Master
+							</label></li>
+						<li><input type="checkbox" id="loan_masterg" value="Y" name="loan_master"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="loan_masterg">Loan Master</label>
+						</li>
+						<li><input type="checkbox" id="loan_schedule_migrationg" value="Y" name="loan_schedule_migration"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="loan_schedule_migrationg">Loan Schedule</label>
+						</li>
+						<li><input type="checkbox" id="transaction_migrationg" value="Y" name="transaction_migration"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="transaction_migrationg">Transaction</label>
+						</li>
+						<li><input type="checkbox" id="balance_sheets" value="Y" name="balance_sheets"
+														style="margin-right: 10px; margin-top: 10px" checked /> <label
+														for="balance_sheets">Transaction</label>
+												</li>
+					</ul>
+					<div>
+						<!-- <input type="checkbox" id="day_end_operationg" value="Y" name="day_end_operation"
+							style="margin-right: 10px" th:checked="${access?.day_end_operation == 'Y'}"
+							/><label> Day End Operation </label>   <br> -->
+
+						<input type="checkbox" id="customer_maintenanceg" value="Y" name="customer_maintenance"
+						style="margin-right: 10px" th:checked="${access?.customer_maintenance == 'Y'}"
+						/><label> Customer Maintanance</label>   <br>
+
+						<input type="checkbox" id="loan_maintanaceg" value="Y" name="loan_maintanace"
+						style="margin-right: 10px" th:checked="${access?.loan_maintanace == 'Y'}"
+						/><label> Loan Maintanance</label>   <br>
+					</div>					
+					<input type="checkbox" id="loan_operationg" value="Y" name="loan_operationg"
+						style="margin-right: 10px" checked />Loan Operation
+
+					<ul>
+						<li><input type="checkbox" id="loan_operation_lsg" value="Y" name="loan_operation_ls"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label for="loan_operation_lsg">Loan Operation
+							</label></li>
+						<li><input type="checkbox" id="loan_closureg" value="Y" name="loan_closure"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="loan_closureg">Loan Closure</label>
+						</li>
+					</ul>
+
+					<!-- <input type="checkbox" id="maintenanceg" value='Y' name="maintenanceg" style="margin-right: 10px"
+						checked />Maintanance -->
+<!-- 
+					<ul>
+						<li><input type="checkbox" id="customer_master_maintenanceg" value="Y"
+								name="customer_master_maintenance" style="margin-right: 10px; margin-top: 10px"
+								checked />
+							<label for="customer_master_maintenance">Customer Master Maintanance</label>
+						</li>
+						<li><input type="checkbox" id="account_master_maintenanceg" value="Y"
+								name="account_master_maintenance" style="margin-right: 10px; margin-top: 10px"
+								checked /> <label for="account_master_maintenance">
+								Account Master Maintenance</label></li>
+
+						<li><input type="checkbox" id="lease_accountsg" value="Y" name="lease_accounts"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label for="lease_accounts">
+								Lease Accounts</label></li>
+
+						<li><input type="checkbox" id="deposit_accounts_cg" value="Y" name="deposit_accounts_c"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label for="deposit_accounts_c">
+								Deposit Accounts</label></li>
+
+						<li><input type="checkbox" id="office_accountsg" value="Y" name="office_accounts"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label for="office_accounts">
+								Office Accounts</label></li>
+
+						<li><input type="checkbox" id="document_maintenanceg" value="Y" name="document_maintenance"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="document_maintenance">
+								Document Maintenance</label></li>
+
+						<li><input type="checkbox" id="kyc_normsg" value="Y" name="kyc_norms"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label for="kyc_norms">
+								KYC Norms</label></li>
+
+					</ul> -->
+
+					<input type="checkbox" id="transaction_maintenanceg" value="Y" name="transaction_maintenance"
+						style="margin-right: 10px" checked />Transaction Maintenance
+
+					<ul>
+						<li><input type="checkbox" id="journal_entriesg" value="Y" name="journal_entries"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="journal_entries">Journal
+								Entries
+							</label></li>
+
+						<li><input type="checkbox" id="account_ledger_postingg" value="Y" name="account_ledger_posting"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="account_ledger_posting">Account Ledger Posting</label>
+
+						</li>
+
+						<li><input type="checkbox" id="account_ledgerg" value="Y" name="account_ledger"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="account_ledger">Account
+								Ledger</label>
+
+						</li>
+						<li><input type="checkbox" id="trial_balance_tg" value="Y" name="trial_balance_t"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="trial_balance_t">Trial
+								Balance</label>
+
+						</li>
+						<li><input type="checkbox" id="profit_and_loss_account_tg" value="Y"
+								name="profit_and_loss_account_t" style="margin-right: 10px; margin-top: 10px" checked />
+							<label for="profit_and_loss_account_t">Profit and Loss Account</label>
+
+						</li>
+
+					</ul>
+
+
+					<input type="checkbox" id="collection_processg" value="Y" name="collection_process" style="margin-right: 10px"
+						checked />Collection Process
+
+					<ul>
+						<li><input type="checkbox" id="participating_banksg" value="Y" name="participating_banks"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="participating_banks">Participating Banks
+							</label></li>
+						<li><input type="checkbox" id="loan_collectingg" value="Y" name="loan_collecting"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="loan_collecting">Loan Collection</label>
+						</li>
+					</ul>
+
+					<input type="checkbox" id="batch_job_execution" value="Y" name="batch_job_execution"
+						style="margin-right: 10px" checked />Batch Job Execution
+
+					<ul>
+						<li><input type="checkbox" id="batch_job" value="Y" name="batch_job"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="batch_job">Batch Job
+							</label></li>
+					</ul>
+
+					<input type="checkbox" id="inquiries_and_reportsg" value="Y" name="inquiries_and_reports"
+						style="margin-right: 10px" checked />Inquiries & Reports
+
+					<ul>
+						<li><input type="checkbox" id="account_balance_inqg" value="Y" name="account_balance_inq"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="account_balance_inq">Account Balance
+							</label></li>
+						<li><input type="checkbox" id="interset_summary_inqg" value="Y" name="interset_summary_inq"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="interset_summary_inq">Interest Summary
+							</label>
+						</li>
+
+						<li><input type="checkbox" id="journal_bookg" value="Y" name="journal_book"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="journal_book">Journal Book
+							</label></li>
+						<li><input type="checkbox" id="account_ledgers_ig" value="Y" name="account_ledgers_i"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="account_ledgers_i">Account
+								Ledgers</label>
+						</li>
+
+						<li><input type="checkbox" id="trial_balance_ig" value="Y" name="trial_balance_i"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="trial_balance_i">Trial
+								Balance</label>
+						</li>
+
+						<li><input type="checkbox" id="general_ledgerg" value="Y" name="general_ledger"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="general_ledger">General
+								Ledger</label>
+						</li>
+
+						<li><input type="checkbox" id="profit_and_loss_account_ig" value="Y"
+								name="profit_and_loss_account_i" style="margin-right: 10px; margin-top: 10px" checked />
+							<label for="profit_and_loss_account_i">Profit and Loss Account</label>
+						</li>
+
+						<li><input type="checkbox" id="balance_sheetg" value="Y" name="balance_sheet"
+								style="margin-right: 10px; margin-top: 10px" checked /> <label
+								for="balance_sheet">Balance
+								Sheet</label>
+						</li>
+
+					</ul>
+
+
+					<div>
+						<button type="button" class="btn-primary big-btn" data-dismiss="modal">SUBMIT</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="finusers" data-backdrop="false" data-keyboard="false" style="margin: auto;">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+			style="max-width: 800px;max-height: 100vh;">
+			<div class="modal-content" style="border: 2px solid black;height: 100vh;margin: auto;">
+				<!-- Modal Header -->
+				<div class="modal-header" style="background-color: #e6eaed;">
+					<h4 class="modal-title" style="color: black;">User Access Modules </h4>
+					<button type="button" class="close" data-dismiss="modal">×</button>
+				</div>
+				<!-- Modal body -->
+				<div class="modal-body">
+					<input type="checkbox" onclick="accessechecking(this)" id="admin" name="admin" style="margin-right: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.admin == 'Y'}" />Admin
+
+					<ul>
+						<li><input type="checkbox" id="orgnaization_details" name="orgnaization_details"
+								style="margin-right: 10px; margin-top: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.orgnaization_details == 'Y'}" /> <label
+								for="orgnaization_details">Oraganization Details
+							</label>
+							<!-- <ul>
+								<li><input type="checkbox" id="head_office" name="head_office"
+										style="margin-right: 10px; margin-top: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.head_office == 'Y'}" />
+									<label for="head_office">Head Office
+									</label>
+								</li>
+								<li><input type="checkbox" id="branches" name="branches"
+										style="margin-right: 10px; margin-top: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.branches == 'Y'}" />
+									<label for="branches">Branches
+									</label>
+								</li>
+								<li><input type="checkbox" id="calender_maintance"  name="calender_maintance"
+										style="margin-right: 10px; margin-top: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.calender_maintance == 'Y'}" />
+									<label for="calender_maintance">Calender Maintance
+									</label>
+								</li>
+								<li><input type="checkbox" id="exception"  name="exception"
+										style="margin-right: 10px; margin-top: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.exception == 'Y'}" />
+									<label for="exception">Exception
+									</label>
+								</li>
+							</ul> -->
+						</li>
+						<li><input type="checkbox" id="user_controls"  name="user_controls"
+								style="margin-right: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.user_controls == 'Y'}" /> <label for="user_controls">User Control</label>
+							<!-- <ul>
+								<li><input type="checkbox" id="user_profile"  name="user_profile"
+										style="margin-right: 10px; margin-top: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.user_profile == 'Y'}" />
+									<label for="user_profile">User Profile
+									</label>
+								</li>
+								<li><input type="checkbox" id="employee_profile"  name="employee_profile"
+										style="margin-right: 10px; margin-top: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.employee_profile == 'Y'}" />
+									<label for="employee_profile">Employee Profile
+									</label>
+								</li>
+
+							</ul> -->
+						</li>
+						<li><input type="checkbox" id="reference_code_maintenance" 
+								name="reference_code_maintenance" style="margin-right: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.reference_code_maintenance == 'Y'}" /> <label
+								for="reference_code_maintenance">Parameters</label>
+							<!-- <ul>
+								<li><input type="checkbox" id="reference_code" name="reference_code"
+										style="margin-right: 10px; margin-top: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.reference_code == 'Y'}" />
+									<label for="reference_code">Reference Code Maintanance</label>
+									</label>
+								</li>
+								<li><input type="checkbox" id="gl_structure"  name="gl_structure"
+										style="margin-right: 10px; margin-top: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.gl_structure == 'Y'}" />
+									<label for="gl_structure">GL Structure
+									</label>
+								</li>
+								<li><input type="checkbox" id="scheme_codes"  name="scheme_codes"
+										style="margin-right: 10px; margin-top: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.scheme_codes == 'Y'}" />
+									<label for="scheme_codes">Scheme Code
+									</label>
+								</li>
+								<li><input type="checkbox" id="chart_of_accounts"  name="chart_of_accounts"
+										style="margin-right: 10px; margin-top: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.chart_of_accounts == 'Y'}" />
+									<label for="chart_of_accounts">Chart of Accounts
+									</label>
+								</li>
+								<li><input type="checkbox" id="account_ledgers" name="account_ledgers"
+										style="margin-right: 10px; margin-top: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.account_ledgers == 'Y'}" />
+									<label for="account_ledgers">Account Ledgers
+									</label>
+								</li>
+							</ul> -->
+						</li>
+
+						<li><input type="checkbox" id="audit_trail" name="audit_trail"
+								style="margin-right: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.audit_trail == 'Y'}" />
+							<label for="audit_trail">Audit Trial</label>
+							<!-- <ul>
+								<li><input type="checkbox" id="user_activities"
+										name="user_activities" style="margin-right: 10px; margin-top: 10px"
+										  th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.user_activities == 'Y'}" />
+									<label for="user_activities">User Activities
+									</label>
+								</li>
+								<li><input type="checkbox" id="business_activity" name="business_activity"
+										style="margin-right: 10px; margin-top: 10px"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.business_activity == 'Y'}" />
+									<label for="business_activity">Buisness Activity
+									</label>
+								</li>
+
+							</ul> -->
+						</li>
+						<!-- <li><input type="checkbox" id="budget_controls" value='Y' name="budget_controls"
+								style="margin-right: 10px" />
+							<label for="budget_controls">Budget Control</label>
+						</li> -->
+					</ul>
+
+					<input type="checkbox" id="migration"  name="migration"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.migration == 'Y'}"
+						onclick="accessechecking(this)" style="margin-right: 10px" />Migration
+
+					<ul>
+						<li><input type="checkbox" id="customer_master"  name="customer_master"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.customer_master == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="customer_master">Customer Master
+							</label></li>
+						<li><input type="checkbox" id="loan_master"  name="loan_master"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.loan_master == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="loan_master">Loan Master</label>
+						</li>
+						<li><input type="checkbox" id="loan_schedule_migration" name="loan_schedule_migration"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.loan_schedule_migration == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="loan_schedule_migration">Loan Schedule</label>
+						</li>
+						<li><input type="checkbox" id="transaction_migration" name="transaction_migration"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.transaction_migration == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="transaction_migration">Transaction</label>
+						</li>
+					</ul>
+<div>
+					<input type="checkbox" id="day_end_operation_user" name="day_end_operation_user"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.day_end_operation == 'Y'}"
+						style="margin-right: 10px"
+						 /><label> Day End Operation </label>   <br>
+
+					<input type="checkbox" id="customer_maintenance" name="customer_maintenance"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.customer_maintenance == 'Y'}"
+					style="margin-right: 10px"
+					 /><label> Customer Maintanance</label>   <br>
+
+					<input type="checkbox" id="loan_maintanace" name="loan_maintanace"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.loan_maintanace == 'Y'}"
+					style="margin-right: 10px"
+					 /><label> Loan Maintanance</label>   <br>
+</div>
+					<input type="checkbox" id="loan_operation" name="loan_operation"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.loan_operation == 'Y'}"
+						style="margin-right: 10px" onclick="accessechecking(this)" />Loan Operation
+
+					<ul>
+						<li><input type="checkbox" id="loan_operation_ls"  name="loan_operation_ls"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.loan_operation_ls == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="loan_operation_ls">Loan Operation
+							</label></li>
+						<li><input type="checkbox" id="loan_closure"  name="loan_closure"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.loan_closure == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="loan_closure">Loan Closure</label>
+						</li>
+					</ul>
+
+					<!-- <input type="checkbox" id="maintenance" value='Y' name="maintenance"
+						style="margin-right: 10px" />Maintanance -->
+
+					<!-- <ul>
+						<li><input type="checkbox" id="customer_master_maintenance" 
+								name="customer_master_maintenance" style="margin-right: 10px; margin-top: 10px" />
+							<label for="customer_master_maintenance">Customer Master Maintanance</label>
+						</li>
+						<li><input type="checkbox" id="account_master_maintenance" 
+								name="account_master_maintenance" style="margin-right: 10px; margin-top: 10px" /> <label
+								for="account_master_maintenance">
+								Account Master Maintenance</label></li>
+
+						<li><input type="checkbox" id="lease_accounts"  name="lease_accounts"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="lease_accounts">
+								Lease Accounts</label></li>
+
+						<li><input type="checkbox" id="deposit_accounts_c"  name="deposit_accounts_c"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="deposit_accounts_c">
+								Deposit Accounts</label></li>
+
+						<li><input type="checkbox" id="office_accounts"  name="office_accounts"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="office_accounts">
+								Office Accounts</label></li>
+
+						<li><input type="checkbox" id="document_maintenance"  name="document_maintenance"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="document_maintenance">
+								Document Maintenance</label></li>
+
+						<li><input type="checkbox" id="kyc_norms"  name="kyc_norms"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="kyc_norms">
+								KYC Norms</label></li>
+
+					</ul> -->
+
+					<input type="checkbox" id="transaction_maintenance"  name="transaction_maintenance"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.transaction_maintenance == 'Y'}"
+						style="margin-right: 10px" onclick="accessechecking(this)" />Transaction Maintenance
+
+					<ul>
+						<li><input type="checkbox" id="journal_entries"  name="journal_entries"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.journal_entries == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="journal_entries">Journal Entries</label>
+							</li>
+
+						<li><input type="checkbox" id="account_ledger_posting"  name="account_ledger_posting"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.account_ledger_posting == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label
+								for="account_ledger_posting">Account Ledger Posting</label>
+
+						</li>
+
+						<li><input type="checkbox" id="account_ledger"  name="account_ledger"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.account_ledger == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="account_ledger">Account
+								Ledger</label>
+
+						</li>
+						<li><input type="checkbox" id="trial_balance_t"  name="trial_balance_t"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.trial_balance_t == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="trial_balance_t">Trial
+								Balance</label>
+
+						</li>
+						<li><input type="checkbox" id="profit_and_loss_account_t"    th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.profit_and_loss_account_t == 'Y'}"
+								name="profit_and_loss_account_t" style="margin-right: 10px; margin-top: 10px" /> <label
+								for="profit_and_loss_account_t">Profit and Loss Account</label>
+
+						</li>
+
+					</ul>
+
+
+					<input type="checkbox" id="collection_process"  name="collection_process"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.collection_process == 'Y'}"
+						style="margin-right: 10px" onclick="accessechecking(this)" />Collection Process
+
+					<ul>
+						<li><input type="checkbox" id="participating_banks"  name="participating_banks"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.participating_banks == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label
+								for="participating_banks">Participating Banks
+							</label></li>
+						<li><input type="checkbox" id="loan_collecting"  name="loan_collecting"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.loan_collecting == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label
+								for="loan_collecting">Loan Collection</label>
+						</li>
+					</ul>
+
+					<input type="checkbox" id="batch_job_execution"  name="batch_job_execution"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.batch_job_execution == 'Y'}"
+						style="margin-right: 10px" onclick="accessechecking(this)" />Batch Job Execution
+
+					<ul>
+						<li><input type="checkbox" id="batch_job"  name="batch_job"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.batch_job == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label
+								for="batch_job">Batch Job
+							</label></li>
+					</ul>
+
+					<input type="checkbox" id="inquiries_and_reports"  name="inquiries_and_reports"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.inquiries_and_reports == 'Y'}"
+						style="margin-right: 10px" onclick="accessechecking(this)" />Inquiries & Reports
+
+					<ul>
+						<li><input type="checkbox" id="account_balance_inq"  name="account_balance_inq"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.account_balance_inq == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="account_balance_inq">Account Balance
+							</label></li>
+
+						<li><input type="checkbox" id="interset_summary_inq"  name="interset_summary_inq"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.interset_summary_inq == 'Y'}"
+							style="margin-right: 10px; margin-top: 10px" /> <label for="interset_summary_inq">Interest Summary
+						</label></li>
+
+						<li><input type="checkbox" id="journal_book"  name="journal_book"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.journal_book == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="journal_book">Journal Book
+							</label></li>
+						<li><input type="checkbox" id="account_ledgers_i"  name="account_ledgers_i"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.account_ledgers_i == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="account_ledgers_i">Account
+								Ledgers</label>
+						</li>
+
+						<li><input type="checkbox" id="trial_balance_i"  name="trial_balance_i"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.trial_balance_i == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="trial_balance_i">Trial
+								Balance</label>
+						</li>
+
+						<li><input type="checkbox" id="general_ledger"  name="general_ledger"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.general_ledger == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="general_ledger">General
+								Ledger</label>
+						</li>
+
+						<li><input type="checkbox" id="profit_and_loss_account_i"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.profit_and_loss_account_i == 'Y'}"
+								name="profit_and_loss_account_i" style="margin-right: 10px; margin-top: 10px" /> <label
+								for="profit_and_loss_account_i">Profit and Loss Account</label>
+						</li>
+
+						<li><input type="checkbox" id="balance_sheet"  name="balance_sheet"   th:disabled="${formmode != 'add' and formmode != 'modify'}"  th:checked="${access?.balance_sheet == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="balance_sheet">Balance
+								Sheet</label>
+						</li>
+
+					</ul>
+
+
+					<div>
+						<button type="button" th:if="${formmode == 'add' or formmode == 'modify'}" class="btn-primary big-btn" data-dismiss="modal">SUBMIT</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal" data-backdrop="false" data-keyboard="false" id="userModal">
+		<div class="modal-dialog">
+			<div class="modal-content" style="width: 200%;margin-left: -400px;">
+				<div class="modal-header">
+					<h5 class="modal-title" id="myModalLabel">List of Employees
+					</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+						onclick="$('#userModal').modal('hide')">×</button>
+				</div>
+				<div class="modal-body" style="height: 70vh;overflow-y: auto;">
+					<table class="table  table-bordered  table-hover table-sm" id="usertableSyncTab">
+						<thead>
+							<tr class="filters">
+								<th><input oninput="filterSyncRec()" type="text" placeholder="Employee Id"
+										class="form-control font-weight-bold" id="filterInputSyncNo"
+										style="width: 100%; height: 23px; font-size: 12px; margin-left: -3px;">
+								</th>
+								<th><input oninput="filterSyncRec()" type="text" placeholder="Employee Name"
+										class="form-control font-weight-bold" id="filterInputBorrName"
+										style="width: 100%; height: 23px; font-size: 12px; margin-left: -3px;">
+								</th>
+								<th><input oninput="filterSyncRec()" type="text" placeholder="Branch Id"
+										class="form-control font-weight-bold" id="filterInputBorrName"
+										style="width: 100%; height: 23px; font-size: 12px; margin-left: -3px;">
+								</th>
+								<th><input oninput="filterSyncRec()" type="text" placeholder="Branch Des"
+										class="form-control font-weight-bold" id="filterInputBorrName"
+										style="width: 100%; height: 23px; font-size: 12px; margin-left: -3px;">
+								</th>
+								<th>Select</th>
+							</tr>
+						</thead>
+						<tbody id="filterhower">
+							<tr th:each="getDetails : ${getEmployeeDetails}"
+								th:attr="data-employee_id=${getDetails.employee_id}, data-employee_name=${getDetails.employee_name},data-branch_id=${getDetails.branch_id},data-branch_desc=${getDetails.branch_desc}"
+								onclick="setUserData(this)" style="cursor: pointer;">
+								<td th:text="${getDetails?.employee_id}">456</td>
+								<td th:text="${getDetails?.employee_name}">456</td>
+								<td th:text="${getDetails?.branch_id}">456</td>
+								<td th:text="${getDetails?.branch_desc}">456</td>
+								<td><input type="radio" id="btnclick" name="btnradio" /></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="SuccesPopUp" style="background: #000000b0;margin-bottom:10px;margin: auto;"
+		role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+		<div
+			class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+			role="document">
+			<div class="modal-content" style="height:200px;margin-left:0px;" >
+				<!-- Modal Body -->
+				<div class="modal-body">
+					<h5  id="Successmsgpopup" style="font-size: 17px; color: black; padding: 15px;"></h5>
+				</div>
+				<!-- Modal Footer -->
+				<div style="padding: 10px; text-align: center;">
+					<button type="button" class="btn btn-outline-dark me-3"
+						style="font-size: 16px;"  onclick="goToList();" >Close</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+</body>
+
+</html>

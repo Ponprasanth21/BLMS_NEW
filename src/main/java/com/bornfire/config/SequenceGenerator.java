@@ -108,7 +108,7 @@ public class SequenceGenerator {
 	}
 	
 	public String generateRequestUUId() {
-
+		
 		StringBuffer randStr = new StringBuffer();
 		randStr.append(new SimpleDateFormat("yyyyMMdd").format(new Date()));
 		randStr.append("_");
