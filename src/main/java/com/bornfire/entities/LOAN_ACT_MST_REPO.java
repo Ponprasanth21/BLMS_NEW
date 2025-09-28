@@ -14,7 +14,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, String> {
 //	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL", nativeQuery = true)
-    @Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL LIMIT 100", nativeQuery = true)
+    @Query(value = "SELECT *\r\n"
+    		+ "FROM LOAN_ACCOUNT_MASTER_TBL\r\n"
+    		+ "FETCH FIRST 100 ROWS ONLY", nativeQuery = true)
 	List<LOAN_ACT_MST_ENTITY> getLoanActDet();
 
 	@Query(value = "SELECT * \r\n" + "FROM LOAN_ACCOUNT_MASTER_TBL \r\n" + "WHERE ENCODED_KEY IN (\r\n"

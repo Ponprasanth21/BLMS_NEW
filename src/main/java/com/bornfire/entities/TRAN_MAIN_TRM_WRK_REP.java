@@ -243,7 +243,8 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 	@Query(value = "SELECT NEXT VALUE FOR OrderIDSequence", nativeQuery = true)
 	String gettrmRefUUID();
 
-	@Query(value = "SELECT NEXT VALUE FOR TRAN_ID_SEQUENCE", nativeQuery = true)
+	@Query(value = "SELECT TRAN_ID_SEQUENCE.NEXTVAL\r\n"
+			+ "FROM DUAL", nativeQuery = true)
 	String gettrmRefUUID1();
 
 	@Query(value = "select  * from BGLS_TRM_WRK_TRANSACTIONS order by TRAN_DATE,TRAN_ID,PART_TRAN_ID ", nativeQuery = true)

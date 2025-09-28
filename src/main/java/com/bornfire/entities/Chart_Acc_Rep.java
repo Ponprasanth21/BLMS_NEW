@@ -13,11 +13,11 @@ import org.springframework.stereotype.Repository;
 public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 
 	@Query(value = "SELECT SUM(TRY_CAST(total_balance AS NUMERIC)) \r\n" + "FROM BGLS_GL_WORK \r\n"
-			+ "WHERE TRY_CAST(total_balance AS NUMERIC) < 0;", nativeQuery = true)
+			+ "WHERE TRY_CAST(total_balance AS NUMERIC) < 0", nativeQuery = true)
 	String getacctbaldebit();
 
 	@Query(value = "SELECT SUM(TRY_CAST(total_balance AS NUMERIC)) \r\n" + "FROM BGLS_GL_WORK \r\n"
-			+ "WHERE TRY_CAST(total_balance AS NUMERIC) > 0;", nativeQuery = true)
+			+ "WHERE TRY_CAST(total_balance AS NUMERIC) > 0", nativeQuery = true)
 	String getacctbalcredit();
 
 	@Query(value = "SELECT SUM(ACCT_BAL) FROM BGLS_CHART_OF_ACCOUNTS WHERE ACCT_BAL <0", nativeQuery = true)
@@ -26,7 +26,7 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 	@Query(value = "SELECT SUM(ACCT_BAL) FROM BGLS_CHART_OF_ACCOUNTS WHERE ACCT_BAL >0", nativeQuery = true)
 	String getGLbalcredit();
 
-	@Query(value = "SELECT COUNT(ACCT_BAL) AS ACCT_BAL,SUM(ACCT_BAL) AS SUM_BAL FROM BGLS_CHART_OF_ACCOUNTS WHERE ACCT_CLS_FLG='N';", nativeQuery = true)
+	@Query(value = "SELECT COUNT(ACCT_BAL) AS ACCT_BAL,SUM(ACCT_BAL) AS SUM_BAL FROM BGLS_CHART_OF_ACCOUNTS WHERE ACCT_CLS_FLG='N'", nativeQuery = true)
 	Object[] getaccbalance();
 
 	@Query(value = "SELECT * FROM BGLS_CHART_OF_ACCOUNTS WHERE acct_num IN (:accountNumbers)", nativeQuery = true)
@@ -35,7 +35,7 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 	@Query(value = "SELECT * FROM BGLS_CHART_OF_ACCOUNTS WHERE del_flg='N' ORDER BY ACCT_NUM, CLASSIFICATION ASC", nativeQuery = true)
 	List<Chart_Acc_Entity> getList();
 
-	@Query(value = "SELECT * FROM BGLS_CHART_OF_ACCOUNTS WHERE del_flg='N' AND ACCT_NUM NOT LIKE '%C%'  ORDER BY ACCT_NUM, CLASSIFICATION ASC", nativeQuery = true)
+	@Query(value = "SELECT * FROM BGLS_CHART_OF_ACCOUNTS WHERE del_flg='N' AND own_type ='O'  ORDER BY ACCT_NUM, CLASSIFICATION ASC", nativeQuery = true)
 	List<Chart_Acc_Entity> getListoffice();
 
 	@Query(value = "SELECT GLSH_CODE, GLSH_DESC,COUNT(GLSH_CODE) as sum, acct_crncy, SUM(ACCT_BAL) FROM BGLS_CHART_OF_ACCOUNTS WHERE del_flg='N' AND classification='Asset' GROUP BY GLSH_CODE, GLSH_DESC, acct_crncy ORDER BY GLSH_CODE ASC", nativeQuery = true)

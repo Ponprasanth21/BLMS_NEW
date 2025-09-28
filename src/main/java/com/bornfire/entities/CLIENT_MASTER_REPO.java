@@ -22,7 +22,7 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 	@Query(value = "select * from CLIENT_MASTER_TBL WHERE DEL_FLG ='N' and CUSTOMER_ID =?1", nativeQuery = true)
 	CLIENT_MASTER_ENTITY  getid(String tr_his_id);
     
-    @Query(value = "SELECT * FROM CLIENT_MASTER_TBL  LIMIT 100", nativeQuery = true)
+    @Query(value = "SELECT * FROM CLIENT_MASTER_TBL FETCH FIRST 100 ROWS ONLY", nativeQuery = true)
 	 List<CLIENT_MASTER_ENTITY> getLoanActDet();
 
      @Query(value = "SELECT * FROM CLIENT_MASTER_TBL where  last_modified_date > approved_date", nativeQuery = true)

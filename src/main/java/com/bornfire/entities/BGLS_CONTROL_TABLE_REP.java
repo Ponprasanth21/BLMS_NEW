@@ -12,7 +12,14 @@ public interface BGLS_CONTROL_TABLE_REP extends JpaRepository<BGLS_Control_Table
 	@Query(value="SELECT * FROM BGLS_CONTROL_TABLE", nativeQuery = true)
 	BGLS_Control_Table getTranDate();
 	
-	@Query(value = "SELECT TOP 1 TRAN_DATE FROM BGLS_CONTROL_TABLE ORDER BY TRAN_DATE DESC", nativeQuery = true)
+	@Query(value = "\r\n"
+			+ "SELECT TRAN_DATE\r\n"
+			+ "FROM (\r\n"
+			+ "   SELECT TRAN_DATE\r\n"
+			+ "   FROM BGLS_CONTROL_TABLE\r\n"
+			+ "   ORDER BY TRAN_DATE DESC\r\n"
+			+ ")\r\n"
+			+ "WHERE ROWNUM = 1", nativeQuery = true)
     Date getLatestTranDate();  // Returns the latest TRAN_DATE
 	
 	 @Query(value = "SELECT JOURNAL_CONS, LEDGER_CONS, ACCT_CONS, HOL_CHECK, MOV_DAC, MOV_JOURNAL FROM CON", nativeQuery = true)
