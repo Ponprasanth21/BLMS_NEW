@@ -199,7 +199,7 @@ function SubmitLmsScheme() {
             // Redirect when user clicks OK
             $("#alertOkBtn").off("click").on("click", function() {
                 $('#alert').modal('hide'); 
-                window.location.href = './Parameter'; 
+                window.location.href = './parameter'; 
             });
         },
         error: function(xhr, status, error) {
@@ -209,6 +209,37 @@ function SubmitLmsScheme() {
         }
     });
 }
+
+
+function Delete() {
+    const paramId = document.getElementById('params_id').value; // make sure your input field has id="id"
+
+    if (!paramId) {
+        alert("Parameter ID not found!");
+        return;
+    }
+
+    $.ajax({
+        url: './parametersdelete',   // exact mapping
+        type: 'POST',
+        data: { id: paramId },      // must match entity field
+        success: function(response) {
+            $("#alertmsg").text(response || "Record deleted successfully");
+            $('#alert').modal('show');
+
+            $("#alertOkBtn").off("click").on("click", function() {
+                $('#alert').modal('hide'); 
+                window.location.href = './Parameter';
+            });
+        },
+        error: function(xhr, status, error) {
+            $("#alertmsg").text("Error while deleting: " + error);
+            $('#alert').modal('show');
+        }
+    });
+}
+
+
 
 
 
@@ -233,7 +264,7 @@ function SubmitLmsScheme() {
                             <div class="card-header" style="background-color: #e9ecef; height: 50px">
 
                                 <div class="float-left">
-                                    <h6 style="font-size: 1.2rem; color: black;">PARAMETER LIST - ADD</h6>
+                                    <h6 style="font-size: 1.2rem; color: black;">PARAMETER LIST - DELETE</h6>
                                 </div>
                             </div>
 
@@ -251,7 +282,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Encoded Key</label>
                                                 <input type="text" id="encodedKey" name="encodedKey"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].id}" readonly>
                                             </div> -->
 
                                             <!-- Field 2 -->
@@ -260,18 +291,19 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">ID</label>
                                                 <input type="text" id="id" name="id"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].id}" readonly>
                                             </div>
 
                                             <!-- Field 3 -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="activated" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">Activated</label>
-                                                <select id="activated" name="activated" class="form-control form-control-sm border border-dark" style="width: 55%;">
-                                                <option value="">select</option>
-                                                <option value="N">No</option>
-                                                <option value="Y">Yes</option>
-                                            </select>
+                                                <select id="activated" name="activated" class="form-control form-control-sm border border-dark" style="width: 55%;" disabled>
+                                                    <option value="" th:selected="${parameters[0].activated == null}">Select</option>
+                                                    <option value="N" th:selected="${parameters[0].activated == 'N'}">No</option>
+                                                    <option value="Y" th:selected="${parameters[0].activated == 'Y'}">Yes</option>
+                                                </select>
                                             </div>
 
                                             <!-- Four Eyes Principle Loan Approval -->
@@ -282,7 +314,8 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="fourEyesPrincipleLoanApproval"
                                                     name="fourEyesPrincipleLoanApproval"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].fourEyesPrincipleLoanApproval}" readonly>
                                             </div>
                                         </div>
 
@@ -293,7 +326,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Creation Date</label>
                                                 <input type="date" id="creationDate" name="creationDate"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${#dates.format(parameters[0].creationDate, 'yyyy-MM-dd')}" readonly>
                                             </div>
 
                                             <!-- Field 5 -->
@@ -302,7 +336,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Default Grace Period</label>
                                                 <input type="text" id="defaultGracePeriod" name="defaultGracePeriod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].defaultGracePeriod}" readonly>
                                             </div>
 
                                             <!-- Field 6 -->
@@ -311,7 +346,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Default Loan Amount</label>
                                                 <input type="number" id="defaultLoanAmount" name="defaultLoanAmount"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].defaultLoanAmount}" readonly>
                                             </div>
                                         </div>
 
@@ -325,7 +361,8 @@ function SubmitLmsScheme() {
                                                 <input type="number" id="defaultNumInstallments"
                                                     name="defaultNumInstallments"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].defaultNumInstallments}" readonly>
                                             </div>
 
                                             <!-- Default Repayment Period Count -->
@@ -336,7 +373,8 @@ function SubmitLmsScheme() {
                                                 <input type="number" id="defaultRepaymentPeriodCount"
                                                     name="defaultRepaymentPeriodCount"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].defaultRepaymentPeriodCount}" readonly>
                                             </div>
 
                                             <!-- Grace Period Type -->
@@ -345,7 +383,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Grace Period Type</label>
                                                 <input type="text" id="gracePeriodType" name="gracePeriodType"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].gracePeriodType}" readonly>
                                             </div>
                                         </div>
 
@@ -358,7 +397,8 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="interestCalculationMethod"
                                                     name="interestCalculationMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].interestCalculationMethod}" readonly>
                                             </div>
 
                                             <!-- Interest Type -->
@@ -367,7 +407,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Interest Type</label>
                                                 <input type="text" id="interestType" name="interestType"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].interestType}" readonly>
                                             </div>
 
                                             <!-- Repayment Schedule Method -->
@@ -378,7 +419,8 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="repaymentScheduleMethod"
                                                     name="repaymentScheduleMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].repaymentScheduleMethod}" readonly>
                                             </div>
                                         </div>
 
@@ -389,7 +431,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Last Modified Date</label>
                                                 <input type="date" id="lastModifiedDate" name="lastModifiedDate"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${#dates.format(parameters[0].lastModifiedDate, 'yyyy-MM-dd')}" readonly>
                                             </div>
 
                                             <!-- Max Grace Period -->
@@ -398,7 +441,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Max Grace Period</label>
                                                 <input type="number" id="maxGracePeriod" name="maxGracePeriod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].maxGracePeriod}" readonly>
                                             </div>
 
                                             <!-- Max Loan Amount -->
@@ -407,7 +451,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Max Loan Amount</label>
                                                 <input type="number" id="maxLoanAmount" name="maxLoanAmount"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].maxLoanAmount}" readonly>
                                             </div>
                                         </div>
 
@@ -420,7 +465,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Max Num Installments</label>
                                                 <input type="number" id="maxNumInstallments" name="maxNumInstallments"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].maxNumInstallments}" readonly>
                                             </div>
 
                                             <!-- Max Penalty Rate -->
@@ -429,7 +475,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Max Penalty Rate</label>
                                                 <input type="number" id="maxPenaltyRate" name="maxPenaltyRate"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].maxPenaltyRate}" readonly>
                                             </div>
 
                                             <!-- Min Grace Period -->
@@ -438,7 +485,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Min Grace Period</label>
                                                 <input type="number" id="minGracePeriod" name="minGracePeriod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].minGracePeriod}" readonly>
                                             </div>
                                         </div>
 
@@ -450,7 +498,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Min Loan Amount</label>
                                                 <input type="number" id="minLoanAmount" name="minLoanAmount"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].minLoanAmount}" readonly>
                                             </div>
 
                                             <!-- Min Number of Installments -->
@@ -459,7 +508,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Min Num Installments</label>
                                                 <input type="number" id="minNumInstallments" name="minNumInstallments"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].minNumInstallments}" readonly>
                                             </div>
 
                                             <!-- Min Penalty Rate -->
@@ -468,7 +518,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Min Penalty Rate</label>
                                                 <input type="number" id="minPenaltyRate" name="minPenaltyRate"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].minPenaltyRate}" readonly>
                                             </div>
                                         </div>
 
@@ -479,7 +530,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Default Penalty Rate</label>
                                                 <input type="number" id="defaultPenaltyRate" name="defaultPenaltyRate"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].defaultPenaltyRate}" readonly>
                                             </div>
 
                                             <!-- Product Description -->
@@ -488,7 +540,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Product Description</label>
                                                 <input type="text" id="productDescription" name="productDescription"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].productDescription}" readonly>
                                             </div>
 
                                             <!-- Product Name -->
@@ -497,7 +550,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Product Name</label>
                                                 <input type="text" id="productName" name="productName"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].productName}" readonly>
                                             </div>
                                         </div>
 
@@ -509,7 +563,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Repayment Period Unit</label>
                                                 <input type="text" id="repaymentPeriodUnit" name="repaymentPeriodUnit"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].repaymentPeriodUnit}" readonly>
                                             </div>
 
                                             <!-- Prepayment Acceptance -->
@@ -518,7 +573,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Prepayment Acceptance</label>
                                                 <input type="text" id="prepaymentAcceptance" name="prepaymentAcceptance"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].prepaymentAcceptance}" readonly>
                                             </div>
 
                                             <!-- Interest Application Method -->
@@ -529,7 +585,8 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="interestApplicationMethod"
                                                     name="interestApplicationMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].interestApplicationMethod}" readonly>
                                             </div>
                                         </div>
 
@@ -541,7 +598,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Allow Arbitrary Fees</label>
                                                 <input type="text" id="allowArbitraryFees" name="allowArbitraryFees"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].allowArbitraryFees}" readonly>
                                             </div>
 
                                             <!-- Default Principal Repayment Interval -->
@@ -552,7 +610,8 @@ function SubmitLmsScheme() {
                                                 <input type="number" id="defaultPrincipalRepaymentInterval"
                                                     name="defaultPrincipalRepaymentInterval"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].defaultPrincipalRepaymentInterval}" readonly>
                                             </div>
 
                                             <!-- Loan Penalty Calculation Method -->
@@ -563,7 +622,8 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="loanPenaltyCalculationMethod"
                                                     name="loanPenaltyCalculationMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].loanPenaltyCalculationMethod}" readonly>
                                             </div>
                                         </div>
 
@@ -576,7 +636,8 @@ function SubmitLmsScheme() {
                                                 <input type="number" id="loanPenaltyGracePeriod"
                                                     name="loanPenaltyGracePeriod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].loanPenaltyGracePeriod}" readonly>
                                             </div>
 
                                             <!-- Repayment Currency Rounding -->
@@ -587,7 +648,8 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="repaymentCurrencyRounding"
                                                     name="repaymentCurrencyRounding"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].repaymentCurrencyRounding}" readonly>
                                             </div>
 
                                             <!-- Rounding Repayment Schedule Method -->
@@ -598,7 +660,8 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="roundingRepaymentScheduleMethod"
                                                     name="roundingRepaymentScheduleMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].roundingRepaymentScheduleMethod}" readonly>
                                             </div>
                                         </div>
 
@@ -612,7 +675,8 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="prepaymentRecalculationMethod"
                                                     name="prepaymentRecalculationMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].prepaymentRecalculationMethod}" readonly>
                                             </div>
 
                                             <!-- Principal Paid Installment Status -->
@@ -623,7 +687,8 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="principalPaidInstallmentStatus"
                                                     name="principalPaidInstallmentStatus"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].principalPaidInstallmentStatus}" readonly>
                                             </div>
 
                                             <!-- Days In Year -->
@@ -632,7 +697,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Days In Year</label>
                                                 <input type="number" id="daysInYear" name="daysInYear"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].daysInYear}" readonly>
                                             </div>
                                         </div>
 
@@ -646,7 +712,8 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="scheduleInterestDaysCountMethod"
                                                     name="scheduleInterestDaysCountMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].scheduleInterestDaysCountMethod}" readonly>
                                             </div>
 
                                             <!-- Repayment Allocation Order -->
@@ -657,7 +724,8 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="repaymentAllocationOrder"
                                                     name="repaymentAllocationOrder"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].repaymentAllocationOrder}" readonly>
                                             </div>
 
                                             <!-- ID Generator Type -->
@@ -666,7 +734,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">ID Generator Type</label>
                                                 <input type="text" id="idGeneratorType" name="idGeneratorType"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].idGeneratorType}" readonly>
                                             </div>
                                         </div>
 
@@ -678,7 +747,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">ID Pattern</label>
                                                 <input type="text" id="idPattern" name="idPattern"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].idPattern}" readonly>
                                             </div>
 
                                             <!-- Accounting Method -->
@@ -687,7 +757,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Accounting Method</label>
                                                 <input type="text" id="accountingMethod" name="accountingMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].accountingMethod}" readonly>
                                             </div>
 
                                             <!-- Account Linking Enabled -->
@@ -697,7 +768,8 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="accountLinkingEnabled"
                                                     name="accountLinkingEnabled"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].accountLinkingEnabled}" readonly>
                                             </div>
                                         </div>
 
@@ -712,7 +784,8 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="linkableSavingsProductKey"
                                                     name="linkableSavingsProductKey"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].linkableSavingsProductKey}" readonly>
                                             </div>
 
                                             <!-- Auto Link Accounts -->
@@ -721,7 +794,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Auto Link Accounts</label>
                                                 <input type="text" id="autoLinkAccounts" name="autoLinkAccounts"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].autoLinkAccounts}" readonly>
                                             </div>
 
                                             <!-- Auto Create Linked Accounts -->
@@ -732,7 +806,9 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="autoCreateLinkedAccounts"
                                                     name="autoCreateLinkedAccounts"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].autoCreateLinkedAccounts}" readonly>
+                                                    
                                             </div>
                                         </div>
 
@@ -746,7 +822,8 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="repaymentScheduleEditOptions"
                                                     name="repaymentScheduleEditOptions"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].repaymentScheduleEditOptions}" readonly>
                                             </div>
 
                                             <!-- Schedule Due Dates Method -->
@@ -757,7 +834,8 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="scheduleDueDatesMethod"
                                                     name="scheduleDueDatesMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].scheduleDueDatesMethod}" readonly>
                                             </div>
 
                                             <!-- Payment Method -->
@@ -766,7 +844,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Payment Method</label>
                                                 <input type="text" id="paymentMethod" name="paymentMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].paymentMethod}" readonly>
                                             </div>
                                         </div>
 
@@ -777,7 +856,8 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Fixed Days Of Month</label>
                                                 <input type="number" id="fixedDaysOfMonth" name="fixedDaysOfMonth"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].fixedDaysOfMonth}" readonly>
                                             </div>
 
                                             <!-- Short Month Handling Method -->
@@ -788,7 +868,8 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="shortMonthHandlingMethod"
                                                     name="shortMonthHandlingMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;"
+                                                    th:value="${parameters[0].shortMonthHandlingMethod}" readonly>
                                             </div>
 
                                             <!-- Taxes On Interest Enabled -->
@@ -799,7 +880,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="taxesOnInterestEnabled"
                                                     name="taxesOnInterestEnabled"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].taxesOnInterestEnabled}" readonly>
                                             </div>
                                         </div>
 
@@ -810,7 +891,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Tax Source Key</label>
                                                 <input type="text" id="taxSourceKey" name="taxSourceKey"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].taxSourceKey}" readonly>
                                             </div>
 
                                             <!-- Tax Calculation Method -->
@@ -819,7 +900,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Tax Calculation Method</label>
                                                 <input type="text" id="taxCalculationMethod" name="taxCalculationMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].taxCalculationMethod}" readonly>
                                             </div>
 
                                             <!-- Future Payments Acceptance -->
@@ -830,7 +911,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="futurePaymentsAcceptance"
                                                     name="futurePaymentsAcceptance"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].futurePaymentsAcceptance}" readonly>
                                             </div>
                                         </div>
 
@@ -842,7 +923,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Taxes On Fees Enabled</label>
                                                 <input type="text" id="taxesOnFeesEnabled" name="taxesOnFeesEnabled"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].taxesOnFeesEnabled}" readonly>
                                             </div>
 
                                             <!-- Taxes On Penalty Enabled -->
@@ -852,7 +933,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="taxesOnPenaltyEnabled"
                                                     name="taxesOnPenaltyEnabled"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].taxesOnPenaltyEnabled}" readonly>
                                             </div>
 
                                             <!-- Apply Interest On Prepayment Method -->
@@ -863,7 +944,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="applyInterestOnPrepaymentMethod"
                                                     name="applyInterestOnPrepaymentMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].applyInterestOnPrepaymentMethod}" readonly>
                                             </div>
                                         </div>
 
@@ -877,7 +958,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="repaymentElementsRoundingMethod"
                                                     name="repaymentElementsRoundingMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].repaymentElementsRoundingMethod}" readonly>
                                             </div>
 
                                             <!-- Elements Recalculation Method -->
@@ -888,7 +969,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="elementsRecalculationMethod"
                                                     name="elementsRecalculationMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].elementsRecalculationMethod}" readonly>
                                             </div>
 
                                             <!-- Dormancy Period Days -->
@@ -897,7 +978,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Dormancy Period Days</label>
                                                 <input type="number" id="dormancyPeriodDays" name="dormancyPeriodDays"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].dormancyPeriodDays}" readonly>
                                             </div>
                                         </div>
 
@@ -908,7 +989,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Lock Period Days</label>
                                                 <input type="number" id="lockPeriodDays" name="lockPeriodDays"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].lockPeriodDays}" readonly>
                                             </div>
 
                                             <!-- Capping Method -->
@@ -917,7 +998,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Capping Method</label>
                                                 <input type="text" id="cappingMethod" name="cappingMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].cappingMethod}" readonly>
                                             </div>
 
                                             <!-- Capping Constraint Type -->
@@ -927,7 +1008,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="cappingConstraintType"
                                                     name="cappingConstraintType"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].cappingConstraintType}" readonly>
                                             </div>
                                         </div>
 
@@ -939,7 +1020,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Capping Percentage</label>
                                                 <input type="number" id="cappingPercentage" name="cappingPercentage"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].cappingPercentage}" readonly>
                                             </div>
 
                                             <!-- Capping Apply Accrued Charges Before Locking -->
@@ -950,7 +1031,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="cappingApplyAccruedChargesBeforeLocking"
                                                     name="cappingApplyAccruedChargesBeforeLocking"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].cappingApplyAccruedChargesBeforeLocking}" readonly>
                                             </div>
 
                                             <!-- Settlement Options -->
@@ -959,7 +1040,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Settlement Options</label>
                                                 <input type="text" id="settlementOptions" name="settlementOptions"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].settlementOptions}" readonly>
                                             </div>
                                         </div>
 
@@ -970,7 +1051,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Offset Percentage</label>
                                                 <input type="number" id="offsetPercentage" name="offsetPercentage"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].offsetPercentage}" readonly>
                                             </div>
 
                                             <!-- Account Initial State -->
@@ -979,7 +1060,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Account Initial State</label>
                                                 <input type="text" id="accountInitialState" name="accountInitialState"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].accountInitialState}" readonly>
                                             </div>
 
                                             <!-- Max Number Of Disbursement Tranches -->
@@ -990,7 +1071,7 @@ function SubmitLmsScheme() {
                                                 <input type="number" id="maxNumberOfDisbursementTranches"
                                                     name="maxNumberOfDisbursementTranches"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].maxNumberOfDisbursementTranches}" readonly>
                                             </div>
                                         </div>
 
@@ -1003,7 +1084,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="latePaymentsRecalculationMethod"
                                                     name="latePaymentsRecalculationMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].latePaymentsRecalculationMethod}" readonly>
                                             </div>
 
                                             <!-- Amortization Method -->
@@ -1012,7 +1093,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Amortization Method</label>
                                                 <input type="text" id="amortizationMethod" name="amortizationMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].amortizationMethod}" readonly>
                                             </div>
 
                                             <!-- Interest Rate Settings Key -->
@@ -1023,7 +1104,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="interestRateSettingsKey"
                                                     name="interestRateSettingsKey"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].interestRateSettingsKey}" readonly>
                                             </div>
                                         </div>
 
@@ -1042,7 +1123,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="lineOfCreditRequirement"
                                                     name="lineOfCreditRequirement"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].lineOfCreditRequirement}" readonly>
                                             </div>
 
                                             <!-- Product Security Settings Key -->
@@ -1053,7 +1134,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="productSecuritySettingsKey"
                                                     name="productSecuritySettingsKey"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].productSecuritySettingsKey}" readonly>
                                             </div>
 
                                             <!-- Default First Repayment Due Date Offset -->
@@ -1065,18 +1146,22 @@ function SubmitLmsScheme() {
                                                 name="defaultFirstRepaymentDueDateOffset"
                                                 class="form-control form-control-sm border border-dark"
                                                 style="width: 55%;"
-                                                >
+                                                th:value="${#dates.format(parameters[0].defaultFirstRepaymentDueDateOffset, 'yyyy-MM-dd')}"
+                                                readonly>
                                             </div>
                                         </div>
 
                                         <div class="row g-3 mt-2">
-                                             <div class="col-md-4 d-flex align-items-center">
+
+                                            <div class="col-md-4 d-flex align-items-center">
                                                 <label for="minFirstRepaymentDueDateOffset"
                                                     class="form-label me-2 mb-0 text-end" style="width: 45%;">Min First Repayment Due Date</label>
                                                 <input type="date" id="minFirstRepaymentDueDateOffset"
                                                 name="minFirstRepaymentDueDateOffset"
                                                 class="form-control form-control-sm border border-dark"
-                                                style="width: 55%;">
+                                                style="width: 55%;"
+                                                th:value="${#dates.format(parameters[0].minFirstRepaymentDueDateOffset, 'yyyy-MM-dd')}"
+                                                readonly>
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1085,7 +1170,9 @@ function SubmitLmsScheme() {
                                                 <input type="date" id="maxFirstRepaymentDueDateOffset"
                                                 name="maxFirstRepaymentDueDateOffset"
                                                 class="form-control form-control-sm border border-dark"
-                                                style="width: 55%;">
+                                                style="width: 55%;"
+                                                th:value="${#dates.format(parameters[0].maxFirstRepaymentDueDateOffset, 'yyyy-MM-dd')}"
+                                                readonly>
                                             </div>
 
                                             <!-- Interest Accrued Accounting Method -->
@@ -1096,7 +1183,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="interestAccruedAccountingMethod"
                                                     name="interestAccruedAccountingMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].interestAccruedAccountingMethod}" readonly>
                                             </div>
                                         </div>
 
@@ -1107,7 +1194,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Loan Product Type</label>
                                                 <input type="text" id="loanProductType" name="loanProductType"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].loanProductType}" readonly>
                                             </div>
 
                                             <!-- For Individuals -->
@@ -1116,7 +1203,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">For Individuals</label>
                                                 <input type="text" id="forIndividuals" name="forIndividuals"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].forIndividuals}" readonly>
                                             </div>
 
                                             <!-- For Pure Groups -->
@@ -1125,7 +1212,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">For Pure Groups</label>
                                                 <input type="text" id="forPureGroups" name="forPureGroups"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].forPureGroups}" readonly>
                                             </div>
                                         </div>
 
@@ -1136,7 +1223,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">For Hybrid Groups</label>
                                                 <input type="text" id="forHybridGroups" name="forHybridGroups"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].forHybridGroups}" readonly>
                                             </div>
 
                                             <!-- For All Branches -->
@@ -1145,7 +1232,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">For All Branches</label>
                                                 <input type="text" id="forAllBranches" name="forAllBranches"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].forAllBranches}" readonly>
                                             </div>
 
                                             <!-- Principal Payment Settings Key -->
@@ -1156,7 +1243,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="principalPaymentSettingsKey"
                                                     name="principalPaymentSettingsKey"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].principalPaymentSettingsKey}" readonly>
                                             </div>
                                         </div>
 
@@ -1169,7 +1256,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="repaymentReschedulingMethod"
                                                     name="repaymentReschedulingMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].repaymentReschedulingMethod}" readonly>
                                             </div>
 
                                             <!-- Interest Balance Calculation Method -->
@@ -1180,7 +1267,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="interestBalanceCalculationMethod"
                                                     name="interestBalanceCalculationMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].interestBalanceCalculationMethod}" readonly>
                                             </div>
 
                                             <!-- Arrears Settings Key -->
@@ -1189,7 +1276,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Arrears Settings Key</label>
                                                 <input type="text" id="arrearsSettingsKey" name="arrearsSettingsKey"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].arrearsSettingsKey}" readonly>
                                             </div>
                                         </div>
 
@@ -1200,7 +1287,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Redraw Settings Key</label>
                                                 <input type="text" id="redrawSettingsKey" name="redrawSettingsKey"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].redrawSettingsKey}" readonly>
                                             </div>
 
                                             <!-- Allow Custom Repayment Allocation -->
@@ -1211,7 +1298,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="allowCustomRepaymentAllocation"
                                                     name="allowCustomRepaymentAllocation"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].allowCustomRepaymentAllocation}" readonly>
                                             </div>
 
                                             <!-- Accrue Late Interest -->
@@ -1220,7 +1307,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Accrue Late Interest</label>
                                                 <input type="text" id="accrueLateInterest" name="accrueLateInterest"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].accrueLateInterest}" readonly>
                                             </div>
                                         </div>
 
@@ -1233,7 +1320,7 @@ function SubmitLmsScheme() {
                                                 <input type="text" id="interestAccrualCalculation"
                                                     name="interestAccrualCalculation"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].interestAccrualCalculation}" readonly>
                                             </div>
 
                                             <!-- Category -->
@@ -1242,7 +1329,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Category</label>
                                                 <input type="text" id="category" name="category"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].category}" readonly>
                                             </div>
 
                                             <!-- Currency Code -->
@@ -1251,7 +1338,7 @@ function SubmitLmsScheme() {
                                                     style="width: 45%;">Currency Code</label>
                                                 <input type="text" id="currencyCode" name="currencyCode"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:value="${parameters[0].currencyCode}" readonly>
                                             </div>
                                         </div>
 
@@ -1264,7 +1351,8 @@ function SubmitLmsScheme() {
                                     <div class="card-footer text-center" style="background-color: #e9ecef;">
 
                                         <button class="btn-primary big-btn" onclick="Home();">Home</button>
-                                        <button class="btn-primary big-btn" type="button" onclick="SubmitLmsScheme();">Submit</button>
+                                        <input type="hidden" name="params_id" id="params_id" th:value="${parameters[0].id}">
+                                        <button class="btn-primary big-btn" type="button" onclick="Delete();">DELETE</button>
                                         <button class="btn-primary big-btn" onclick="Back();">Back</button>
 
                                     </div>

@@ -76,6 +76,7 @@ import com.bornfire.entities.BGLS_Journal_History_Rep;
 import com.bornfire.entities.Baj_Work_Repo;
 import com.bornfire.entities.BamDocumentMasRep;
 import com.bornfire.entities.Bamdocumentmanager;
+import com.bornfire.entities.BglsLmsSchemesRepo;
 import com.bornfire.entities.Budget_Maintanance_Repo;
 import com.bornfire.entities.CLIENT_MASTER_ENTITY;
 import com.bornfire.entities.CLIENT_MASTER_REPO;
@@ -316,6 +317,9 @@ public class BGLSNavigationController {
 	
 	@Autowired
 	com.bornfire.entities.BglsHolidayMasterRep bglsHolidayMasterRep;
+	
+	@Autowired
+	BglsLmsSchemesRepo bglsLmsSchemesRepo;
 	
 	
 	@Autowired
@@ -3899,15 +3903,6 @@ public class BGLSNavigationController {
 	}
 	
 
-	@RequestMapping(value = "Parameteradd", method = { RequestMethod.GET, RequestMethod.POST })
-	public String redirectschemeadd() {
-
-//		md.addAttribute("refdetails",reference_code_Rep.getRefById(id) );
-//		md.addAttribute("refType", reference_code_Rep.getReferenceType());
-		
-		return "BACP/PARAMETERADD";  
-	}
-
 	@GetMapping("/checkControlStatus")
 	@ResponseBody
 	public Map<String, Boolean> checkControlStatus() {
@@ -4091,8 +4086,44 @@ public class BGLSNavigationController {
 	    return DateChangeService.dateChange(TRANDATE);
 	}
 
+	@RequestMapping(value = "Parameteradd", method = { RequestMethod.GET, RequestMethod.POST })
+	public String redirectschemeadd() {
+
+//		md.addAttribute("refdetails",reference_code_Rep.getRefById(id) );
+//		md.addAttribute("refType", reference_code_Rep.getReferenceType());
+		
+		return "BACP/PARAMETERADD";  
+	}
+
+
+	@RequestMapping(value = "parameterview", method = { RequestMethod.GET, RequestMethod.POST })
+	public String parameterEdit(
+	        @RequestParam(required = false) String id,
+	        @RequestParam(required = false, defaultValue = "view") String formmode, // <--- add this
+	        Model md) {
+
+	    // Fetch the entity/entities
+	    md.addAttribute("parameters", bglsLmsSchemesRepo.findByUniqueId(id));
+
+	    // Pass the mode to Thymeleaf
+	    md.addAttribute("formMode", formmode);
+
+	    return "BACP/parameterview.html";
+	}
 
 
 
+	
+	@RequestMapping(value = "parameterdelete", method = { RequestMethod.GET, RequestMethod.POST })
+	public String parameterDELETE(@RequestParam(required = false) String id, Model md) {
+	    md.addAttribute("parameters", bglsLmsSchemesRepo.findByUniqueId(id));
+	    return "BACP/parameterdelete.html";
+	}
+	
+	@RequestMapping(value = "parameterupdate", method = { RequestMethod.GET, RequestMethod.POST })
+	public String parameterUpdate(@RequestParam(required = false) String id, Model md) {
+	    md.addAttribute("parameters", bglsLmsSchemesRepo.findByUniqueId(id));
+	    return "BACP/PARAMETERUPDATE.html";
+	}
 
 }

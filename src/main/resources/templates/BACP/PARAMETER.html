@@ -959,6 +959,37 @@ function modifyTab(evt, tabName) {
 	function addscheme() {
 		location.href = "Parameteradd";
 	}
+
+	function rowClick(Id) {
+		// Example: navigate to URL with refId
+		window.location.href = './parameterview?id=' + Id +'&formmode=view';
+	}
+
+
+	function redirectToVerify(element) {
+    // Get the ID from the clicked element's data attribute
+    const Id = element.getAttribute('data-refid');
+    // Navigate to verify mode
+    window.location.href = './parameterview?id=' + Id + '&formmode=verify';
+}
+
+	function redirectToDelete(element) {
+		const refId = element.getAttribute('data-refid');
+		if (refId) {
+            window.location.href = './parameterdelete?id=' + refId;
+        }
+	}
+
+	function redirectToEdit(element) {
+		const refId = element.getAttribute('data-refid');
+		if (refId) {
+            window.location.href = './parameterupdate?id=' + refId;
+        }
+	}
+
+
+
+	
 </script>
 
 
@@ -1045,6 +1076,7 @@ function modifyTab(evt, tabName) {
 												<th>PRODUCT NAME</th>
 												<th>LOAN PRODUCT TYPE</th>
 												<th>CURRENCY CODE</th>
+												<th>SELECT</th>
 											</tr>
 										</thead>
 
@@ -1054,26 +1086,56 @@ function modifyTab(evt, tabName) {
 												class="userlist">
 
 
-												<td style="width: 80px; font-size: 15px;"
-													th:text="${tabledata.id}"></td>
+												 <td style="width: 80px; font-size: 15px; color: #007bff; cursor: pointer;" 
+													th:attr="onclick=|rowClick('${tabledata.id}')|"  
+													th:text="${tabledata.id}">
+												</td>
 												<td style="width: 200px; font-size: 15px;"
-													th:text="${tabledata.schmdesc}"></td>
+													th:text="${tabledata.activated}"></td>
 												<td style="width: 200px; font-size: 15px;"
-													th:text="${tabledata.schmcode}"></td>
+													th:text="${tabledata.interestType}"></td>
 												<td style="width: 200px; font-size: 15px;"
-													th:text="${tabledata.schm_group}"></td>
+													th:text="${tabledata.productDescription}"></td>
 												<td style="width: 200px; font-size: 15px;"
-													th:text="${tabledata.home_curr}"></td>
+													th:text="${tabledata.productName}"></td>
 												<td style="width: 230px; font-size: 15px;"
-													th:text="${tabledata.td_type}"></td>
-												<th:block id="status" th:switch="${tabledata.verify_flg}">
-													<td th:case="'Y'"
-														style="color: green; font-size: 12px; font-weight: bold;">VERIFIED</td>
-													<td th:case="'N'"
-														style="color: red; font-size: 12px; font-weight: bold;">UNVERIFIED</td>
-													<td th:case="*"
-														style="color: red; font-size: 12px; font-weight: bold;">UNVERIFIED</td>
-												</th:block>
+													th:text="${tabledata.loanProductType}"></td>
+												<td style="width: 230px; font-size: 15px;"
+													th:text="${tabledata.currencyCode}"></td>
+
+												<td class="text-center" style="width: 100px;">
+											<div class="dropdown action-dropdown">
+												<button class="btn btn-action dropdown-toggle" style="padding:0px"
+														type="button" id="dropdownMenuButton" title="Action"
+														data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													Action
+												</button>
+
+												<div class="dropdown-menu" style="padding:0px" aria-labelledby="dropdownMenuButton">
+													<!-- Edit / Redirect -->
+													<a class="dropdown-item edit-item"
+													th:attr="data-refid=${tabledata.id}"
+													title="Edit"
+													onclick="redirectToEdit(this)">Edit</a>
+
+													<div class="dropdown-divider"></div>
+
+													<!-- Delete -->
+													<a class="dropdown-item delete-item"
+													th:attr="data-refid=${tabledata.id}"
+													title="Delete"
+													onclick="redirectToDelete(this)">Delete</a>
+
+													<div class="dropdown-divider"></div>
+
+													<a class="dropdown-item delete-item"
+													th:attr="data-refid=${tabledata.id}"
+													title="Verify"
+													onclick="redirectToVerify(this)">Verify</a>
+												</div>
+											</div>
+										</td>
+												
 												<!-- <td>
 													<div class="dropdown action-dropdown">
 														<button class="btn btn-action dropdown-toggle" style="padding:0px"
@@ -2124,7 +2186,7 @@ function modifyTab(evt, tabName) {
 						</div>
 					</div>
 
-					<div id="tab2" class="tabcontent" style="display: none;" >
+					<div id="tab2" class="tabcontent">
 						<div class="card ">
 							<div class="card-header"
 								style="background-color: #e9ecef; height: 50px">
@@ -2383,7 +2445,7 @@ function modifyTab(evt, tabName) {
 						</div>
 					</div>
 
-					<div id="tab3" class="tabcontent" style="display: none;" >
+					<div id="tab3" class="tabcontent">
 						<div class="card">
 							<div class="card-header"
 								style="background-color: #e9ecef; height: 50px">
@@ -3621,7 +3683,7 @@ function modifyTab(evt, tabName) {
 					</div>
 
 
-					<div id="tab2" class="tabcontent" style="display: none;" >
+					<div id="tab2" class="tabcontent">
 						<div class="card ">
 
 							<div class="card-header"
@@ -3881,7 +3943,7 @@ function modifyTab(evt, tabName) {
 						</div>
 					</div>
 
-					<div id="tab3" class="tabcontent" style="display: none;" >
+					<div id="tab3" class="tabcontent">
 						<div class="card">
 
 							<div class="card-header"
@@ -6475,7 +6537,7 @@ function modifyTab(evt, tabName) {
 					</div>
  -->
 
-					<div id="tab2" class="tabcontent" style="display: none;" >
+					<div id="tab2" class="tabcontent">
 						<div class="card ">
 
 							<div class="card-header"
@@ -6735,7 +6797,7 @@ function modifyTab(evt, tabName) {
 						</div>
 					</div>
 
-					<div id="tab3" class="tabcontent" style="display: none;" >
+					<div id="tab3" class="tabcontent">
 						<div class="card">
 
 							<div class="card-header"
@@ -9234,7 +9296,7 @@ function modifyTab(evt, tabName) {
 							</table>
 						</div>
 					</div>
-					<div id="tab2" class="tabcontent" style="display: none;" >
+					<div id="tab2" class="tabcontent">
 						<div class="card ">
 
 							<div class="card-header"
@@ -9494,7 +9556,7 @@ function modifyTab(evt, tabName) {
 						</div>
 					</div>
 
-					<div id="tab3" class="tabcontent" style="display: none;" >
+					<div id="tab3" class="tabcontent">
 						<div class="card">
 
 							<div class="card-header"

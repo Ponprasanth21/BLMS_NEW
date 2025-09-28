@@ -124,6 +124,14 @@
 			<version>5.9.0</version>
 
 		</dependency>
+		
+		<dependency>
+    <groupId>javax.interceptor</groupId>
+    <artifactId>javax.interceptor-api</artifactId>
+    <version>1.2</version>
+    <scope>provided</scope>
+</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/org.webjars/jquery -->
 
@@ -403,10 +411,11 @@
 
 		</dependency>
 		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc7</artifactId>
-			<version>12.1.0.2</version>
-		</dependency>
+    <groupId>com.oracle.database.jdbc</groupId>
+    <artifactId>ojdbc8</artifactId>
+    <version>19.14.0.0</version>
+</dependency>
+
 
 <dependency>
     <groupId>org.springframework</groupId>
@@ -435,15 +444,37 @@
 
 
 	<repositories>
-
-		<repository>
-
-			<id>ojdbc7</id>
-
-			<url>http://nexus.saas.hand-china.com/content/repositories/rdc/</url>
-
-		</repository>
-
+		
+            <repository>
+                <id>jaspersoft-third-party</id>
+                <url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/</url>
+                <releases>
+                    <enabled>true</enabled>
+                </releases>
+                <snapshots>
+                    <enabled>true</enabled>
+                </snapshots>
+            </repository>
+            <repository>
+                <id>jr-ce-releases</id>
+                <url>https://jaspersoft.jfrog.io/jaspersoft/jr-ce-releases</url>
+                <releases>
+                    <enabled>true</enabled>
+                </releases>
+                <snapshots>
+                    <enabled>true</enabled>
+                </snapshots>
+            </repository>
+            <repository>
+                <id>jr-ce-snapshots</id>
+                <url>https://jaspersoft.jfrog.io/jaspersoft/jr-ce-snapshots/</url>
+                <releases>
+                    <enabled>true</enabled>
+                </releases>
+                <snapshots>
+                    <enabled>true</enabled>
+                </snapshots>
+            </repository>
 	</repositories>
 
 

@@ -5,19 +5,25 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.ValueGenerationType;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "BGLS_LMS_SCHEMES")
 public class BglsLmsSchemesEntity {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "UNIQUE_ID")
     private Long unique_id;
-    
+     
     @Column(name = "ID")
     private String id;
 
@@ -27,7 +33,9 @@ public class BglsLmsSchemesEntity {
     @Column(name = "ACTIVATED")
     private String activated;
 
+    
     @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "CREATIONDATE")
     private Date creationDate;
 
@@ -56,6 +64,7 @@ public class BglsLmsSchemesEntity {
     private String repaymentScheduleMethod;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "LASTMODIFIEDDATE")
     private Date lastModifiedDate;
 
@@ -243,14 +252,17 @@ public class BglsLmsSchemesEntity {
     private String productSecuritySettingsKey;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "DEFAULTFIRSTREPAYMENTDUEDATEOFFSET")
     private Date defaultFirstRepaymentDueDateOffset;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "MINFIRSTREPAYMENTDUEDATEOFFSET")
     private Date minFirstRepaymentDueDateOffset;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "MAXFIRSTREPAYMENTDUEDATEOFFSET")
     private Date maxFirstRepaymentDueDateOffset;
 
