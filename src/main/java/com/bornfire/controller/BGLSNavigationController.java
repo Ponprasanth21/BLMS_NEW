@@ -3562,7 +3562,8 @@ public class BGLSNavigationController {
 			md.addAttribute("formmode", "home");
 		} else if (formmode.equals("list")) {
 			md.addAttribute("formmode", "list");
-			md.addAttribute("list", clientMasterRepo.getLoanActDet());
+			Long limit = 100L;
+			md.addAttribute("list", clientMasterRepo.getLoanActDet(limit));
 		} else if (formmode.equals("view")) {
 			Integer unverifiedStatus = clientMasterRepo.getUnverifiedStatus(id);
 			Boolean isUnverified = unverifiedStatus != null && unverifiedStatus == 1;

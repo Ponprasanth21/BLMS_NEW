@@ -92,8 +92,10 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
 			+ "FROM LOAN_ACCOUNT_MASTER_TBL WHERE id = ?1", nativeQuery = true)
 	Integer getUnverifiedStatus(String id);
 
-	@Query(value = "select id,loan_name,encoded_key , CURRENCY_CODE from LOAN_ACCOUNT_MASTER_TBL order by id", nativeQuery = true)
-	List<Object[]> getActNo();
+	@Query(value = "SELECT id, loan_name, encoded_key, currency_code " +
+            "FROM loan_account_master_tbl " +
+            "ORDER BY id FETCH FIRST 1000 ROWS ONLY", nativeQuery = true)
+List<Object[]> getActNo();
 
 	@Query(value = "SELECT encoded_key FROM LOAN_ACCOUNT_MASTER_TBL WHERE ID =?1", nativeQuery = true)
 	String getLoanViewdatas(String id);

@@ -17,7 +17,7 @@ public interface DepositRep extends JpaRepository<DepositEntity, String> {
 	@Query(value="SELECT * FROM BGLS_DEPOSIT_WORK WHERE CUST_ID =?1", nativeQuery = true)
 	DepositEntity getCustdata(String cust_id);
 	
-	@Query(value="SELECT DEPO_ACTNO FROM BGLS_DEPOSIT_WORK order by DEPO_ACTNO", nativeQuery = true)
+	@Query(value = "SELECT depo_actno FROM bgls_deposit_work ORDER BY depo_actno", nativeQuery = true)
 	List<String> getexistingData();
 	
 	@Query(value="SELECT * FROM BGLS_DEPOSIT_WORK WHERE DEPO_ACTNO =?1", nativeQuery = true)

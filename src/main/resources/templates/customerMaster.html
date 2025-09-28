@@ -2145,51 +2145,46 @@
 	</script>
 
 	<script type="text/javascript">
-		document.addEventListener('DOMContentLoaded', function () {
-			handleFilterChange(); // Automatically apply the filter on page load
-		});
 
-		function handleFilterChange() {
-			var a = document.getElementById('approvedfilter').value;
 
-			if (a === 'ALL') {
-				$.ajax({
-					url: './AllApprovedCust',
-					type: 'GET',
-					success: function (data) {
-						updateTable(data);
-						console.log("data" + data);
-					},
-					error: function (err) {
-						console.error('Error fetching data:', err);
-					}
-				});
-			} else if (a === 'NOTAPPROVED') {
-				$.ajax({
-					url: './NotApprovedCust',
-					type: 'GET',
-					success: function (data) {
-						updateTable(data);
-						console.log("data" + data);
-					},
-					error: function (err) {
-						console.error('Error fetching data:', err);
-					}
-				});
-			} else if (a === 'APPROVED') {
-				$.ajax({
-					url: './ApprovedCust',
-					type: 'GET',
-					success: function (data) {
-						updateTable(data);
-						console.log("data" + data);
-					},
-					error: function (err) {
-						console.error('Error fetching data:', err);
-					}
-				});
-			}
-		}
+	document.addEventListener('DOMContentLoaded', function () {
+		handleFilterChange(100); // Load 100 rows initially
+	});
+
+function handleFilterChange(limit) {
+    var filterValue = document.getElementById('approvedfilter').value;
+
+    // Only send limit for ALL on page load
+    let data = {};
+    if (filterValue === 'ALL' && limit !== undefined && limit !== null) {
+        data.limit = limit; // send 100 only on page load
+    }
+
+    let url = '';
+    if (filterValue === 'ALL') {
+        url = './AllApprovedCust';
+    } else if (filterValue === 'NOTAPPROVED') {
+        url = './NotApprovedCust';
+    } else if (filterValue === 'APPROVED') {
+        url = './ApprovedCust';
+    }
+
+    if (url) {
+        $.ajax({
+            url: url,
+            type: 'GET',
+            data: data, // send limit only if defined
+            success: function (response) {
+                updateTable(response);
+                console.log("Data received:", response);
+            },
+            error: function (err) {
+                console.error('Error fetching data:', err);
+            }
+        });
+    }
+}
+
 
 		function updateTable(data) {
 			// Clear the table body before appending new rows
@@ -2471,7 +2466,7 @@
 								th:style="${module == 'module2'} ? 'display:block;' : 'display:none;'">
 
 								<select class="form-control-sm bg-white ml-2 w-100" id="approvedfilter"
-									onchange="handleFilterChange()" style="background-color: #e3e3e4; width:">
+									onchange="handleFilterChange(100)" style="background-color: #e3e3e4; width:">
 									<option value="ALL">All</option>
 									<option value="NOTAPPROVED" selected>UnVerified</option>
 									<option value="APPROVED" selected>Verified</option>
@@ -2486,19 +2481,13 @@
 									<thead class="thead-light"
 										style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
 										<tr class="filters">
-											<th style="width: 2%"><input type="text" class="form-control"
-													placeholder="S.NO" disabled></th>
-											<th style="width: 4%"><input type="text" class="form-control"
-													placeholder="CUSTOMER ID" disabled></th>
-											<th style="width: 10%"><input type="text" class="form-control"
-													placeholder="CUSTOMER NAME" disabled></th>
-											<th style="width: 5%"><input type="text" class="form-control"
-													placeholder="DOB" disabled></th>
-											<th style="width: 5%"><input type="text" class="form-control"
-													placeholder="BRANCH ID" disabled></th>
-											<th style="width: 5%"><input type="text" class="form-control"
-													placeholder="STATUS" disabled></th>
-										</tr>
+    <th style="width: 2%"><input type="text" class="form-control" onchange="handleFilterChange()" placeholder="S.NO" disabled></th>
+    <th style="width: 4%"><input type="text" class="form-control" onchange="handleFilterChange()" placeholder="CUSTOMER ID" disabled></th>
+    <th style="width: 10%"><input type="text" class="form-control" onchange="handleFilterChange()" placeholder="CUSTOMER NAME" disabled></th>
+    <th style="width: 5%"><input type="text" class="form-control" onchange="handleFilterChange()" placeholder="DOB" disabled></th>
+    <th style="width: 5%"><input type="text" class="form-control" onchange="handleFilterChange()" placeholder="BRANCH ID" disabled></th>
+    <th style="width: 5%"><input type="text" class="form-control" onchange="handleFilterChange()" placeholder="STATUS" disabled></th>
+</tr>
 									</thead>
 									<tbody th:if="${formmode}=='list' and ${module == 'module1'}">
 										<tr th:each="list, iterator : ${list}" class="userlist">

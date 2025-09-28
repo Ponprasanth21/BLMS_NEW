@@ -5461,9 +5461,17 @@ public class BGLSRestController {
 	}
 
 	@GetMapping("AllApprovedCust")
-	public List<CLIENT_MASTER_ENTITY> AllApprovedCust(@RequestParam(required = false) String tran_id,
-			@RequestParam(required = false) String part_tran_id) {
-		return clientMasterRepo.getLoanActDet();
+	public List<CLIENT_MASTER_ENTITY> AllApprovedCust(
+	        @RequestParam(required = false) String tran_id,
+	        @RequestParam(required = false) String part_tran_id,
+	        @RequestParam(required = false) Long limit) {
+
+	    // If limit is null or zero, return all 1000 rows
+	    if (limit == null || limit == 0) {
+	        return clientMasterRepo.getLoanActDetAll();
+	    }
+
+	    return clientMasterRepo.getLoanActDet(limit);
 	}
 
 	@GetMapping("getAccDet")
