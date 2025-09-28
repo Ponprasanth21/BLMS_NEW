@@ -24,7 +24,139 @@ public class BglsLmsSchemesEntity {
     @Column(name = "UNIQUE_ID")
     private Long unique_id;
      
-    @Column(name = "ID")
+    @Override
+	public String toString() {
+		return "BglsLmsSchemesEntity [unique_id=" + unique_id + ", id=" + id + ", encodedKey=" + encodedKey
+				+ ", activated=" + activated + ", creationDate=" + creationDate + ", defaultGracePeriod="
+				+ defaultGracePeriod + ", defaultLoanAmount=" + defaultLoanAmount + ", defaultNumInstallments="
+				+ defaultNumInstallments + ", defaultRepaymentPeriodCount=" + defaultRepaymentPeriodCount
+				+ ", gracePeriodType=" + gracePeriodType + ", interestCalculationMethod=" + interestCalculationMethod
+				+ ", interestType=" + interestType + ", repaymentScheduleMethod=" + repaymentScheduleMethod
+				+ ", lastModifiedDate=" + lastModifiedDate + ", maxGracePeriod=" + maxGracePeriod + ", maxLoanAmount="
+				+ maxLoanAmount + ", maxNumInstallments=" + maxNumInstallments + ", maxPenaltyRate=" + maxPenaltyRate
+				+ ", minGracePeriod=" + minGracePeriod + ", minLoanAmount=" + minLoanAmount + ", minNumInstallments="
+				+ minNumInstallments + ", minPenaltyRate=" + minPenaltyRate + ", defaultPenaltyRate="
+				+ defaultPenaltyRate + ", productDescription=" + productDescription + ", productName=" + productName
+				+ ", repaymentPeriodUnit=" + repaymentPeriodUnit + ", prepaymentAcceptance=" + prepaymentAcceptance
+				+ ", interestApplicationMethod=" + interestApplicationMethod + ", allowArbitraryFees="
+				+ allowArbitraryFees + ", defaultPrincipalRepaymentInterval=" + defaultPrincipalRepaymentInterval
+				+ ", loanPenaltyCalculationMethod=" + loanPenaltyCalculationMethod + ", loanPenaltyGracePeriod="
+				+ loanPenaltyGracePeriod + ", repaymentCurrencyRounding=" + repaymentCurrencyRounding
+				+ ", roundingRepaymentScheduleMethod=" + roundingRepaymentScheduleMethod
+				+ ", prepaymentRecalculationMethod=" + prepaymentRecalculationMethod
+				+ ", principalPaidInstallmentStatus=" + principalPaidInstallmentStatus + ", daysInYear=" + daysInYear
+				+ ", scheduleInterestDaysCountMethod=" + scheduleInterestDaysCountMethod + ", repaymentAllocationOrder="
+				+ repaymentAllocationOrder + ", idGeneratorType=" + idGeneratorType + ", idPattern=" + idPattern
+				+ ", accountingMethod=" + accountingMethod + ", accountLinkingEnabled=" + accountLinkingEnabled
+				+ ", linkableSavingsProductKey=" + linkableSavingsProductKey + ", autoLinkAccounts=" + autoLinkAccounts
+				+ ", autoCreateLinkedAccounts=" + autoCreateLinkedAccounts + ", repaymentScheduleEditOptions="
+				+ repaymentScheduleEditOptions + ", scheduleDueDatesMethod=" + scheduleDueDatesMethod
+				+ ", paymentMethod=" + paymentMethod + ", fixedDaysOfMonth=" + fixedDaysOfMonth
+				+ ", shortMonthHandlingMethod=" + shortMonthHandlingMethod + ", taxesOnInterestEnabled="
+				+ taxesOnInterestEnabled + ", taxSourceKey=" + taxSourceKey + ", taxCalculationMethod="
+				+ taxCalculationMethod + ", futurePaymentsAcceptance=" + futurePaymentsAcceptance
+				+ ", taxesOnFeesEnabled=" + taxesOnFeesEnabled + ", taxesOnPenaltyEnabled=" + taxesOnPenaltyEnabled
+				+ ", applyInterestOnPrepaymentMethod=" + applyInterestOnPrepaymentMethod
+				+ ", repaymentElementsRoundingMethod=" + repaymentElementsRoundingMethod
+				+ ", elementsRecalculationMethod=" + elementsRecalculationMethod + ", dormancyPeriodDays="
+				+ dormancyPeriodDays + ", lockPeriodDays=" + lockPeriodDays + ", cappingMethod=" + cappingMethod
+				+ ", cappingConstraintType=" + cappingConstraintType + ", cappingPercentage=" + cappingPercentage
+				+ ", cappingApplyAccruedChargesBeforeLocking=" + cappingApplyAccruedChargesBeforeLocking
+				+ ", settlementOptions=" + settlementOptions + ", offsetPercentage=" + offsetPercentage
+				+ ", accountInitialState=" + accountInitialState + ", maxNumberOfDisbursementTranches="
+				+ maxNumberOfDisbursementTranches + ", latePaymentsRecalculationMethod="
+				+ latePaymentsRecalculationMethod + ", amortizationMethod=" + amortizationMethod
+				+ ", interestRateSettingsKey=" + interestRateSettingsKey + ", lineOfCreditRequirement="
+				+ lineOfCreditRequirement + ", productSecuritySettingsKey=" + productSecuritySettingsKey
+				+ ", defaultFirstRepaymentDueDateOffset=" + defaultFirstRepaymentDueDateOffset
+				+ ", minFirstRepaymentDueDateOffset=" + minFirstRepaymentDueDateOffset
+				+ ", maxFirstRepaymentDueDateOffset=" + maxFirstRepaymentDueDateOffset
+				+ ", interestAccruedAccountingMethod=" + interestAccruedAccountingMethod + ", loanProductType="
+				+ loanProductType + ", forIndividuals=" + forIndividuals + ", forPureGroups=" + forPureGroups
+				+ ", forHybridGroups=" + forHybridGroups + ", forAllBranches=" + forAllBranches
+				+ ", principalPaymentSettingsKey=" + principalPaymentSettingsKey + ", repaymentReschedulingMethod="
+				+ repaymentReschedulingMethod + ", interestBalanceCalculationMethod=" + interestBalanceCalculationMethod
+				+ ", arrearsSettingsKey=" + arrearsSettingsKey + ", redrawSettingsKey=" + redrawSettingsKey
+				+ ", allowCustomRepaymentAllocation=" + allowCustomRepaymentAllocation + ", accrueLateInterest="
+				+ accrueLateInterest + ", interestAccrualCalculation=" + interestAccrualCalculation + ", category="
+				+ category + ", currencyCode=" + currencyCode + ", fourEyesPrincipleLoanApproval="
+				+ fourEyesPrincipleLoanApproval + ", addition=" + addition + ", entryUser=" + entryUser
+				+ ", modifyUser=" + modifyUser + ", verifyUser=" + verifyUser + ", entryTime=" + entryTime
+				+ ", modifyTime=" + modifyTime + ", verifyTime=" + verifyTime + ", delFlg=" + delFlg + ", entityFlg="
+				+ entityFlg + ", modifyFlg=" + modifyFlg + ", verifyFlg=" + verifyFlg + ", getEncodedKey()="
+				+ getEncodedKey() + ", getId()=" + getId() + ", getActivated()=" + getActivated()
+				+ ", getCreationDate()=" + getCreationDate() + ", getDefaultGracePeriod()=" + getDefaultGracePeriod()
+				+ ", getDefaultLoanAmount()=" + getDefaultLoanAmount() + ", getDefaultNumInstallments()="
+				+ getDefaultNumInstallments() + ", getDefaultRepaymentPeriodCount()=" + getDefaultRepaymentPeriodCount()
+				+ ", getGracePeriodType()=" + getGracePeriodType() + ", getInterestCalculationMethod()="
+				+ getInterestCalculationMethod() + ", getInterestType()=" + getInterestType()
+				+ ", getRepaymentScheduleMethod()=" + getRepaymentScheduleMethod() + ", getLastModifiedDate()="
+				+ getLastModifiedDate() + ", getMaxGracePeriod()=" + getMaxGracePeriod() + ", getMaxLoanAmount()="
+				+ getMaxLoanAmount() + ", getMaxNumInstallments()=" + getMaxNumInstallments() + ", getMaxPenaltyRate()="
+				+ getMaxPenaltyRate() + ", getMinGracePeriod()=" + getMinGracePeriod() + ", getMinLoanAmount()="
+				+ getMinLoanAmount() + ", getMinNumInstallments()=" + getMinNumInstallments() + ", getMinPenaltyRate()="
+				+ getMinPenaltyRate() + ", getDefaultPenaltyRate()=" + getDefaultPenaltyRate()
+				+ ", getProductDescription()=" + getProductDescription() + ", getProductName()=" + getProductName()
+				+ ", getRepaymentPeriodUnit()=" + getRepaymentPeriodUnit() + ", getPrepaymentAcceptance()="
+				+ getPrepaymentAcceptance() + ", getInterestApplicationMethod()=" + getInterestApplicationMethod()
+				+ ", getAllowArbitraryFees()=" + getAllowArbitraryFees() + ", getDefaultPrincipalRepaymentInterval()="
+				+ getDefaultPrincipalRepaymentInterval() + ", getLoanPenaltyCalculationMethod()="
+				+ getLoanPenaltyCalculationMethod() + ", getLoanPenaltyGracePeriod()=" + getLoanPenaltyGracePeriod()
+				+ ", getRepaymentCurrencyRounding()=" + getRepaymentCurrencyRounding()
+				+ ", getRoundingRepaymentScheduleMethod()=" + getRoundingRepaymentScheduleMethod()
+				+ ", getPrepaymentRecalculationMethod()=" + getPrepaymentRecalculationMethod()
+				+ ", getPrincipalPaidInstallmentStatus()=" + getPrincipalPaidInstallmentStatus() + ", getDaysInYear()="
+				+ getDaysInYear() + ", getScheduleInterestDaysCountMethod()=" + getScheduleInterestDaysCountMethod()
+				+ ", getRepaymentAllocationOrder()=" + getRepaymentAllocationOrder() + ", getIdGeneratorType()="
+				+ getIdGeneratorType() + ", getIdPattern()=" + getIdPattern() + ", getAccountingMethod()="
+				+ getAccountingMethod() + ", getAccountLinkingEnabled()=" + getAccountLinkingEnabled()
+				+ ", getLinkableSavingsProductKey()=" + getLinkableSavingsProductKey() + ", getAutoLinkAccounts()="
+				+ getAutoLinkAccounts() + ", getAutoCreateLinkedAccounts()=" + getAutoCreateLinkedAccounts()
+				+ ", getRepaymentScheduleEditOptions()=" + getRepaymentScheduleEditOptions()
+				+ ", getScheduleDueDatesMethod()=" + getScheduleDueDatesMethod() + ", getPaymentMethod()="
+				+ getPaymentMethod() + ", getFixedDaysOfMonth()=" + getFixedDaysOfMonth()
+				+ ", getShortMonthHandlingMethod()=" + getShortMonthHandlingMethod() + ", getTaxesOnInterestEnabled()="
+				+ getTaxesOnInterestEnabled() + ", getTaxSourceKey()=" + getTaxSourceKey()
+				+ ", getTaxCalculationMethod()=" + getTaxCalculationMethod() + ", getFuturePaymentsAcceptance()="
+				+ getFuturePaymentsAcceptance() + ", getTaxesOnFeesEnabled()=" + getTaxesOnFeesEnabled()
+				+ ", getTaxesOnPenaltyEnabled()=" + getTaxesOnPenaltyEnabled()
+				+ ", getApplyInterestOnPrepaymentMethod()=" + getApplyInterestOnPrepaymentMethod()
+				+ ", getRepaymentElementsRoundingMethod()=" + getRepaymentElementsRoundingMethod()
+				+ ", getElementsRecalculationMethod()=" + getElementsRecalculationMethod()
+				+ ", getDormancyPeriodDays()=" + getDormancyPeriodDays() + ", getLockPeriodDays()="
+				+ getLockPeriodDays() + ", getCappingMethod()=" + getCappingMethod() + ", getCappingConstraintType()="
+				+ getCappingConstraintType() + ", getCappingPercentage()=" + getCappingPercentage()
+				+ ", getCappingApplyAccruedChargesBeforeLocking()=" + getCappingApplyAccruedChargesBeforeLocking()
+				+ ", getSettlementOptions()=" + getSettlementOptions() + ", getOffsetPercentage()="
+				+ getOffsetPercentage() + ", getAccountInitialState()=" + getAccountInitialState()
+				+ ", getMaxNumberOfDisbursementTranches()=" + getMaxNumberOfDisbursementTranches()
+				+ ", getLatePaymentsRecalculationMethod()=" + getLatePaymentsRecalculationMethod()
+				+ ", getAmortizationMethod()=" + getAmortizationMethod() + ", getInterestRateSettingsKey()="
+				+ getInterestRateSettingsKey() + ", getLineOfCreditRequirement()=" + getLineOfCreditRequirement()
+				+ ", getProductSecuritySettingsKey()=" + getProductSecuritySettingsKey()
+				+ ", getDefaultFirstRepaymentDueDateOffset()=" + getDefaultFirstRepaymentDueDateOffset()
+				+ ", getMinFirstRepaymentDueDateOffset()=" + getMinFirstRepaymentDueDateOffset()
+				+ ", getMaxFirstRepaymentDueDateOffset()=" + getMaxFirstRepaymentDueDateOffset()
+				+ ", getInterestAccruedAccountingMethod()=" + getInterestAccruedAccountingMethod()
+				+ ", getLoanProductType()=" + getLoanProductType() + ", getForIndividuals()=" + getForIndividuals()
+				+ ", getForPureGroups()=" + getForPureGroups() + ", getForHybridGroups()=" + getForHybridGroups()
+				+ ", getForAllBranches()=" + getForAllBranches() + ", getPrincipalPaymentSettingsKey()="
+				+ getPrincipalPaymentSettingsKey() + ", getRepaymentReschedulingMethod()="
+				+ getRepaymentReschedulingMethod() + ", getInterestBalanceCalculationMethod()="
+				+ getInterestBalanceCalculationMethod() + ", getArrearsSettingsKey()=" + getArrearsSettingsKey()
+				+ ", getRedrawSettingsKey()=" + getRedrawSettingsKey() + ", getAllowCustomRepaymentAllocation()="
+				+ getAllowCustomRepaymentAllocation() + ", getAccrueLateInterest()=" + getAccrueLateInterest()
+				+ ", getInterestAccrualCalculation()=" + getInterestAccrualCalculation() + ", getCategory()="
+				+ getCategory() + ", getCurrencyCode()=" + getCurrencyCode() + ", getFourEyesPrincipleLoanApproval()="
+				+ getFourEyesPrincipleLoanApproval() + ", getAddition()=" + getAddition() + ", getEntryUser()="
+				+ getEntryUser() + ", getModifyUser()=" + getModifyUser() + ", getVerifyUser()=" + getVerifyUser()
+				+ ", getEntryTime()=" + getEntryTime() + ", getModifyTime()=" + getModifyTime() + ", getVerifyTime()="
+				+ getVerifyTime() + ", getDelFlg()=" + getDelFlg() + ", getEntityFlg()=" + getEntityFlg()
+				+ ", getModifyFlg()=" + getModifyFlg() + ", getVerifyFlg()=" + getVerifyFlg() + ", getClass()="
+				+ getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
+	}
+
+	@Column(name = "ID")
     private String id;
 
     @Column(name = "ENCODEDKEY")

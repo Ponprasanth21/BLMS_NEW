@@ -1130,45 +1130,6 @@
 			}
 		}
 
-		$('#placelist3 tr').each(function () {
-			var row = $(this).find('td');
-			if (row.length > 0) {
-				var rowData = {
-					srl_no: $(row[0]).text().trim(),
-					flow_id: $(row[1]).text().trim(),
-					flow_date: $(row[2]).text().trim(),
-					flow_code: $(row[3]).text().trim(),
-					flow_amount: $(row[4]).text().trim().replace(/,/g, ''),
-					account_number: $(row[5]).text().trim(),
-					account_name: $(row[6]).text().trim()
-				};
-				tableData.push(rowData);
-			}
-		});
-
-		if (tableData.length === 0) {
-			alert("No data to submit.");
-			return;
-		}
-
-		$('#alertmsg121').text('File Uploading...');
-		$('#alert121').modal('show');
-
-		$.ajax({
-			url: './saveBranchData3',
-			type: 'POST',
-			contentType: 'application/json',
-			data: JSON.stringify(tableData),
-			success: function (response) {
-				$('#alertmsg121').text('Data saved successfully!');
-				$('#alert121').modal('hide');
-			},
-			error: function () {
-				$('#alert121').modal('hide');
-				$('#alertmsg121').text('Failed to save data.');
-				$('#alert121').modal('show');
-			}
-		});
 	</script>
 </head>
 
@@ -3151,11 +3112,12 @@
 				<!-- Modal Footer -->
 				<div style="padding: 10px; text-align: center;">
 					<button type="button" class="btn btn-outline-dark me-3" style="font-size: 16px;"
-						onclick="$('#SuccesPopUp').modal('hide')">Cancel</button>
+						onclick="$('#SuccesPopUp').modal('hide'); location.reload();">Cancel</button>
 				</div>
-
 			</div>
+
 		</div>
+	</div>
 	</div>
 </body>
 

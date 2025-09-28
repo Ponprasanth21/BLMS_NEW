@@ -1,7 +1,6 @@
 package com.bornfire.entities;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -17,19 +16,12 @@ public interface DAB_Repo extends CrudRepository<DAB_Entity, String> {
 
 	@Query(value = "SELECT * FROM BGLS_DAILY_ACCT_BAL WHERE ACCT_NUM IN (:accountNumbers)", nativeQuery = true)
 	List<DAB_Entity> get_transaction_acc_num(@Param("accountNumbers") List<String> accountNumbers);
-	/*
-	 * @Modifying
-	 * 
-	 * @Transactional
-	 * 
-	 * @Query("SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END " +
-	 * "FROM BGLSDailyAcctBal t WHERE t.acctNum = :accountNum AND t.tranDate = :today"
-	 * ) boolean existsForToday(@Param("accountNum") String
-	 * accountNum, @Param("today") LocalDate today);
-	 * 
-	 */
 
-	@Query(value = "SELECT TRAN_DATE_BAL FROM BGLS_DAILY_ACCT_BAL WHERE ACCT_NUM = ?1 AND DATEADD(day, -1, CAST(?2 AS DATE)) BETWEEN TRAN_DATE AND END_TRAN_DATE", nativeQuery = true)
+	/*
+	 * Original SQL Server: DATEADD(day, -1, CAST(?2 AS DATE))
+	 * Oracle Equivalent: ?2 - 1 (Subtracting 1 from a date results in the previous day)
+	 */
+	@Query(value = "SELECT TRAN_DATE_BAL FROM BGLS_DAILY_ACCT_BAL WHERE ACCT_NUM = ?1 AND (?2 - 1) BETWEEN TRAN_DATE AND END_TRAN_DATE", nativeQuery = true)
 	BigDecimal getTranDateBAlance(String acct_num, String fromdateref);
 
 	@Query(value = "SELECT gl_desc AS primary_gl_desc, gl_code, gl_desc AS secondary_gl_desc, glsh_code, glsh_desc, COUNT(GLSH_CODE) as sum, acct_crncy, "
@@ -59,14 +51,14 @@ public interface DAB_Repo extends CrudRepository<DAB_Entity, String> {
             + "SUM(CASE WHEN tran_date_bal > 0 THEN tran_date_bal ELSE 0 END) AS total_credit, "
             + "SUM(CASE WHEN tran_date_bal < 0 THEN ABS(tran_date_bal) ELSE 0 END) AS total_debit "
             + "FROM BGLS_DAILY_ACCT_BAL "
-            + "WHERE :formattedDate BETWEEN tran_date AND end_tran_date AND glsh_code = :glshCode "
+            + "WHERE TO_DATE(:formattedDate, 'YYYY-MM-DD') BETWEEN tran_date AND end_tran_date AND glsh_code = :glshCode "
             + "GROUP BY ACCT_NUM, acct_name, glsh_code", nativeQuery = true)
-List<Object[]> getAccountBalancesByGlshCode(@Param("formattedDate") String formattedDate, @Param("glshCode") String glshCode);
+	List<Object[]> getAccountBalancesByGlshCode(@Param("formattedDate") String formattedDate, @Param("glshCode") String glshCode);
 
-	@Query(value = "SELECT  GLSH_CODE, GLSH_DESC,COUNT(GLSH_CODE) as sum, acct_crncy, SUM(tran_date_bal) FROM BGLS_DAILY_ACCT_BAL WHERE gl_desc='Asset' AND :balancedate BETWEEN TRAN_DATE AND END_TRAN_DATE GROUP BY GLSH_CODE, GLSH_DESC, acct_crncy ORDER BY GLSH_CODE ASC", nativeQuery = true)
+	@Query(value = "SELECT GLSH_CODE, GLSH_DESC, COUNT(GLSH_CODE) as sum, acct_crncy, SUM(tran_date_bal) FROM BGLS_DAILY_ACCT_BAL WHERE gl_desc='Asset' AND :balancedate BETWEEN TRAN_DATE AND END_TRAN_DATE GROUP BY GLSH_CODE, GLSH_DESC, acct_crncy ORDER BY GLSH_CODE ASC", nativeQuery = true)
 	List<Object[]> getfilteredrec(@Param("balancedate") Date balancedate);
 
-	@Query(value = "SELECT  GLSH_CODE, GLSH_DESC,COUNT(GLSH_CODE) as sum, acct_crncy, SUM(tran_date_bal) FROM BGLS_DAILY_ACCT_BAL WHERE gl_desc='Liability' AND :balancedate BETWEEN TRAN_DATE AND END_TRAN_DATE GROUP BY GLSH_CODE, GLSH_DESC, acct_crncy ORDER BY GLSH_CODE ASC", nativeQuery = true)
+	@Query(value = "SELECT GLSH_CODE, GLSH_DESC, COUNT(GLSH_CODE) as sum, acct_crncy, SUM(tran_date_bal) FROM BGLS_DAILY_ACCT_BAL WHERE gl_desc='Liability' AND :balancedate BETWEEN TRAN_DATE AND END_TRAN_DATE GROUP BY GLSH_CODE, GLSH_DESC, acct_crncy ORDER BY GLSH_CODE ASC", nativeQuery = true)
 	List<Object[]> getfilteredrec1(@Param("balancedate") Date balancedate);
 
 	@Query(value = "SELECT * FROM BGLS_DAILY_ACCT_BAL WHERE gl_desc='Income' AND :balancedate BETWEEN TRAN_DATE AND END_TRAN_DATE", nativeQuery = true)
@@ -78,13 +70,17 @@ List<Object[]> getAccountBalancesByGlshCode(@Param("formattedDate") String forma
 	@Query(value = "SELECT SUM(TRAN_CR_BAL) as TRANAMT, SUM(TRAN_DR_BAL) as TRANAMT1 FROM BGLS_DAILY_ACCT_BAL", nativeQuery = true)
 	Object[] getcheck3();
 
-	@Query(value = " select a.customer_id, a.loan_accountno,a.customer_name,a.date_of_loan,a.loan_sanctioned ,b.TRAN_DATE_BAL  from Loan_AccountMaster a , BGLS_DAILY_ACCT_BAL b where\r\n"
-			+ "		 b.ACCT_NUM =a.Loan_AccountNo  and :date_of_loan between TRAN_DATE and END_TRAN_DATE ORDER BY a.loan_accountno", nativeQuery = true)
-
+	// Removed \r\n and adjusted JOIN logic slightly for readability (though original join is fine)
+	@Query(value = "SELECT a.customer_id, a.loan_accountno, a.customer_name, a.date_of_loan, a.loan_sanctioned, b.TRAN_DATE_BAL "
+			+ "FROM Loan_AccountMaster a, BGLS_DAILY_ACCT_BAL b "
+			+ "WHERE b.ACCT_NUM = a.Loan_AccountNo AND :date_of_loan BETWEEN TRAN_DATE AND END_TRAN_DATE "
+			+ "ORDER BY a.loan_accountno", nativeQuery = true)
 	List<Object[]> getLeaseBal(@Param("date_of_loan") Date date_of_loan);
 
-	@Query(value = " select a.cust_id, a.depo_actno,a.cust_name,a.deposit_date,a.deposit_amt, a.deposit_period,a.rate_of_int,a.maturity_date ,b.TRAN_DATE_BAL  from Loan_AccountMaster a , BGLS_DAILY_ACCT_BAL b where\r\n"
-			+ "		 b.ACCT_NUM =a.depo_actno  and :deposit_period between TRAN_DATE and END_TRAN_DATE", nativeQuery = true)
+	// Removed \r\n and adjusted JOIN logic slightly for readability
+	@Query(value = "SELECT a.cust_id, a.depo_actno, a.cust_name, a.deposit_date, a.deposit_amt, a.deposit_period, a.rate_of_int, a.maturity_date, b.TRAN_DATE_BAL "
+			+ "FROM Loan_AccountMaster a, BGLS_DAILY_ACCT_BAL b "
+			+ "WHERE b.ACCT_NUM = a.depo_actno AND :deposit_period BETWEEN TRAN_DATE AND END_TRAN_DATE", nativeQuery = true)
 	List<Object[]> getDepositBal(@Param("deposit_period") Date deposit_period);
 
 }
