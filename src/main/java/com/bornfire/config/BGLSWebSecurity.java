@@ -115,18 +115,11 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
 			public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 				String userid = authentication.getName();
 				String password = authentication.getCredentials().toString();
-				System.out.println("sdfsdf");
 				Optional<UserProfile> up = userProfileRep.findById(userid);
 
 				try {
 					if (up.isPresent() && up.get().getDel_flg().equals("N")) {
 						UserProfile usr = up.get();
-
-						// System.out.println("Inside---->"+usr.isAccountNonExpired());
-						// System.out.println("isCredentialsNonExpired---->"+usr.isCredentialsNonExpired());
-						// System.out.println("isAccountNonLocked---->"+usr.isAccountNonLocked());
-						// System.out.println("isEnabled---->"+usr.isEnabled());
-						// System.out.println("isLoginAllowed---->"+usr.isLoginAllowed());
 
 						if (!usr.isAccountNonExpired()) {
 
@@ -154,10 +147,8 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
 						 * 
 						 * }
 						 */ 
-						System.out.println("ddddddddddd");
-						System.out.println(PasswordEncryption.validatePassword(password, usr.getPassword()));
+
 						if (!PasswordEncryption.validatePassword(password, usr.getPassword())) {
-							System.out.println("________________ddddddddddd");
 
 							logger.info("Passing Userid :" + userid);
 
@@ -171,7 +162,6 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
 							throw new BadCredentialsException("Authentication failed");
 
 						} else {
-							System.out.println("))))))))))))))))))))");
 
 							return new UsernamePasswordAuthenticationToken(userid, password, Collections.emptyList());
 
@@ -185,7 +175,6 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
 				} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 					e.printStackTrace();
 					logger.info(" Userid :" + userid);
-					System.out.println("ddhfgh" + userid);
 					authentication.setAuthenticated(false);
 				}
 				return authentication;
@@ -237,8 +226,6 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
 				
 				BGLS_Control_Table up1 = bGLS_CONTROL_TABLE_REP.getTranDate();
 				
-				System.out.println(up1.getTran_date());
-				
 				
 				
 				UserProfile user = up.get();
@@ -249,8 +236,6 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
 
 				// user.setLocked_flg("N");
 				userProfileRep.save(user);
-
-				// System.out.println(Msg+"123");
 
 				/*
 				 * loginServices.SessionLogging("LOGIN", "M1", request.getSession().getId(),

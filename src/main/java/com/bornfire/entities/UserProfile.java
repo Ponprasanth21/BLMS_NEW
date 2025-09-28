@@ -540,7 +540,6 @@ public class UserProfile implements UserDetails {
 
 //	@Override
 	public boolean isVerified() {
-			System.out.println(this.getAuth_flg() +"  -----  "+this.entity_flg);
 		if (this.getAuth_flg().equals("Y")) {
 			return false;
 		} else {
