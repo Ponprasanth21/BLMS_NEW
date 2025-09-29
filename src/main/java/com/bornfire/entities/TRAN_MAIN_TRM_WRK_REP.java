@@ -253,7 +253,7 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 	@Query(value = "SELECT TRAN_ID_SEQUENCE.NEXTVAL FROM DUAL", nativeQuery = true)
 	String gettrmRefUUID1();
 
-	@Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS ORDER BY TRAN_DATE, TRAN_ID, PART_TRAN_ID", nativeQuery = true)
+	@Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS ORDER BY TRAN_DATE, TRAN_ID, PART_TRAN_ID FETCH FIRST 1000 ROWS ONLY ", nativeQuery = true)
 	List<TRAN_MAIN_TRM_WRK_ENTITY> findByjournal();
 
 	@Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS WHERE TRUNC(tran_date)=TRUNC(?1) ORDER BY TRAN_DATE, TRAN_ID, PART_TRAN_ID", nativeQuery = true)

@@ -894,10 +894,10 @@ function funcall() {
 													th:text="${chartacc?.acct_bal == 0 ? '0.00' :#numbers.formatDecimal(chartacc?.acct_bal, 0, 'COMMA', 2, 'POINT')}"
 													style="text-align: right;"></td>
 												<th:block th:switch="${chartacc.acct_status}">
-													<td th:case="ACTIVE"   style="color: green;">Active</td>
+													<td th:case="Active"   style="color: green;">Active</td>
 													<td th:case="Y"  style="color: green;">Active</td>
 													<td th:case="N"   style="color: green;">Closed</td>
-													<td th:case="CLOSED" style="color: red;">Closed</td>
+													<td th:case="Closed" style="color: red;">Closed</td>
 													<!-- <td th:case="'Y'" style="color: red;">closed</td> -->
 												</th:block>
 												<!-- <td>
