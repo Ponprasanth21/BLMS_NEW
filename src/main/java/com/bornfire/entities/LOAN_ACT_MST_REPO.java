@@ -14,6 +14,182 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, String> {
 //	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL", nativeQuery = true)
+	
+	
+	@Modifying
+    @Transactional
+    @Query(
+        value =
+            "INSERT INTO LOAN_ACCOUNT_MASTER_TBL_TEST_1 ( " +
+            "    ENCODED_KEY, " +
+            "    ID, " +
+            "    ACCOUNT_HOLDERTYPE, " +
+            "    ACCOUNT_HOLDERKEY, " +
+            "    CREATION_DATE, " +
+            "    APPROVED_DATE, " +
+            "    LAST_MODIFIED_DATE, " +
+            "    CLOSED_DATE, " +
+            "    LAST_ACCOUNT_APPRAISALDATE, " +
+            "    ACCOUNT_STATE, " +
+            "    ACCOUNT_SUBSTATE, " +
+            "    PRODUCT_TYPEKEY, " +
+            "    LOAN_NAME, " +
+            "    PAYMENT_METHOD, " +
+            "    ASSIGNED_BRANCHKEY, " +
+            "    LOAN_AMOUNT, " +
+            "    INTEREST_RATE, " +
+            "    PENALTY_RATE, " +
+            "    ACCRUED_INTEREST, " +
+            "    ACCRUED_PENALTY, " +
+            "    PRINCIPAL_DUE, " +
+            "    PRINCIPAL_PAID, " +
+            "    PRINCIPAL_BALANCE, " +
+            "    INTEREST_DUE, " +
+            "    INTEREST_PAID, " +
+            "    INTEREST_BALANCE, " +
+            "    INTEREST_FROMARREARSBALANCE, " +
+            "    INTEREST_FROMARREARSDUE, " +
+            "    INTEREST_FROMARREARSPAID, " +
+            "    FEES_DUE, " +
+            "    FEES_PAID, " +
+            "    FEES_BALANCE, " +
+            "    PENALTY_DUE, " +
+            "    PENALTY_PAID, " +
+            "    PENALTY_BALANCE, " +
+            "    EXPECTED_DISBURSEMENTDATE, " +
+            "    DISBURSEMENT_DATE, " +
+            "    FIRST_REPAYMENTDATE, " +
+            "    GRACE_PERIOD, " +
+            "    REPAYMENT_INSTALLMENTS, " +
+            "    REPAYMENT_PERIODCOUNT, " +
+            "    DAYS_LATE, " +
+            "    DAYS_INARREARS, " +
+            "    REPAYMENT_SCHEDULE_METHOD, " +
+            "    CURRENCY_CODE, " +
+            "    SALE_PROCESSEDBYVGID, " +
+            "    SALE_PROCESSEDFOR, " +
+            "    SALE_REFERREDBY, " +
+            "    EMPLOYMENT_STATUS, " +
+            "    JOB_TITLE, " +
+            "    EMPLOYER_NAME, " +
+            "    TUSCORE, " +
+            "    TUPROBABILITY, " +
+            "    TUFULLNAME, " +
+            "    TUREASON1, " +
+            "    TUREASON2, " +
+            "    TUREASON3, " +
+            "    TUREASON4, " +
+            "    DISPOSABLE_INCOME, " +
+            "    MANUALOVERRIDE_AMOUNT, " +
+            "    MANUALOVERRIDE_EXPIRY_DATE, " +
+            "    CPFEES, " +
+            "    DEPOSIT_AMOUNT, " +
+            "    TOTAL_PRODUCT_PRICE, " +
+            "    RETAILER_NAME, " +
+            "    RETAILER_BRANCH, " +
+            "    VG_APPLICATION_ID, " +
+            "    CONTRACT_SIGNED, " +
+            "    DATE_OF_FIRST_CALL, " +
+            "    LAST_CALL_OUTCOME, " +
+            "    ASONDATE, " +
+            "    DISBURSEMENT_FLG, " +
+            "    INTEREST_FLG, " +
+            "    FEES_FLG, " +
+            "    RECOVERY_FLG " +
+            ") " +
+            "SELECT " +
+            "    ENCODED_KEY, " +
+            "    ID, " +
+            "    ACCOUNT_HOLDERTYPE, " +
+            "    ACCOUNT_HOLDERKEY, " +
+            "    CASE WHEN REGEXP_LIKE(CREATION_DATE,'^\\d{4}-\\d{2}-\\d{2}$') " +
+            "         THEN TO_DATE(CREATION_DATE,'YYYY-MM-DD') ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(APPROVED_DATE,'^\\d{4}-\\d{2}-\\d{2}$') " +
+            "         THEN TO_DATE(APPROVED_DATE,'YYYY-MM-DD') ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(LAST_MODIFIED_DATE,'^\\d{4}-\\d{2}-\\d{2}$') " +
+            "         THEN TO_DATE(LAST_MODIFIED_DATE,'YYYY-MM-DD') ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(CLOSED_DATE,'^\\d{4}-\\d{2}-\\d{2}$') " +
+            "         THEN TO_DATE(CLOSED_DATE,'YYYY-MM-DD') ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(LAST_ACCOUNT_APPRAISALDATE,'^\\d{4}-\\d{2}-\\d{2}$') " +
+            "         THEN TO_DATE(LAST_ACCOUNT_APPRAISALDATE,'YYYY-MM-DD') ELSE NULL END, " +
+            "    ACCOUNT_STATE, " +
+            "    ACCOUNT_SUBSTATE, " +
+            "    PRODUCT_TYPEKEY, " +
+            "    LOAN_NAME, " +
+            "    PAYMENT_METHOD, " +
+            "    ASSIGNED_BRANCHKEY, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(LOAN_AMOUNT), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(LOAN_AMOUNT) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(INTEREST_RATE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(INTEREST_RATE) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(PENALTY_RATE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(PENALTY_RATE) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(ACCRUED_INTEREST), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(ACCRUED_INTEREST) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(ACCRUED_PENALTY), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(ACCRUED_PENALTY) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(PRINCIPAL_DUE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(PRINCIPAL_DUE) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(PRINCIPAL_PAID), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(PRINCIPAL_PAID) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(PRINCIPAL_BALANCE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(PRINCIPAL_BALANCE) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(INTEREST_DUE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(INTEREST_DUE) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(INTEREST_PAID), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(INTEREST_PAID) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(INTEREST_BALANCE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(INTEREST_BALANCE) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(INTEREST_FROMARREARSBALANCE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(INTEREST_FROMARREARSBALANCE) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(INTEREST_FROMARREARSDUE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(INTEREST_FROMARREARSDUE) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(INTEREST_FROMARREARSPAID), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(INTEREST_FROMARREARSPAID) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(FEES_DUE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(FEES_DUE) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(FEES_PAID), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(FEES_PAID) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(FEES_BALANCE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(FEES_BALANCE) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(PENALTY_DUE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(PENALTY_DUE) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(PENALTY_PAID), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(PENALTY_PAID) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(PENALTY_BALANCE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(PENALTY_BALANCE) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(EXPECTED_DISBURSEMENTDATE,'^\\d{4}-\\d{2}-\\d{2}$') " +
+            "         THEN TO_DATE(EXPECTED_DISBURSEMENTDATE,'YYYY-MM-DD') ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(DISBURSEMENT_DATE,'^\\d{4}-\\d{2}-\\d{2}$') " +
+            "         THEN TO_DATE(DISBURSEMENT_DATE,'YYYY-MM-DD') ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(FIRST_REPAYMENTDATE,'^\\d{4}-\\d{2}-\\d{2}$') " +
+            "         THEN TO_DATE(FIRST_REPAYMENTDATE,'YYYY-MM-DD') ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(GRACE_PERIOD), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(GRACE_PERIOD) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(REPAYMENT_INSTALLMENTS), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(REPAYMENT_INSTALLMENTS) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(REPAYMENT_PERIODCOUNT), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(REPAYMENT_PERIODCOUNT) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(DAYS_LATE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(DAYS_LATE) ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(DAYS_INARREARS), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(DAYS_INARREARS) ELSE NULL END, "+
+            "    REPAYMENT_SCHEDULE_METHOD, " +
+            "    CURRENCY_CODE, " +
+            "    SALE_PROCESSEDBYVGID, " +
+            "    SALE_PROCESSEDFOR, " +
+            "    SALE_REFERREDBY, " +
+            "    EMPLOYMENT_STATUS, " +
+            "    JOB_TITLE, " +
+            "    EMPLOYER_NAME, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(TUSCORE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(TUSCORE) ELSE NULL END, "+
+            "    CASE WHEN REGEXP_LIKE(TRIM(TUPROBABILITY), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(TUPROBABILITY) ELSE NULL END, "+
+            "    TUFULLNAME, " +
+            "    TUREASON1, " +
+            "    TUREASON2, " +
+            "    TUREASON3, " +
+            "    TUREASON4, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(DISPOSABLE_INCOME), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(DISPOSABLE_INCOME) ELSE NULL END, "+
+            "    CASE WHEN REGEXP_LIKE(TRIM(MANUALOVERRIDE_AMOUNT), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(MANUALOVERRIDE_AMOUNT) ELSE NULL END, "+
+            "    CASE WHEN REGEXP_LIKE(MANUALOVERRIDE_EXPIRY_DATE,'^\\d{4}-\\d{2}-\\d{2}$') " +
+            "         THEN TO_DATE(MANUALOVERRIDE_EXPIRY_DATE,'YYYY-MM-DD') ELSE NULL END, " +
+            "    CASE WHEN REGEXP_LIKE(TRIM(CPFEES), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(CPFEES) ELSE NULL END, "+
+            "    CASE WHEN REGEXP_LIKE(TRIM(DEPOSIT_AMOUNT), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(DEPOSIT_AMOUNT) ELSE NULL END, "+
+            "    CASE WHEN REGEXP_LIKE(TRIM(TOTAL_PRODUCT_PRICE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(TOTAL_PRODUCT_PRICE) ELSE NULL END, "+
+            "    RETAILER_NAME, " +
+            "    RETAILER_BRANCH, " +
+            "    VG_APPLICATION_ID, " +
+            "    CONTRACT_SIGNED, " +
+            "    CASE WHEN REGEXP_LIKE(DATE_OF_FIRST_CALL,'^\\d{4}-\\d{2}-\\d{2}$') " +
+            "         THEN TO_DATE(DATE_OF_FIRST_CALL,'YYYY-MM-DD') ELSE NULL END, " +
+            "    LAST_CALL_OUTCOME, " +
+            "    CASE WHEN REGEXP_LIKE(ASONDATE,'^\\d{4}-\\d{2}-\\d{2}$') " +
+            "         THEN TO_DATE(ASONDATE,'YYYY-MM-DD') ELSE NULL END, " +
+            "    'N', " +
+            "    'N', " +
+            "    'N', " +
+            "    'N' " +
+            "FROM LOAN_ACCOUNT_MASTER_TBL_TEST",
+        nativeQuery = true
+    )
+    int insertFromOldTable();
+
+	
     @Query(value = "SELECT *\r\n"
     		+ "FROM LOAN_ACCOUNT_MASTER_TBL\r\n"
     		+ "FETCH FIRST 100 ROWS ONLY", nativeQuery = true)

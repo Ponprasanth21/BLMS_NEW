@@ -25,8 +25,29 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bornfire.config.SequenceGenerator;
+import com.bornfire.entities.LOAN_ACT_MST_REPO;
+import com.bornfire.services.ExcelToCsvService;
 import com.bornfire.services.ExelDownloadService;
+import com.bornfire.services.SqlLoaderService;
 import com.bornfire.services.UploadService;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.*;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 @Controller
 @ConfigurationProperties("default")
@@ -42,8 +63,19 @@ public class ASPIRAUploadController {
 	@Autowired
 	SequenceGenerator sequence;
 	
+	@Autowired
+	private ExcelToCsvService excelToCsvService;
+	
+	@Autowired
+	LOAN_ACT_MST_REPO lOAN_ACT_MST_REPO;
+	
 
-		
+	private final SqlLoaderService sqlLoaderService;
+	
+	
+	public ASPIRAUploadController(SqlLoaderService sqlLoaderService) {
+        this.sqlLoaderService = sqlLoaderService;
+    }
 	
 	 @PostMapping(value = "/UploadFileData")
 	 public ResponseEntity<Map<String, Object>> uploadExcel(@RequestParam("file") MultipartFile file,
@@ -58,9 +90,23 @@ public class ASPIRAUploadController {
 	        String userName = (String) request.getSession().getAttribute("USERNAME");
 	        String auditRefNo = sequence.generateRequestUUId();
 	        if ("CUSTOMER".equalsIgnoreCase(fileInput)) {
-	            resultMap = UploadService.saveCustomerFile(file, userID, userName,overwrite);
+        		  String fileName = file.getOriginalFilename().toLowerCase();
+	        	  String CSVfileName= "customer_master_file.csv";
+	        	    if (fileName.endsWith(".xlsx")) {
+	        	    	resultMap = UploadService.saveCustomerFile(file, userID, userName,overwrite);
+	        	    } else if (fileName.endsWith(".csv")) {
+	        	    	 uploadExcel(file,CSVfileName,"CUSTOMER");
+	        	    } 
 	        } else if ("LOAN".equalsIgnoreCase(fileInput)) {
-	            resultMap = UploadService.saveLoanFile(file, userID, userName, overwrite);
+	        	  String fileName = file.getOriginalFilename().toLowerCase();
+	        	  String CSVfileName= "loan_master_file.csv";
+	        	    if (fileName.endsWith(".xlsx")) {
+	        	    	System.out.println("df!!!!!");
+	        	    	resultMap = UploadService.saveLoanFile(file, userID, userName, overwrite);
+	        	    } else if (fileName.endsWith(".csv")) {
+	        	    	System.out.println("df");
+	        	    	 uploadExcel(file,CSVfileName,"LOAN");
+	        	    } 
 	        } else if ("REPAYMENT".equalsIgnoreCase(fileInput)) {
 	            resultMap = UploadService.saveRepaymentFile(file, userID, userName, overwrite);
 	        }else if ("GL_CODE".equalsIgnoreCase(fileInput)) {
@@ -95,6 +141,49 @@ public class ASPIRAUploadController {
 		    excelDownloadService.ExportExcel1(type, userID, userName, auditRefNo, response, currentDate);
 		}
 		
+		private static final String UPLOAD_DIR = "C:/Temp/Files/";
+
+	    public String uploadExcel(@RequestParam("file") MultipartFile file,String fileName,String uploadPage) {
+	        if (file.isEmpty()) {
+	            return "File is empty!";
+	        }
+
+	        File dir = new File(UPLOAD_DIR);
+	        if (!dir.exists()) dir.mkdirs();
+	        String orginalFileName = file.getOriginalFilename();
+	        File destFile = new File(UPLOAD_DIR + fileName);
+	        System.out.println(destFile);
+        	System.out.println(file.getOriginalFilename()+"---------------");
+	        try (InputStream is = file.getInputStream();
+	             OutputStream os = new FileOutputStream(destFile)) {
+
+	            byte[] buffer = new byte[8192];
+	            int bytesRead;
+	            while ((bytesRead = is.read(buffer)) != -1) {
+	                os.write(buffer, 0, bytesRead);
+	            }
+
+//	            excelToCsvService.convertExcelToCsv("C:/Temp_File/"+orginalFileName, "C:/Test_Temp/csv/temp_csv.csv");
+	            
+	            loadCsvToOracle(uploadPage);
+
+	            return "File uploaded successfully";
+
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            return "Failed to save file";
+	        }
+	    }
+	    
+	    public String loadCsvToOracle(String uploadPage) {
+	        try {
+	            sqlLoaderService.runSqlLoader(uploadPage);
+	            return "CSV loaded successfully into Oracle!";
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return "Error while loading CSV: " + e.getMessage();
+	        }
+	    }
 }
  
 	
