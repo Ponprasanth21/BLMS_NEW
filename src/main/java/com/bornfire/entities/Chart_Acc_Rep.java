@@ -117,6 +117,12 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 	@Query(value = "SELECT ACCT_BAL FROM BGLS_CHART_OF_ACCOUNTS WHERE ACCT_NUM=?1", nativeQuery = true)
 	BigDecimal getaccountbal(String acc_num);
 
-	@Query(value = "SELECT * FROM BGLS_CHART_OF_ACCOUNTS WHERE del_flg='N' AND OWN_TYPE = 'O' ORDER BY ACCT_NUM, CLASSIFICATION ASC ", nativeQuery = true)
-	List<Chart_Acc_Entity> getListoffice1();
+	@Query(value = "SELECT * " +
+            "FROM BGLS_CHART_OF_ACCOUNTS " +
+            "WHERE del_flg = 'N' " +
+            "  AND OWN_TYPE IN ('O', 'C') " +
+            "ORDER BY ACCT_NUM, CLASSIFICATION ASC",
+    nativeQuery = true)
+List<Chart_Acc_Entity> getListoffice1();
+
 }
