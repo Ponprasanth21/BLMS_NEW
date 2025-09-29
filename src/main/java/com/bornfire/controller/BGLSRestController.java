@@ -7740,42 +7740,43 @@ public class BGLSRestController {
 	@RequestMapping(value = "/getBranchData1", method = RequestMethod.GET)
 	@ResponseBody
 	public List<Object[]> getBranchData1(
-			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date currentDate) {
+	        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date currentDate) {
 
-		if (currentDate != null) {
-			// Convert to SQL date to remove time
-			java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
-			System.out.println("Formatted SQL Date for DB: " + sqlDate);
+	    if (currentDate == null) {
+	        System.out.println("No date provided.");
+	        return new ArrayList<>();
+	    }
 
-			// Get loan account data
-			List<LOAN_ACT_MST_ENTITY> loanActList = lOAN_ACT_MST_REPO.getLoanActDetval1(sqlDate);
+	    // Convert to SQL date (removes time)
+	    java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
+	    System.out.println("Formatted SQL Date for DB: " + sqlDate);
 
-			// Create list of encoded keys
-			List<String> encodedKeyList = new ArrayList<>();
-			for (LOAN_ACT_MST_ENTITY entity : loanActList) {
-				if (entity.getEncoded_key() != null) {
-					System.out.println("Encoded Key: " + entity.getEncoded_key());
-					encodedKeyList.add(entity.getEncoded_key());
-				}
-			}
+	    // Fetch loan account data
+	    List<LOAN_ACT_MST_ENTITY> loanActList = lOAN_ACT_MST_REPO.getLoanActDetval1(sqlDate);
 
-			// If keys are found, fetch repayment data
-			if (!encodedKeyList.isEmpty()) {
-				List<Object[]> repaymentList = lOAN_REPAYMENT_REPO
-						.findByParentAccountKeyInAndDueDateLessThanEqual(encodedKeyList, sqlDate);
+	    // Collect encoded keys
+	    List<String> encodedKeyList = loanActList.stream()
+	            .map(LOAN_ACT_MST_ENTITY::getEncoded_key)
+	            .filter(Objects::nonNull)
+	            .collect(Collectors.toList());
 
-				// Log result
-				System.out.println("Repayment Size: " + repaymentList.size());
-				return repaymentList;
-			} else {
-				System.out.println("No Encoded Keys Found.");
-				return new ArrayList<>();
-			}
-		} else {
-			System.out.println("No date provided.");
-			return new ArrayList<>();
-		}
+	    if (encodedKeyList.isEmpty()) {
+	        System.out.println("No Encoded Keys Found.");
+	        return new ArrayList<>();
+	    }
+
+	    // Split keys into batches of 1000 to avoid ORA-01795
+	    List<Object[]> repaymentList = new ArrayList<>();
+	    int batchSize = 1000;
+	    for (int i = 0; i < encodedKeyList.size(); i += batchSize) {
+	        List<String> batch = encodedKeyList.subList(i, Math.min(i + batchSize, encodedKeyList.size()));
+	        repaymentList.addAll(lOAN_REPAYMENT_REPO.findByParentAccountKeyInAndDueDateLessThanEqual(batch, sqlDate));
+	    }
+
+	    System.out.println("Repayment Size: " + repaymentList.size());
+	    return repaymentList;
 	}
+
 
 	@PostMapping("/saveBranchData")
 	public ResponseEntity<Map<String, Object>> saveBranchData(@RequestBody List<Map<String, Object>> branchDataList,
@@ -8651,82 +8652,83 @@ public class BGLSRestController {
 	@RequestMapping(value = "/getBranchData21", method = RequestMethod.GET)
 	@ResponseBody
 	public List<Object[]> getBranchData21(
-			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date currentDate) {
+	        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date currentDate) {
 
-		if (currentDate != null) {
-			// Convert to SQL date to remove time
-			java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
-			System.out.println("Formatted SQL Date for DB: " + sqlDate);
+	    if (currentDate == null) {
+	        System.out.println("No date provided.");
+	        return new ArrayList<>();
+	    }
 
-			// Get loan account data
-			List<LOAN_ACT_MST_ENTITY> loanActList = lOAN_ACT_MST_REPO.getLoanActDetval21(sqlDate);
+	    java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
+	    System.out.println("Formatted SQL Date for DB: " + sqlDate);
 
-			// Create list of encoded keys
-			List<String> encodedKeyList = new ArrayList<>();
-			for (LOAN_ACT_MST_ENTITY entity : loanActList) {
-				if (entity.getEncoded_key() != null) {
-//					System.out.println("Encoded Key: " + entity.getEncoded_key());
-					encodedKeyList.add(entity.getEncoded_key());
-				}
-			}
+	    // Fetch loan account data
+	    List<LOAN_ACT_MST_ENTITY> loanActList = lOAN_ACT_MST_REPO.getLoanActDetval21(sqlDate);
 
-			// If keys are found, fetch repayment data
-			if (!encodedKeyList.isEmpty()) {
-				List<Object[]> repaymentList = lOAN_REPAYMENT_REPO
-						.findByParentAccountKeyInAndDueDateLessThanEqual(encodedKeyList, sqlDate);
+	    // Collect encoded keys
+	    List<String> encodedKeyList = loanActList.stream()
+	            .map(LOAN_ACT_MST_ENTITY::getEncoded_key)
+	            .filter(Objects::nonNull)
+	            .collect(Collectors.toList());
 
-				// Log result
-				System.out.println("Repayment Size: " + repaymentList.size());
-				return repaymentList;
-			} else {
-				System.out.println("No Encoded Keys Found.");
-				return new ArrayList<>();
-			}
-		} else {
-			System.out.println("No date provided.");
-			return new ArrayList<>();
-		}
+	    if (encodedKeyList.isEmpty()) {
+	        System.out.println("No Encoded Keys Found.");
+	        return new ArrayList<>();
+	    }
+
+	    // Batch size for Oracle IN clause
+	    int batchSize = 1000;
+	    List<Object[]> repaymentList = new ArrayList<>();
+
+	    for (int i = 0; i < encodedKeyList.size(); i += batchSize) {
+	        List<String> batch = encodedKeyList.subList(i, Math.min(i + batchSize, encodedKeyList.size()));
+	        repaymentList.addAll(lOAN_REPAYMENT_REPO.findByParentAccountKeyInAndDueDateLessThanEqual(batch, sqlDate));
+	    }
+
+	    System.out.println("Repayment Size: " + repaymentList.size());
+	    return repaymentList;
 	}
+
 
 	// LIST SHOW
 	@RequestMapping(value = "/getBranchData31", method = RequestMethod.GET)
 	@ResponseBody
 	public List<Object[]> getBranchData31(
-			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date currentDate) {
+	        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date currentDate) {
 
-		if (currentDate != null) {
-			// Convert to SQL date to remove time
-			java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
-			System.out.println("Formatted SQL Date for DB: " + sqlDate);
+	    if (currentDate == null) {
+	        System.out.println("No date provided.");
+	        return new ArrayList<>();
+	    }
 
-			// Get loan account data
-			List<LOAN_ACT_MST_ENTITY> loanActList = lOAN_ACT_MST_REPO.getLoanActDetval31(sqlDate);
+	    java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
+	    System.out.println("Formatted SQL Date for DB: " + sqlDate);
 
-			// Create list of encoded keys
-			List<String> encodedKeyList = new ArrayList<>();
-			for (LOAN_ACT_MST_ENTITY entity : loanActList) {
-				if (entity.getEncoded_key() != null) {
-					System.out.println("Encoded Key: " + entity.getEncoded_key());
-					encodedKeyList.add(entity.getEncoded_key());
-				}
-			}
+	    // Fetch loan account data
+	    List<LOAN_ACT_MST_ENTITY> loanActList = lOAN_ACT_MST_REPO.getLoanActDetval31(sqlDate);
 
-			// If keys are found, fetch repayment data
-			if (!encodedKeyList.isEmpty()) {
-				List<Object[]> repaymentList = lOAN_REPAYMENT_REPO
-						.findByParentAccountKeyInAndDueDateLessThanEqualpaid(encodedKeyList, sqlDate);
+	    // Collect encoded keys
+	    List<String> encodedKeyList = loanActList.stream()
+	            .map(LOAN_ACT_MST_ENTITY::getEncoded_key)
+	            .filter(Objects::nonNull)
+	            .collect(Collectors.toList());
 
-				// Log result
-				System.out.println("Repayment Size: " + repaymentList.size());
-				return repaymentList;
-			} else {
-				System.out.println("No Encoded Keys Found.");
-				return new ArrayList<>();
-			}
-		} else {
-			System.out.println("No date provided.");
-			return new ArrayList<>();
-		}
+	    if (encodedKeyList.isEmpty()) {
+	        System.out.println("No Encoded Keys Found.");
+	        return new ArrayList<>();
+	    }
+
+	    // Oracle IN clause supports max 1000 expressions
+	    int batchSize = 1000;
+	    List<Object[]> repaymentList = new ArrayList<>();
+
+	    for (int i = 0; i < encodedKeyList.size(); i += batchSize) {
+	        List<String> batch = encodedKeyList.subList(i, Math.min(i + batchSize, encodedKeyList.size()));
+	        repaymentList.addAll(lOAN_REPAYMENT_REPO.findByParentAccountKeyInAndDueDateLessThanEqualpaid(batch, sqlDate));
+	    }
+
+	    System.out.println("Repayment Size: " + repaymentList.size());
+	    return repaymentList;
 	}
 
 	@RequestMapping(value = "/getBranchData11", method = RequestMethod.GET)
