@@ -1389,10 +1389,22 @@
 											<div class="col-sm-2 d-flex align-items-center">Customer
 												Id</div>
 											<div class="col-sm-2">
-												<input type="text" id="id" name="id"
-													th:value="${view[0] != null ? view[0][0] : ''}"
-													class="form-control form-control-sm bg-white border border-dark"
-													readonly />
+												<th:block th:if="${view != null and !#lists.isEmpty(view)}">
+												    <input type="text" id="id" name="id"
+												           th:value="${view[0][0]}"
+												           class="form-control form-control-sm bg-white border border-dark"
+												           readonly />
+												</th:block>
+
+												<th:block th:unless="${view != null and !#lists.isEmpty(view)}">
+												    <input type="text" id="id" name="id"
+												           value=""
+												           class="form-control form-control-sm bg-white border border-dark"
+												           readonly />
+												</th:block>
+
+
+
 											</div>
 
 											<div class="col-sm-2 d-flex align-items-center">Customer

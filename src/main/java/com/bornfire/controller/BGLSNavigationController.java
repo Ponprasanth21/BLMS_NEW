@@ -3658,7 +3658,7 @@ public class BGLSNavigationController {
 
 		if (formmode == null || "viewloanschedule".equals(formmode)) {
 			model.addAttribute("formmode", "viewloanschedule");
-
+			LOAN_ACT_MST_REPO.getCustomer(Transaction_date, holder_key, id, encodedKey);
 		} else if ("viewloanschedule1".equals(formmode)) {
 			model.addAttribute("formmode", "viewloanschedule1");
 			System.out.println(encodedKey);
