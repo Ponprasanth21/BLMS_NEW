@@ -19,10 +19,16 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name = "BGLS_LMS_SCHEMES")
 public class BglsLmsSchemesEntity {
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "UNIQUE_ID")
-    private Long unique_id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "lms_scheme_seq")
+	@javax.persistence.SequenceGenerator(
+	        name = "lms_scheme_seq",
+	        sequenceName = "BGLS_LMS_SCHEMES_SEQ",
+	        allocationSize = 1
+	)
+	@Column(name = "UNIQUE_ID")
+	private Long uniqueId;
+
      
     @Override
 	public String toString() {
