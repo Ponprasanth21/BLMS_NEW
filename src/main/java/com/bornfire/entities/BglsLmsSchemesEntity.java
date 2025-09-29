@@ -32,7 +32,7 @@ public class BglsLmsSchemesEntity {
      
     @Override
 	public String toString() {
-		return "BglsLmsSchemesEntity [unique_id=" + unique_id + ", id=" + id + ", encodedKey=" + encodedKey
+		return "BglsLmsSchemesEntity [ id=" + id + ", encodedKey=" + encodedKey
 				+ ", activated=" + activated + ", creationDate=" + creationDate + ", defaultGracePeriod="
 				+ defaultGracePeriod + ", defaultLoanAmount=" + defaultLoanAmount + ", defaultNumInstallments="
 				+ defaultNumInstallments + ", defaultRepaymentPeriodCount=" + defaultRepaymentPeriodCount
