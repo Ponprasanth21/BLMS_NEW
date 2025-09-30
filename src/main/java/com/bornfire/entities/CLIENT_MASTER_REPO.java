@@ -38,26 +38,26 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
              "FROM CLIENT_MASTER_TBL WHERE CUSTOMER_ID = ?1", nativeQuery = true)
      Integer getUnverifiedStatus(String id);
 
-     @Query(value = "SELECT \r\n" + //
-                          "   L.ACCOUNT_HOLDERKEY, L.ID,\r\n" + //
-                          "    L.LOAN_NAME,\r\n" + //
-                          "    FORMAT(L.DISBURSEMENT_DATE, 'dd-MM-yyyy') AS DISBURSEMENT_DATE,\r\n" + //
-                          "    L.LOAN_AMOUNT,\r\n" + //
-                          "    COALESCE(B.ACCT_BAL, 0) AS ACCT_BAL\r\n" + //
-                          "FROM \r\n" + //
-                          "    LOAN_ACCOUNT_MASTER_TBL L\r\n" + //
-                          "LEFT JOIN \r\n" + //
-                          "    BGLS_CHART_OF_ACCOUNTS B\r\n" + //
-                          "ON \r\n" + //
-                          "    L.ID = B.ACCT_NUM \r\n" + //
-                          "WHERE \r\n" + //
-                          "    L.ACCOUNT_HOLDERKEY = (\r\n" + //
-                          "        SELECT ENCODED_KEY\r\n" + //
-                          "        FROM CLIENT_MASTER_TBL\r\n" + //
-                          "        WHERE customer_id = ?1\r\n" + //
-                          "    );\r\n" + //
-                          "", nativeQuery = true)
-     List<Object[]> getAccDet(String id);
+     @Query(value = "SELECT " +
+             "   L.ACCOUNT_HOLDERKEY, L.ID, " +
+             "   L.LOAN_NAME, " +
+             "   TO_CHAR(L.DISBURSEMENT_DATE, 'DD-MM-YYYY') AS DISBURSEMENT_DATE, " +
+             "   L.LOAN_AMOUNT, " +
+             "   NVL(B.ACCT_BAL, 0) AS ACCT_BAL " +
+             "FROM " +
+             "   LOAN_ACCOUNT_MASTER_TBL L " +
+             "LEFT JOIN " +
+             "   BGLS_CHART_OF_ACCOUNTS B " +
+             "ON " +
+             "   L.ID = B.ACCT_NUM " +
+             "WHERE " +
+             "   L.ACCOUNT_HOLDERKEY = ( " +
+             "       SELECT ENCODED_KEY " +
+             "       FROM CLIENT_MASTER_TBL " +
+             "       WHERE customer_id = ?1 " +
+             "   )",
+     nativeQuery = true)
+List<Object[]> getAccDet(String id);
      
     @Modifying(clearAutomatically = true, flushAutomatically = true)
  	@Transactional

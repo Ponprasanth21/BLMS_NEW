@@ -295,17 +295,29 @@ Object[] getCustomer(@Param("tran_date") Date tran_date,
                      @Param("encodedKey") String encodedKey);
 
 
-	@Query(value = "SELECT a.ENCODED_KEY, b.DUE_DATE as dueDate, b.REPAID_DATE as repaidDate, "
-	        + "b.PRINCIPAL_EXP as principalExp, b.PRINCIPAL_PAID as principalPaid, b.PRINCIPAL_DUE as principalDue, "
-	        + "b.INTEREST_EXP as interestExp, b.INTEREST_PAID as interestPaid, b.INTEREST_DUE as interestDue, "
-	        + "b.FEE_EXP as feeExp, b.FEE_PAID as feePaid, b.FEE_DUE as feeDue, "
-	        + "b.PENALTY_EXP as penaltyExp, b.PENALTY_PAID as penaltyPaid, b.PENALTY_DUE as penaltyDue "
-	        + "FROM LOAN_ACCOUNT_MASTER_TBL a "
-	        + "JOIN LOAN_REPAYMENT_TBL b ON a.ENCODED_KEY = b.PARENT_ACCOUNT_KEY "
-	        + "WHERE a.ENCODED_KEY = ?1 AND a.DEL_FLG = 'N' AND b.DEL_FLG = 'N' "
-	        + "ORDER BY b.DUE_DATE ASC",
-	       nativeQuery = true)
-	List<Object> getDues(String encodedKey);
+	@Query(value = "SELECT a.ENCODED_KEY, " +
+            "       b.DUE_DATE dueDate, " +
+            "       b.REPAID_DATE repaidDate, " +
+            "       b.PRINCIPAL_EXP principalExp, " +
+            "       b.PRINCIPAL_PAID principalPaid, " +
+            "       b.PRINCIPAL_DUE principalDue, " +
+            "       b.INTEREST_EXP interestExp, " +
+            "       b.INTEREST_PAID interestPaid, " +
+            "       b.INTEREST_DUE interestDue, " +
+            "       b.FEE_EXP feeExp, " +
+            "       b.FEE_PAID feePaid, " +
+            "       b.FEE_DUE feeDue, " +
+            "       b.PENALTY_EXP penaltyExp, " +
+            "       b.PENALTY_PAID penaltyPaid, " +
+            "       b.PENALTY_DUE penaltyDue " +
+            "FROM LOAN_ACCOUNT_MASTER_TBL a " +
+            "JOIN LOAN_REPAYMENT_TBL b ON a.ENCODED_KEY = b.PARENT_ACCOUNT_KEY " +
+            "WHERE a.ENCODED_KEY = ?1 " +
+            "  AND a.DEL_FLG = 'N' " +
+            "  AND b.DEL_FLG = 'N' " +
+            "ORDER BY b.DUE_DATE ASC",
+    nativeQuery = true)
+List<Object[]> getDues(String encodedKey);
 
 
 	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL where  last_modified_date > approved_date", nativeQuery = true)

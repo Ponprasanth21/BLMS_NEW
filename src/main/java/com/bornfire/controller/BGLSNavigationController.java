@@ -392,14 +392,14 @@ public class BGLSNavigationController {
 		if (formmode == null || formmode.equals("add")) {
 			md.addAttribute("formmode", "add");
 			List<Organization_Entity> organization = organization_Repo.getAllList();
-			//md.addAttribute("organization", organization.get(0));
+			md.addAttribute("organization", organization.get(0));
 
 			md.addAttribute("OrgBranch", organization_Branch_Rep.getbranchlist());
 
 		} else if (formmode.equals("ModifyHead")) {
 			md.addAttribute("formmode", "ModifyHead");
 			List<Organization_Entity> organization = organization_Repo.getAllList();
-			//md.addAttribute("organization", organization.get(0));
+			md.addAttribute("organization", organization.get(0));
 		} else if (formmode.equals("DeleteBranch")) {
 			md.addAttribute("formmode", "DeleteBranch");
 			md.addAttribute("OrgBranch", organization_Branch_Rep.getOrgBranch1(branch_code));

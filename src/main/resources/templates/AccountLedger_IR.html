@@ -246,6 +246,7 @@
 				dateFormat: "dd-mm-yy",
 				maxDate: 0,
 				onSelect: function (selected) {
+				
 					var dt = $(this).datepicker('getDate');
 					if (dt) {
 						dt.setDate(dt.getDate());
@@ -262,7 +263,7 @@
 				onSelect: function (selected) {
 					var fromdate = $("#fromdate").val();
 					var todate = $("#todate").val();
-
+					alert(fromdate+todate);
 					if (!fromdate) {
 						alert("Enter From date");
 					} else {

@@ -283,7 +283,9 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 	@Query(value = "SELECT tran_amt FROM BGLS_TRM_WRK_TRANSACTIONS WHERE part_tran_type = 'DEBIT' AND TRAN_ID = ?1 AND PART_TRAN_ID=?2", nativeQuery = true)
 	BigDecimal getdebit(String tran_id, BigDecimal partTranID);
 
-	@Query(value = "SELECT TRAN_DATE, TRAN_ID || '/' || TO_CHAR(PART_TRAN_ID) AS TRANSACTION_ID, TRAN_PARTICULAR, ACCT_CRNCY, TRAN_AMT, CASE PART_TRAN_TYPE WHEN 'credit' THEN TRAN_AMT ELSE 0 END AS Credit, CASE PART_TRAN_TYPE WHEN 'debit' THEN TRAN_AMT ELSE 0 END AS Debit FROM BGLS_TRM_WRK_TRANSACTIONS WHERE acct_num =?1 AND TRAN_STATUS='POSTED' ORDER BY TRAN_DATE, TRAN_ID, PART_TRAN_ID", nativeQuery = true)
+	@Query(value = "SELECT TRAN_DATE, TRAN_ID || '/' || TO_CHAR(PART_TRAN_ID) AS TRANSACTION_ID, TRAN_PARTICULAR, ACCT_CRNCY, TRAN_AMT, CASE PART_TRAN_TYPE WHEN 'Credit' \r\n"
+			+ "THEN TRAN_AMT ELSE 0 END AS Credit, CASE PART_TRAN_TYPE WHEN 'Debit' THEN TRAN_AMT ELSE 0 END AS\r\n"
+			+ "Debit FROM BGLS_TRM_WRK_TRANSACTIONS WHERE acct_num=?1 AND TRAN_STATUS='POSTED' ORDER BY TRAN_DATE, TRAN_ID, PART_TRAN_ID", nativeQuery = true)
 	List<Object[]> getList(@Param("acct_num") String acct_num);
 
 	@Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS aa WHERE aa.acct_num = ?1 AND ROWNUM = 1", nativeQuery = true)
