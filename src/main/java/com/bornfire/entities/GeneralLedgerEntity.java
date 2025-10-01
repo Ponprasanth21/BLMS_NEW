@@ -4,6 +4,10 @@ package com.bornfire.entities;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import java.util.Date;
+
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -37,12 +41,15 @@ public class GeneralLedgerEntity {
     private String entry_user;
     private String modify_user;
     private String verify_flg;
-    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
-    private String entry_time;
-    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
-    private String modify_time;
-    @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
-    private String verify_time;
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	private Date	entry_time;
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	private Date	modify_time;
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	private Date	verify_time;
     private String total_balance;
     private String no_acct_opened;
     private String no_acct_closed;
@@ -160,22 +167,22 @@ public class GeneralLedgerEntity {
 	public void setVerify_flg(String verify_flg) {
 		this.verify_flg = verify_flg;
 	}
-	public String getEntry_time() {
+	public Date getEntry_time() {
 		return entry_time;
 	}
-	public void setEntry_time(String entry_time) {
+	public void setEntry_time(Date entry_time) {
 		this.entry_time = entry_time;
 	}
-	public String getModify_time() {
+	public Date getModify_time() {
 		return modify_time;
 	}
-	public void setModify_time(String modify_time) {
+	public void setModify_time(Date modify_time) {
 		this.modify_time = modify_time;
 	}
-	public String getVerify_time() {
+	public Date getVerify_time() {
 		return verify_time;
 	}
-	public void setVerify_time(String verify_time) {
+	public void setVerify_time(Date verify_time) {
 		this.verify_time = verify_time;
 	}
 	public String getTotal_balance() {
@@ -196,44 +203,9 @@ public class GeneralLedgerEntity {
 	public void setNo_acct_closed(String no_acct_closed) {
 		this.no_acct_closed = no_acct_closed;
 	}
-	public GeneralLedgerEntity(String glCode, String glDescription, String remarks, String delFlg, String modifyFlg,
-			String branch_id, String branch_desc, String glsh_code, String glsh_desc, String crncy_code,
-			String bal_sheet_group, String seq_order, String gl_type, String gl_type_description, String module,
-			String entity_flg, String entry_user, String modify_user, String verify_flg, String entry_time,
-			String modify_time, String verify_time, String total_balance, String no_acct_opened,
-			String no_acct_closed) {
-		super();
-		this.glCode = glCode;
-		this.glDescription = glDescription;
-		this.remarks = remarks;
-		this.delFlg = delFlg;
-		this.modifyFlg = modifyFlg;
-		this.branch_id = branch_id;
-		this.branch_desc = branch_desc;
-		this.glsh_code = glsh_code;
-		this.glsh_desc = glsh_desc;
-		this.crncy_code = crncy_code;
-		this.bal_sheet_group = bal_sheet_group;
-		this.seq_order = seq_order;
-		this.gl_type = gl_type;
-		this.gl_type_description = gl_type_description;
-		this.module = module;
-		this.entity_flg = entity_flg;
-		this.entry_user = entry_user;
-		this.modify_user = modify_user;
-		this.verify_flg = verify_flg;
-		this.entry_time = entry_time;
-		this.modify_time = modify_time;
-		this.verify_time = verify_time;
-		this.total_balance = total_balance;
-		this.no_acct_opened = no_acct_opened;
-		this.no_acct_closed = no_acct_closed;
-	}
 	public GeneralLedgerEntity() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	
-	
-
 }

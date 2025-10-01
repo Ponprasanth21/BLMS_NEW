@@ -63,7 +63,7 @@ public class AdminOperServices {
 
 		String msg = "";
 		 BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd ");
 		if (formmode.equals("add")) {
 
 			GeneralLedgerEntity up = getGeneralLedger;
@@ -71,7 +71,8 @@ public class AdminOperServices {
 			up.setDelFlg("N");
 			up.setModifyFlg("N");
 			up.setEntry_user(userid);
-			up.setEntry_time(sdf.format(new Date()));
+			//up.setEntry_time(sdf.format(new Date()));
+			 up.setEntry_time(new Date());
 			generalLedgerRep.save(up);
 
 			msg = "Added Successfully";
@@ -112,7 +113,8 @@ public class AdminOperServices {
 				up.setModifyFlg("Y");
 				up.setDelFlg("N");
 				up.setModify_user(userid);
-				up.setModify_time(sdf.format(new Date()));
+				//up.setModify_time(sdf.format(new Date()));
+				 up.setModify_time(new Date());
 				generalLedgerRep.save(up);
 				msg = "Modify Successfully";
 			 
