@@ -771,6 +771,95 @@ function funcall() {
 	</script>
 
 
+
+
+
+
+
+
+<!-- suresh -->
+<script>
+
+function updateTable(data) {
+    let rows = "";
+
+    data.forEach(chartacc => {
+        rows += `
+            <tr>
+                <td>${chartacc.classification || ""}</td>
+                <td style="color:blue; cursor:pointer;" 
+                    data-attr="${chartacc.acct_num}" 
+                    onclick="enquiryuser(this);">
+                    ${chartacc.acct_num || ""}
+                </td>
+                <td>${chartacc.acct_name || ""}</td>
+                <td>${chartacc.acct_crncy || ""}</td>
+
+                <td style="text-align:right;">${chartacc.cr_amt === 0 ? "0.00" : formatNumber(chartacc.cr_amt)}</td>
+                <td style="text-align:right;">${chartacc.dr_amt === 0 ? "0.00" : formatNumber(chartacc.dr_amt)}</td>
+                <td style="text-align:right;">${chartacc.acct_bal === 0 ? "0.00" : formatNumber(chartacc.acct_bal)}</td>
+
+                <td style="color:${chartacc.acct_status === 'Active' || chartacc.acct_status === 'Y' ? 'green' : 'red'};">
+                    ${mapStatus(chartacc.acct_status)}
+                </td>
+            </tr>
+        `;
+    });
+
+    $("#placelist").html(rows);
+}
+
+// number formatting like thymeleaf
+function formatNumber(num) {
+    return Number(num).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// mapping status values like thymeleaf switch
+function mapStatus(status) {
+    if (status === "Active" || status === "Y") return "Active";
+    if (status === "N" || status === "Closed") return "Closed";
+    return status;
+}
+
+
+$(document).ready(function () {
+    // call handleSelect once DOM is fully loaded
+    handleSelect();
+});
+
+
+function handleSelect() {
+    let type = $("#filterselect").val();
+
+    document.getElementById('loadingModal').style.display = 'flex';
+
+    $.ajax({
+        url: "chartaccounts/filter",
+        type: "GET",
+        data: { type: type }, // send O or C to backend
+        success: function (response) {
+            if (response && response.length > 0) {
+                updateTable(response);
+            } else {
+                $("#placelist").html(
+                    `<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
+                );
+            }
+        },
+        error: function () {
+            $("#placelist").html(
+                `<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
+            );
+        },
+        complete: function () {
+            document.getElementById('loadingModal').style.display = 'none';
+        }
+    });
+}
+
+</script>
+
+
 </head>
 
 
@@ -802,9 +891,17 @@ function funcall() {
 									<h6 style="font-size: 1.2rem; color: black;">ACCOUNT
 										LEDGER</h6>
 								</div>
-								<div class="float-right">
-									<button type="button"
-										class="btn-primary big-btn btn-filter">Filter</button>
+								<div class="float-right d-flex">
+
+									<select class="form-control-sm bg-white mr-2 w-100" id="filterselect"
+										onchange="handleSelect()" style="background-color: #e3e3e4;">
+										<option value="O" selected>OFFICE</option>
+										<option value="C">CUSTOMER</option>
+									</select>
+
+									<button type="button" class="btn-primary big-btn btn-filter">Filter</button>
+
+										
 								</div>
 							</div>
 
@@ -877,7 +974,7 @@ function funcall() {
 											</tr>
 										</thead>
 										<tbody id="placelist">
-											<tr th:each="chartacc : ${chartaccount}">
+											<!-- <tr th:each="chartacc : ${chartaccount}">
 												<td th:text="${chartacc?.classification}"></td>
 												<td style="color:blue " th:text="${chartacc?.acct_num}" 
 													th:attr="data-attr=${chartacc?.acct_num}" onclick="enquiryuser(this);"></td>
@@ -898,29 +995,9 @@ function funcall() {
 													<td th:case="Y"  style="color: green;">Active</td>
 													<td th:case="N"   style="color: green;">Closed</td>
 													<td th:case="Closed" style="color: red;">Closed</td>
-													<!-- <td th:case="'Y'" style="color: red;">closed</td> -->
 												</th:block>
-												<!-- <td>
-													<div class="dropdown">
-														<button class="btn-primary big-btn" type="button"
-															id="dropdownMenuButton" data-toggle="dropdown"
-															style="background-color: #B2BEB5; color: white; border: none; outline: none;"
-															aria-haspopup="true" aria-expanded="false">
-															Action</button>
-														<div class="dropdown-menu"
-															aria-labelledby="dropdownMenuButton">
-															<button type="button" class="dropdown-item" id="btndelete"
-																th:attr="data-attribute=${chartacc?.acct_num}"
-																style="text-align: center;"
-																onclick="deleteuser(this);">Delete</button>
-															<div class="dropdown-divider"></div>
-															<a class="dropdown-item" id="btnEnquiry"
-																th:attr="data-attr=${chartacc?.acct_num}"
-																style="text-align: center;" onclick="enquiryuser(this);">view</a> 
-														</div>
-													</div>
-												</td> -->
-											</tr>
+												
+											</tr> -->
 										</tbody>
 									</table>
 								</div>

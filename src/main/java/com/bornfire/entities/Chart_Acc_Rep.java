@@ -120,9 +120,17 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 	@Query(value = "SELECT * " +
             "FROM BGLS_CHART_OF_ACCOUNTS " +
             "WHERE del_flg = 'N' " +
-            "  AND OWN_TYPE IN ('C') " +
+            "  AND OWN_TYPE IN ('O') " +
             "ORDER BY ACCT_NUM, CLASSIFICATION ASC",
     nativeQuery = true)
 List<Chart_Acc_Entity> getListoffice1();
+
+@Query(value = "SELECT * " +
+        "FROM BGLS_CHART_OF_ACCOUNTS " +
+        "WHERE del_flg = 'N' " +
+        "  AND OWN_TYPE IN ('C') " +
+        "ORDER BY ACCT_NUM, CLASSIFICATION ASC",
+nativeQuery = true)
+List<Chart_Acc_Entity> getListofCustomer();
 
 }

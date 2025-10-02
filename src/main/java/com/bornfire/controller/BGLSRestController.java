@@ -9241,6 +9241,17 @@ public List<CLIENT_MASTER_ENTITY> searchByStatus(@RequestParam String status) {
     return clientMasterRepo.findByStatus(status);
 }
 
+@GetMapping("chartaccounts/filter")
+public List<Chart_Acc_Entity> filterChartAccounts(@RequestParam String type) {
+    if (type.equals("O")) {
+        return chart_Acc_Rep.getListoffice1();
+    } else if (type.equals("C")) {
+        return chart_Acc_Rep.getListofCustomer();
+    }
+    return chart_Acc_Rep.findAll();
+}
+
+
 
 
 }

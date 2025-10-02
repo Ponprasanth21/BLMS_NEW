@@ -432,6 +432,144 @@ function verifysubmit(a) {
 	window.addEventListener("resize", adjustHeight);
 	document.addEventListener("DOMContentLoaded", adjustHeight);
 </script>
+
+
+<!-- suresh -->
+<script>
+
+
+function updateTable(data) {
+    let rows = "";
+
+    data.forEach(chartacc => {
+        rows += `
+            <tr>
+                <td>${chartacc.classification || ""}</td>
+                <td>${chartacc.gl_code || ""}</td>
+                <td>${chartacc.schm_code || ""}</td>
+                <td class="text-primary" 
+                    data-attr="${chartacc.acct_num || ""}" 
+                    onclick="enquiryuser(this);">
+                    ${chartacc.acct_num || ""}
+                </td>
+                <td>${chartacc.acct_name || ""}</td>
+                <td>${chartacc.acct_crncy || ""}</td>
+
+                <td style="text-align:right;">
+                    ${formatNumber(chartacc.cr_amt)}
+                </td>
+                <td style="text-align:right;">
+                    ${formatNumber(chartacc.dr_amt)}
+                </td>
+                <td style="text-align:right;">
+                    ${formatNumber(chartacc.acct_bal)}
+                </td>
+
+                <td style="color:${chartacc.entity_flg === 'Y' ? 'green' : 'red'};">
+                    ${chartacc.entity_flg === 'Y' ? 'Active' : 'Inactive'}
+                </td>
+
+                <td>
+                    <div class="dropdown action-dropdown">
+                        <button class="btn btn-action dropdown-toggle" style="padding:0px"
+                            type="button" id="dropdownMenuButton" title="Action"
+                            data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">Action</button>
+
+                        <div class="dropdown-menu" style="padding:0px"
+                            aria-labelledby="dropdownMenuButton">
+                            
+                            <!-- Modify -->
+                            <a class="dropdown-item modify-item"
+                                data-attr="${chartacc.acct_num || ""}" title="Modify"
+                                onclick="modifyuser(this)">Modify</a>
+
+                            <div class="dropdown-divider"></div>
+
+                            <!-- Verify -->
+                            <a class="dropdown-item verify-item"
+                                data-attr="${chartacc.acct_num || ""}" title="Verify"
+                                onclick="verifyuser(this)">Verify</a>
+
+                            <div class="dropdown-divider"></div>
+
+                            <!-- Delete -->
+                            <a class="dropdown-item delete-item"
+                                data-attribute="${chartacc.acct_num || ""}" title="Delete"
+                                onclick="deleteUser(this)">Delete</a>
+
+                            <div class="dropdown-divider"></div>
+
+                            <!-- View -->
+                            <a class="dropdown-item view-item"
+                                data-attr="${chartacc.acct_num || ""}" title="View"
+                                onclick="enquiryuser(this)">View</a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        `;
+    });
+
+    $("#placelist").html(rows);
+}
+
+// Number formatting function (2 decimals, comma separator)
+function formatNumber(num) {
+    if (num == null || isNaN(num)) return "0.00";
+    return Number(num).toLocaleString("en-IN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
+
+// mapping status values like thymeleaf switch
+function mapStatus(status) {
+    if (status === "Active" || status === "Y") return "Active";
+    if (status === "N" || status === "Closed") return "Closed";
+    return status;
+}
+
+
+$(document).ready(function () {
+    // call handleSelect once DOM is fully loaded
+    handleSelect();
+});
+
+	function handleSelect() {
+    let type = $("#filterselect").val();
+
+    document.getElementById('loadingModal').style.display = 'flex';
+
+    $.ajax({
+        url: "chartaccounts/filter",
+        type: "GET",
+        data: { type: type }, // send O or C to backend
+        success: function (response) {
+            if (response && response.length > 0) {
+                updateTable(response);
+            } else {
+                $("#placelist").html(
+                    `<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
+                );
+            }
+        },
+        error: function () {
+            $("#placelist").html(
+                `<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
+            );
+        },
+        complete: function () {
+            document.getElementById('loadingModal').style.display = 'none';
+        }
+    });
+}
+</script>
+
+
+
+
 </head>
 <body>
 
@@ -450,9 +588,14 @@ function verifysubmit(a) {
 								<div class="float-left">
 									<h6 style="font-size: 1.2rem; color: black;">BALANCE REPORT</h6>
 								</div>
-								<div class="float-right">
+								<div class="float-right d-flex">
+									<select class="form-control-sm bg-white mr-2 w-100" id="filterselect"
+										onchange="handleSelect()" style="background-color: #e3e3e4;">
+										<option value="O" selected>OFFICE</option>
+										<option value="C">CUSTOMER</option>
+									</select>
 									<button type="button"
-										class="btn-primary big-btn btn-filter">Filter</button>
+										class="btn-primary big-btn btn-filter mr-2">Filter</button>
 									<button type="button" class="btn-primary big-btn" id="btnadd"
 										style="text-align: center;" onclick="adduser(this);">Add</button>
 								</div>
@@ -501,7 +644,7 @@ function verifysubmit(a) {
 											</tr>
 										</thead>
 										<tbody id="placelist">
-											<tr th:each="chartacc : ${chartaccount}">
+											<!-- <tr th:each="chartacc : ${chartaccount}">
 												<td th:text="${chartacc?.classification}"></td>
 												<td th:text="${chartacc?.gl_code}"></td>
 												<td th:text="${chartacc?.schm_code}"></td>
@@ -535,35 +678,31 @@ function verifysubmit(a) {
 
 														<div class="dropdown-menu" style="padding:0px"
 															aria-labelledby="dropdownMenuButton">
-															<!-- Modify -->
 															<a class="dropdown-item modify-item"
 																th:attr="data-attr=${chartacc?.acct_num}" title="Modify"
 																onclick="modifyuser(this)">Modify</a>
 
 															<div class="dropdown-divider"></div>
 
-															<!-- Verify -->
 															<a class="dropdown-item verify-item"
 																th:attr="data-attr=${chartacc?.acct_num}" title="Verify"
 																onclick="verifyuser(this)">Verify</a>
 
 															<div class="dropdown-divider"></div>
 
-															<!-- Delete -->
 															<a class="dropdown-item delete-item"
 																th:attr="data-attribute=${chartacc?.acct_num}"
 																title="Delete" onclick="deleteUser(this)">Delete</a>
 
 															<div class="dropdown-divider"></div>
 
-															<!-- View -->
 															<a class="dropdown-item view-item"
 																th:attr="data-attr=${chartacc?.acct_num}" title="View"
 																onclick="enquiryuser(this)">View</a>
 														</div>
 													</div>
 												</td>
-											</tr>
+											</tr> -->
 										</tbody>
 									</table>
 								</div>
