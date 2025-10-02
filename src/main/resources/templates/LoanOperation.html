@@ -1,195 +1,279 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="/ASPIRA/js/jquery.min.js"></script>
-<script src="/ASPIRA/js/jquery-ui.min.js"></script>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="/ASPIRA/js/jquery.min.js"></script>
+	<script src="/ASPIRA/js/jquery-ui.min.js"></script>
+	<style>
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.4);
+			margin-left: 350px;
+		}
 
+		.modal-content {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 100%;
+			height: 50%;
+			margin-left: 200px;
+		}
 
-<style>
-body {
-	font-size: 0.8rem;
-}
+		.modal-content1 {
+			background-color: #fefefe;
+			margin: 10% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 70%;
+			height: 45%;
+			margin-left: 200px;
+		}
 
-.btn {
-	line-height: 0.5rem;
-}
+		.modal-pass {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 40%;
+			height: 25%;
+			margin-left: 400PX;
+			margin-right: auto;
+			border-radius: 10px;
+			box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+			font-family: Arial, sans-serif;
+		}
 
-.table-bordered td, .table-bordered th {
-	font-size: smaller;
-}
+		.close {
+			color: red;
+			font-size: 28px;
+			font-weight: bold;
+		}
 
-.container-manager {
-	width: 83.5%;
-	padding-right: 15px;
-	padding-left: 15px;
-	margin-right: auto;
-	margin-left: 17.3%;
-	margin-top: 80px;
-	margin-top: 80px;
-}
+		.close:hover,
+		.close:focus {
+			color: black;
+			text-decoration: none;
+			cursor: pointer;
+		}
+	</style>
+	<style>
+		body {
+			font-size: 0.8rem;
+		}
 
-.table .thead-light th {
-	color: #495057;
-	background-color: #e9ecef;
-	border-color: #dee2e6;
-	width: 23px;
-}
+		.btn {
+			line-height: 0.5rem;
+		}
 
-.scroll {
-	max-height: 60vh;
-	overflow-y: scroll;
-	overflow-x: hidden;
-}
+		.table-bordered td,
+		.table-bordered th {
+			font-size: smaller;
+		}
 
-.tablinks {
-	background-color: #f1f1f1;
-	/* Default background color */
-	border: none;
-	color: black;
-	padding: 10px 20px;
-	text-align: center;
-	text-decoration: none;
-	display: inline-block;
-	font-size: 16px;
-	transition: background-color 0.3s;
-}
+		.container-manager {
+			width: 83.5%;
+			padding-right: 15px;
+			padding-left: 15px;
+			margin-right: auto;
+			margin-left: 17.3%;
+			margin-top: 80px;
+			margin-top: 80px;
+		}
 
-.tablinks.active {
-	background-color: #2084a9;
-	color: white;
-}
+		.table .thead-light th {
+			color: #495057;
+			background-color: #e9ecef;
+			border-color: #dee2e6;
+			width: 23px;
+		}
 
-.tab {
-	overflow: hidden;
-	border: 1px solid #ccc;
-	background-color: #f2f2f2;
-}
+		.scroll {
+			max-height: 60vh;
+			overflow-y: scroll;
+			overflow-x: hidden;
+		}
 
-.tab button {
-	background-color: inherit;
-	float: left;
-	border: none;
-	outline: none;
-	cursor: pointer;
-	padding: 14px 56px;
-	transition: 0.3s;
-	font-size: 17px;
-}
+		.tablinks {
+			background-color: #f1f1f1;
+			/* Default background color */
+			border: none;
+			color: black;
+			padding: 10px 20px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+			transition: background-color 0.3s;
+		}
 
-.tab button:hover {
-	background-color: #ddd;
-}
+		.tablinks.active {
+			background-color: #2084a9;
+			color: white;
+		}
 
-.tabcontent {
-	display: none;
-	padding: 0px;
-	border-top: 1px solid #ccc;
-}
+		.tab {
+			overflow: hidden;
+			border: 1px solid #ccc;
+			background-color: #f2f2f2;
+		}
 
-.active {
-	background-color: #2084a9;
-}
+		.tab button {
+			background-color: inherit;
+			float: left;
+			border: none;
+			outline: none;
+			cursor: pointer;
+			padding: 14px 56px;
+			transition: 0.3s;
+			font-size: 17px;
+		}
 
-#myPieChart {
-	width: 100px;
-	height: 100px;
-}
-</style>
-<style>
-.modal {
-	display: none;
-	/* Hidden by default */
-	position: absolute;
-	/* Stay in place */
-	z-index: 1;
-	/* Location of the box */
-	left: 0;
-	top: 0;
-	width: 100%;
-	/* Full width */
-	height: 100%;
-	/* Full height */
-	overflow: auto;
-	/* Enable scroll if needed */
-	background-color: rgb(0, 0, 0);
-	/* Fallback color */
-	background-color: rgba(0, 0, 0, 0.4);
-	/* Black w/ opacity */
-}
+		.tab button:hover {
+			background-color: #ddd;
+		}
 
-/* Modal Content */
-.modal-content {
-	background-color: #fefefe;
-	margin: auto;
-	padding: 20px;
-	border: 1px solid #888;
-	width: 100%;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0
-		rgba(0, 0, 0, 0.19);
-	-webkit-animation-name: animatetop;
-	-webkit-animation-duration: 0.4s;
-	animation-name: animatetop;
-	animation-duration: 0.4s
-}
+		.tabcontent {
+			display: none;
+			padding: 0px;
+			border-top: 1px solid #ccc;
+		}
 
-.modal-pass {
-	background-color: #fefefe;
-	margin: 15% auto;
-	padding: 20px;
-	border: 1px solid #888;
-	width: 40%;
-	height: 25%;
-	margin-left: 400PX;
-	margin-right: auto;
-	border-radius: 10px;
-	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
-	font-family: Arial, sans-serif;
-}
+		.active {
+			background-color: #2084a9;
+		}
 
-.close {
-	color: red;
-	font-size: 28px;
-	font-weight: bold;
-}
+		#myPieChart {
+			width: 100px;
+			height: 100px;
+		}
+	</style>
+	<style>
+		.modal {
+			display: none;
+			/* Hidden by default */
+			position: absolute;
+			/* Stay in place */
+			z-index: 1;
+			/* Location of the box */
+			left: 0;
+			top: 0;
+			width: 100%;
+			/* Full width */
+			height: 100%;
+			/* Full height */
+			overflow: auto;
+			/* Enable scroll if needed */
+			background-color: rgb(0, 0, 0);
+			/* Fallback color */
+			background-color: rgba(0, 0, 0, 0.4);
+			/* Black w/ opacity */
+		}
 
-.close:hover, .close:focus {
-	color: black;
-	text-decoration: none;
-	cursor: pointer;
-}
-</style>
-<style>
-.password-info {
-	visibility: hidden;
-	width: 320px;
-	background-color: #333;
-	color: #fff;
-	text-align: left;
-	border-radius: 10px;
-	padding: 10px;
-	position: absolute;
-	z-index: 1;
-	top: calc(100% + 10px);
-	left: 50%;
-	transform: translateX(-50%);
-	opacity: 0;
-	transition: opacity 0.3s;
-}
+		/* Modal Content */
+		.modal-content {
+			background-color: #fefefe;
+			margin: auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 100%;
+			box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			-webkit-animation-name: animatetop;
+			-webkit-animation-duration: 0.4s;
+			animation-name: animatetop;
+			animation-duration: 0.4s
+		}
 
-input:hover+.password-info {
-	visibility: visible;
-	opacity: 0.8;
-}
-.big-btn {
-  font-size: 16px;
-}
-</style>
+		.modal-pass {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 40%;
+			height: 25%;
+			margin-left: 400PX;
+			margin-right: auto;
+			border-radius: 10px;
+			box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+			font-family: Arial, sans-serif;
+		}
 
-<script>
+		.close {
+			color: red;
+			font-size: 28px;
+			font-weight: bold;
+		}
+
+		.close:hover,
+		.close:focus {
+			color: black;
+			text-decoration: none;
+			cursor: pointer;
+		}
+	</style>
+	<style>
+		.password-info {
+			visibility: hidden;
+			width: 320px;
+			background-color: #333;
+			color: #fff;
+			text-align: left;
+			border-radius: 10px;
+			padding: 10px;
+			position: absolute;
+			z-index: 1;
+			top: calc(100% + 10px);
+			left: 50%;
+			transform: translateX(-50%);
+			opacity: 0;
+			transition: opacity 0.3s;
+		}
+
+		input:hover+.password-info {
+			visibility: visible;
+			opacity: 0.8;
+		}
+
+		.big-btn {
+			font-size: 16px;
+		}
+		
+		#flowIdTable {
+		    width: 100%;
+		    border-collapse: collapse;
+		    table-layout: fixed; /* Important to align header and body */
+		}
+
+		#flowIdTable thead, #flowIdTable tbody tr {
+		    display: table;
+		    width: 100%;
+		    table-layout: fixed;
+		}
+
+		#flowIdTable tbody {
+		    display: block;
+		    max-height: 355px; /* Scrollable height */
+		    overflow-y: auto;
+		}
+
+		#flowIdTable th, #flowIdTable td {
+		    white-space: nowrap;
+		    overflow: hidden;
+		    text-overflow: ellipsis;
+		}
+	</style>
+
+	<script>
 
 		$(function () {
 			$("#fromdate").datepicker({
@@ -267,7 +351,7 @@ input:hover+.password-info {
 			location.href = url;
 		}
 	</script>
-<script>
+	<script>
 
 		function callCollectionScreen(a) {
 			event.preventDefault();
@@ -279,15 +363,17 @@ input:hover+.password-info {
 		}
 
 
-		function getflowDetails() {	
+		function getflowDetails() {
 			event.preventDefault();
 
 			var fromdate = $('#fromdate').val();
 			var todate = $('#todate').val();
+			var transactindate = $('#transaction_date_id').val();
 
 			var dateFrom = formatDateToDD(fromdate.trim());
 			var DateTo = formatDateToDD(todate.trim());
-			
+			var transactionTo = formatDateToDD(transactindate.trim());
+
 
 			console.log(dateFrom + " " + DateTo);
 
@@ -302,6 +388,9 @@ input:hover+.password-info {
 				$("#operationtype").removeClass("d-none");
 				$("#serviceflowIdTable").addClass("d-none");
 				$("#repaymentTypeDiv").addClass("d-none");
+				$("#acct_balance1, #acct_balance, #acct_balance21, #acct_balancedatas").hide();
+				$("#from_date_id, #fromdate, #to_date_id, #todate").show();
+				$("#transaction_date_id, #transactiondates").hide();
 
 				var operationType = "Interest";
 
@@ -309,10 +398,10 @@ input:hover+.password-info {
 					console.log("Loan option is checked.");
 					$("#acct_num123").removeClass("d-none");
 					$("#acct_num2").addClass("d-none");
-					
+
 					// Get the hidden input field value
-				    var acctNum = document.getElementById("acct_num123").value;
-					
+					var acctNum = document.getElementById("acct_num123").value;
+
 					$.ajax({
 						type: 'GET',
 						url: './loanflowDetails',
@@ -321,21 +410,21 @@ input:hover+.password-info {
 							todate: DateTo,
 							accountNumber: acctNum
 						},
-						 success: function (data) {
-						        var tHTML = "";
+						success: function (data) {
+							var tHTML = "";
 
-						        if (data.length > 0) {
-						            $.each(data, function (index, entity) {
-						                // ✅ Correctly access JSON object properties
-						                var flowDate = entity.flow_date ? formatDate(entity.flow_date) : "";
-						                var flowId = entity.flow_id || "1";  
-						                var flowCode = entity.flow_code || "INDEM";
-						                var flowAmount = entity.flow_amt ? formatNumberWithCommas(entity.flow_amt) : "0.00";
-						                var acctNo = entity.loan_acct_no || "";
-						                var acctName = entity.acct_name || "";
-						                var encodedKey = entity.encoded_key || "";  // Ensure it's defined
+							if (data.length > 0) {
+								$.each(data, function (index, entity) {
+									// ✅ Correctly access JSON object properties
+									var flowDate = entity.flow_date ? formatDate(entity.flow_date) : "";
+									var flowId = entity.flow_id || "1";
+									var flowCode = entity.flow_code || "INDEM";
+									var flowAmount = entity.flow_amt ? formatNumberWithCommas(entity.flow_amt) : "0.00";
+									var acctNo = entity.loan_acct_no || "";
+									var acctName = entity.acct_name || "";
+									var encodedKey = entity.encoded_key || "";  // Ensure it's defined
 
-						                tHTML += `
+									tHTML += `
 						                	<tr>
 						                	    <td><input type="text" name="flow_date" value="${flowDate}" class="border-0" readonly /></td>
 						                	    <td><input type="text" name="flow_id" value="${flowId}" class="border-0" readonly /></td>
@@ -356,17 +445,17 @@ input:hover+.password-info {
 						                	            name="und_pct_radio" />
 						                	    </td>
 						                	</tr>`;
-						            });
-						        } else {
-						            tHTML += "<tr><td class='text-center' colspan='7'>No records available</td></tr>";
-						        }
+								});
+							} else {
+								tHTML += "<tr><td class='text-center' colspan='7'>No records available</td></tr>";
+							}
 
-						        $("#flowIdTbody").empty().append(tHTML);
-						    },
-						    error: function () {
-						        $('#errorMessage').text('Error fetching data');
-						        $('#errorModal').modal('show');
-						    }
+							$("#flowIdTbody").empty().append(tHTML);
+						},
+						error: function () {
+							$('#errorMessage').text('Error fetching data');
+							$('#errorModal').modal('show');
+						}
 					});
 
 				} else {
@@ -462,6 +551,9 @@ input:hover+.password-info {
 				$("#operationtype").removeClass("d-none");
 				$("#serviceflowIdTable").addClass("d-none");
 				$("#repaymentTypeDiv").addClass("d-none");
+				$("#acct_balance1, #acct_balance, #acct_balance21, #acct_balancedatas").hide();
+				$("#from_date_id, #fromdate, #to_date_id, #todate").show();
+				$("#transaction_date_id, #transactiondates").hide();
 
 				var operationType = "Fees";
 
@@ -469,10 +561,10 @@ input:hover+.password-info {
 					console.log("Loan option is checked.");
 					$("#acct_num123").removeClass("d-none");
 					$("#acct_num2").addClass("d-none");
-					
+
 					// Get the hidden input field value
-				    var acctNum = document.getElementById("acct_num123").value;
-					
+					var acctNum = document.getElementById("acct_num123").value;
+
 					$.ajax({
 						type: 'GET',
 						url: './loanflowDetailsfees',
@@ -481,49 +573,49 @@ input:hover+.password-info {
 							todate: DateTo,
 							accountNumber: acctNum
 						},
-						 success: function (data) {
-						        var tHTML = "";
+						success: function (data) {
+							var tHTML = "";
 
-						        if (data.length > 0) {
-						            $.each(data, function (index, entity) {
-						                // ✅ Correctly access JSON object properties
-						                var flowDate = entity.flow_date ? formatDate(entity.flow_date) : "";
-						                var flowId = entity.flow_id || "1";  
-						                var flowCode = entity.flow_code || "INDEM";
-						                var flowAmount = entity.flow_amt ? formatNumberWithCommas(entity.flow_amt) : "0.00";
-						                var acctNo = entity.loan_acct_no || "";
-						                var acctName = entity.acct_name || "";
+							if (data.length > 0) {
+								$.each(data, function (index, entity) {
+									// ✅ Correctly access JSON object properties
+									var flowDate = entity.flow_date ? formatDate(entity.flow_date) : "";
+									var flowId = entity.flow_id || "1";
+									var flowCode = entity.flow_code || "INDEM";
+									var flowAmount = entity.flow_amt ? formatNumberWithCommas(entity.flow_amt) : "0.00";
+									var acctNo = entity.loan_acct_no || "";
+									var acctName = entity.acct_name || "";
 
-						                tHTML += "<tr>"
-						                    + "<td><input type='text' name='flow_date' value='" + flowDate + "' class='border-0' readonly /></td>"
-						                    + "<td><input type='text' name='flow_id' value='" + flowId + "'  class='border-0' readonly  /></td>"
-						                    + "<td><input type='text' name='flow_code' value='" + flowCode + "' class='border-0' readonly  /></td>"
-						                    + "<td><input type='text' name='flow_amt' value='" + flowAmount + "' class='border-0' readonly  /></td>"
-						                    + "<td><input type='text' name='loan_acct_no' value='" + acctNo + "' class='border-0' readonly  /></td>"
-						                    + "<td><input type='text' name='acct_name' value='" + acctName + "' class='border-0' readonly  /></td>"
+									tHTML += "<tr>"
+										+ "<td><input type='text' name='flow_date' value='" + flowDate + "' class='border-0' readonly /></td>"
+										+ "<td><input type='text' name='flow_id' value='" + flowId + "'  class='border-0' readonly  /></td>"
+										+ "<td><input type='text' name='flow_code' value='" + flowCode + "' class='border-0' readonly  /></td>"
+										+ "<td><input type='text' name='flow_amt' value='" + flowAmount + "' class='border-0' readonly  /></td>"
+										+ "<td><input type='text' name='loan_acct_no' value='" + acctNo + "' class='border-0' readonly  /></td>"
+										+ "<td><input type='text' name='acct_name' value='" + acctName + "' class='border-0' readonly  /></td>"
 
-						                    + "<td><input type='radio' onclick='handleRadioClickInterest(this);' "
-						                    + "data-flow_code='" + flowCode + "' "
-						                    + "data-loan_acct_no='" + acctNo + "' "
-						                    + "data-flow_amt='" + flowAmount + "' "
-						                    + "data-acct_name='" + acctName + "' "
-						                    + "data-flow_date='" + flowDate + "' "
-						                    + "data-flow_id='" + flowId + "' "
-						                    + "data-operation='" + operationType + "' "
-						                    + "name='und_pct_radio' /></td>"
+										+ "<td><input type='radio' onclick='handleRadioClickInterest(this);' "
+										+ "data-flow_code='" + flowCode + "' "
+										+ "data-loan_acct_no='" + acctNo + "' "
+										+ "data-flow_amt='" + flowAmount + "' "
+										+ "data-acct_name='" + acctName + "' "
+										+ "data-flow_date='" + flowDate + "' "
+										+ "data-flow_id='" + flowId + "' "
+										+ "data-operation='" + operationType + "' "
+										+ "name='und_pct_radio' /></td>"
 
-						                    + "</tr>";
-						            });
-						        } else {
-						            tHTML += "<tr><td class='text-center' colspan='7'>No records available</td></tr>";
-						        }
+										+ "</tr>";
+								});
+							} else {
+								tHTML += "<tr><td class='text-center' colspan='7'>No records available</td></tr>";
+							}
 
-						        $("#flowIdTbody").empty().append(tHTML);
-						    },
-						    error: function () {
-						        $('#errorMessage').text('Error fetching data');
-						        $('#errorModal').modal('show');
-						    }
+							$("#flowIdTbody").empty().append(tHTML);
+						},
+						error: function () {
+							$('#errorMessage').text('Error fetching data');
+							$('#errorModal').modal('show');
+						}
 					});
 
 				}
@@ -537,44 +629,46 @@ input:hover+.password-info {
 				$("#serviceflowIdTable").removeClass("d-none");
 				$("#acct_num1234").removeClass("d-none");
 				$("#repaymentTypeDiv").addClass("d-none");
-				
+				$("#acct_balance1, #acct_balance, #acct_balance21, #acct_balancedatas").hide();
+				$("#transaction_date_id, #transactiondates").hide();
+
 				var acct_num = $("#acct_num1234").val();
-                
-                $.ajax({
-                    type: 'GET',
-                    url: './getAccountNamedatas',
-                    data: { accountNum: acct_num },
-                    success: function (data) {
-                        console.log("Received data:", data);
 
-                        if (data) {
-                            document.getElementById("loaaccountname").value = data.loan_name || "";  
-                            document.getElementById("loanaccountnumber").value = data.id || "";  
-                            document.getElementById("loaaccountnamedata").value = data.loan_name || "";  
-                            if (data && data.fees_due !== null && data.fees_due !== undefined && data.fees_due > 0) {
-                                document.getElementById("flowamount").value = data.fees_due;
-                            } else {
-                                document.getElementById("flowamount").value = "";
-                            }
-                            // Show a success message
-                            $('#successMessage').text('Data retrieved successfully').show().delay(3000).fadeOut();
-                        } else {
-                            // Clear fields if no valid data is found
-                            document.getElementById("loaaccountname").value = "";  
-                            document.getElementById("loanaccountnumber").value = "";  
-                            document.getElementById("loaaccountnamedata").value = "";
+				$.ajax({
+					type: 'GET',
+					url: './getAccountNamedatas',
+					data: {accountNum: acct_num},
+					success: function (data) {
+						console.log("Received data:", data);
 
-                            $('#errorMessage').text('No data found').show().delay(3000).fadeOut();
-                        }
-                    },
-                    error: function (xhr) {
-                        console.error("Error:", xhr);
-                        
-                        // Show an error message
-                        $('#errorMessage').text('Error fetching data').show().delay(3000).fadeOut();
-                        $('#errorModal').modal('show');
-                    }
-                });
+						if (data) {
+							document.getElementById("loaaccountname").value = data.loan_name || "";
+							document.getElementById("loanaccountnumber").value = data.id || "";
+							document.getElementById("loaaccountnamedata").value = data.loan_name || "";
+							if (data && data.fees_due !== null && data.fees_due !== undefined && data.fees_due > 0) {
+								document.getElementById("flowamount").value = data.fees_due;
+							} else {
+								document.getElementById("flowamount").value = "";
+							}
+							// Show a success message
+							$('#successMessage').text('Data retrieved successfully').show().delay(3000).fadeOut();
+						} else {
+							// Clear fields if no valid data is found
+							document.getElementById("loaaccountname").value = "";
+							document.getElementById("loanaccountnumber").value = "";
+							document.getElementById("loaaccountnamedata").value = "";
+
+							$('#errorMessage').text('No data found').show().delay(3000).fadeOut();
+						}
+					},
+					error: function (xhr) {
+						console.error("Error:", xhr);
+
+						// Show an error message
+						$('#errorMessage').text('Error fetching data').show().delay(3000).fadeOut();
+						$('#errorModal').modal('show');
+					}
+				});
 			} else if ($('#collection').is(':checked')) {
 				console.log("Collection option is checked.");
 
@@ -587,6 +681,10 @@ input:hover+.password-info {
 				$("#repaymentTypeDiv").addClass("d-none");
 				$("#acct_balance1, #acct_balance").removeClass("hidden"); // Show balance fields
 				$("#acct_balance21, #acct_balance22").removeClass("hidden"); // Show balance fields
+				$("#acct_names_1, #acct_names").show();
+				$("#from_date_id, #fromdate, #to_date_id, #todate").hide();
+				// Show Transaction Date
+				$("#transaction_date_id, #transactiondates").show();
 
 				if ($('#cash').is(':checked')) {
 
@@ -596,92 +694,76 @@ input:hover+.password-info {
 
 					if ($('#loan').is(':checked')) {
 						console.log("Loan option is checked.");
+
 						$("#acct_num123").removeClass("d-none");
 						$("#acct_num2").addClass("d-none");
-						
-						 // Fetch the updated account name directly from the select field
-					    var selectedOption = document.getElementById("acct_num123").options[document.getElementById("acct_num1234").selectedIndex];
-					    var acctName = selectedOption.getAttribute("data-acct-name") || ""; // Correctly fetching from the selected option
-						
-						var acct_num = $("#acct_num123").val();
-						alert("collection cash alert alert "+acct_num);
+
+						// ✅ Get the account number from the text input
+						var acct_num = $("#acct_num123").val().trim();
+
+						console.log("Selected Account Number:", acct_num);
+
 						$.ajax({
 							type: 'GET',
-							url: './loanflowDetails1',
+							url: './loanflowDetails11',
 							data: {
-								fromDate: dateFrom,
 								todate: DateTo,
-								accountNumber: acct_num
+								accountNumber: acct_num // ✅ pass account number correctly
 							},
 							success: function (data) {
-								console.log(data);
-								
-								$.ajax({
-							        type: 'GET',
-							        url: './fetchacctbalance',
-							        data: { acctnum: acctnum },
-							        success: function (data) {
-							            console.log("Raw Account Balance:", data);
-
-							            var formattedBalance = parseFloat(data).toLocaleString('en-US', { 
-							                minimumFractionDigits: 2, 
-							                maximumFractionDigits: 2 
-							            });
-
-							            document.getElementById("loan_bal").value = formattedBalance;
-							            
-							        }
-								})
+								console.log("Received data:", data);
 
 								var tHTML = "";
-								if (data.length > 0) {
-									$
-										.each(
-											data,
-											function (index, entity) {
 
+								// Extract total amount safely
+								var flow_total_amt = data.flow_total_amt ? data.flow_total_amt : "0.00";
+								console.log("Total Amount:", flow_total_amt);
+								console.log("Loan Flows:", data.loan_flows);
 
-												var flowDate = entity.flow_date !== null ? formatDate(entity.flow_date)
-													: "";
-												var flowId = entity.flow_id !== null ? entity.flow_id
-													: "";
+								// Format total amount
+								var formattedTotalAmount = parseFloat(flow_total_amt).toLocaleString('en-US', {
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 2
+								});
+								$("#acct_balancedatas").val(formattedTotalAmount);
 
-												var flowCode = entity.flow_code !== null ? entity.flow_code
-													: "";
-												var flowAmount = entity.flow_amt !== null ? formatNumberWithCommas(entity.flow_amt)
-													: "0.00";
-												var acctNo = entity.loan_acct_no !== null ? entity.loan_acct_no
-													: "";
-												//var inst_pct = entity.inst_pct !== null ? entity.inst_pct : "";
-												var acctName = entity.acct_name !== null ? entity.acct_name
-													: "";
-
-
-												tHTML += "<tr>"
-													+ "<td><input type='text' name='flow_date' value='" + flowDate + "' class='border-0' readonly /></td>"
-													+ "<td><input type='text' name='flow_id' value='" + flowId + "'  class='border-0' readonly  /></td>"
-													+ "<td><input type='text' name='flow_code' value='" + flowCode + "' class='border-0' readonly  /></td>"
-													+ "<td><input type='text' name='flow_amt' value='" + flowAmount + "' class='border-0' readonly  /></td>"
-													+ "<td><input type='text' name='loan_acct_no' value='" + acctNo + "' class='border-0' readonly  /></td>"
-													+ "<td><input type='text' name='acct_name' value='" + acctName + "' class='border-0' readonly  /></td>"
-
-													+ "<td><input type='radio' onclick='handleRadioClickCollection(this);' data-flow_code='"
-													+ flowCode
-													+ "' data-loan_acct_no='"
-													+ acctNo
-													+ "' data-flow_amt='"
-													+ flowAmount
-													+ "' data-acct_name='" + acctName
-													+ "' data-flow_date='" + flowDate
-													+ "' data-flow_id='" + flowId
-													+ "' data-operation='" + operationType
-													+ "' name='und_pct_radio' /></td>"
-
-													+ "</tr>";
-											});
-								} else {
-									tHTML += "<tr><td colspan='7'>No records available</td></tr>";
+								// Add "Tran Amt" column if missing
+								if ($("#flowIdTable thead tr th").length === 7) {
+									$("#flowIdTable thead tr th").eq(3)
+										.after("<th style='text-align:center;'>Tran Amt</th>");
 								}
+
+								// Check if loan_flows is an array
+								if (Array.isArray(data.loan_flows) && data.loan_flows.length > 0) {
+									$.each(data.loan_flows, function (index, entity) {
+										var flowDate = entity.flow_date ? formatDate(entity.flow_date) : "";
+										var flowId = entity.flow_id || "";
+										var flowCode = entity.flow_code || "";
+										var flowAmount = entity.flow_amt ? formatNumberWithCommas(entity.flow_amt) : "0.00";
+										var tranamount = entity.tran_amt ? formatNumberWithCommas(entity.tran_amt) : "0.00";
+										var acctNo = entity.loan_acct_no || "";
+										var acctName = entity.acct_name || "";
+										var encodedkey = entity.encoded_key || "";
+
+										tHTML += "<tr>"
+											+ "<td><input type='text' value='" + flowDate + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td><input type='text' value='" + flowId + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td><input type='text' value='" + flowCode + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td><input type='text' value='" + flowAmount + "' readonly class='border-0 p-0 m-0 text-right' style='width:100%;'/></td>"
+											+ "<td><input type='text' value='" + tranamount + "' readonly class='border-0 p-0 m-0 text-right' style='width:100%;' oninput='calculateRemainingAmount(this)'/></td>"
+											+ "<td><input type='text' value='" + acctNo + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td><input type='text' value='" + acctName + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td style='text-align:center; padding:0; margin:0;'>"
+											+ "<input type='radio' name='und_pct_radio' data-operation='" + operationType + "' data-encoded_key='" + encodedkey + "' "
+											+ (tranamount > 0 ? "checked" : "") + " />"
+											+ "</td>"
+											+ "</tr>";
+									});
+									$("#collectionsubmit").show();
+								} else {
+									tHTML += "<tr style='text-align:center;'><td colspan='8'>No records available</td></tr>";
+								}
+
 								$("#flowIdTbody").empty().append(tHTML);
 							},
 							error: function () {
@@ -689,7 +771,6 @@ input:hover+.password-info {
 								$('#errorModal').modal('show');
 							}
 						});
-
 					} else {
 						console.log("Deposit option is checked.");
 						$("#acct_num2").removeClass("d-none");
@@ -699,7 +780,7 @@ input:hover+.password-info {
 						$("#operationtype").removeClass("d-none");
 						$("#serviceflowIdTable").addClass("d-none");
 						$("#repaymentTypeDiv").addClass("d-none");
-						
+
 						var acct_num = $("#acct_num2").val();
 						$.ajax({
 							type: 'GET',
@@ -773,9 +854,6 @@ input:hover+.password-info {
 								$('#errorModal').modal('show');
 							}
 						});
-
-
-
 					}
 
 				} else if ($('#officeRouting').is(':checked')) {
@@ -795,11 +873,11 @@ input:hover+.password-info {
 						$("#acct_num123").removeClass("d-none");
 						$("#acct_num2").addClass("d-none");
 						var acct_num = $("#acct_num123").val();
-						 // Fetch the updated account name directly from the select field
-				        var selectElement = document.getElementById("acct_num123");
-				        var selectedOption = selectElement.options[selectElement.selectedIndex];
-				        var acctName = selectedOption.getAttribute("data-acct-name") || ""; // Correctly fetch the account name
-				        
+						// Fetch the updated account name directly from the select field
+						var selectElement = document.getElementById("acct_num123");
+						var selectedOption = selectElement.options[selectElement.selectedIndex];
+						var acctName = selectedOption.getAttribute("data-acct-name") || ""; // Correctly fetch the account name
+
 						$.ajax({
 							type: 'GET',
 							url: './loanflowDetails11',
@@ -808,93 +886,97 @@ input:hover+.password-info {
 								accountNumber: acct_num
 							},
 							success: function (data) {
-							    console.log("Received data:", data);
+								console.log("Received data:", data);
 
-							    var tHTML = "";
+								$("#collectionsubmit").show();
 
-							    // Extract total amount safely
-							    var flow_total_amt = data.flow_total_amt ? data.flow_total_amt : "0.00";
-							    console.log("Total Amount:", flow_total_amt); // ✅ Total amount
-							    console.log("Loan Flows:", data.loan_flows); // ✅ List of loan flow details
+								// ✅ If acctName is not empty, make the second AJAX request
+								if (acctName && acctName.trim() !== "") {
+									console.log("Fetching account balance for:", acctName);
 
-							 // Format total amount as decimal (2 decimal places with commas)
-							    var formattedTotalAmount = parseFloat(flow_total_amt).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+									$.ajax({
+										type: 'GET',
+										url: './fetchacctbalance',
+										data: {acctnum: acctName}, // Use account name instead of account number
+										success: function (balanceData) {
+											console.log("Raw Account Balance:", balanceData);
 
-							    // Set total amount to an input field
-							    document.getElementById("acct_balancedatas").value = formattedTotalAmount;
-							    
-							 // 🔹 Add "Tran Amt" column if missing at the correct 5th position
-							    if ($("#flowIdTable thead tr th").length === 7) {
-							        $("#flowIdTable thead tr th").eq(3).after("<th style='text-align:center;'>Tran Amt</th>"); // ✅ Corrected quotes
-							    }
+											var balance = parseFloat(balanceData);
+											var formattedBalance = isNaN(balance) ? "0.00" : balance.toLocaleString('en-US', {
+												minimumFractionDigits: 2,
+												maximumFractionDigits: 2
+											});
 
-							    // Ensure data.loan_flows is an array before iterating
-							    if (Array.isArray(data.loan_flows) && data.loan_flows.length > 0) {
-							        $.each(data.loan_flows, function (index, entity) {
-							            var flowDate = entity.flow_date ? formatDate(entity.flow_date) : "";
-							            var flowId = entity.flow_id ? entity.flow_id : "";
-							            var flowCode = entity.flow_code ? entity.flow_code : "";
-							            var flowAmount = entity.flow_amt ? formatNumberWithCommas(entity.flow_amt) : "0.00";
-							            var tranamount = entity.tran_amt ? formatNumberWithCommas(entity.tran_amt) : "0.00";
-							            var acctNo = entity.loan_acct_no ? entity.loan_acct_no : "";
-							            var acctName = entity.acct_name ? entity.acct_name : "";
-							            var encodedkey = entity.encoded_key ? entity.encoded_key : "";
+											document.getElementById("acct_balance").value = formattedBalance;
+										},
+										error: function (error) {
+											console.error("Error fetching account balance:", error);
+										}
+									});
+								} else {
+									console.log("No valid account name found. Skipping balance fetch.");
+								}
 
-							            tHTML += "<tr>"
-							                + "<td><input type='text' name='flow_date' value='" + flowDate + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
-							                + "<td><input type='text' name='flow_id' value='" + flowId + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
-							                + "<td><input type='text' name='flow_code' value='" + flowCode + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
-							                + "<td><input type='text' name='flow_amt' value='" + flowAmount + "' class='border-0 p-0 m-0' style='width:100%; text-align:right;' readonly /></td>"
-							                + "<td><input type='text' name='tran_amt' value='" + tranamount + "' class='border-0 p-0 m-0' style='width:100%; text-align:right;' oninput='calculateRemainingAmount(this)' readonly /></td>"
-							                + "<td><input type='text' name='loan_acct_no' value='" + acctNo + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
-							                + "<td><input type='text' name='acct_name' value='" + acctName + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
-							                + "<td style='text-align:center; padding:0; margin:0;'>"
-							                + "<input type='radio' name='und_pct_radio' "  // Keep name same if only one selection is allowed
-							                + "data-operation='" + operationType + "' "
-							                + "data-encoded_key='" + encodedkey + "' "
-							                + (tranamount > 0 ? " checked='checked'" : "")  // Corrected checked attribute
-							                + " onclick='handleCheckboxClickCollectiondata()' />"
-							                + "</td>"
-							                + "</tr>";
-							        });
+								var tHTML = "";
 
-							        // Append the rows to the table body
-							        $("#flowIdTbody").html(tHTML);
-							    } else {
-							        tHTML += "<tr><td colspan='7'>No records available</td></tr>";
-							    }
-							    $("#flowIdTbody").empty().append(tHTML);
-							    
-							    // ✅ If acctName is not empty, make the second AJAX request
-					            if (acctName && acctName.trim() !== "") {
-					                console.log("Fetching account balance for:", acctName);
-					                
-					                $.ajax({
-					                    type: 'GET',
-					                    url: './fetchacctbalance',
-					                    data: { acctnum: acctName }, // Use account name instead of account number
-					                    success: function (balanceData) {
-					                        console.log("Raw Account Balance:", balanceData);
+								// Extract total amount safely
+								var flow_total_amt = data.flow_total_amt ? data.flow_total_amt : "0.00";
+								console.log("Total Amount:", flow_total_amt); // ✅ Total amount
+								console.log("Loan Flows:", data.loan_flows); // ✅ List of loan flow details
 
-					                        var balance = parseFloat(balanceData);
-					                        var formattedBalance = isNaN(balance) ? "0.00" : balance.toLocaleString('en-US', {
-					                            minimumFractionDigits: 2,
-					                            maximumFractionDigits: 2
-					                        });
+								// Format total amount as decimal (2 decimal places with commas)
+								var formattedTotalAmount = parseFloat(flow_total_amt).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
-					                        document.getElementById("acct_balance").value = formattedBalance;
-					                    },
-					                    error: function (error) {
-					                        console.error("Error fetching account balance:", error);
-					                    }
-					                });
-					            } else {
-					                console.log("No valid account name found. Skipping balance fetch.");
-					            }
+								// Set total amount to an input field
+								document.getElementById("acct_balancedatas").value = formattedTotalAmount;
+
+								// 🔹 Add "Tran Amt" column if missing at the correct 5th position
+								if ($("#flowIdTable thead tr th").length === 7) {
+									$("#flowIdTable thead tr th").eq(3).after("<th style='text-align:center;'>Tran Amt</th>"); // ✅ Corrected quotes
+								}
+
+								// Ensure data.loan_flows is an array before iterating
+								if (Array.isArray(data.loan_flows) && data.loan_flows.length > 0) {
+									$.each(data.loan_flows, function (index, entity) {
+										var flowDate = entity.flow_date ? formatDate(entity.flow_date) : "";
+										var flowId = entity.flow_id ? entity.flow_id : "";
+										var flowCode = entity.flow_code ? entity.flow_code : "";
+										var flowAmount = entity.flow_amt ? formatNumberWithCommas(entity.flow_amt) : "0.00";
+										var tranamount = entity.tran_amt ? formatNumberWithCommas(entity.tran_amt) : "0.00";
+										var acctNo = entity.loan_acct_no ? entity.loan_acct_no : "";
+										var acctName = entity.acct_name ? entity.acct_name : "";
+										var encodedkey = entity.encoded_key ? entity.encoded_key : "";
+
+										tHTML += "<tr>"
+											+ "<td><input type='text' name='flow_date' value='" + flowDate + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
+											+ "<td><input type='text' name='flow_id' value='" + flowId + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
+											+ "<td><input type='text' name='flow_code' value='" + flowCode + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
+											+ "<td><input type='text' name='flow_amt' value='" + flowAmount + "' class='border-0 p-0 m-0' style='width:100%; text-align:right;' readonly /></td>"
+											+ "<td><input type='text' name='tran_amt' value='" + tranamount + "' class='border-0 p-0 m-0' style='width:100%; text-align:right;' oninput='calculateRemainingAmount(this)' readonly /></td>"
+											+ "<td><input type='text' name='loan_acct_no' value='" + acctNo + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
+											+ "<td><input type='text' name='acct_name' value='" + acctName + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
+											+ "<td style='text-align:center; padding:0; margin:0;'>"
+											+ "<input type='radio' name='und_pct_radio' "  // One selection only
+											+ "data-operation='" + operationType + "' "
+											+ "data-encoded_key='" + encodedkey + "' "
+											+ (tranamount > 0 ? " checked='checked'" : "")
+											+ " />"
+											+ "</td>"
+											+ "</tr>";
+
+										$("#collectionsubmit").show();
+									});
+
+									// Append the rows to the table body
+									$("#flowIdTbody").html(tHTML);
+								} else {
+									tHTML += "<tr style='text-align:center;'><td colspan='8'>No records available</td></tr>";
+								}
+								$("#flowIdTbody").empty().append(tHTML);
 							},
 							error: function () {
-							    $('#errorMessage').text('Error fetching data');
-							    $('#errorModal').modal('show');
+								$('#errorMessage').text('Error fetching data');
+								$('#errorModal').modal('show');
 							}
 						});
 
@@ -995,7 +1077,7 @@ input:hover+.password-info {
 				$("#fromtovalues").addClass("d-none");
 				$("#operationtype").addClass("d-none");
 				$("#serviceflowIdTable").addClass("d-none");
-				$("#acct_num11").addClass("d-none");	
+				$("#acct_num11").addClass("d-none");
 			}
 			else if ($('#booking').is(':checked')) {
 				console.log("Collection option is checked.");
@@ -1007,6 +1089,8 @@ input:hover+.password-info {
 				$("#operationtype").removeClass("d-none");
 				$("#serviceflowIdTable").addClass("d-none");
 				$("#repaymentTypeDiv").addClass("d-none");
+				$("#from_date_id, #fromdate, #to_date_id, #todate").show();
+				$("#transaction_date_id, #transactiondates").hide();
 
 				var operationType = "Booking";
 
@@ -1023,65 +1107,65 @@ input:hover+.password-info {
 						data: {
 							actno1: actno1,
 							dateFrom: dateFrom,
-							todate:DateTo
+							todate: DateTo
 						},
 						success: function (data) {
-						    console.log("Data received:", data);
-						    if (data.message) {
-							       // alert(data.message);
-							        $("#alertmsg").text(data.message);
-									$('#alert').modal('show');
-							        return; // Stop further processing if it's not month-end
-							 }
-						    if (!data || Object.keys(data).length === 0) {
-						        $("#errorMessage").text("No records found.");
-						        $("#errorModal").modal("show");
-						        return;
-						    }
+							console.log("Data received:", data);
+							if (data.message) {
+								// alert(data.message);
+								$("#alertmsg").text(data.message);
+								$('#alert').modal('show');
+								return; // Stop further processing if it's not month-end
+							}
+							if (!data || Object.keys(data).length === 0) {
+								$("#errorMessage").text("No records found.");
+								$("#errorModal").modal("show");
+								return;
+							}
 
-						    var tHTML = "";
+							var tHTML = "";
 
-						    var flowDate = data.flow_date ? formatDate(data.flow_date) : "";
-						    var flowId = data.flow_id || "";
-						    var flowCode = data.flow_code || "";
-						    var flowAmount = data.flow_amt ? formatNumberWithCommas(data.flow_amt) : "0.00";
-						    var acctNo = data.loan_acct_no || "";
-						    var acctName = data.acct_name || "";
-						    var interest_rate = data.intrest_rate || "";
-						    var intamt = data.flow_amt ? data.flow_amt : "0.00"; // No `tran_amt`, using `flow_amt`
-						    var days = data.no_of_days; // Since `part_tran_id` is not present in response
+							var flowDate = data.flow_date ? formatDate(data.flow_date) : "";
+							var flowId = data.flow_id || "";
+							var flowCode = data.flow_code || "";
+							var flowAmount = data.flow_amt ? formatNumberWithCommas(data.flow_amt) : "0.00";
+							var acctNo = data.loan_acct_no || "";
+							var acctName = data.acct_name || "";
+							var interest_rate = data.intrest_rate || "";
+							var intamt = data.flow_amt ? data.flow_amt : "0.00"; // No `tran_amt`, using `flow_amt`
+							var days = data.no_of_days; // Since `part_tran_id` is not present in response
 
-						    tHTML += "<tr>"
-						        + "<td><input type='text' name='flow_date' value='" + flowDate + "' class='border-0' readonly /></td>"
-						        + "<td><input type='text' name='flow_id' value='" + flowId + "' class='border-0' readonly /></td>"
-						        + "<td><input type='text' name='flow_code' value='" + flowCode + "' class='border-0' readonly /></td>"
-						        + "<td><input type='text' name='flow_amt' value='" + flowAmount + "' class='border-0' readonly /></td>"
-						        + "<td><input type='text' name='loan_acct_no' value='" + acctNo + "' class='border-0' readonly /></td>"
-						        + "<td><input type='text' name='acct_name' value='" + acctName + "' class='border-0' readonly /></td>"
+							tHTML += "<tr>"
+								+ "<td><input type='text' name='flow_date' value='" + flowDate + "' class='border-0' readonly /></td>"
+								+ "<td><input type='text' name='flow_id' value='" + flowId + "' class='border-0' readonly /></td>"
+								+ "<td><input type='text' name='flow_code' value='" + flowCode + "' class='border-0' readonly /></td>"
+								+ "<td><input type='text' name='flow_amt' value='" + flowAmount + "' class='border-0' readonly /></td>"
+								+ "<td><input type='text' name='loan_acct_no' value='" + acctNo + "' class='border-0' readonly /></td>"
+								+ "<td><input type='text' name='acct_name' value='" + acctName + "' class='border-0' readonly /></td>"
 
-						        + "<td><input type='radio' onclick='handleRadioClickBooking(this);' data-flow_code='"
-						        + flowCode
-						        + "' data-loan_acct_no='" + acctNo
-						        + "' data-flow_amt='" + flowAmount
-						        + "' data-acct_name='" + acctName
-						        + "' data-flow_date='" + flowDate
-						        + "' data-flow_id='" + flowId
-						        + "' data-operation='" + operationType
-						        + "' data-interest='" + intamt
-						        + "' data-days='" + days
-						        + "' data-interestpercentge='" + interest_rate
-						        + "' name='und_pct_radio' /></td>"
+								+ "<td><input type='radio' onclick='handleRadioClickBooking(this);' data-flow_code='"
+								+ flowCode
+								+ "' data-loan_acct_no='" + acctNo
+								+ "' data-flow_amt='" + flowAmount
+								+ "' data-acct_name='" + acctName
+								+ "' data-flow_date='" + flowDate
+								+ "' data-flow_id='" + flowId
+								+ "' data-operation='" + operationType
+								+ "' data-interest='" + intamt
+								+ "' data-days='" + days
+								+ "' data-interestpercentge='" + interest_rate
+								+ "' name='und_pct_radio' /></td>"
 
-						        + "</tr>";
+								+ "</tr>";
 
-						    $("#flowIdTbody").empty().append(tHTML);
+							$("#flowIdTbody").empty().append(tHTML);
 
-						    // ✅ Show success message
-						    $("#successMessage").text("Data loaded successfully.").show().fadeOut(3000);
+							// ✅ Show success message
+							$("#successMessage").text("Data loaded successfully.").show().fadeOut(3000);
 						},
 						error: function () {
-						    $("#errorMessage").text("Error fetching data.");
-						    $("#errorModal").modal("show");
+							$("#errorMessage").text("Error fetching data.");
+							$("#errorModal").modal("show");
 						}
 					});
 
@@ -1190,16 +1274,16 @@ input:hover+.password-info {
 			var loan_acct_no = selectedRadio.getAttribute("data-loan_acct_no");
 			var acct_name = selectedRadio.getAttribute("data-acct_name");
 			var operation = selectedRadio.getAttribute("data-operation");
-			
-			var message = "Flow Amount: " + flow_amt + "\n"
-            + "Flow Code: " + flow_code + "\n"
-            + "Flow ID: " + flow_id + "\n"
-            + "Flow Date: " + flow_date + "\n"
-            + "Loan Account No: " + loan_acct_no + "\n"
-            + "Account Name: " + acct_name + "\n"
-            + "Operation: " + operation;
 
-            alert(message);
+			var message = "Flow Amount: " + flow_amt + "\n"
+				+ "Flow Code: " + flow_code + "\n"
+				+ "Flow ID: " + flow_id + "\n"
+				+ "Flow Date: " + flow_date + "\n"
+				+ "Loan Account No: " + loan_acct_no + "\n"
+				+ "Account Name: " + acct_name + "\n"
+				+ "Operation: " + operation;
+
+			alert(message);
 
 			console.log(flow_amt + " " + flow_code + " " + loan_acct_no + " " + acct_name + " " + flow_date);
 
@@ -1241,122 +1325,122 @@ input:hover+.password-info {
 				}
 			});
 		}
-		
+
 		function handleRadioClickInterest1(selectedRadio) {
-		    var flow_amt = selectedRadio.getAttribute("data-flow_amt").replace(/,/g, '');
-		    var flow_code = selectedRadio.getAttribute("data-flow_code");
-		    var flow_id = selectedRadio.getAttribute("data-flow_id");
-		    var flow_date = selectedRadio.getAttribute("data-flow_date");
-		    var loan_acct_no = selectedRadio.getAttribute("data-loan_acct_no");
-		    var acct_name = selectedRadio.getAttribute("data-acct_name");
-		    var operation = selectedRadio.getAttribute("data-operation");
-		    var encodedKey = selectedRadio.getAttribute("data-encodedkey");  // ✅ Extract encoded_key
+			var flow_amt = selectedRadio.getAttribute("data-flow_amt").replace(/,/g, '');
+			var flow_code = selectedRadio.getAttribute("data-flow_code");
+			var flow_id = selectedRadio.getAttribute("data-flow_id");
+			var flow_date = selectedRadio.getAttribute("data-flow_date");
+			var loan_acct_no = selectedRadio.getAttribute("data-loan_acct_no");
+			var acct_name = selectedRadio.getAttribute("data-acct_name");
+			var operation = selectedRadio.getAttribute("data-operation");
+			var encodedKey = selectedRadio.getAttribute("data-encodedkey");  // ✅ Extract encoded_key
 
-		    var message = "Flow Amount: " + flow_amt + "\n"
-		        + "Flow Code: " + flow_code + "\n"
-		        + "Flow ID: " + flow_id + "\n"
-		        + "Flow Date: " + flow_date + "\n"
-		        + "Loan Account No: " + loan_acct_no + "\n"
-		        + "Account Name: " + acct_name + "\n"
-		        + "Operation: " + operation + "\n"
-		        + "Encoded Key: " + encodedKey;  // ✅ Display encoded_key
+			var message = "Flow Amount: " + flow_amt + "\n"
+				+ "Flow Code: " + flow_code + "\n"
+				+ "Flow ID: " + flow_id + "\n"
+				+ "Flow Date: " + flow_date + "\n"
+				+ "Loan Account No: " + loan_acct_no + "\n"
+				+ "Account Name: " + acct_name + "\n"
+				+ "Operation: " + operation + "\n"
+				+ "Encoded Key: " + encodedKey;  // ✅ Display encoded_key
 
-		    alert(message);
+			alert(message);
 
-		    console.log(flow_amt + " " + flow_code + " " + loan_acct_no + " " + acct_name + " " + flow_date + " " + encodedKey);
+			console.log(flow_amt + " " + flow_code + " " + loan_acct_no + " " + acct_name + " " + flow_date + " " + encodedKey);
 
-		    $.ajax({
-		        type: 'GET',
-		        url: './transactionInterest11',
-		        data: {
-		            flow_amount: flow_amt,
-		            flow_code: flow_code,
-		            flow_date: flow_date,
-		            account_no: loan_acct_no,
-		            accountName: acct_name,
-		            flow_id: flow_id,
-		            operation: operation,
-		            encoded_key: encodedKey  // ✅ Send encoded_key to the backend
-		        },
-		        success: function (data) {
-		            console.log(data);
+			$.ajax({
+				type: 'GET',
+				url: './transactionInterest11',
+				data: {
+					flow_amount: flow_amt,
+					flow_code: flow_code,
+					flow_date: flow_date,
+					account_no: loan_acct_no,
+					accountName: acct_name,
+					flow_id: flow_id,
+					operation: operation,
+					encoded_key: encodedKey  // ✅ Send encoded_key to the backend
+				},
+				success: function (data) {
+					console.log(data);
 
-		            var tranId = data.trim();
-		            var parttranid = "1";
+					var tranId = data.trim();
+					var parttranid = "1";
 
-		            var url = 'accountLedgerPost?formmode=verify' +
-		                '&acct_num=' + encodeURIComponent(loan_acct_no) +
-		                '&tran_id=' + encodeURIComponent(tranId) +
-		                '&part_tran_id=' + encodeURIComponent(parttranid) +
-		                '&encoded_key=' + encodeURIComponent(encodedKey);  // ✅ Include encoded_key in URL
+					var url = 'accountLedgerPost?formmode=verify' +
+						'&acct_num=' + encodeURIComponent(loan_acct_no) +
+						'&tran_id=' + encodeURIComponent(tranId) +
+						'&part_tran_id=' + encodeURIComponent(parttranid) +
+						'&encoded_key=' + encodeURIComponent(encodedKey);  // ✅ Include encoded_key in URL
 
-		            // Redirect to the constructed URL
-		            location.href = url;
-		        },
-		        error: function () {
-		            $('#errorMessage').text('Error fetching data');
-		            $('#errorModal').modal('show');
-		        }
-		    });
+					// Redirect to the constructed URL
+					location.href = url;
+				},
+				error: function () {
+					$('#errorMessage').text('Error fetching data');
+					$('#errorModal').modal('show');
+				}
+			});
 		}
-		
-		
+
+
 		function handleRadioClickInterestdatas(selectedRadio) {
-		    // Get the parent row of the selected radio button
-		    var row = selectedRadio.closest("tr");
+			// Get the parent row of the selected radio button
+			var row = selectedRadio.closest("tr");
 
-		    // Fetch values dynamically from input fields within the same row
-		    var flow_amt = row.querySelector("[name='flow_amt']").value.trim();
-		    var flow_code = row.querySelector("[name='flow_code']").value.trim();
-		    var flow_id = row.querySelector("[name='flow_id']").value.trim();
-		    var flow_date = row.querySelector("[name='flow_date']").value.trim();
-		    var loan_acct_no = row.querySelector("[name='loan_acct_no']").value.trim();
-		    var acct_name = row.querySelector("[name='acct_name']").value.trim();
+			// Fetch values dynamically from input fields within the same row
+			var flow_amt = row.querySelector("[name='flow_amt']").value.trim();
+			var flow_code = row.querySelector("[name='flow_code']").value.trim();
+			var flow_id = row.querySelector("[name='flow_id']").value.trim();
+			var flow_date = row.querySelector("[name='flow_date']").value.trim();
+			var loan_acct_no = row.querySelector("[name='loan_acct_no']").value.trim();
+			var acct_name = row.querySelector("[name='acct_name']").value.trim();
 
-		    // Convert flow_date from "YYYY-MM-DD" to "DD-MM-YYYY"
-		    if (flow_date) {
-		        let dateParts = flow_date.split("-");
-		        flow_date = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;  // Rearranging to DD-MM-YYYY
-		    }
+			// Convert flow_date from "YYYY-MM-DD" to "DD-MM-YYYY"
+			if (flow_date) {
+				let dateParts = flow_date.split("-");
+				flow_date = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;  // Rearranging to DD-MM-YYYY
+			}
 
-		    // Debugging alert
-		    alert("Flow Amount: " + flow_amt + 
-		          "\nFlow Code: " + flow_code + 
-		          "\nFlow ID: " + flow_id + 
-		          "\nFlow Date (Converted): " + flow_date + 
-		          "\nLoan Account No: " + loan_acct_no + 
-		          "\nAccount Name: " + acct_name);
+			// Debugging alert
+			alert("Flow Amount: " + flow_amt +
+				"\nFlow Code: " + flow_code +
+				"\nFlow ID: " + flow_id +
+				"\nFlow Date (Converted): " + flow_date +
+				"\nLoan Account No: " + loan_acct_no +
+				"\nAccount Name: " + acct_name);
 
-		    // AJAX Request
-		    $.ajax({
-		        type: 'GET',
-		        url: './transactionInterest',
-		        data: {
-		            flow_amount: flow_amt,
-		            flow_code: flow_code,
-		            flow_date: flow_date,
-		            account_no: loan_acct_no,
-		            accountName: acct_name,
-		            flow_id: flow_id
-		        },
-		        success: function (data) {
-		            console.log(data);
-		            var tranId = data.trim();
-		            var parttranid = "1";
+			// AJAX Request
+			$.ajax({
+				type: 'GET',
+				url: './transactionInterest',
+				data: {
+					flow_amount: flow_amt,
+					flow_code: flow_code,
+					flow_date: flow_date,
+					account_no: loan_acct_no,
+					accountName: acct_name,
+					flow_id: flow_id
+				},
+				success: function (data) {
+					console.log(data);
+					var tranId = data.trim();
+					var parttranid = "1";
 
-		            var url = 'accountLedgerPost?formmode=verify' +
-		                '&acct_num=' + encodeURIComponent(loan_acct_no) +
-		                '&tran_id=' + encodeURIComponent(tranId) +
-		                '&part_tran_id=' + encodeURIComponent(parttranid);
+					var url = 'accountLedgerPost?formmode=verify' +
+						'&acct_num=' + encodeURIComponent(loan_acct_no) +
+						'&tran_id=' + encodeURIComponent(tranId) +
+						'&part_tran_id=' + encodeURIComponent(parttranid);
 
-		            // Redirect to the constructed URL
-		            location.href = url;
-		        },
-		        error: function () {
-		            $('#errorMessage').text('Error fetching data');
-		            $('#errorModal').modal('show');
-		        }
-		    });
+					// Redirect to the constructed URL
+					location.href = url;
+				},
+				error: function () {
+					$('#errorMessage').text('Error fetching data');
+					$('#errorModal').modal('show');
+				}
+			});
 		}
 
 		function handleRadioClickCollection(selectedRadio) {
@@ -1409,91 +1493,93 @@ input:hover+.password-info {
 				}
 			});
 		}
-		
-		
+
+
 		function handleCheckboxClickCollectiondata() {
-		    var selectedData = [];
-		    var encodedKey = ""; // Variable to store encoded key
+			var selectedData = [];
 
-		    var fromdate = $('#fromdate').val();
-		    var todate = $('#todate').val();
+			
+			var fromdate = $('#fromdate').val();
+			var todate = $('#todate').val();
 
-		    if (!fromdate || !todate) {
-		        alert("Please select both From Date and To Date.");
-		        return;
-		    }
+			if (!fromdate || !todate) {
+				alert("Please select both From Date and To Date.");
+				return;
+			}
 
-		    var dateFrom = formatDateToDD(fromdate.trim());
-		    var dateTo = formatDateToDD(todate.trim());
+			// Get selected operation type from radio buttons
+			   var operationType = $("input[name='collectionOption']:checked").val(); // will be "cash" or "officeRouting"
+			   if (!operationType) {
+			       alert("Please select an Operation Type.");
+			       return;
+			   }
+			   alert(operationType);
+			var dateFrom = formatDateToDD(fromdate.trim());
+			var dateTo = formatDateToDD(todate.trim());
 
-		    console.log("From Date Sent:", dateFrom);
-		    console.log("To Date Sent:", dateTo);
+			console.log("From Date Sent:", dateFrom);
+			console.log("To Date Sent:", dateTo);
 
-		    $("table tbody tr").each(function () {
-		        var row = $(this);
-		        var flowAmt = row.find("input[name='flow_amt']").val();
-		        var flowCode = row.find("input[name='flow_code']").val();
-		        var flowDate = row.find("input[name='flow_date']").val();
-		        var flowId = row.find("input[name='flow_id']").val();
-		        var loanAcctNo = row.find("input[name='loan_acct_no']").val();
-		        var acctName = row.find("input[name='acct_name']").val();
-		        var tranAmt = row.find("input[name='tran_amt']").val();
-		        var radioBtn = row.find("input[name='und_pct_radio']:checked");
+			// Loop through all rows, include all data
+			$("table tbody tr").each(function () {
+				var row = $(this);
+				var flowAmt = row.find("input[name='flow_amt']").val();
+				var flowCode = row.find("input[name='flow_code']").val();
+				var flowDate = row.find("input[name='flow_date']").val();
+				var flowId = row.find("input[name='flow_id']").val();
+				var loanAcctNo = row.find("input[name='loan_acct_no']").val();
+				var acctName = row.find("input[name='acct_name']").val();
+				var tranAmt = row.find("input[name='tran_amt']").val();
+				var encodedKey = row.find("input[type='radio']").data("encoded_key") || ""; // get encoded_key even if radio not checked
 
-		        // ✅ Get encoded_key from the selected radio button
-		        if (radioBtn.length > 0) {
-		            encodedKey = radioBtn.data("encoded_key");
-		        }
+				// Only push rows that have flowCode / loan account / amounts
+				if (flowCode && loanAcctNo) {
+					selectedData.push({
+						flow_amt: flowAmt ? flowAmt.replace(/,/g, '') : "0",
+						flow_code: flowCode,
+						flow_date: flowDate,
+						flow_id: flowId,
+						loan_acct_no: loanAcctNo,
+						acct_name: acctName,
+						tran_amt: tranAmt ? tranAmt.replace(/,/g, '') : "0",
+						from_date: dateFrom,
+						to_date: dateTo,
+						encoded_key: encodedKey // include for all rows
+					});
+				}
+			});
 
-		        // ✅ Ensure each row has the correct encoded_key
-		        if (flowAmt && flowCode && flowDate && flowId && loanAcctNo && acctName && tranAmt && encodedKey) {
-		            var rowData = {
-		                flow_amt: flowAmt.replace(/,/g, ''),
-		                flow_code: flowCode,
-		                flow_date: flowDate,
-		                flow_id: flowId,
-		                loan_acct_no: loanAcctNo,
-		                acct_name: acctName,
-		                tran_amt: tranAmt.replace(/,/g, ''),
-		                from_date: dateFrom,
-		                to_date: dateTo,
-		                encoded_key: encodedKey  // ✅ Ensure encoded_key is included in every row
-		            };
-		            selectedData.push(rowData);
-		        }
-		    });
+			console.log("Request Payload:", JSON.stringify(selectedData, null, 2));
 
-		    console.log("Encoded Key:", encodedKey);
-		    console.log("Request Payload:", JSON.stringify(selectedData, null, 2));
+			if (selectedData.length === 0) {
+				alert("No data found to submit.");
+				return;
+			}
 
-		    if (selectedData.length === 0) {
-		        alert("No data found.");
-		        return;
-		    }
+			// Send all transactions to backend
+			$.ajax({
+				type: 'POST',
+				url: './transactionCollectiondatas',
+				contentType: 'application/json',
+				data: JSON.stringify(selectedData),
+				success: function (data) {
+					var tranId = data.trim();
+					var parttranid = "1";
+					var acctNum = selectedData[0].loan_acct_no;
 
-		    // ✅ Send only `transactions`
-		    $.ajax({
-		        type: 'POST',
-		        url: './transactionCollectiondatas',
-		        contentType: 'application/json',
-		        data: JSON.stringify(selectedData),
-		        success: function (data) {
-		            console.log("Server response:", data);
-		            var tranId = data.trim();
-		            var parttranid = "1";
+					// Show popup with transaction details
+					var message = "Transaction Saved Successfully!\n\n" +
+						"Transaction ID: " + tranId + "\n" +
+						"Part Tran ID: " + parttranid + "\n" +
+						"Account Number: " + acctNum;
 
-		            var url = 'accountLedgerPost?formmode=verify' +
-		                '&acct_num=' + encodeURIComponent(selectedData[0].loan_acct_no) +
-		                '&tran_id=' + encodeURIComponent(tranId) +
-		                '&part_tran_id=' + encodeURIComponent(parttranid);
-
-		            location.href = url;
-		        },
-		        error: function () {
-		            $('#errorMessage').text('Error fetching data');
-		            $('#errorModal').modal('show');
-		        }
-		    });
+					alert(message);
+				},
+				error: function () {
+					$('#errorMessage').text('Error saving transactions');
+					$('#errorModal').modal('show');
+				}
+			});
 		}
 
 		function handleRadioClickBooking(selectedRadio) {
@@ -1509,16 +1595,16 @@ input:hover+.password-info {
 			var int_percentage = selectedRadio.getAttribute("data-interestpercentge");
 
 			alert(
-			    "Flow Amount: " + flow_amt + "\n" +
-			    "Flow Code: " + flow_code + "\n" +
-			    "Flow ID: " + flow_id + "\n" +
-			    "Flow Date: " + flow_date + "\n" +
-			    "Loan Account No: " + loan_acct_no + "\n" +
-			    "Account Name: " + acct_name + "\n" +
-			    "Operation: " + operation + "\n" +
-			    "Interest: " + interest + "\n" +
-			    "Interest percentage: " + int_percentage + "\n" +
-			    "Days: " + days
+				"Flow Amount: " + flow_amt + "\n" +
+				"Flow Code: " + flow_code + "\n" +
+				"Flow ID: " + flow_id + "\n" +
+				"Flow Date: " + flow_date + "\n" +
+				"Loan Account No: " + loan_acct_no + "\n" +
+				"Account Name: " + acct_name + "\n" +
+				"Operation: " + operation + "\n" +
+				"Interest: " + interest + "\n" +
+				"Interest percentage: " + int_percentage + "\n" +
+				"Days: " + days
 			);
 
 			console.log(flow_amt + " " + flow_code + " " + loan_acct_no + " " + acct_name + " " + flow_date);
@@ -1622,13 +1708,13 @@ input:hover+.password-info {
 			return day + '-' + month + '-' + year;
 		}
 	</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
-        document.getElementById("flowDateInput").value = today; // Set default value
-    });
-</script>
-<script th:inline="javascript">
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			let today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+			document.getElementById("flowDateInput").value = today; // Set default value
+		});
+	</script>
+	<script th:inline="javascript">
 
 		/* <![CDATA[ */
 		// Convert the Thymeleaf variable to a JavaScript date
@@ -1651,209 +1737,349 @@ input:hover+.password-info {
 			var year = d.getFullYear();
 			return `${day}-${month}-${year}`;
 		}
-		
-		document.addEventListener("DOMContentLoaded", function () {
-			// Get today's date
 
+		document.addEventListener("DOMContentLoaded", function () {
 			const formattedDate = formatDatedd(trandate);
 
-			// Display today's date in dd-mm-yyyy format
+			// Set today's date
 			document.getElementById('fromdate').value = formattedDate;
 			document.getElementById('todate').value = formattedDate;
+			document.getElementById('transactiondates').value = formattedDate;
 
-			document.getElementById('interest').checked = true;
+			// Set default radios
+			document.getElementById('collection').checked = true;
 			document.getElementById('loan').checked = true;
-			document.getElementById('officeRouting').checked = true;
+			document.getElementById('cash').checked = true;
 
-
-
+			toggleBalanceFields();
 
 			getflowDetails();
 		});
 
-		
-		/* ]]> */
-		
-$(document).ready(function () {
-    $('input[name="transactionOption"]').change(function () {
-        if ($('#collection').is(':checked')) {
-            $("#acct_balance1, #acct_balance").show(); // Show when 'Collection' is selected
-            $("#acct_balance21, #acct_balancedatas").show(); // Show when 'Collection' is selected
-        } else {
-            $("#acct_balance1, #acct_balance").hide(); // Hide for all other options
-        }
-    });
-});
-	</script>
-<script>
-function updateTableValueSequentially() {
-    let balanceValue = parseFloat(document.getElementById("acct_balancedatas").value.replace(/,/g, '')) || 0;
-    let flowAmtFields = document.getElementsByName("flow_amt");
-    let tranAmtFields = document.getElementsByName("tran_amt");
-    let remainingBalance = balanceValue;
-    let stopIndex = -1;
-
-    console.log("Initial Balance: " + balanceValue.toLocaleString());
-
-    for (let i = 0; i < tranAmtFields.length; i++) {
-        let flowField = flowAmtFields[i];
-        let tranField = tranAmtFields[i];
-        
-        // Get flow amount and convert to number
-        let flowValue = parseFloat(flowField.value.replace(/,/g, '')) || 0;
-
-        if (flowValue < 0) {
-            console.error(`Error: Row ${i + 1} has a negative amount! Setting it to 0.`);
-            tranField.value = "0.00";
-            continue;
-        }
-
-        console.log(`Processing Row ${i + 1} | Flow Value: ${flowValue.toLocaleString()} | Remaining Balance: ${remainingBalance.toLocaleString()}`);
-
-        // Stop if no balance left
-        if (remainingBalance <= 0) {
-            stopIndex = i;
-            break;
-        }
-
-        // Deduct from balance and update tran_amt
-        if (flowValue > remainingBalance) {
-            tranField.value = remainingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            remainingBalance = 0;
-            stopIndex = i;
-            break;
-        } else {
-            tranField.value = flowValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            remainingBalance -= flowValue;
-        }
-    }
-
-		if(remainingBalance<=0){
-    // Log and update remaining rows to 0.00 if necessary
-    for (let i = stopIndex + 1; i < tranAmtFields.length; i++) {
-        tranAmtFields[i].value = "0.00";
-        console.log(`Row ${i + 1} set to 0.00`);
-    }
-	}
-
-    // Update the remaining balance display
-    let balanceDisplay = document.getElementById("remaining_balance");
-    if (balanceDisplay) {
-        balanceDisplay.textContent = `Remaining Balance: ${remainingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        console.log(`Final Remaining Balance: ${remainingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
-    }
-
-if (remainingBalance > 0) {
-   // alert(typeof balanceValue);
-	 					var operationType = "CollectionRouting";
-					console.log("officeRouting option is checked.");
-					
-				
-						var acct_num = $("#acct_num123").val();
-				        var selectElement = document.getElementById("acct_num123");
-				        var selectedOption = selectElement.options[selectElement.selectedIndex];
-				        var acctName = selectedOption.getAttribute("data-acct-name") || ""; // Correctly fetch the account name
-				        
-
-    $.ajax({
-        type: 'GET',
-        url: './loanflowDetailsupdate', // Correct endpoint name
-        data: {
-            id: acct_num,
-            amount: balanceValue // Corrected parameter usage
-        },
-        success: function (data) {
-           // console.log("Received data:", data);
-            var tHTML = "";
-						
-
-            // 🔹 Add "Tran Amt" column if missing at the correct 5th position
-            if ($("#flowIdTable thead tr th").length === 7) {
-                $("#flowIdTable thead tr th").eq(3).after("<th style='text-align:center;'>Tran Amt</th>");
-            }
-
-            // Ensure data.loanFlowDetails is an array before iterating
-            if (Array.isArray(data.loanFlowDetails) && data.loanFlowDetails.length > 0) {
-                $.each(data.loanFlowDetails, function (index, entity) {
-                    var flowDate = entity.flow_date ? formatDate(entity.flow_date) : "";
-                    var flowId = entity.flow_id ? entity.flow_id : "";
-                    var flowCode = entity.flow_code ? entity.flow_code : "";
-                    var flowAmount = entity.flow_amt ? formatNumberWithCommas(entity.flow_amt) : "0.00";
-                    var tranAmount = entity.tran_amt ? formatNumberWithCommas(entity.tran_amt) : "0.00";
-                    var acctNo = entity.loan_acct_no ? entity.loan_acct_no : "";
-                    var acctName = entity.acct_name ? entity.acct_name : "";
-                    var encodedKey = entity.encoded_key ? entity.encoded_key : "";
-
-                    tHTML += "<tr>"
-                        + "<td><input type='text' name='flow_date' value='" + flowDate + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
-                        + "<td><input type='text' name='flow_id' value='" + flowId + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
-                        + "<td><input type='text' name='flow_code' value='" + flowCode + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
-                        + "<td><input type='text' name='flow_amt' value='" + flowAmount + "' class='border-0 p-0 m-0' style='width:100%; text-align:right;' readonly /></td>"
-                        + "<td><input type='text' name='tran_amt' value='" + tranAmount + "' class='border-0 p-0 m-0' style='width:100%; text-align:right;' oninput='calculateRemainingAmount(this)' readonly /></td>"
-                        + "<td><input type='text' name='loan_acct_no' value='" + acctNo + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
-                        + "<td><input type='text' name='acct_name' value='" + acctName + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
-                        + "<td style='text-align:center; padding:0; margin:0;'>"
-                        + "<input type='radio' name='und_pct_radio' " // Use name attribute correctly for multiple rows
-                        + "data-operation='" + operationType + "' "
-                        + "data-encoded_key='" + encodedKey + "' "
-                        + (parseFloat(tranAmount) > 0 ? " checked='checked'" : "") // Correctly apply checked attribute
-                        + " onclick='handleCheckboxClickCollectiondata()' />"
-                        + "</td>"
-                        + "</tr>";
-                });
-								//console.log(tHTML);
-            } else {
-                tHTML += "<tr><td colspan='8'>No records available</td></tr>"; // Updated colspan to 8
-            }
-
-            // Update table content
-            $("#flowIdTbody").empty().append(tHTML);
-
-            // ✅ If acctName is not empty, make the second AJAX request to fetch balance
-            if (acctName && acctName.trim() !== "") {
-                console.log("Fetching account balance for:", acctName);
-
-                $.ajax({
-                    type: 'GET',
-                    url: './fetchacctbalance',
-                    data: { acctnum: acctName }, // Use account name correctly
-                    success: function (balanceData) {
-                        console.log("Raw Account Balance:", balanceData);
-
-                        var balance = parseFloat(balanceData);
-                        var formattedBalance = isNaN(balance) ? "0.00" : balance.toLocaleString('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        });
-
-                        document.getElementById("acct_balance").value = formattedBalance;
-                    },
-                    error: function (error) {
-                        console.error("Error fetching account balance:", error);
-                    }
-                });
-            } else {
-                console.log("No valid account name found. Skipping balance fetch.");
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("Error occurred:", error);
-        }
-    });
-}
-
-
-
-	}
-
-    // Extra message if balance is not fully utilized
-   
-function closeModal() {
-		    $("#alert").modal('hide');
+		// Function to toggle fields based on radio button
+		function toggleBalanceFields() {
+			if (document.getElementById('collection').checked) {
+				$("#acct_balance1, #acct_balance, #acct_balance21, #acct_balancedatas").show();
+				$("#acct_names_1, #acct_names").show();
+				$("#from_date_id, #fromdate, #to_date_id, #todate").hide();
+				// Show Transaction Date
+				$("#transaction_date_id, #transactiondates").show();
+			} else {
+				$("#acct_balance1, #acct_balance, #acct_balance21, #acct_balancedatas").hide();
+			}
 		}
 
-</script>
+		// Attach event listener to all radio buttons
+		$("input[name='accountOption']").on("change", toggleBalanceFields);
+
+
+		/* ]]> */
+
+		$(document).ready(function () {
+			$('input[name="transactionOption"]').change(function () {
+				if ($('#collection').is(':checked')) {
+					$("#acct_balance1, #acct_balance").show(); // Show when 'Collection' is selected
+					$("#acct_balance21, #acct_balancedatas").show(); // Show when 'Collection' is selected
+				} else {
+					$("#acct_balance1, #acct_balance").hide(); // Hide for all other options
+				}
+			});
+		});
+	</script>
+	<script>
+		function updateTableValueSequentially() {
+			let balanceValue = parseFloat(document.getElementById("acct_balancedatas").value.replace(/,/g, '')) || 0;
+			let flowAmtFields = document.getElementsByName("flow_amt");
+			let tranAmtFields = document.getElementsByName("tran_amt");
+			let remainingBalance = balanceValue;
+			let stopIndex = -1;
+
+			console.log("Initial Balance: " + balanceValue.toLocaleString());
+
+			for (let i = 0; i < tranAmtFields.length; i++) {
+				let flowField = flowAmtFields[i];
+				let tranField = tranAmtFields[i];
+
+				// Get flow amount and convert to number
+				let flowValue = parseFloat(flowField.value.replace(/,/g, '')) || 0;
+
+				if (flowValue < 0) {
+					console.error(`Error: Row ${i + 1} has a negative amount! Setting it to 0.`);
+					tranField.value = "0.00";
+					continue;
+				}
+
+				console.log(`Processing Row ${i + 1} | Flow Value: ${flowValue.toLocaleString()} | Remaining Balance: ${remainingBalance.toLocaleString()}`);
+
+				// Stop if no balance left
+				if (remainingBalance <= 0) {
+					stopIndex = i;
+					break;
+				}
+
+				// Deduct from balance and update tran_amt
+				if (flowValue > remainingBalance) {
+					tranField.value = remainingBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+					remainingBalance = 0;
+					stopIndex = i;
+					break;
+				} else {
+					tranField.value = flowValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+					remainingBalance -= flowValue;
+				}
+			}
+
+			if (remainingBalance <= 0) {
+				// Log and update remaining rows to 0.00 if necessary
+				for (let i = stopIndex + 1; i < tranAmtFields.length; i++) {
+					tranAmtFields[i].value = "0.00";
+					console.log(`Row ${i + 1} set to 0.00`);
+				}
+			}
+
+			// Update the remaining balance display
+			let balanceDisplay = document.getElementById("remaining_balance");
+			if (balanceDisplay) {
+				balanceDisplay.textContent = `Remaining Balance: ${remainingBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+				console.log(`Final Remaining Balance: ${remainingBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`);
+			}
+
+			if (remainingBalance > 0) {
+				// alert(typeof balanceValue);
+				var operationType = "CollectionRouting";
+				console.log("officeRouting option is checked.");
+
+
+				var acct_num = $("#acct_num123").val();
+				var selectElement = document.getElementById("acct_num123");
+				var selectedOption = selectElement.options[selectElement.selectedIndex];
+				var acctName = selectedOption.getAttribute("data-acct-name") || ""; // Correctly fetch the account name
+
+
+				$.ajax({
+					type: 'GET',
+					url: './loanflowDetailsupdate', // Correct endpoint name
+					data: {
+						id: acct_num,
+						amount: balanceValue // Corrected parameter usage
+					},
+					success: function (data) {
+						// console.log("Received data:", data);
+						var tHTML = "";
+
+
+						// 🔹 Add "Tran Amt" column if missing at the correct 5th position
+						if ($("#flowIdTable thead tr th").length === 7) {
+							$("#flowIdTable thead tr th").eq(3).after("<th style='text-align:center;'>Tran Amt</th>");
+						}
+
+						// Ensure data.loanFlowDetails is an array before iterating
+						if (Array.isArray(data.loanFlowDetails) && data.loanFlowDetails.length > 0) {
+							$.each(data.loanFlowDetails, function (index, entity) {
+								var flowDate = entity.flow_date ? formatDate(entity.flow_date) : "";
+								var flowId = entity.flow_id ? entity.flow_id : "";
+								var flowCode = entity.flow_code ? entity.flow_code : "";
+								var flowAmount = entity.flow_amt ? formatNumberWithCommas(entity.flow_amt) : "0.00";
+								var tranAmount = entity.tran_amt ? formatNumberWithCommas(entity.tran_amt) : "0.00";
+								var acctNo = entity.loan_acct_no ? entity.loan_acct_no : "";
+								var acctName = entity.acct_name ? entity.acct_name : "";
+								var encodedKey = entity.encoded_key ? entity.encoded_key : "";
+
+								tHTML += "<tr>"
+									+ "<td><input type='text' name='flow_date' value='" + flowDate + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
+									+ "<td><input type='text' name='flow_id' value='" + flowId + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
+									+ "<td><input type='text' name='flow_code' value='" + flowCode + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
+									+ "<td><input type='text' name='flow_amt' value='" + flowAmount + "' class='border-0 p-0 m-0' style='width:100%; text-align:right;' readonly /></td>"
+									+ "<td><input type='text' name='tran_amt' value='" + tranAmount + "' class='border-0 p-0 m-0' style='width:100%; text-align:right;' oninput='calculateRemainingAmount(this)' readonly /></td>"
+									+ "<td><input type='text' name='loan_acct_no' value='" + acctNo + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
+									+ "<td><input type='text' name='acct_name' value='" + acctName + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
+									+ "<td style='text-align:center; padding:0; margin:0;'>"
+									+ "<input type='radio' name='und_pct_radio' " // Grouped radio
+									+ "data-operation='" + operationType + "' "
+									+ "data-encoded_key='" + encodedKey + "' "
+									+ (parseFloat(tranAmount) > 0 ? " checked='checked'" : "")
+									+ " />"
+									+ "</td>"
+									+ "</tr>";
+							});
+							//console.log(tHTML);
+						} else {
+							tHTML += "<tr><td colspan='8'>No records available</td></tr>"; // Updated colspan to 8
+						}
+
+						// Update table content
+						$("#flowIdTbody").empty().append(tHTML);
+
+						// ✅ If acctName is not empty, make the second AJAX request to fetch balance
+						if (acctName && acctName.trim() !== "") {
+							console.log("Fetching account balance for:", acctName);
+
+							$.ajax({
+								type: 'GET',
+								url: './fetchacctbalance',
+								data: {acctnum: acctName}, // Use account name correctly
+								success: function (balanceData) {
+									console.log("Raw Account Balance:", balanceData);
+
+									var balance = parseFloat(balanceData);
+									var formattedBalance = isNaN(balance) ? "0.00" : balance.toLocaleString('en-US', {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2
+									});
+
+									document.getElementById("acct_balance").value = formattedBalance;
+								},
+								error: function (error) {
+									console.error("Error fetching account balance:", error);
+								}
+							});
+						} else {
+							console.log("No valid account name found. Skipping balance fetch.");
+						}
+					},
+					error: function (xhr, status, error) {
+						console.error("Error occurred:", error);
+					}
+				});
+			}
+
+
+
+		}
+
+		// Extra message if balance is not fully utilized
+
+		function closeModal() {
+			$("#alert").modal('hide');
+		}
+
+		function openModal1(a) {
+			event.preventDefault();
+
+			var modal = document.getElementById("myModal");
+			modal.style.display = "block";
+
+		}
+
+		function closeModal(a) {
+			event.preventDefault();
+
+			var modal = document.getElementById("myModal");
+			modal.style.display = "none";
+
+		}
+	</script>
+	<script>
+		$(document).ready(function () {
+			// Enable / Disable filter inputs when Filter button is clicked
+			$('.filterable .btn-filter').click(function (event) {
+				event.preventDefault();
+				var $panel = $(this).closest('.filterable');
+				var $filters = $panel.find('.filters input');
+
+				if ($filters.prop('disabled')) {
+					$filters.prop('disabled', false).val('');
+					$filters.first().focus();
+				} else {
+					$filters.prop('disabled', true).val('');
+					$panel.find('tbody tr').show();
+					$panel.find('.no-result').remove();
+				}
+			});
+
+			// Add input listener after enabling fields dynamically
+			$('#filterAccountNumber, #filterAccountName').on('input', function () {
+				filterModalRows();
+			});
+		});
+
+		// Function to filter rows based on Account Number and Account Name
+		function filterModalRows() {
+			var accountNumber = $('#filterAccountNumber').val().toUpperCase();
+			var accountName = $('#filterAccountName').val().toUpperCase();
+
+			var $rows = $('#myModal tbody tr');
+			var anyVisible = false;
+
+			$rows.each(function () {
+				var colNumber = $(this).find('td').eq(0).text().toUpperCase();
+				var colName = $(this).find('td').eq(1).text().toUpperCase();
+
+				if (colNumber.includes(accountNumber) && colName.includes(accountName)) {
+					$(this).show();
+					anyVisible = true;
+				} else {
+					$(this).hide();
+				}
+			});
+
+			// Show "No result" row if all rows are hidden
+			$('#myModal tbody .no-result').remove();
+			if (!anyVisible) {
+				var colspan = $('#myModal thead th').length;
+				$('#myModal tbody').prepend(
+					`<tr class="no-result text-center"><td colspan="${colspan}">No result found</td></tr>`
+				);
+			}
+		}
+
+
+		function selectAccount(row) {
+			// Get account number and name from the clicked row
+			var accountNumber = row.cells[0].textContent.trim();
+			var accountName = row.cells[1].textContent.trim();
+
+			// Populate the input fields
+			document.getElementById("acct_num123").value = accountNumber;
+			document.getElementById("acct_names").value = accountName;
+
+			// Show the account name field if hidden
+			document.getElementById("acct_names_1").style.display = "block";
+			document.getElementById("acct_names").style.display = "block";
+
+			// Optional: populate hidden select if needed
+			var hiddenSelect = document.getElementById("acct_num_select_hidden");
+			if (hiddenSelect) {
+				hiddenSelect.value = accountNumber;
+			}
+
+			// Fetch account balance if account number is valid
+			if (accountNumber) {
+				$.ajax({
+					type: 'GET',
+					url: './fetchacctbalance',
+					data: {acctnum: accountNumber}, // pass account number
+					success: function (balanceData) {
+						var balance = parseFloat(balanceData);
+						var formattedBalance = isNaN(balance) ? "0.00" : balance.toLocaleString('en-US', {
+							minimumFractionDigits: 2,
+							maximumFractionDigits: 2
+						});
+						document.getElementById("acct_balance").value = formattedBalance;
+						document.getElementById("acct_balance1").style.display = "block";
+						document.getElementById("acct_balance").style.display = "block";
+
+						// Also show Recovery Paid fields
+						document.getElementById("acct_balance21").style.display = "block";
+						document.getElementById("acct_balancedatas").style.display = "block";
+						document.getElementById("acct_balancedatas").value = "0.00";
+					},
+					error: function (error) {
+						console.error("Error fetching account balance:", error);
+					}
+				});
+			}
+
+			// Close the modal
+			closeModal(document.getElementById("myModal"));
+
+			// Trigger main AJAX function to load related data
+			callflowDetails();
+		}
+
+	</script>
 </head>
+
 <body>
 
 	<div class="col-sm-2">
@@ -1866,8 +2092,7 @@ function closeModal() {
 			<div class="col-sm-11 ml-5 mt-2">
 
 				<div th:if="${formmode}=='list'">
-					<div class="card-header "
-						style="background-color: #e9ecef; HEIGHT: 50px; padding-left: 5px;">
+					<div class="card-header " style="background-color: #e9ecef; HEIGHT: 50px; padding-left: 5px;">
 
 						<div class="float-left">
 							<h6 style="font-size: 1.2rem; color: black;" class="ml-4">LOAN
@@ -1887,41 +2112,36 @@ function closeModal() {
 									<!-- Transaction Type Options in a Single Row with Reduced Gap -->
 									<div class="col-sm-2">
 										<div class="form-check">
-											<input class="form-check-input" type="radio"
-												onchange="callflowDetails()" name="transactionOption"
-												id="interest"> <label class="form-check-label"
+											<input class="form-check-input" type="radio" onchange="callflowDetails()"
+												name="transactionOption" id="collection"> <label
+												class="form-check-label" for="collection">Collection</label>
+										</div>
+									</div>
+									<div class="col-sm-2">
+										<div class="form-check">
+											<input class="form-check-input" type="radio" onchange="callflowDetails()"
+												name="transactionOption" id="interest"> <label class="form-check-label"
 												for="interest">Interest</label>
 										</div>
 									</div>
 									<div class="col-sm-2">
 										<div class="form-check">
-											<input class="form-check-input" type="radio"
-												onchange="callflowDetails()" name="transactionOption"
-												id="feesCharges"> <label class="form-check-label"
-												for="feesCharges">Fees</label>
+											<input class="form-check-input" type="radio" onchange="callflowDetails()"
+												name="transactionOption" id="feesCharges"> <label
+												class="form-check-label" for="feesCharges">Fees</label>
 										</div>
 									</div>
 									<div class="col-sm-2">
 										<div class="form-check">
-											<input class="form-check-input" type="radio"
-												onchange="callflowDetails()" name="transactionOption"
-												id="serviceCharges"> <label class="form-check-label"
-												for="serviceCharges">Service Charges</label>
+											<input class="form-check-input" type="radio" onchange="callflowDetails()"
+												name="transactionOption" id="serviceCharges"> <label
+												class="form-check-label" for="serviceCharges">Service Charges</label>
 										</div>
 									</div>
 									<div class="col-sm-2">
 										<div class="form-check">
-											<input class="form-check-input" type="radio"
-												onchange="callflowDetails()" name="transactionOption"
-												id="collection"> <label class="form-check-label"
-												for="collection">Collection</label>
-										</div>
-									</div>
-									<div class="col-sm-2">
-										<div class="form-check">
-											<input class="form-check-input" type="radio"
-												onchange="callflowDetails()" name="transactionOption"
-												id="booking"> <label class="form-check-label"
+											<input class="form-check-input" type="radio" onchange="callflowDetails()"
+												name="transactionOption" id="booking"> <label class="form-check-label"
 												for="booking">Booking</label>
 										</div>
 									</div>
@@ -1936,17 +2156,16 @@ function closeModal() {
 									<!-- Account Type Options in a Single Row with Reduced Gap -->
 									<div class="col-sm-3">
 										<div class="form-check">
-											<input class="form-check-input" type="radio"
-												onchange="callflowDetails()" name="accountOption" id="loan">
+											<input class="form-check-input" type="radio" onchange="callflowDetails()"
+												name="accountOption" id="loan">
 											<label class="form-check-label" for="loan">Loan</label>
 										</div>
 									</div>
 									<div class="col-sm-3">
 										<div class="form-check">
-											<input class="form-check-input" type="radio"
-												onchange="callflowDetails()" name="accountOption"
-												id="deposit"> <label class="form-check-label"
-												for="deposit">Deposit</label>
+											<input class="form-check-input" type="radio" onchange="callflowDetails()"
+												name="accountOption" id="deposit" disabled> <label
+												class="form-check-label" for="deposit">Deposit</label>
 										</div>
 									</div>
 								</div>
@@ -1962,39 +2181,34 @@ function closeModal() {
 									<!-- Account Type Options in a Single Row with Reduced Gap -->
 									<div class="col-sm-3">
 										<div class="form-check">
-											<input class="form-check-input" type="radio"
-												onchange="callflowDetails()" name="collectionOption"
-												id="cash"> <label class="form-check-label"
+											<input class="form-check-input" type="radio" onchange="callflowDetails()"
+												name="collectionOption" id="cash"> <label class="form-check-label"
 												for="cash">Cash</label>
 										</div>
 									</div>
 									<div class="col-sm-3">
 										<div class="form-check">
-											<input class="form-check-input" type="radio"
-												onchange="callflowDetails()" name="collectionOption"
-												id="officeRouting"> <label class="form-check-label"
-												for="officeRouting">Office Routing A/C</label>
+											<input class="form-check-input" type="radio" onchange="callflowDetails()"
+												name="collectionOption" id="officeRouting"> <label
+												class="form-check-label" for="officeRouting">Office Routing A/C</label>
 										</div>
 									</div>
 
 									<div class="col-sm-3">
 										<div class="form-check">
 											<input class="form-check-input" type="radio"
-												onchange="callCollectionScreen(this);"
-												name="collectionOption" id="standing"> <label
-												class="form-check-label" for="standing">Standing
+												onchange="callCollectionScreen(this);" name="collectionOption"
+												id="standing"> <label class="form-check-label" for="standing">Standing
 												Insection</label>
 										</div>
 									</div>
 								</div>
 							</div>
-
 						</div>
 
 						<div class="row" style="padding-left: 20px;">
 
-							<div class="col-sm-8 border p-2 d-none"
-								id="serviceChargesTypeDiv">
+							<div class="col-sm-8 border p-2 d-none" id="serviceChargesTypeDiv">
 								<h6 class="mt-3">ACCOUNT DETAILS</h6>
 								<div class="row formline">
 									<div class="col-sm-3">Account No</div>
@@ -2009,8 +2223,8 @@ function closeModal() {
 										</select> <select class="d-none" name="acct_num" id="acct_num22"
 											onchange="callflowDetails()" placeholder="select">
 											<option th:selected="${empty == ''}" value="">select</option>
-											<option th:each="ref : ${booking1}" th:value="${ref}"
-												th:text="${ref}"></option>
+											<option th:each="ref : ${booking1}" th:value="${ref}" th:text="${ref}">
+											</option>
 
 										</select>
 									</div>
@@ -2032,89 +2246,89 @@ function closeModal() {
 						</div>
 
 						<!-- Section Heading: Date Range -->
-						<h6 class="mt-3 d-none" id="operationtype"
-							style="padding-left: 20px;">OPERATION DATE</h6>
-						<div class="row formline mt-3 d-none" id="fromtovalues"
-							style="padding-left: 20px;">
+						<h6 class="mt-3 d-none" id="operationtype" style="padding-left: 20px;">OPERATION DATE</h6>
+						<div class="row formline mt-3 d-none" id="fromtovalues" style="padding-left: 20px;">
 							<!-- From Date -->
-							<div class="col-sm-1">From Date</div>
+							<div class="col-sm-1" id="from_date_id">From Date</div>
 							<div>
 								<input type="text" name="fromdate" id="fromdate" />
 							</div>
 
 							<!-- To Date -->
-							<div class="col-sm-1">To Date</div>
+							<div class="col-sm-1" id="to_date_id">To Date</div>
 							<div>
-								<input type="text" name="todate" id="todate"
+								<input type="text" name="todate" id="todate" onchange="callflowDetails();" />
+							</div>
+
+							<div class="col-sm-1" id="transaction_date_id">Transaction Date</div>
+							<div>
+								<input type="text" name="transactiondate" id="transactiondates"
 									onchange="callflowDetails();" />
 							</div>
 
+
 							<div class="col-sm-1">Account No</div>
 							<div>
+								<!-- Input for selected account number -->
+								<input type="text" id="acct_num123" name="acct_num" readonly
+									placeholder="Select Account" onchange="callflowDetails()" />
 
-								<select class="d-none" name="acct_num" id="acct_num123"
-									onchange="callflowDetails()" placeholder="select">
-									<option th:selected="${empty == ''}" value="">select</option>
-									<option th:each="ref : ${booking}" th:value="${ref[2]}"
-										th:attr="title=${ref[1]},data-acct-name=${ref[0]}"
-										th:text="${ref[0]}"></option>
+								<!-- Search button -->
+								<button type="button" onclick="openModal1(this)">
+									<i class="fa fa-search"></i>
+								</button>
+								<input type="text" th:each="ref : ${booking}" id="acct_num121" th:value="${ref[2]}"
+									style="display: none;" />
+							</div>
 
-									<input type="text" th:each="ref : ${booking}" id="acct_num121"
-									th:value="${ref[2]}" style="display: none;" />
 
-								</select> <select class="d-none" name="acct_num" id="acct_num2"
-									onchange="callflowDetails()" placeholder="select">
-									<option th:selected="${empty == ''}" value="">select</option>
-									<option th:each="ref : ${booking}" th:value="${ref}"
-										th:text="${ref}"></option>
-
-								</select>
+							<div class="col-sm-1" id="acct_names_1" style="display: none;">Acct
+								Name</div>
+							<div>
+								<input type="text" name="acct_names_data" id="acct_names" style="display: none;" />
 							</div>
 
 							<!-- Account Balance Section (Initially Hidden) -->
 							<div class="col-sm-1" id="acct_balance1" style="display: none;">Acct
 								Balance</div>
 							<div>
-								<input type="text" name="acct_balance" id="acct_balance"
-									onchange="callflowDetails();" style="display: none;" />
+								<input type="text" name="acct_balance" id="acct_balance" onchange="callflowDetails();"
+									style="display: none;" />
 							</div>
 
 							<div class="col-sm-1" id="acct_balance21" style="display: none;">Recovery
 								Paid</div>
 							<div>
 								<input type="text" name="acct_balance22" id="acct_balancedatas"
-									onchange="updateTableValueSequentially();"
-									style="display: none;" />
+									onchange="updateTableValueSequentially();" style="display: none;" />
 							</div>
 						</div>
-
+					
 						<!-- Table -->
+							<table class="table table-bordered table-sm mt-4 d-none "
+								style="margin-bottom: 0px; font-size: initial;" id="flowIdTable">
+								<thead class="thead-light">
+									<tr>
+										<th style="white-space:nowrap;">Flow Date</th>
+										<th style="white-space:nowrap;">Flow ID</th>
+										<th style="white-space:nowrap;">Flow Code</th>
+										<th style="text-align:center; white-space:nowrap;">Flow Amt</th>
+										<th style="white-space:nowrap;">Acct No</th>
+										<th style="white-space:nowrap;">Acct Name</th>
+										<th style="text-align:center; white-space:nowrap;">Select</th>
+									</tr>
+								</thead>
+
+								<tbody id="flowIdTbody">
+									<tr>
+										<td colspan="7" style="text-align: center;">No records
+											available</td>
+									</tr>
+								</tbody>
+							</table>
+
 						<table class="table table-bordered table-sm mt-4 d-none"
-							style="margin-bottom: 0px; font-size: initial;" id="flowIdTable">
-							<thead class="thead-light">
-								<tr>
-									<th>Flow Date</th>
-									<th>Flow ID</th>
-									<th>Flow Code</th>
-									<th style="text-align: center;">Flow Amt</th>
-									<th>Acct No</th>
-									<th>Acct Name</th>
-									<th>Select</th>
-								</tr>
-							</thead>
-
-							<tbody id="flowIdTbody">
-								<tr>
-									<td colspan="7" style="text-align: center;">No records
-										available</td>
-								</tr>
-							</tbody>
-						</table>
-
-
-						<table class="table table-bordered table-sm mt-4 d-none"
-							style="margin-bottom: 0px; font-size: initial;"
-							id="serviceflowIdTable">
+							style="margin-bottom: 0px; font-size: initial;" id="serviceflowIdTable">
 							<thead class="thead-light">
 								<tr>
 									<th>Flow Date</th>
@@ -2129,29 +2343,30 @@ function closeModal() {
 
 							<tbody id="flowIdTbody">
 								<tr>
-									<td><input type="date" name="flow_date" class="border-0"
-										id="flowDateInput"></td>
-									<td><input type="text" id="flowids" name="flow_id"
-										value="1" class="border-0" readonly /></td>
-									<td><input type="text" id="flowcodes" name="flow_code"
-										value="BCDEM - FEES" class="border-0" readonly /></td>
-									<td><input type="text" id="flowamount" name="flow_amt"
-										class="border-0" /></td>
-									<td><input type="text" name="loan_acct_no"
-										id="loanaccountnumber" class="border-0" readonly /></td>
-									<td><input type="text" name="acct_name"
-										id="loaaccountnamedata" class="border-0" readonly /></td>
-									<td style="text-align: center;" class="align-middle"><input
-										type="radio" onclick="handleRadioClickInterestdatas(this)" />
+									<td><input type="date" name="flow_date" class="border-0" id="flowDateInput"></td>
+									<td><input type="text" id="flowids" name="flow_id" value="1" class="border-0"
+											readonly /></td>
+									<td><input type="text" id="flowcodes" name="flow_code" value="BCDEM - FEES"
+											class="border-0" readonly /></td>
+									<td><input type="text" id="flowamount" name="flow_amt" class="border-0" /></td>
+									<td><input type="text" name="loan_acct_no" id="loanaccountnumber" class="border-0"
+											readonly /></td>
+									<td><input type="text" name="acct_name" id="loaaccountnamedata" class="border-0"
+											readonly /></td>
+									<td style="text-align: center;" class="align-middle"><input type="radio"
+											onclick="handleRadioClickInterestdatas(this)" />
 									</td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
 
-					<div class="card-footer text-center"
-						style="background-color: #e9ecef;">
+					<div class="card-footer text-center" style="background-color: #e9ecef;">
 						<button class="btn-primary big-btn" onclick="Home();">Home</button>
+						<button class="btn-primary big-btn" id="collectionsubmit"
+							onclick="handleCheckboxClickCollectiondata();" style="display:none;">
+							Submit
+						</button>
 						<button class="btn-primary big-btn" onclick="back();">Back</button>
 					</div>
 				</div>
@@ -2160,12 +2375,11 @@ function closeModal() {
 	</div>
 
 	<div class="modal fade" id="alertERE">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content" style="background-color: white;">
 				<div class="menu-title-header">
-					<div class="modal-title" id="exampleModalLabel"
-						style="text-align: center; color: white;">ACCOUNT DETAILS</div>
+					<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">ACCOUNT
+						DETAILS</div>
 				</div>
 				<div class="modal-body">
 					<table class="table table-bordered table-hover table-sm">
@@ -2180,9 +2394,9 @@ function closeModal() {
 							<tr th:each="accvals : ${solvalues}">
 								<td style="text-align: left;" th:text="${accvals[0]}"></td>
 								<td style="text-align: left;" th:text="${accvals[1]}"></td>
-								<td style="text-align: center;"><input type="radio"
-									name="radioGroup" th:data-value1="${accvals[0]}"
-									th:data-value2="${accvals[1]}" onclick="requestvalue(this);" />
+								<td style="text-align: center;"><input type="radio" name="radioGroup"
+										th:data-value1="${accvals[0]}" th:data-value2="${accvals[1]}"
+										onclick="requestvalue(this);" />
 								</td>
 
 							</tr>
@@ -2190,17 +2404,52 @@ function closeModal() {
 					</table>
 				</div>
 				<div class="card-footer text-center">
-					<button type="button" class="btn-primary big-btn"
-						id="selectedAccount" onclick="closemodal();" style="color: white;">Close</button>
+					<button type="button" class="btn-primary big-btn" id="selectedAccount" onclick="closemodal();"
+						style="color: white;">Close</button>
 				</div>
 			</div>
 		</div>
 	</div>
-</body>
-<div class="modal fade" data-backdrop="false" data-keyboard="false"
-		id="alert" tabindex="-1" role="dialog" aria-hidden="true">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+
+	<div id="myModal" class="modal" style="font-size:120%;">
+		<div class="modal-content1">
+			<div class="close text-right" onclick="closeModal(this);">&times;</div>
+			<div class="panel panel-primary filterable">
+				<button type="button" class="btn text-white btn-filter btn-primary float-right">Filter</button>
+
+				<div style="max-height: 350px; overflow-y: auto;">
+					<table class="table table-bordered table-sm">
+						<thead>
+							<tr class="filters">
+								<th>
+									<input type="text" id="filterAccountNumber" class="form-control font-weight-bold"
+										placeholder="Account Number" disabled>
+								</th>
+								<th>
+									<input type="text" id="filterAccountName" class="form-control font-weight-bold"
+										placeholder="Account Name" disabled>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="ref : ${booking}" onclick="selectAccount(this)">
+								<td th:text="${ref[0]}"></td>
+								<td th:text="${ref[1]}"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="text-center mt-2">
+					<button type="button" class="btn-primary big-btn" onclick="closeModal(this);">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade" data-backdrop="false" data-keyboard="false" id="alert" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
 
 				<div class="modal-body" style="text-align: center;">
@@ -2210,7 +2459,6 @@ function closeModal() {
 			</div>
 		</div>
 	</div>
-
-
+</body>
 
 </html>
