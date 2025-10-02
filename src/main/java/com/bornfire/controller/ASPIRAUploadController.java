@@ -3,6 +3,8 @@ package com.bornfire.controller;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -64,7 +66,7 @@ public class ASPIRAUploadController {
 	SequenceGenerator sequence;
 	
 	@Autowired
-	private ExcelToCsvService excelToCsvService;
+	ExcelToCsvService excelToCsvService;
 	
 	@Autowired
 	LOAN_ACT_MST_REPO lOAN_ACT_MST_REPO;
@@ -92,23 +94,15 @@ public class ASPIRAUploadController {
 	        if ("CUSTOMER".equalsIgnoreCase(fileInput)) {
         		  String fileName = file.getOriginalFilename().toLowerCase();
 	        	  String CSVfileName= "customer_master_file.csv";
-	        	    if (fileName.endsWith(".xlsx")) {
-	        	    	resultMap = UploadService.saveCustomerFile(file, userID, userName,overwrite);
-	        	    } else if (fileName.endsWith(".csv")) {
 	        	    	 uploadExcel(file,CSVfileName,"CUSTOMER");
-	        	    } 
 	        } else if ("LOAN".equalsIgnoreCase(fileInput)) {
 	        	  String fileName = file.getOriginalFilename().toLowerCase();
 	        	  String CSVfileName= "loan_master_file.csv";
-	        	    if (fileName.endsWith(".xlsx")) {
-	        	    	System.out.println("df!!!!!");
-	        	    	resultMap = UploadService.saveLoanFile(file, userID, userName, overwrite);
-	        	    } else if (fileName.endsWith(".csv")) {
-	        	    	System.out.println("df");
 	        	    	 uploadExcel(file,CSVfileName,"LOAN");
-	        	    } 
 	        } else if ("REPAYMENT".equalsIgnoreCase(fileInput)) {
-	            resultMap = UploadService.saveRepaymentFile(file, userID, userName, overwrite);
+	        	  String fileName = file.getOriginalFilename().toLowerCase();
+	        	  String CSVfileName= "loan_repayment_file.csv";
+	        	    	 uploadExcel(file,CSVfileName,"REPAYMENT");
 	        }else if ("GL_CODE".equalsIgnoreCase(fileInput)) {
 	            resultMap = UploadService.saveGLFile(file, userID, userName, overwrite,  auditRefNo);
 	        }  else {
@@ -147,13 +141,15 @@ public class ASPIRAUploadController {
 	        if (file.isEmpty()) {
 	            return "File is empty!";
 	        }
+	        
+	        logger.info("Saved Start :" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
 	        File dir = new File(UPLOAD_DIR);
 	        if (!dir.exists()) dir.mkdirs();
-	        String orginalFileName = file.getOriginalFilename();
+	        
+	        String orginalFileName = file.getOriginalFilename().toLowerCase();
 	        File destFile = new File(UPLOAD_DIR + fileName);
-	        System.out.println(destFile);
-        	System.out.println(file.getOriginalFilename()+"---------------");
+	        
 	        try (InputStream is = file.getInputStream();
 	             OutputStream os = new FileOutputStream(destFile)) {
 
@@ -162,10 +158,17 @@ public class ASPIRAUploadController {
 	            while ((bytesRead = is.read(buffer)) != -1) {
 	                os.write(buffer, 0, bytesRead);
 	            }
-
-//	            excelToCsvService.convertExcelToCsv("C:/Temp_File/"+orginalFileName, "C:/Test_Temp/csv/temp_csv.csv");
+	            
+	            logger.info("File was saved in thd drive");
+	            
+	            if(orginalFileName.endsWith(".xlsx")) {
+	            	convertCSV(file,fileName);
+	            }
+	            
 	            
 	            loadCsvToOracle(uploadPage);
+	            
+	            logger.info("File uploaded successfully");
 
 	            return "File uploaded successfully";
 
@@ -173,6 +176,12 @@ public class ASPIRAUploadController {
 	            e.printStackTrace();
 	            return "Failed to save file";
 	        }
+	    }
+	    
+	    public File convertCSV(MultipartFile file,String fileName) throws IOException {
+	    	logger.info(" Start Excel To CSV File ");
+	    	File convertedFile = excelToCsvService.convertExcelToCsv(file,fileName);
+	    	return convertedFile;
 	    }
 	    
 	    public String loadCsvToOracle(String uploadPage) {
@@ -185,7 +194,3 @@ public class ASPIRAUploadController {
 	        }
 	    }
 }
- 
-	
-
-

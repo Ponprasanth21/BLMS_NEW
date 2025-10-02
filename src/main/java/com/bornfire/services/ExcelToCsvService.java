@@ -1,78 +1,80 @@
 package com.bornfire.services;
 
-import org.apache.poi.ss.usermodel.CellType;
-import com.monitorjbl.xlsx.StreamingReader;
-import com.opencsv.CSVWriter;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.bornfire.controller.ASPIRAUploadController;
+import com.monitorjbl.xlsx.StreamingReader;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import org.apache.poi.ss.usermodel.*;
 
 @Service
 public class ExcelToCsvService {
+	private static final Logger logger = LoggerFactory.getLogger(ExcelToCsvService.class);
 
-    public void convertExcelToCsv(String excelFilePath, String csvFilePath) throws IOException {
-
-        Path excelPath = Paths.get(excelFilePath);
-        Path csvPath = Paths.get(csvFilePath);
-        System.out.println("CSV");
-
-        try (InputStream is = new FileInputStream(excelPath.toFile());
-             Workbook workbook = StreamingReader.builder()
-                     .rowCacheSize(100)     // number of rows to keep in memory
-                     .bufferSize(4096)      // buffer size to read from InputStream
-                     .open(is);
-             CSVWriter writer = new CSVWriter(new FileWriter(csvPath.toFile()))) {
-
-            Sheet sheet = workbook.getSheetAt(0); // first sheet
-            int count=0;
-            for (Row row : sheet) {
-                boolean allEmpty = true;
-                String[] csvRow = new String[56];
-                count++;
-                System.out.println(count);
-
-                for (int cn = 0; cn < 56; cn++) {
-                    Cell cell = row.getCell(cn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                    String val = getCellValueAsString(cell);
-                    if (!val.isEmpty()) allEmpty = false;
-                    csvRow[cn] = val;
-                }
-
-                if (allEmpty) break; // stop when an entirely empty row is found
-                writer.writeNext(csvRow);
-            }
+	private static final String CSV_SAVE_DIR = "C:/Temp/Files/";
+	
+    public File convertExcelToCsv(MultipartFile file,String fileName) throws IOException {
+        // Ensure directory exists
+        File dir = new File(CSV_SAVE_DIR);
+        if (!dir.exists()) {
+            dir.mkdirs();
+            logger.info("directory Created");
         }
 
-        System.out.println("Excel converted to CSV successfully: " + csvFilePath);
+        // Create CSV file with same name as uploaded Excel (but .csv extension)
+        String originalName = fileName;
+        String baseName = (originalName != null && originalName.contains("."))
+                ? originalName.substring(0, originalName.lastIndexOf('.'))
+                : "upload";
+        File csvFile = new File(dir, baseName + ".csv");
+    	  
+
+          try (InputStream is = file.getInputStream();
+               Workbook workbook = StreamingReader.builder()
+                       .rowCacheSize(100)     // keep 100 rows in memory
+                       .bufferSize(4096)      // buffer size for reading
+                       .open(is);
+               BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile))) {
+
+              Sheet sheet = workbook.getSheetAt(0); // first sheet only
+              DataFormatter formatter = new DataFormatter();
+
+              for (Row row : sheet) {
+                  StringBuilder sb = new StringBuilder();
+
+                  for (int cn = 0; cn < row.getLastCellNum(); cn++) {
+                      Cell cell = row.getCell(cn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                      String cellValue = formatter.formatCellValue(cell); 
+                      
+//                      if (cell != null) {
+//                          cellValue = cell.toString();
+//                      }
+
+                      if (cellValue.contains(",") || cellValue.contains("\"") || cellValue.contains("\n")) {
+                          // Escape double quotes and wrap the field in quotes
+                          cellValue = "\"" + cellValue.replace("\"", "\"\"") + "\"";
+                      }
+
+                              sb.append(cellValue);
+                             
+                      if (cn < row.getLastCellNum() - 1) {
+                          sb.append(",");
+                      }
+                  }
+
+                  writer.write(sb.toString());
+                  writer.newLine();
+              }
+          }
+          
+          logger.info("Excel converted to CSV");
+          return csvFile;
     }
-
-    private String getCellValueAsString(Cell cell) {
-        if (cell == null) return "";
-
-        switch (cell.getCellType()) { // returns int in POI 3.17
-            case Cell.CELL_TYPE_STRING:
-                return cell.getStringCellValue();
-            case Cell.CELL_TYPE_BOOLEAN:
-                return Boolean.toString(cell.getBooleanCellValue());
-            case Cell.CELL_TYPE_NUMERIC:
-                if (DateUtil.isCellDateFormatted(cell)) {
-                    return cell.getDateCellValue().toString();
-                } else {
-                    return Double.toString(cell.getNumericCellValue());
-                }
-            case Cell.CELL_TYPE_FORMULA:
-                return cell.getCellFormula();
-            case Cell.CELL_TYPE_BLANK:
-            case Cell.CELL_TYPE_ERROR:
-            default:
-                return "";
-        }
-    }
-
-
 }
-

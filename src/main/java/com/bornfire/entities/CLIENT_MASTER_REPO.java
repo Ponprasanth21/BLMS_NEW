@@ -103,4 +103,76 @@ List<Object[]> getAccDet(String id);
     nativeQuery = true)
 List<CLIENT_MASTER_ENTITY> searchByCustomerIdLike(@Param("customerId") String customerId);
 
+
+
+@Modifying
+@Transactional
+@Query(
+    value =  " INSERT INTO CLIENT_MASTER_TBL (   " +
+    		 "    ENCODED_KEY,   " +
+    		 "    CUSTOMER_ID,   " +
+    		 "    CLIENT_STATE,   " +
+    		 "    CREATION_DATE,   " +
+    		 "    LAST_MODIFIED_DATE,   " +
+    		 "    ACTIVATION_DATE,   " +
+    		 "    APPROVED_DATE,    " +
+    		 "    FIRST_NAME,   " +
+    		 "    LAST_NAME,   " +
+    		 "    MOBILE_PHONE,   " +
+    		 "    EMAIL_ADDRESS,   " +
+    		 "    PREFERRED_LANGUAGE,   " +
+    		 "    BIRTH_DATE,    " +
+    		 "    GENDER,   " +
+    		 "    ASSIGNED_BRANCH_KEY,   " +
+    		 "    CLIENT_ROLE_KEY,   " +
+    		 "    LOAN_CYCLE,   " +
+    		 "    GROUP_LOAN_CYCLE,   " +
+    		 "    ADDRESS_LINE1,   " +
+    		 "    ADDRESS_LINE2,   " +
+    		 "    ADDRESS_LINE3,   " +
+    		 "    CITY,   " +
+    		 "    SUBURB,   " +
+    		 "    ASSIGNED_USER_KEY,   " +
+    		 "    ASONDATE   " +
+    		 ")   " +
+    		 "SELECT    " +
+    		 "    ENCODED_KEY,   " +
+    		 "    CUSTOMER_ID,   " +
+    		 "    CLIENT_STATE,    " +
+    		 "    CASE WHEN REGEXP_LIKE(CREATION_DATE,'^\\\\d{4}-\\\\d{2}-\\\\d{2}$') THEN TO_DATE(CREATION_DATE,'YYYY-MM-DD') ELSE NULL END,    " +
+    		 "    CASE WHEN REGEXP_LIKE(LAST_MODIFIED_DATE,'^\\\\d{4}-\\\\d{2}-\\\\d{2}$') THEN TO_DATE(LAST_MODIFIED_DATE,'YYYY-MM-DD') ELSE NULL END,    " +
+    		 "    CASE WHEN REGEXP_LIKE(ACTIVATION_DATE,'^\\\\d{4}-\\\\d{2}-\\\\d{2}$') THEN TO_DATE(ACTIVATION_DATE,'YYYY-MM-DD') ELSE NULL END,    " +
+    		 "    CASE WHEN REGEXP_LIKE(APPROVED_DATE,'^\\\\d{4}-\\\\d{2}-\\\\d{2}$') THEN TO_DATE(APPROVED_DATE,'YYYY-MM-DD') ELSE NULL END,    " +
+    		 "    FIRST_NAME,    " +
+    		 "    LAST_NAME,   " +
+    		 "    MOBILE_PHONE,   " +
+    		 "    EMAIL_ADDRESS,   " +
+    		 "    PREFERRED_LANGUAGE,    " +
+    		 "    CASE WHEN REGEXP_LIKE(BIRTH_DATE,'^\\\\d{4}-\\\\d{2}-\\\\d{2}$') THEN TO_DATE(BIRTH_DATE,'YYYY-MM-DD') ELSE NULL END,    " +
+    		 "    GENDER,    " +
+    		 "    ASSIGNED_BRANCH_KEY,   " +
+    		 "    CLIENT_ROLE_KEY,   " +
+    		 "    CASE WHEN REGEXP_LIKE(TRIM(LOAN_CYCLE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(LOAN_CYCLE) ELSE NULL END,   " +
+    		 "    CASE WHEN REGEXP_LIKE(TRIM(GROUP_LOAN_CYCLE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(GROUP_LOAN_CYCLE) ELSE NULL END,   " +
+    		 "    ADDRESS_LINE1,    " +
+    		 "    ADDRESS_LINE2,   " +
+    		 "    ADDRESS_LINE3,   " +
+    		 "    CITY,   " +
+    		 "    SUBURB,   " +
+    		 "    ASSIGNED_USER_KEY,    " +
+    		 "    CASE WHEN REGEXP_LIKE(ASONDATE,'^\\\\d{4}-\\\\d{2}-\\\\d{2}$') THEN TO_DATE(ASONDATE,'YYYY-MM-DD') ELSE NULL END    " +
+             " FROM CLIENT_MASTER_TBL_UPLOAD s "+
+             " WHERE NOT EXISTS ( " +
+ 	    		"     SELECT 1 " +
+ 	    		"     FROM CLIENT_MASTER_TBL m " +
+ 	    		"     WHERE m.CUSTOMER_ID = s.CUSTOMER_ID " +
+ 	    		" ) " 
+    		 , nativeQuery = true )
+void CustomerMasterCopyTempTableToMainTable();
+
+@Modifying
+@Transactional
+@Query(value = "DELETE FROM CLIENT_MASTER_TBL_UPLOAD", nativeQuery = true)
+int CustomerMasterTempTableDelete();
+
 }

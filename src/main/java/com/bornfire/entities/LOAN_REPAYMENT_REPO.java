@@ -274,5 +274,87 @@ public interface LOAN_REPAYMENT_REPO extends JpaRepository<LOAN_REPAYMENT_ENTITY
 	@Transactional
 	@Query(value = "delete from LOAN_REPAYMENT_TBL where encoded_key IN (:encoded_key)", nativeQuery = true)
 	int delteid(@Param("encoded_key") List<String> encoded_key);
+	
+
+	@Modifying
+    @Transactional
+    @Query( value =  "INSERT INTO LOAN_REPAYMENT_TBL (   " +
+           " ENCODED_KEY,  " +                  
+           " ASSIGNED_BRANCH_KEY,  " +  
+           " ASSIGNED_USER_KEY,  " +  
+           " DUE_DATE,  " +                       
+           " INTEREST_DUE,  " +                   
+           " INTEREST_PAID,  " +                  
+           " LAST_PAID_DATE,  " +                 
+           " LAST_PENALTY_APPLIED_DATE,  " +  
+           " NOTES,  " +  
+           " PARENT_ACCOUNT_KEY,  " +            
+           " PRINCIPAL_DUE,  " +                 
+           " PRINCIPAL_PAID,  " +                
+           " REPAID_DATE,  " +                   
+           " PAYMENT_STATE,  " +                 
+           " ASSIGNED_CENTRE_KEY,  " +  
+           " FEE_DUE,  " +                        
+           " FEE_PAID,  " +                       
+           " PENALTY_DUE,  " +                    
+           " PENALTY_PAID,  " +                   
+           " TAX_INTEREST_DUE,  " +  
+           " TAX_INTEREST_PAID,  " +  
+           " TAX_FEES_DUE,  " +  
+           " TAX_FEES_PAID,  " +  
+           " TAX_PENALTY_DUE,  " +  
+           " TAX_PENALTY_PAID,  " +  
+           " ORGANIZATION_COMMISSION_DUE,  " +  
+           " FUNDERS_INTEREST_DUE,  " +  
+           " CREATIONDATE,  " +                     
+           " LASTMODIFIEDDATE,  " +                  
+           " ADDITIONS,  " +
+           " DEL_FLG " +
+           " )   " +
+            " SELECT    " +
+            " ENCODED_KEY,  " +                  
+            " ASSIGNED_BRANCH_KEY,  " +  
+            " ASSIGNED_USER_KEY,  " +  
+            " CASE WHEN REGEXP_LIKE(DUE_DATE,'^\\\\d{4}-\\\\d{2}-\\\\d{2}$') THEN TO_DATE(DUE_DATE,'YYYY-MM-DD') ELSE NULL END," +
+            " CASE WHEN REGEXP_LIKE(TRIM(INTEREST_DUE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(INTEREST_DUE) ELSE NULL END,   " +
+            " CASE WHEN REGEXP_LIKE(TRIM(INTEREST_PAID), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(INTEREST_PAID) ELSE NULL END,   " +
+            " CASE WHEN REGEXP_LIKE(LAST_PAID_DATE,'^\\\\d{4}-\\\\d{2}-\\\\d{2}$') THEN TO_DATE(LAST_PAID_DATE,'YYYY-MM-DD') ELSE NULL END,    " +
+            " CASE WHEN REGEXP_LIKE(LAST_PENALTY_APPLIED_DATE,'^\\\\d{4}-\\\\d{2}-\\\\d{2}$') THEN TO_DATE(LAST_PENALTY_APPLIED_DATE,'YYYY-MM-DD') ELSE NULL END,    " +             
+            " NOTES,  " +  
+            " PARENT_ACCOUNT_KEY,  " +   
+            " CASE WHEN REGEXP_LIKE(TRIM(PRINCIPAL_DUE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(PRINCIPAL_DUE) ELSE NULL END,   " +         
+            " CASE WHEN REGEXP_LIKE(TRIM(PRINCIPAL_PAID), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(PRINCIPAL_PAID) ELSE NULL END,   " +         
+            " CASE WHEN REGEXP_LIKE(REPAID_DATE,'^\\\\d{4}-\\\\d{2}-\\\\d{2}$') THEN TO_DATE(REPAID_DATE,'YYYY-MM-DD') ELSE NULL END,    " +
+            " PAYMENT_STATE,  " +                 
+            " ASSIGNED_CENTRE_KEY,  " +  
+            " CASE WHEN REGEXP_LIKE(TRIM(FEE_DUE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(FEE_DUE) ELSE NULL END,   " +         
+            " CASE WHEN REGEXP_LIKE(TRIM(FEE_PAID), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(FEE_PAID) ELSE NULL END,   " +                          
+            " CASE WHEN REGEXP_LIKE(TRIM(PENALTY_DUE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(PENALTY_DUE) ELSE NULL END,   " +                          
+            " CASE WHEN REGEXP_LIKE(TRIM(PENALTY_PAID), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(PENALTY_PAID) ELSE NULL END,   " +                          
+            " CASE WHEN REGEXP_LIKE(TRIM(TAX_INTEREST_DUE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(TAX_INTEREST_DUE) ELSE NULL END,   " +                          
+            " CASE WHEN REGEXP_LIKE(TRIM(TAX_INTEREST_PAID), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(TAX_INTEREST_PAID) ELSE NULL END,   " +                          
+            " CASE WHEN REGEXP_LIKE(TRIM(TAX_FEES_DUE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(TAX_FEES_DUE) ELSE NULL END,   " +                          
+            " CASE WHEN REGEXP_LIKE(TRIM(TAX_FEES_PAID), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(TAX_FEES_PAID) ELSE NULL END,   " +                          
+            " CASE WHEN REGEXP_LIKE(TRIM(TAX_PENALTY_DUE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(TAX_PENALTY_DUE) ELSE NULL END,   " +                          
+            " CASE WHEN REGEXP_LIKE(TRIM(TAX_PENALTY_PAID), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(TAX_PENALTY_PAID) ELSE NULL END,   " +                          
+            " CASE WHEN REGEXP_LIKE(TRIM(ORGANIZATION_COMMISSION_DUE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(ORGANIZATION_COMMISSION_DUE) ELSE NULL END,   " +                          
+            " CASE WHEN REGEXP_LIKE(TRIM(FUNDERS_INTEREST_DUE), '^\\d+(\\.\\d+)?$') THEN TO_NUMBER(FUNDERS_INTEREST_DUE) ELSE NULL END,   " +                          
+            " CASE WHEN REGEXP_LIKE(CREATIONDATE,'^\\\\d{4}-\\\\d{2}-\\\\d{2}$') THEN TO_DATE(CREATIONDATE,'YYYY-MM-DD') ELSE NULL END,    " +
+            " CASE WHEN REGEXP_LIKE(LASTMODIFIEDDATE,'^\\\\d{4}-\\\\d{2}-\\\\d{2}$') THEN TO_DATE(LASTMODIFIEDDATE,'YYYY-MM-DD') ELSE NULL END,    " +        
+            " ADDITIONS,  " +
+            " 'N' " +
+            " FROM LOAN_REPAYMENT_TBL_UPLOAD s "+
+            " WHERE NOT EXISTS ( " +
+	    		"     SELECT 1 " +
+	    		"     FROM LOAN_REPAYMENT_TBL m " +
+	    		"     WHERE m.PARENT_ACCOUNT_KEY = s.PARENT_ACCOUNT_KEY " +
+	    		" ) " 
+            , nativeQuery = true )
+			int LoanRepaymnetCopyTempTableToMainTable();
+	
+			@Modifying
+			@Transactional
+			@Query(value = "DELETE FROM LOAN_REPAYMENT_TBL_UPLOAD", nativeQuery = true)
+			int LoanRepaymetTempTableDelete();
 
 }

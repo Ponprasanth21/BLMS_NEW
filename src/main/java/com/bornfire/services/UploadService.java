@@ -347,7 +347,7 @@ public class UploadService {
 
 					coa.setAcct_num(item.get(1));
 					coa.setAcct_name(item.get(12));
-					coa.setAcct_crncy("MUR");
+					coa.setAcct_crncy("KES");
 					coa.setAcct_bal(BigDecimal.ZERO);
 					coa.setCr_amt(BigDecimal.ZERO);
 					coa.setDr_amt(BigDecimal.ZERO);
@@ -355,7 +355,7 @@ public class UploadService {
 					coa.setGl_desc("Asset");
 					coa.setGlsh_code("Asset");
 					coa.setGlsh_desc("LOANS AND ADVANCES");
-					coa.setSchm_code("LA");
+					coa.setSchm_code("Asset");
 					coa.setSchm_type("LOAN");
 					coa.setAcct_status("Active");
 					//coa.setMobile_no(new BigDecimal(up.getCa_mobile_number()));
@@ -364,9 +364,10 @@ public class UploadService {
 					coa.setAdd_det_flg("N");
 					coa.setEntity_flg("Y");
 					coa.setDel_flg("N");
-					coa.setAcct_status("Y");
+//					coa.setAcct_status("Y");
 					coa.setAcct_cls_flg("N");
 					coa.setAcct_type("L");
+					coa.setOwn_type("C");
 
 					chart_Acc_Rep.save(coa);
 					logger.info("Start 7.1");

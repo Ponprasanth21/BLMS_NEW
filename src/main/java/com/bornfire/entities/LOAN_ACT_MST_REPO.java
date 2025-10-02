@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
-
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -403,5 +403,16 @@ List<Object[]> getActNo();
             "WHERE LOWER(ID) LIKE LOWER('%' || :loanId || '%')",
     nativeQuery = true)
 List<LOAN_ACT_MST_ENTITY> searchByLoanIdLike(@Param("loanId") String loanId);
+
+@Procedure(procedureName = "ASPIRA.LoanMasterCopyTempTableToMainTable")
+void LoanMasterCopyTempTableToMainTableProcedure();
+
+@Modifying
+@Transactional
+@Query(value = "DELETE FROM LOAN_ACCOUNT_MASTER_TBL_UPLOAD", nativeQuery = true)
+int LoanMasterTempTableDelete();
+
+
+
  	
 }
