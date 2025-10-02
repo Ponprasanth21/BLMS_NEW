@@ -2752,7 +2752,7 @@ public class BGLSRestController {
         int totalPages = (int) Math.ceil((double) totalItems / limit);
         int offset = (page - 1) * limit;
 
-        List<LOAN_ACT_MST_ENTITY> data = lOAN_ACT_MST_REPO.getLoanActDet(offset, limit);
+        List<Object[]> data = lOAN_ACT_MST_REPO.getLoanActWithMobile(offset, limit);
 
         Map<String, Object> response = new HashMap<>();
         response.put("data", data);
@@ -9188,14 +9188,38 @@ public Map<String, Object> getLoans(
     if (page < 1) page = 1;
     int offset = (page - 1) * limit;
 
-    // Fetch paged loans
-    List<LOAN_ACT_MST_ENTITY> loans = lOAN_ACT_MST_REPO.getLoanActDetPaged(offset, limit);
+    List<Object[]> rows = lOAN_ACT_MST_REPO.getLoanActWithMobile(offset, limit);
     Long totalRecords = lOAN_ACT_MST_REPO.getTotalLoans();
     int totalPages = (int) Math.ceil((double) totalRecords / limit);
 
+//    for (Object[] row : rows) {
+//        for (int i = 0; i < row.length; i++) {
+//            System.out.println("Column " + i + ": " + row[i]);
+//        }
+//        System.out.println("=================================");
+//    }
+    
+    List<Map<String, Object>> result = new ArrayList<>();
+
+    for (Object[] row : rows) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", row[1]);               // l.ID
+        map.put("account_holderkey", row[3]); // adjust index to match your query
+        map.put("loan_name", row[12]);
+        map.put("retailer_name", row[64]);
+        map.put("retailer_branch", row[65]);
+        map.put("account_state", row[9]);
+        map.put("last_name", row[row.length - 1]);
+        map.put("mobile_phone", row[row.length - 3]);
+        map.put("first_name", row[row.length - 2]);
+      
+        
+        System.out.println(row[row.length - 2]);
+        result.add(map);
+    }
     // Prepare JSON response
     Map<String, Object> response = new HashMap<>();
-    response.put("data", loans);
+    response.put("data", result);
     response.put("currentPage", page);
     response.put("totalPages", totalPages);
     response.put("totalRecords", totalRecords);
@@ -9214,11 +9238,31 @@ public Map<String, Object> getLoans(
 
 
 @GetMapping("loan/search")
-public List<LOAN_ACT_MST_ENTITY> searchLoan(@RequestParam String loanId) {
+public List<Map<String, Object>> searchLoan(@RequestParam String loanId) {
+	List<Object[]> rows;
     if (loanId == null || loanId.trim().isEmpty()) {
-        return lOAN_ACT_MST_REPO.getLoanActDet(0, 200); // default 200 rows
+    	rows= lOAN_ACT_MST_REPO.getLoanActWithMobile(0, 200); // default 200 rows
+    }else {
+    	rows = lOAN_ACT_MST_REPO.searchByLoanIdLike(loanId.trim());
     }
-    return lOAN_ACT_MST_REPO.searchByLoanIdLike(loanId.trim());
+    
+    List<Map<String, Object>> result = new ArrayList<>();
+
+    for (Object[] row : rows) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", row[1]);               // l.ID
+        map.put("account_holderkey", row[3]); // adjust index to match your query
+        map.put("loan_name", row[12]);
+        map.put("retailer_name", row[64]);
+        map.put("retailer_branch", row[65]);
+        map.put("account_state", row[9]);
+        map.put("last_name", row[row.length - 1]);
+        map.put("mobile_phone", row[row.length - 3]);
+        map.put("first_name", row[row.length - 2]);
+        result.add(map);
+    }
+
+    return result;
 }
 
 //@GetMapping("customers/mobilesearch")
@@ -9240,6 +9284,30 @@ public List<LOAN_ACT_MST_ENTITY> searchLoan(@RequestParam String loanId) {
 @GetMapping("customers/statusSearch")
 public List<CLIENT_MASTER_ENTITY> searchByStatus(@RequestParam String status) {
     return clientMasterRepo.findByStatus(status);
+}
+
+@GetMapping("loan/statusSearch")
+public List<Map<String, Object>> searchByStatusLoan(@RequestParam String status) {
+	List<Object[]> rows;
+    	rows= lOAN_ACT_MST_REPO.getLoanActWithStatus(status); // default 200 rows
+    
+    List<Map<String, Object>> result = new ArrayList<>();
+
+    for (Object[] row : rows) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", row[1]);               // l.ID
+        map.put("account_holderkey", row[3]); // adjust index to match your query
+        map.put("loan_name", row[12]);
+        map.put("retailer_name", row[64]);
+        map.put("retailer_branch", row[65]);
+        map.put("account_state", row[9]);
+        map.put("last_name", row[row.length - 1]);
+        map.put("mobile_phone", row[row.length - 3]);
+        map.put("first_name", row[row.length - 2]);
+        result.add(map);
+    }
+
+    return result;
 }
 
 @GetMapping("chartaccounts/filter")

@@ -3611,7 +3611,8 @@ public class BGLSNavigationController {
 	        md.addAttribute("user", user);
 	        md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
 	        md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
-
+	        System.out.println("-----------------------------");
+	        System.out.println(LOAN_ACT_MST_REPO.getLoanValue(holder_key));
 	    } else if (formmode.equals("list")) {
 	        model.addAttribute("formmode", "list");
 	        md.addAttribute("user", user);
@@ -3639,7 +3640,7 @@ public class BGLSNavigationController {
 	        md.addAttribute("formmode", "list");
 
 	        // Fetch paginated loan list
-	        List<LOAN_ACT_MST_ENTITY> loanList = LOAN_ACT_MST_REPO.getLoanActDet(offset, limit);
+	        List<Object[]> loanList = LOAN_ACT_MST_REPO.getLoanActWithMobile(offset, limit);
 	        md.addAttribute("list", loanList);
 
 	        // Calculate total pages for pagination

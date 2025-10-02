@@ -378,8 +378,18 @@ List<Object[]> getActNo();
 	
 	
 	// All loans (Oracle 12c+)
-	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL ORDER BY id OFFSET ?1 ROWS FETCH NEXT ?2 ROWS ONLY", nativeQuery = true)
-	List<LOAN_ACT_MST_ENTITY> getLoanActDet(int offset, int limit);
+//	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL ORDER BY id OFFSET ?1 ROWS FETCH NEXT ?2 ROWS ONLY", nativeQuery = true)
+//	List<LOAN_ACT_MST_ENTITY> getLoanActDet(int offset, int limit);
+	
+    @Query(value = 
+            "  SELECT l.*, c.MOBILE_PHONE AS mobile_phone,c.FIRST_NAME AS first_name,c.LAST_NAME AS last_name   " +
+            "  FROM LOAN_ACCOUNT_MASTER_TBL l  " +
+            "  INNER JOIN CLIENT_MASTER_TBL c  " +
+            "      ON c.ENCODED_KEY = l.ACCOUNT_HOLDERKEY  " +
+            "  ORDER BY l.ID  " +
+            "  OFFSET ?1 ROWS FETCH NEXT ?2 ROWS ONLY  "
+            , nativeQuery = true)
+        List<Object[]> getLoanActWithMobile(int offset, int limit);
 
 	// Not Approved loans (last_modified_date > approved_date)
 	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL WHERE last_modified_date > approved_date ORDER BY id OFFSET ?1 ROWS FETCH NEXT ?2 ROWS ONLY", nativeQuery = true)
@@ -399,10 +409,13 @@ List<Object[]> getActNo();
     @Query(value = "SELECT COUNT(*) FROM LOAN_ACCOUNT_MASTER_TBL WHERE last_modified_date < approved_date", nativeQuery = true)
     int countVerifiedLoans();
 
-    @Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL " +
-            "WHERE LOWER(ID) LIKE LOWER('%' || :loanId || '%')",
-    nativeQuery = true)
-List<LOAN_ACT_MST_ENTITY> searchByLoanIdLike(@Param("loanId") String loanId);
+    @Query(value =     " SELECT l.*, c.MOBILE_PHONE AS mobile_phone,c.FIRST_NAME AS first_name,c.LAST_NAME AS last_name    " +
+    	    " FROM LOAN_ACCOUNT_MASTER_TBL l " +
+    	    " INNER JOIN CLIENT_MASTER_TBL c " +
+    	    "     ON c.ENCODED_KEY = l.ACCOUNT_HOLDERKEY " +
+    	    " WHERE LOWER(l.ID) LIKE  LOWER('%' || :loanId || '%')" ,
+		    nativeQuery = true)
+		List<Object[]> searchByLoanIdLike(@Param("loanId") String loanId);
 
 @Procedure(procedureName = "ASPIRA.LoanMasterCopyTempTableToMainTable")
 void LoanMasterCopyTempTableToMainTableProcedure();
@@ -411,6 +424,21 @@ void LoanMasterCopyTempTableToMainTableProcedure();
 @Transactional
 @Query(value = "DELETE FROM LOAN_ACCOUNT_MASTER_TBL_UPLOAD", nativeQuery = true)
 int LoanMasterTempTableDelete();
+
+
+	@Query(value = 
+	" SELECT l.*, " +
+	"        c.MOBILE_PHONE AS mobile_phone, " +
+	"        c.FIRST_NAME   AS first_name, " +
+	"        c.LAST_NAME    AS last_name " +
+	" FROM LOAN_ACCOUNT_MASTER_TBL l " +
+	" INNER JOIN CLIENT_MASTER_TBL c " +
+	"   ON c.ENCODED_KEY = l.ACCOUNT_HOLDERKEY " +
+	" WHERE l.ACCOUNT_STATE = :status " +
+	" ORDER BY l.ID " +                // ✅ required before FETCH
+	" FETCH FIRST 2000 ROWS ONLY ", 
+	nativeQuery = true)
+	List<Object[]> getLoanActWithStatus(String status);
 
 
 

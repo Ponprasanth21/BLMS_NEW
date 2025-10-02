@@ -286,6 +286,44 @@
 	</style>
 
 	<script>
+
+		function handleStatus(){
+
+			let status = $("#filterselect2").val();
+
+			// If default option selected, load pagination (or reset table)
+			if (status === "STATUS" || status.trim() === "") {
+				// handleFilterChange(1);  // your default pagination function
+				return;
+			}
+
+    		document.getElementById('loadingModal').style.display = 'flex';
+
+	$.ajax({
+        url: "loan/statusSearch",
+        type: "GET",
+        data: { status: status },
+        success: function (response) {
+			console.log(response.length+"   -----------")
+            if (response && response.length > 0) {
+                updateTable(response);  // same table update function you already have
+            } else {
+                $("#usertable").html(
+                    `<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
+                );
+            }
+        },
+        error: function () {
+            $("#usertable").html(
+                `<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
+            );
+        },
+        complete: function () {
+            document.getElementById('loadingModal').style.display = 'none';
+        }
+    });
+}
+
 		function back() {
 			event.preventDefault();
 			window.history.back();
@@ -835,6 +873,8 @@ function updateTable(data) {
                     ${item?.id || ''}
                 </td>
                 <td>${item?.loan_name || ''}</td>
+                <td>${item?.first_name+" "+item?.last_name || ''}</td>
+                <td>${item?.mobile_phone || ''}</td>
                 <td>${item?.retailer_name || ''}</td>
                 <td>${item?.retailer_branch || ''}</td>
                 <td>${item?.account_state || ''}</td>
@@ -948,9 +988,20 @@ $(document).ready(
 								<div class="float-left">
 									<h6 style="font-size: 1.2rem;">LOAN MASTER - LIST</h6>
 								</div>
-								<div class="float-right">
+								<div class="row float-right">
+									<div class="mr-4"
+									th:style="${formmode == 'list' } ? 'display:block;' : 'display:none;'">
+
+									<select class="form-control-sm bg-white ml-2 w-100" id="filterselect2"
+										onchange="handleStatus()" style="background-color: #e3e3e4;">
+										<option value="STATUS">STATUS</option>
+										<option value="ACTIVE">ACTIVE</option>
+										<option value="ACTIVE_IN_ARREARS">ACTIVE IN ARREARS</option>
+										<option value="APPROVED">APPROVED</option>
+									</select>
+								</div>
 									<button type="button"
-										class="btn-primary big-btn btn-filter">Filter</button>
+										class="btn-primary big-btn btn-filter mr-2">Filter</button>
 										<button type="button" class="btn-primary big-btn" onclick="downloadExcel('LOAN')">Download</button>
 								</div>
 							</div>
@@ -963,7 +1014,9 @@ $(document).ready(
 											<tr class="filters">
 											<th style="width: 6%;">S.NO</th>
 											<th style="width: 10%;"><input type="text" id="loanIdFilter" class="form-control" placeholder="LOAN ID" disabled></th>
+											<th>LOAN TYPE</th>
 											<th>LOAN NAME</th>
+											<th>MOBILE NUMBER</th>
 											<th>RETAILER NAME</th>
 											<th>RETAILER BRANCH ID</th>
 											<th style="width: 10%;">STATUS</th>
