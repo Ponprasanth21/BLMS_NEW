@@ -1528,178 +1528,179 @@ public class BGLSRestController {
 	/* pon prasanth */
 	@Transactional
 	@GetMapping("postedTrmRecords")
-	public String postedTrmRecords(Model md, HttpServletRequest rq, @RequestParam(required = false) String acct_num,
-			@RequestParam(required = false) String tran_id, @RequestParam(required = false) String part_tran_id,
-			HttpServletRequest request) {
+	public String postedTrmRecords(Model md, HttpServletRequest rq,
+	        @RequestParam(required = false) String acct_num,
+	        @RequestParam(required = false) String tran_id,
+	        @RequestParam(required = false) String part_tran_id,
+	        @RequestParam(required = false) String entry_user,
+	        HttpServletRequest request) throws ParseException {
 
-		System.out.println("Tran id : " + tran_id);
+	    String userSession = (String) rq.getSession().getAttribute("USERID");
 
-		/* list of tranId values */
-		List<TRAN_MAIN_TRM_WRK_ENTITY> values = tRAN_MAIN_TRM_WRK_REP.findByjournalvalues(tran_id);
+	    // Prevent same user from verifying
+	    if (entry_user != null && entry_user.equalsIgnoreCase(userSession)) {
+	        return "Same user cannot verify";
+	    } else {
+	        System.out.println("Tran id : " + tran_id);
 
-		List<String> partTranTypes = new ArrayList<>();
-		List<BigDecimal> partTranid = new ArrayList<>();
+	        List<TRAN_MAIN_TRM_WRK_ENTITY> allTransactions = tRAN_MAIN_TRM_WRK_REP.findByjournalvalues(tran_id);
 
-		for (TRAN_MAIN_TRM_WRK_ENTITY entity : values) {
-			partTranTypes.add(entity.getPart_tran_type());
-			partTranid.add(entity.getPart_tran_id());
+	        List<String> partTranTypes = allTransactions.stream()
+	                .map(TRAN_MAIN_TRM_WRK_ENTITY::getPart_tran_type)
+	                .collect(Collectors.toList());
 
-		}
+	        if (!partTranTypes.contains("Debit") || !partTranTypes.contains("Credit")) {
+	            return "Error: Please select at least one credit and one debit transaction.";
+	        }
 
-		if (partTranid.size() > 1) {
+	        String user = (String) rq.getSession().getAttribute("USERID");
+	        Date conDate = (Date) rq.getSession().getAttribute("TRANDATE");
 
-			boolean hasDebit = partTranTypes.contains("Debit");
-			boolean hasCredit = partTranTypes.contains("Credit");
+	        List<TRAN_MAIN_TRM_WRK_ENTITY> savedTransactions = new ArrayList<>();
 
-			if (hasDebit && hasCredit) {
+	        // --- Step 1: Update account balances for debit/credit ---
+	        for (TRAN_MAIN_TRM_WRK_ENTITY entity : allTransactions) {
+	            entity.setPost_user(user);
+	            entity.setPost_time(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
+	            entity.setDel_flg("N");
+	            entity.setTran_status("POSTED");
+	            savedTransactions.add(entity);
 
-				String user = (String) rq.getSession().getAttribute("USERID");
-				Date con_date = (Date) rq.getSession().getAttribute("TRANDATE");
+	            Chart_Acc_Entity account = chart_Acc_Rep.getaedit(entity.getAcct_num());
+	            BigDecimal balance = Optional.ofNullable(account.getAcct_bal()).orElse(BigDecimal.ZERO);
+	            BigDecimal crAmt = Optional.ofNullable(account.getCr_amt()).orElse(BigDecimal.ZERO);
+	            BigDecimal drAmt = Optional.ofNullable(account.getDr_amt()).orElse(BigDecimal.ZERO);
 
-				List<TRAN_MAIN_TRM_WRK_ENTITY> savedatas = new ArrayList<>();
+	            BigDecimal tranAmt = Optional.ofNullable(entity.getTran_amt()).orElse(BigDecimal.ZERO);
 
-				for (TRAN_MAIN_TRM_WRK_ENTITY entity : values) {
-					entity.setPost_user(user);
-					entity.setPost_time(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
-					entity.setDel_flg("N");
-					entity.setTran_status("POSTED");
-					savedatas.add(entity);
+	            if ("Credit".equalsIgnoreCase(entity.getPart_tran_type())) {
+	                balance = balance.add(tranAmt);
+	                crAmt = crAmt.add(tranAmt);
+	            } else {
+	                balance = balance.subtract(tranAmt);
+	                drAmt = drAmt.add(tranAmt);
+	            }
 
-					if (entity.getFlow_code().equalsIgnoreCase("DISBT")) {
-						String accountNumber = entity.getAcct_num();
-						String acountName = lease_Loan_Master_Repo.accountName(accountNumber);
-						if (Objects.nonNull(acountName) || acountName != null) {
-							Lease_Loan_Master_Entity leaseRecord = lease_Loan_Master_Repo.findByref_no(accountNumber);
-							leaseRecord.setDisbursement(entity.getTran_amt());
-							lease_Loan_Master_Repo.save(leaseRecord);
-						} else {
-							System.out.println("Not a loan account");
-						}
+	            account.setAcct_bal(balance);
+	            account.setCr_amt(crAmt);
+	            account.setDr_amt(drAmt);
+	            account.setModify_time(conDate);
+	            account.setModify_user(user);
 
-					} else {
-						System.out.println("Not a disbursement");
-					}
-				}
+	            chart_Acc_Rep.save(account);
 
-				String auditID = sequence.generateRequestUUId();
-				String user1 = (String) request.getSession().getAttribute("USERID");
-				String username = (String) request.getSession().getAttribute("USERNAME");
+	            // Handle disbursement separately
+	            if ("DISBT".equalsIgnoreCase(entity.getFlow_code())) {
+	                Lease_Loan_Master_Entity lease = lease_Loan_Master_Repo.findByref_no(entity.getAcct_num());
+	                if (lease != null) {
+	                    lease.setDisbursement(tranAmt);
+	                    lease_Loan_Master_Repo.save(lease);
+	                }
+	            }
+	        }
 
-				BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-				audit.setAudit_date(new Date());
-				audit.setEntry_time(new Date());
-				audit.setEntry_user(user1);
-				audit.setFunc_code("VERIFIED");
-				audit.setAudit_table("BGLSBUSINESSTABLE");
-				audit.setAudit_screen("VERIFIED");
-				audit.setEvent_id(user1);
-				audit.setEvent_name(username);
-				audit.setModi_details("Verified Successfully");
+	        // --- Step 2: Aggregate all credit transactions by flow_code and due date ---
+	        SimpleDateFormat sdfDB = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH); // e.g., 30-SEP-2025
 
-				UserProfile values1 = userProfileRep.getRole(user1);
-				audit.setAuth_user(values1.getAuth_user());
-				audit.setAuth_time(values1.getAuth_time());
-				audit.setAudit_ref_no(auditID);
+	        Map<String, BigDecimal> totalPrdem = new HashMap<>();
+	        Map<String, BigDecimal> totalIndem = new HashMap<>();
+	        Map<String, BigDecimal> totalFeedem = new HashMap<>();
+	        Map<String, BigDecimal> totalPendem = new HashMap<>();
 
-				for (TRAN_MAIN_TRM_WRK_ENTITY entity : values) {
+	        List<TRAN_MAIN_TRM_WRK_ENTITY> creditTransactions = allTransactions.stream()
+	                .filter(t -> "Credit".equalsIgnoreCase(t.getPart_tran_type()))
+	                .collect(Collectors.toList());
 
-					if (entity.getPart_tran_type().equals("Credit")) {
+	        for (TRAN_MAIN_TRM_WRK_ENTITY entity : creditTransactions) {
+	            String dueDateStr = sdfDB.format(entity.getFlow_date());
+	            BigDecimal tranAmt = Optional.ofNullable(entity.getTran_amt()).orElse(BigDecimal.ZERO);
 
-						System.out.println("Credit Part");
+	            switch (entity.getFlow_code().toUpperCase()) {
+	                case "PRDEM":
+	                    totalPrdem.put(dueDateStr, totalPrdem.getOrDefault(dueDateStr, BigDecimal.ZERO).add(tranAmt));
+	                    break;
+	                case "INDEM":
+	                    totalIndem.put(dueDateStr, totalIndem.getOrDefault(dueDateStr, BigDecimal.ZERO).add(tranAmt));
+	                    break;
+	                case "FEEDEM":
+	                    totalFeedem.put(dueDateStr, totalFeedem.getOrDefault(dueDateStr, BigDecimal.ZERO).add(tranAmt));
+	                    break;
+	                case "PENDEM":
+	                    totalPendem.put(dueDateStr, totalPendem.getOrDefault(dueDateStr, BigDecimal.ZERO).add(tranAmt));
+	                    break;
+	                default:
+	                    System.out.println("Unknown flow code: " + entity.getFlow_code());
+	            }
+	        }
 
-						/* Account details get by account number in COA table */
+	        // --- Step 3: Update demand records using aggregated totals ---
+	        for (TRAN_MAIN_TRM_WRK_ENTITY entity : creditTransactions) {
+	            String accountNumber = entity.getAcct_num();
+	            String dueDateStr = sdfDB.format(entity.getFlow_date());
 
-						Chart_Acc_Entity originalAccount = chart_Acc_Rep.getaedit(entity.getAcct_num());
+	            String datavalue = lOAN_ACT_MST_REPO.getLoanViewdatas(accountNumber);
 
-						BigDecimal balance = originalAccount.getAcct_bal();
-						BigDecimal creditBalance = Objects.nonNull(originalAccount.getCr_amt())
-								? originalAccount.getCr_amt()
-								: BigDecimal.ZERO;
-						BigDecimal debitBalance = Objects.nonNull(originalAccount.getDr_amt())
-								? originalAccount.getDr_amt()
-								: BigDecimal.ZERO;
+	            List<LOAN_REPAYMENT_ENTITY> demandRecordsList = Optional
+	                    .ofNullable(lOAN_REPAYMENT_REPO.getLoanFlowsValueDatas21(datavalue, dueDateStr))
+	                    .orElse(Collections.emptyList());
 
-						BigDecimal creditVal = tRAN_MAIN_TRM_WRK_REP.getcredit(entity.getTran_id(),
-								entity.getPart_tran_id());
+	            for (LOAN_REPAYMENT_ENTITY demandRecord : demandRecordsList) {
+	                BigDecimal principalExp = Optional.ofNullable(demandRecord.getPrincipal_exp()).orElse(BigDecimal.ZERO);
+	                BigDecimal interestExp = Optional.ofNullable(demandRecord.getInterest_exp()).orElse(BigDecimal.ZERO);
+	                BigDecimal feeExp = Optional.ofNullable(demandRecord.getFee_exp()).orElse(BigDecimal.ZERO);
+	                BigDecimal penaltyExp = Optional.ofNullable(demandRecord.getPenalty_exp()).orElse(BigDecimal.ZERO);
 
-						System.out.println("Account Balance : " + balance);
-						System.out.println("Cr_Amt : " + creditBalance);
-						System.out.println("Dr_amt : " + debitBalance);
-						System.out.println("Credited Amount : " + creditVal);
+	                BigDecimal principalPaid = totalPrdem.getOrDefault(dueDateStr, BigDecimal.ZERO);
+	                BigDecimal interestPaid = totalIndem.getOrDefault(dueDateStr, BigDecimal.ZERO);
+	                BigDecimal feePaid = totalFeedem.getOrDefault(dueDateStr, BigDecimal.ZERO);
+	                BigDecimal penaltyPaid = totalPendem.getOrDefault(dueDateStr, BigDecimal.ZERO);
 
-						// Add credit amount to the account balance
-						BigDecimal newBalance = balance.add(creditVal);
+	                demandRecord.setPrincipal_paid(demandRecord.getPrincipal_paid().add(principalPaid).min(principalExp));
+	                demandRecord.setPrincipal_due(principalExp.subtract(demandRecord.getPrincipal_paid()).max(BigDecimal.ZERO));
 
-						// Add credited amount to the cr_amt
-						creditBalance = creditBalance.add(creditVal);
-						debitBalance.add(BigDecimal.ZERO);
+	                demandRecord.setInterest_paid(demandRecord.getInterest_paid().add(interestPaid).min(interestExp));
+	                demandRecord.setInterest_due(interestExp.subtract(demandRecord.getInterest_paid()).max(BigDecimal.ZERO));
 
-						System.out.println("Updated Account Balance : " + newBalance);
-						System.out.println("Updated Cr_Amt  : " + creditBalance);
-						System.out.println("Updated Dr_Amt : " + debitBalance);
+	                demandRecord.setFee_paid(demandRecord.getFee_paid().add(feePaid).min(feeExp));
+	                demandRecord.setFee_due(feeExp.subtract(demandRecord.getFee_paid()).max(BigDecimal.ZERO));
 
-						// Update the account with the new balances
-						originalAccount.setAcct_bal(newBalance);
-						originalAccount.setCr_amt(creditBalance);
-						originalAccount.setDr_amt(debitBalance);
-						originalAccount.setModify_time(con_date);
-						originalAccount.setModify_user(user);
+	                demandRecord.setPenalty_paid(demandRecord.getPenalty_paid().add(penaltyPaid).min(penaltyExp));
+	                demandRecord.setPenalty_due(penaltyExp.subtract(demandRecord.getPenalty_paid()).max(BigDecimal.ZERO));
 
-						chart_Acc_Rep.save(originalAccount);
+	                if (demandRecord.getPrincipal_due().compareTo(BigDecimal.ZERO) == 0
+	                        && demandRecord.getInterest_due().compareTo(BigDecimal.ZERO) == 0
+	                        && demandRecord.getFee_due().compareTo(BigDecimal.ZERO) == 0
+	                        && demandRecord.getPenalty_due().compareTo(BigDecimal.ZERO) == 0) {
+	                    demandRecord.setPayment_state("PAID");
+	                }
 
-					} else {
+	                demandRecord.setRepaid_date(entity.getTran_date());
+	                lOAN_REPAYMENT_REPO.save(demandRecord);
+	            }
+	        }
 
-						System.out.println("Debit Part");
+	        // --- Step 4: Save audit and posted transactions ---
+	        BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
+	        audit.setAudit_date(new Date());
+	        audit.setEntry_time(new Date());
+	        audit.setEntry_user(user);
+	        audit.setFunc_code("VERIFIED");
+	        audit.setAudit_table("BGLSBUSINESSTABLE");
+	        audit.setAudit_screen("VERIFIED");
+	        audit.setEvent_id(user);
+	        audit.setEvent_name((String) request.getSession().getAttribute("USERNAME"));
+	        audit.setModi_details("Verified Successfully");
+	        audit.setAudit_ref_no(sequence.generateRequestUUId());
 
-						/* Account details get by account number in COA table */
+	        UserProfile userProfile = userProfileRep.getRole(user);
+	        audit.setAuth_user(userProfile.getAuth_user());
+	        audit.setAuth_time(userProfile.getAuth_time());
 
-						Chart_Acc_Entity originalAccount = chart_Acc_Rep.getaedit(entity.getAcct_num());
+	        bGLSBusinessTable_Rep.save(audit);
+	        tRAN_MAIN_TRM_WRK_REP.saveAll(savedTransactions);
 
-						BigDecimal balance = originalAccount.getAcct_bal();
-						BigDecimal creditBalance = Objects.nonNull(originalAccount.getCr_amt())
-								? originalAccount.getCr_amt()
-								: BigDecimal.ZERO;
-						BigDecimal debitBalance = Objects.nonNull(originalAccount.getDr_amt())
-								? originalAccount.getDr_amt()
-								: BigDecimal.ZERO;
-
-						BigDecimal debitVal = tRAN_MAIN_TRM_WRK_REP.getdebit(entity.getTran_id(),
-								entity.getPart_tran_id());
-						System.out.println("Account Balance : " + balance);
-						System.out.println("Dr_Amt : " + debitBalance);
-						System.out.println("Cr_Amt : " + creditBalance);
-						System.out.println("Debited Amount : " + debitVal);
-
-						// Subtract debited amount from the account balance
-						BigDecimal newBalance = balance.subtract(debitVal);
-
-						// add debited amount to dr_amt
-						debitBalance = debitBalance.add(debitVal);
-						creditBalance.add(BigDecimal.ZERO);
-
-						System.out.println("Updated Account Balance: " + newBalance);
-						System.out.println("Updated Dr_Amt : " + debitBalance);
-						System.out.println("Updated Cr_Amt : " + creditBalance);
-
-						// Update the account with the new balances
-						originalAccount.setAcct_bal(newBalance);
-						originalAccount.setDr_amt(debitBalance);
-						originalAccount.setCr_amt(creditBalance);
-						originalAccount.setModify_time(con_date);
-						originalAccount.setModify_user(user);
-
-						chart_Acc_Rep.save(originalAccount);
-					}
-				}
-
-				bGLSBusinessTable_Rep.save(audit);
-				tRAN_MAIN_TRM_WRK_REP.saveAll(savedatas);
-			} else {
-				return "Error: Please select at least one credit and one debit transaction.";
-			}
-		}
-
-		return "Posted Successfully";
+	        return "Posted Successfully";
+	    }
 	}
 
 	/* pon prasanth */

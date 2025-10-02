@@ -247,29 +247,33 @@
 		.big-btn {
 			font-size: 16px;
 		}
-		
+
 		#flowIdTable {
-		    width: 100%;
-		    border-collapse: collapse;
-		    table-layout: fixed; /* Important to align header and body */
+			width: 100%;
+			border-collapse: collapse;
+			table-layout: fixed;
+			/* Important to align header and body */
 		}
 
-		#flowIdTable thead, #flowIdTable tbody tr {
-		    display: table;
-		    width: 100%;
-		    table-layout: fixed;
+		#flowIdTable thead,
+		#flowIdTable tbody tr {
+			display: table;
+			width: 100%;
+			table-layout: fixed;
 		}
 
 		#flowIdTable tbody {
-		    display: block;
-		    max-height: 355px; /* Scrollable height */
-		    overflow-y: auto;
+			display: block;
+			max-height: 355px;
+			/* Scrollable height */
+			overflow-y: auto;
 		}
 
-		#flowIdTable th, #flowIdTable td {
-		    white-space: nowrap;
-		    overflow: hidden;
-		    text-overflow: ellipsis;
+		#flowIdTable th,
+		#flowIdTable td {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	</style>
 
@@ -744,18 +748,18 @@
 										var acctNo = entity.loan_acct_no || "";
 										var acctName = entity.acct_name || "";
 										var encodedkey = entity.encoded_key || "";
+										var operationType = "CollectionCash";
 
 										tHTML += "<tr>"
-											+ "<td><input type='text' value='" + flowDate + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
-											+ "<td><input type='text' value='" + flowId + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
-											+ "<td><input type='text' value='" + flowCode + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
-											+ "<td><input type='text' value='" + flowAmount + "' readonly class='border-0 p-0 m-0 text-right' style='width:100%;'/></td>"
-											+ "<td><input type='text' value='" + tranamount + "' readonly class='border-0 p-0 m-0 text-right' style='width:100%;' oninput='calculateRemainingAmount(this)'/></td>"
-											+ "<td><input type='text' value='" + acctNo + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
-											+ "<td><input type='text' value='" + acctName + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td><input type='text' name='flow_date' value='" + flowDate + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td><input type='text' name='flow_id' value='" + flowId + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td><input type='text' name='flow_code' value='" + flowCode + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td><input type='text' name='flow_amt' value='" + flowAmount + "' readonly class='border-0 p-0 m-0 text-right' style='width:100%;'/></td>"
+											+ "<td><input type='text' name='tran_amt' value='" + tranamount + "' readonly class='border-0 p-0 m-0 text-right' style='width:100%;'/></td>"
+											+ "<td><input type='text' name='loan_acct_no' value='" + acctNo + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td><input type='text' name='acct_name' value='" + acctName + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
 											+ "<td style='text-align:center; padding:0; margin:0;'>"
-											+ "<input type='radio' name='und_pct_radio' data-operation='" + operationType + "' data-encoded_key='" + encodedkey + "' "
-											+ (tranamount > 0 ? "checked" : "") + " />"
+											+ "<input type='radio' name='und_pct_radio_" + index + "' data-operation='" + operationType + "' data-encoded_key='" + encodedkey + "' />"
 											+ "</td>"
 											+ "</tr>";
 									});
@@ -870,108 +874,75 @@
 
 					if ($('#loan').is(':checked')) {
 						console.log("Loan option is checked.");
+
 						$("#acct_num123").removeClass("d-none");
 						$("#acct_num2").addClass("d-none");
-						var acct_num = $("#acct_num123").val();
-						// Fetch the updated account name directly from the select field
-						var selectElement = document.getElementById("acct_num123");
-						var selectedOption = selectElement.options[selectElement.selectedIndex];
-						var acctName = selectedOption.getAttribute("data-acct-name") || ""; // Correctly fetch the account name
+
+						// ✅ Get the account number from the text input
+						var acct_num = $("#acct_num123").val().trim();
+
+						console.log("Selected Account Number:", acct_num);
 
 						$.ajax({
 							type: 'GET',
 							url: './loanflowDetails11',
 							data: {
 								todate: DateTo,
-								accountNumber: acct_num
+								accountNumber: acct_num // ✅ pass account number correctly
 							},
 							success: function (data) {
 								console.log("Received data:", data);
-
-								$("#collectionsubmit").show();
-
-								// ✅ If acctName is not empty, make the second AJAX request
-								if (acctName && acctName.trim() !== "") {
-									console.log("Fetching account balance for:", acctName);
-
-									$.ajax({
-										type: 'GET',
-										url: './fetchacctbalance',
-										data: {acctnum: acctName}, // Use account name instead of account number
-										success: function (balanceData) {
-											console.log("Raw Account Balance:", balanceData);
-
-											var balance = parseFloat(balanceData);
-											var formattedBalance = isNaN(balance) ? "0.00" : balance.toLocaleString('en-US', {
-												minimumFractionDigits: 2,
-												maximumFractionDigits: 2
-											});
-
-											document.getElementById("acct_balance").value = formattedBalance;
-										},
-										error: function (error) {
-											console.error("Error fetching account balance:", error);
-										}
-									});
-								} else {
-									console.log("No valid account name found. Skipping balance fetch.");
-								}
 
 								var tHTML = "";
 
 								// Extract total amount safely
 								var flow_total_amt = data.flow_total_amt ? data.flow_total_amt : "0.00";
-								console.log("Total Amount:", flow_total_amt); // ✅ Total amount
-								console.log("Loan Flows:", data.loan_flows); // ✅ List of loan flow details
+								console.log("Total Amount:", flow_total_amt);
+								console.log("Loan Flows:", data.loan_flows);
 
-								// Format total amount as decimal (2 decimal places with commas)
-								var formattedTotalAmount = parseFloat(flow_total_amt).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+								// Format total amount
+								var formattedTotalAmount = parseFloat(flow_total_amt).toLocaleString('en-US', {
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 2
+								});
+								$("#acct_balancedatas").val(formattedTotalAmount);
 
-								// Set total amount to an input field
-								document.getElementById("acct_balancedatas").value = formattedTotalAmount;
-
-								// 🔹 Add "Tran Amt" column if missing at the correct 5th position
+								// Add "Tran Amt" column if missing
 								if ($("#flowIdTable thead tr th").length === 7) {
-									$("#flowIdTable thead tr th").eq(3).after("<th style='text-align:center;'>Tran Amt</th>"); // ✅ Corrected quotes
+									$("#flowIdTable thead tr th").eq(3)
+										.after("<th style='text-align:center;'>Tran Amt</th>");
 								}
 
-								// Ensure data.loan_flows is an array before iterating
+								// Check if loan_flows is an array
 								if (Array.isArray(data.loan_flows) && data.loan_flows.length > 0) {
 									$.each(data.loan_flows, function (index, entity) {
 										var flowDate = entity.flow_date ? formatDate(entity.flow_date) : "";
-										var flowId = entity.flow_id ? entity.flow_id : "";
-										var flowCode = entity.flow_code ? entity.flow_code : "";
+										var flowId = entity.flow_id || "";
+										var flowCode = entity.flow_code || "";
 										var flowAmount = entity.flow_amt ? formatNumberWithCommas(entity.flow_amt) : "0.00";
 										var tranamount = entity.tran_amt ? formatNumberWithCommas(entity.tran_amt) : "0.00";
-										var acctNo = entity.loan_acct_no ? entity.loan_acct_no : "";
-										var acctName = entity.acct_name ? entity.acct_name : "";
-										var encodedkey = entity.encoded_key ? entity.encoded_key : "";
+										var acctNo = entity.loan_acct_no || "";
+										var acctName = entity.acct_name || "";
+										var encodedkey = entity.encoded_key || "";
 
 										tHTML += "<tr>"
-											+ "<td><input type='text' name='flow_date' value='" + flowDate + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
-											+ "<td><input type='text' name='flow_id' value='" + flowId + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
-											+ "<td><input type='text' name='flow_code' value='" + flowCode + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
-											+ "<td><input type='text' name='flow_amt' value='" + flowAmount + "' class='border-0 p-0 m-0' style='width:100%; text-align:right;' readonly /></td>"
-											+ "<td><input type='text' name='tran_amt' value='" + tranamount + "' class='border-0 p-0 m-0' style='width:100%; text-align:right;' oninput='calculateRemainingAmount(this)' readonly /></td>"
-											+ "<td><input type='text' name='loan_acct_no' value='" + acctNo + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
-											+ "<td><input type='text' name='acct_name' value='" + acctName + "' class='border-0 p-0 m-0' style='width:100%;' readonly /></td>"
+											+ "<td><input type='text' name='flow_date' value='" + flowDate + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td><input type='text' name='flow_id' value='" + flowId + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td><input type='text' name='flow_code' value='" + flowCode + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td><input type='text' name='flow_amt' value='" + flowAmount + "' readonly class='border-0 p-0 m-0 text-right' style='width:100%;'/></td>"
+											+ "<td><input type='text' name='tran_amt' value='" + tranamount + "' readonly class='border-0 p-0 m-0 text-right' style='width:100%;'/></td>"
+											+ "<td><input type='text' name='loan_acct_no' value='" + acctNo + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td><input type='text' name='acct_name' value='" + acctName + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
 											+ "<td style='text-align:center; padding:0; margin:0;'>"
-											+ "<input type='radio' name='und_pct_radio' "  // One selection only
-											+ "data-operation='" + operationType + "' "
-											+ "data-encoded_key='" + encodedkey + "' "
-											+ (tranamount > 0 ? " checked='checked'" : "")
-											+ " />"
+											+ "<input type='radio' name='und_pct_radio_" + index + "' data-operation='" + operationType + "' data-encoded_key='" + encodedkey + "' />"
 											+ "</td>"
 											+ "</tr>";
-
-										$("#collectionsubmit").show();
 									});
-
-									// Append the rows to the table body
-									$("#flowIdTbody").html(tHTML);
+									$("#collectionsubmit").show();
 								} else {
 									tHTML += "<tr style='text-align:center;'><td colspan='8'>No records available</td></tr>";
 								}
+
 								$("#flowIdTbody").empty().append(tHTML);
 							},
 							error: function () {
@@ -979,7 +950,6 @@
 								$('#errorModal').modal('show');
 							}
 						});
-
 					} else {
 						console.log("Deposit option is checked.");
 						$("#acct_num2").removeClass("d-none");
@@ -1496,90 +1466,75 @@
 
 
 		function handleCheckboxClickCollectiondata() {
-			var selectedData = [];
+		    var selectedData = [];
+		    var fromdate = $('#fromdate').val();
+		    var todate = $('#todate').val();
 
-			
-			var fromdate = $('#fromdate').val();
-			var todate = $('#todate').val();
+		    if (!fromdate || !todate) {
+		        alert("Please select both From Date and To Date.");
+		        return;
+		    }
 
-			if (!fromdate || !todate) {
-				alert("Please select both From Date and To Date.");
-				return;
-			}
+		    var dateFrom = formatDateToDD(fromdate.trim());
+		    var dateTo = formatDateToDD(todate.trim());
 
-			// Get selected operation type from radio buttons
-			   var operationType = $("input[name='collectionOption']:checked").val(); // will be "cash" or "officeRouting"
-			   if (!operationType) {
-			       alert("Please select an Operation Type.");
-			       return;
-			   }
-			   alert(operationType);
-			var dateFrom = formatDateToDD(fromdate.trim());
-			var dateTo = formatDateToDD(todate.trim());
+		    // Loop through all rows in the table
+		    $("#flowIdTbody tr").each(function () {
+		        var row = $(this);
+		        var flowAmt = row.find("input[name='flow_amt']").val();
+		        var flowCode = row.find("input[name='flow_code']").val();
+		        var flowDate = row.find("input[name='flow_date']").val();
+		        var flowId = row.find("input[name='flow_id']").val();
+		        var loanAcctNo = row.find("input[name='loan_acct_no']").val();
+		        var acctName = row.find("input[name='acct_name']").val();
+		        var tranAmt = row.find("input[name='tran_amt']").val();
 
-			console.log("From Date Sent:", dateFrom);
-			console.log("To Date Sent:", dateTo);
+		        // Get the radio in the row (checked or not)
+		        var radio = row.find("input[type='radio']");
+		        var encodedKey = radio.data("encoded_key") || "";
 
-			// Loop through all rows, include all data
-			$("table tbody tr").each(function () {
-				var row = $(this);
-				var flowAmt = row.find("input[name='flow_amt']").val();
-				var flowCode = row.find("input[name='flow_code']").val();
-				var flowDate = row.find("input[name='flow_date']").val();
-				var flowId = row.find("input[name='flow_id']").val();
-				var loanAcctNo = row.find("input[name='loan_acct_no']").val();
-				var acctName = row.find("input[name='acct_name']").val();
-				var tranAmt = row.find("input[name='tran_amt']").val();
-				var encodedKey = row.find("input[type='radio']").data("encoded_key") || ""; // get encoded_key even if radio not checked
+		        // ✅ Always take operationType from the radio's data-operation
+		        var operationType = radio.data("operation") || "";
 
-				// Only push rows that have flowCode / loan account / amounts
-				if (flowCode && loanAcctNo) {
-					selectedData.push({
-						flow_amt: flowAmt ? flowAmt.replace(/,/g, '') : "0",
-						flow_code: flowCode,
-						flow_date: flowDate,
-						flow_id: flowId,
-						loan_acct_no: loanAcctNo,
-						acct_name: acctName,
-						tran_amt: tranAmt ? tranAmt.replace(/,/g, '') : "0",
-						from_date: dateFrom,
-						to_date: dateTo,
-						encoded_key: encodedKey // include for all rows
-					});
-				}
-			});
+		        // Only include rows with necessary data
+		        if (flowCode && loanAcctNo) {
+		            selectedData.push({
+		                flow_amt: flowAmt ? flowAmt.replace(/,/g, '') : "0",
+		                flow_code: flowCode,
+		                flow_date: flowDate,
+		                flow_id: flowId,
+		                loan_acct_no: loanAcctNo,
+		                acct_name: acctName,
+		                tran_amt: tranAmt ? tranAmt.replace(/,/g, '') : "0",
+		                from_date: dateFrom,
+		                to_date: dateTo,
+		                encoded_key: encodedKey,
+		                operation_type: operationType // always passed
+		            });
+		        }
+		    });
 
-			console.log("Request Payload:", JSON.stringify(selectedData, null, 2));
+		    if (selectedData.length === 0) {
+		        alert("No data found to submit.");
+		        return;
+		    }
 
-			if (selectedData.length === 0) {
-				alert("No data found to submit.");
-				return;
-			}
+		    console.log("Payload:", JSON.stringify(selectedData, null, 2));
 
-			// Send all transactions to backend
-			$.ajax({
-				type: 'POST',
-				url: './transactionCollectiondatas',
-				contentType: 'application/json',
-				data: JSON.stringify(selectedData),
-				success: function (data) {
-					var tranId = data.trim();
-					var parttranid = "1";
-					var acctNum = selectedData[0].loan_acct_no;
-
-					// Show popup with transaction details
-					var message = "Transaction Saved Successfully!\n\n" +
-						"Transaction ID: " + tranId + "\n" +
-						"Part Tran ID: " + parttranid + "\n" +
-						"Account Number: " + acctNum;
-
-					alert(message);
-				},
-				error: function () {
-					$('#errorMessage').text('Error saving transactions');
-					$('#errorModal').modal('show');
-				}
-			});
+		    // AJAX call to send data to controller
+		    $.ajax({
+		        type: 'POST',
+		        url: './transactionCollectiondatas',
+		        contentType: 'application/json',
+		        data: JSON.stringify(selectedData),
+		        success: function (response) {
+		            alert("Transaction Saved Successfully!\nTransaction ID: " + response);
+		        },
+		        error: function () {
+		            $('#errorMessage').text('Error saving transactions');
+		            $('#errorModal').modal('show');
+		        }
+		    });
 		}
 
 		function handleRadioClickBooking(selectedRadio) {
@@ -2303,29 +2258,29 @@
 									onchange="updateTableValueSequentially();" style="display: none;" />
 							</div>
 						</div>
-					
-						<!-- Table -->
-							<table class="table table-bordered table-sm mt-4 d-none "
-								style="margin-bottom: 0px; font-size: initial;" id="flowIdTable">
-								<thead class="thead-light">
-									<tr>
-										<th style="white-space:nowrap;">Flow Date</th>
-										<th style="white-space:nowrap;">Flow ID</th>
-										<th style="white-space:nowrap;">Flow Code</th>
-										<th style="text-align:center; white-space:nowrap;">Flow Amt</th>
-										<th style="white-space:nowrap;">Acct No</th>
-										<th style="white-space:nowrap;">Acct Name</th>
-										<th style="text-align:center; white-space:nowrap;">Select</th>
-									</tr>
-								</thead>
 
-								<tbody id="flowIdTbody">
-									<tr>
-										<td colspan="7" style="text-align: center;">No records
-											available</td>
-									</tr>
-								</tbody>
-							</table>
+						<!-- Table -->
+						<table class="table table-bordered table-sm mt-4 d-none "
+							style="margin-bottom: 0px; font-size: initial;" id="flowIdTable">
+							<thead class="thead-light">
+								<tr>
+									<th style="white-space:nowrap;">Flow Date</th>
+									<th style="white-space:nowrap;">Flow ID</th>
+									<th style="white-space:nowrap;">Flow Code</th>
+									<th style="text-align:center; white-space:nowrap;">Flow Amt</th>
+									<th style="white-space:nowrap;">Acct No</th>
+									<th style="white-space:nowrap;">Acct Name</th>
+									<th style="text-align:center; white-space:nowrap;">Select</th>
+								</tr>
+							</thead>
+
+							<tbody id="flowIdTbody">
+								<tr>
+									<td colspan="7" style="text-align: center;">No records
+										available</td>
+								</tr>
+							</tbody>
+						</table>
 
 						<table class="table table-bordered table-sm mt-4 d-none"
 							style="margin-bottom: 0px; font-size: initial;" id="serviceflowIdTable">

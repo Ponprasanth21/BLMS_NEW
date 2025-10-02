@@ -255,32 +255,31 @@ th, td {
 		}
 
 		function verifysubmit(element) {
+		    var tranId = $(element).attr('data-tranid');
+		    var partnId = $(element).attr('data-partnid');
+		    var acctNum = $(element).attr('data-acctnum');
+		    var entryuser = $(element).attr('data-entryuser');
 
-			var tranId = $(element).attr('data-tranid');
-			var partnId = $(element).attr('data-partnid');
-			var acctNum = $(element).attr('data-acctnum');
-			console.log(tranId + " " + partnId + " " + acctNum);
-			
-			
-			  //  $('#tran_id_display').text(tranId);
-			
-			var url = './postedTrmRecords?tran_id=' + tranId
-				+ '&part_tran_id=' + partnId + '&acct_num=' + acctNum; // Include part_tran_type in the URL
+		    console.log(tranId + " " + partnId + " " + acctNum + " " + entryuser);
 
-			$.ajax({
-				type: "GET",
-				url: url, // Pass the values directly in the URL
-				success: function (responseText) {
-					console.log(responseText);
-					$("#alertmsg").text(responseText+" Tran ID : "+tranId);
-					$('#alertsval').modal("toggle");
+		    var url = './postedTrmRecords?tran_id=' + tranId
+		        + '&part_tran_id=' + partnId
+		        + '&acct_num=' + acctNum
+		        + '&entry_user=' + entryuser;   // ✅ added entry user
 
-				},
-				error: function (xhr, status, error) {
-					console.error("Error: " + error);
-					console.error("Response Text: " + xhr.responseText);
-				}
-			});
+		    $.ajax({
+		        type: "GET",
+		        url: url,
+		        success: function (responseText) {
+		            console.log(responseText);
+		            $("#alertmsg").text(responseText + " Tran ID : " + tranId);
+		            $('#alertsval').modal("toggle");
+		        },
+		        error: function (xhr, status, error) {
+		            console.error("Error: " + error);
+		            console.error("Response Text: " + xhr.responseText);
+		        }
+		    });
 		}
 
 		function validationAccount(element) {
@@ -1963,7 +1962,7 @@ $(document)
 								onclick="validationAccount(this);">Validate</button>
 							<button class="btn-primary big-btn" id="transactionAddButton"
 								th:attr="data-tranid=${ledgervalues.tran_id}, data-partnid=${ledgervalues.part_tran_id}, data-acctnum=${ledgervalues.acct_num},
-								data-parttrantype=${ledgervalues.part_tran_type}"
+								data-parttrantype=${ledgervalues.part_tran_type},data-entryuser=${ledgervalues.entry_user}"
 								onclick="verifysubmit(this);">Post</button>
 							<button class="btn-primary big-btn" onclick="Back();">Back</button>
 						</div>

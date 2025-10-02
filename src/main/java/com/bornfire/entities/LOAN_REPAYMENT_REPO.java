@@ -104,7 +104,7 @@ public interface LOAN_REPAYMENT_REPO extends JpaRepository<LOAN_REPAYMENT_ENTITY
 			+ "JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY "
 			+ "WHERE B.DUE_DATE <= :toDate AND A.ID = :accountNum AND (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) > 0 "
 			+ "UNION ALL "
-			+ "SELECT B.due_date, '4' AS flow_id, 'PENALTY' AS flow_code, (B.PENALTY_EXP - B.PENALTY_PAID) AS flow_amt, "
+			+ "SELECT B.due_date, '4' AS flow_id, 'P' AS flow_code, (B.PENALTY_EXP - B.PENALTY_PAID) AS flow_amt, "
 			+ "A.ID AS loan_acct_no, A.LOAN_NAME AS acct_name, A.ENCODED_KEY " + "FROM LOAN_ACCOUNT_MASTER_TBL A "
 			+ "JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY "
 			+ "WHERE B.DUE_DATE <= :toDate AND A.ID = :accountNum AND (B.PENALTY_EXP - B.PENALTY_PAID) > 0 "
@@ -356,5 +356,9 @@ public interface LOAN_REPAYMENT_REPO extends JpaRepository<LOAN_REPAYMENT_ENTITY
 			@Transactional
 			@Query(value = "DELETE FROM LOAN_REPAYMENT_TBL_UPLOAD", nativeQuery = true)
 			int LoanRepaymetTempTableDelete();
+			
+			@Query(value = "SELECT * FROM LOAN_REPAYMENT_TBL WHERE PARENT_ACCOUNT_KEY = :accountNum AND DUE_DATE IN (:flowDates)", nativeQuery = true)
+			List<LOAN_REPAYMENT_ENTITY> getLoanFlowsValueDatas21(@Param("accountNum") String accountNum,
+					@Param("flowDates") String dueDate1);
 
 }
