@@ -869,7 +869,7 @@
 							ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 							var dataURL = canvas.toDataURL('image/jpeg');
 
-							resolve({file: value.file, dataURL: dataURL});
+							resolve({ file: value.file, dataURL: dataURL });
 						};
 
 						img.onerror = function (error) {
@@ -878,7 +878,7 @@
 						};
 					} else {
 						// For non-image files, bypass canvas and directly resolve
-						resolve({file: value.file, dataURL: null});
+						resolve({ file: value.file, dataURL: null });
 					}
 				});
 			}
@@ -1725,7 +1725,7 @@
 	</script>
 	<script th:inline="javascript">
 		/*<![CDATA[*/
-		var dues = [[${module}]]; // Thymeleaf data injected into JavaScript
+		var dues = [[${ module }]]; // Thymeleaf data injected into JavaScript
 		// Thymeleaf data injected into JavaScript
 
 		/*]]>*/
@@ -1772,7 +1772,7 @@
 							var overdue_amt = (adj_amt - flow_amt) < 0 ? (flow_amt - adj_amt).toFixed(2) : "0.00";
 
 							// Store data in an array for potential combination logic
-							tempData.push({flow_date, flow_code, flow_amt, adj_amt, adj_dt, overdue_amt});
+							tempData.push({ flow_date, flow_code, flow_amt, adj_amt, adj_dt, overdue_amt });
 
 							totalFlowAmt += flow_amt;
 							totalAdjAmt += adj_amt;
@@ -1982,7 +1982,7 @@
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
-				body: new URLSearchParams({UserId: userId})
+				body: new URLSearchParams({ UserId: userId })
 			})
 				.then(response => response.text())
 				.then(data => {
@@ -2146,89 +2146,89 @@
 
 	<script type="text/javascript">
 
-		
 
 
-let currentPage = 1;
-const limit = 200;
 
-document.addEventListener('DOMContentLoaded', function () {
+		let currentPage = 1;
+		const limit = 200;
+
+		document.addEventListener('DOMContentLoaded', function () {
 			handleFilterChange(1); // Initial load
 			console.log("init");
 		});
 
-function handleFilterChange(page = 1) {
-    const filterValue = document.getElementById('approvedfilter').value;
-    let url = '';
+		function handleFilterChange(page = 1) {
+			const filterValue = document.getElementById('approvedfilter').value;
+			let url = '';
 
-    if (filterValue === 'ALL') url = './AllApprovedCust';
-    else if (filterValue === 'APPROVED') url = './ApprovedCust';
-    else if (filterValue === 'NOTAPPROVED') url = './NotApprovedCust';
-	else url = './AllApprovedCust';
+			if (filterValue === 'ALL') url = './AllApprovedCust';
+			else if (filterValue === 'APPROVED') url = './ApprovedCust';
+			else if (filterValue === 'NOTAPPROVED') url = './NotApprovedCust';
+			else url = './AllApprovedCust';
 
-	console.log(url);
-	document.getElementById('loadingModal').style.display = 'flex';
+			console.log(url);
+			document.getElementById('loadingModal').style.display = 'flex';
 
-    if (url) {
-        $.ajax({
-            url: url,
-            type: 'GET',
-            data: { page, limit },
-            success: function (response) {
-                updateTable(response.data);
-				console.log(response.data);
-                updatePagination(response.currentPage, response.totalPages);
-            },
-            error: function (err) {
-                console.error('Error fetching data:', err);
-            },
-				complete: function () {
-					// Hide loading modal after success or error
-					document.getElementById('loadingModal').style.display = 'none';
-				}
-        });
-    }
-}
+			if (url) {
+				$.ajax({
+					url: url,
+					type: 'GET',
+					data: { page, limit },
+					success: function (response) {
+						updateTable(response.data);
+						console.log(response.data);
+						updatePagination(response.currentPage, response.totalPages);
+					},
+					error: function (err) {
+						console.error('Error fetching data:', err);
+					},
+					complete: function () {
+						// Hide loading modal after success or error
+						document.getElementById('loadingModal').style.display = 'none';
+					}
+				});
+			}
+		}
 
-function updatePagination(current, total) {
-    $('#pagination').html(`
-        <button ${current <= 1 ? 'disabled' : ''} onclick="handleFilterChange(${current-1})" class="btn-primary big-btn">Prev</button>
+		function updatePagination(current, total) {
+			$('#pagination').html(`
+        <button ${current <= 1 ? 'disabled' : ''} onclick="handleFilterChange(${current - 1})" class="btn-primary big-btn">Prev</button>
         <span class="mx-2">Page ${current} of ${total}</span>
-        <button ${current >= total ? 'disabled' : ''} onclick="handleFilterChange(${current+1})" class="btn-primary big-btn">Next</button>
+        <button ${current >= total ? 'disabled' : ''} onclick="handleFilterChange(${current + 1})" class="btn-primary big-btn">Next</button>
     `);
-}
+		}
 
 
 
-	function updateTable(data, currentPage = 1, limit = 200) {
-    // Determine which table to update based on module
-    const tableSelector = dues === 'module1' ? '#usertable1' : '#usertable';
+		function updateTable(data, currentPage = 1, limit = 200) {
+			// Determine which table to update based on module
+			const tableSelector = dues === 'module1' ? '#usertable1' : '#usertable';
 
-    // Clear the table body before appending new rows
-    $(tableSelector).empty();
+			// Clear the table body before appending new rows
+			$(tableSelector).empty();
 
-    if (!data || data.length === 0) {
-        const noDataRow = `
+			if (!data || data.length === 0) {
+				const noDataRow = `
             <tr style="font-size:14px">
-                <td colspan="6" style="text-align:center; color: red;">No data available</td>
+                <td colspan="8" style="text-align:center; color: red;">No data available</td>
             </tr>
         `;
-        $(tableSelector).append(noDataRow);
-        return;
-    }
+				$(tableSelector).append(noDataRow);
+				return;
+			}
 
-    data.forEach((item, index) => {
-        let rowNumber = (currentPage - 1) * limit + (index + 1);
+			data.forEach((item, index) => {
+				let rowNumber = (currentPage - 1) * limit + (index + 1);
 
-        let birthDate = item?.birth_date
-            ? new Date(item.birth_date).toLocaleDateString('en-GB', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric'
-              }).replace(/\//g, '-')
-            : '05-12-1920';
+				let birthDate = item?.birth_date
+					? new Date(item.birth_date).toLocaleDateString('en-GB', {
+						day: '2-digit',
+						month: '2-digit',
+						year: 'numeric'
+					}).replace(/\//g, '-')
+					: '05-12-1920';
 
-        const row = `
+				const row = `
             <tr style="font-size:14px" class="userlist">
                 <td>${rowNumber}</td>
                 <td class="text-primary"
@@ -2240,13 +2240,15 @@ function updatePagination(current, total) {
                 <td>${(item?.first_name || '') + ' ' + (item?.last_name || '')}</td>
                 <td>${birthDate}</td>
                 <td>${item?.assigned_branch_key || ''}</td>
+                <td>${item?.mobile_phone || ''}</td>
+                <td>${item?.email_address || ''}</td>
                 <td>${item?.client_state || ''}</td>
             </tr>
         `;
 
-        $(tableSelector).append(row);
-    });
-}
+				$(tableSelector).append(row);
+			});
+		}
 
 		function getAcctDetails() {
 			var id = document.getElementById('customer_id').value;
@@ -2254,7 +2256,7 @@ function updatePagination(current, total) {
 
 			$.ajax({
 				url: './getAccDet',
-				data: {id: id},
+				data: { id: id },
 				type: 'GET',
 				success: function (data) {
 					console.log("Data received:", data);
@@ -2399,56 +2401,182 @@ function updatePagination(current, total) {
 	<script>
 
 		$(document).ready(
-	function () {
-	$('.filterable .btn-filter').click(
-	function () {
-	 var $panel = $(this).parents(
-	'.filterable'), $filters = $panel
-	.find('.filters input'), $tbody = $panel
-	.find('.table tbody');
-	if ($filters.prop('disabled') == true) {
-	$filters.prop('disabled', false);
-	$filters.first().focus();
-	} else {
-	$filters.val('').prop('disabled', true);
-	$tbody.find('.no-result').remove();
-	$tbody.find('tr').show();
-	}
-});
-	});
+			function () {
+				$('.filterable .btn-filter').click(
+					function () {
+						var $panel = $(this).parents(
+							'.filterable'), $filters = $panel
+								.find('.filters input'), $tbody = $panel
+									.find('.table tbody');
+						if ($filters.prop('disabled') == true) {
+							$filters.prop('disabled', false);
+							$filters.first().focus();
+						} else {
+							$filters.val('').prop('disabled', true);
+							$tbody.find('.no-result').remove();
+							$tbody.find('tr').show();
+						}
+					});
+			});
 
-$(document).ready(function () {
-    $("#customerIdFilter").on("keypress", function (e) {
-        if (e.which === 13) { // ENTER key
-            let customerId = $(this).val().trim();
+		function handleMultipleFilterChange() {
+			// Disable all filter inputs first
+			$("#customerIdFilter, #emailFilter, #nationalIdFilter, #mobileFilter").prop("disabled", true).val("");
 
-			if(customerId === ""){
-				handleFilterChange(1);
+			// Get selected filter
+			let selected = $("#filterselect").val();
+
+			if (selected === "Email") {
+				$("#emailFilter").prop("disabled", false).focus();
+			} else if (selected === "Customer_ID") { // you mapped as Customer ID
+				$("#customerIdFilter").prop("disabled", false).focus();
+			} else if (selected === "Mobile_No") { // National Id / Mobile No (need unique values)
+				$("#mobileFilter").prop("disabled", false).focus();
+			}
+		}
+
+		$(document).ready(function () {
+			$("#emailFilter").on("keypress", function (e) {
+				if (e.which === 13) { // ENTER key
+					let email = $(this).val().trim();
+
+					if (email === "") {
+						handleFilterChange(1);
+						return;
+					}
+					document.getElementById('loadingModal').style.display = 'flex';
+					$.ajax({
+						url: "customers/emailsearch",
+						type: "GET",
+						data: { email: email },
+						success: function (response) {
+							let rows = "";
+							if (response.length > 0) {
+								updateTable(response);
+							}
+						},
+						error: function () {
+							$("#usertable").html(`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`);
+						},
+						complete: function () {
+							// Hide loading modal after success or error
+							document.getElementById('loadingModal').style.display = 'none';
+						}
+					});
+				}
+			});
+		});
+
+
+		$(document).ready(function () {
+			$("#mobileFilter").on("keypress", function (e) {
+				if (e.which === 13) { // ENTER key
+					let mobile = $(this).val().trim();
+
+					if (mobile === "") {
+						handleFilterChange(1);
+						return;
+					}
+					document.getElementById('loadingModal').style.display = 'flex';
+					$.ajax({
+						url: "customers/mobilesearch",
+						type: "GET",
+						data: { mobile: mobile },
+						success: function (response) {
+							let rows = "";
+							if (response.length > 0) {
+								updateTable(response);
+							}
+						},
+						error: function () {
+							$("#usertable").html(`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`);
+						},
+						complete: function () {
+							// Hide loading modal after success or error
+							document.getElementById('loadingModal').style.display = 'none';
+						}
+					});
+				}
+			});
+		});
+
+
+		$(document).ready(function () {
+			$("#customerIdFilter").on("keypress", function (e) {
+				if (e.which === 13) { // ENTER key
+					let customerId = $(this).val().trim();
+
+					if (customerId === "") {
+						handleFilterChange(1);
+						return;
+					}
+					document.getElementById('loadingModal').style.display = 'flex';
+					$.ajax({
+						url: "customers/search",
+						type: "GET",
+						data: { customerId: customerId },
+						success: function (response) {
+							let rows = "";
+							if (response.length > 0) {
+								updateTable(response);
+							}
+						},
+						error: function () {
+							$("#usertable").html(`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`);
+						},
+						complete: function () {
+							// Hide loading modal after success or error
+							document.getElementById('loadingModal').style.display = 'none';
+						}
+					});
+				}
+			});
+		});
+
+
+		function handleStatus(){
+
+			let status = $("#filterselect2").val();
+
+			// If default option selected, load pagination (or reset table)
+			if (status === "Status" || status.trim() === "") {
+				handleFilterChange(1);  // your default pagination function
 				return;
 			}
-			document.getElementById('loadingModal').style.display = 'flex';
-            $.ajax({
-                url: "customers/search",
-                type: "GET",
-                data: { customerId: customerId },
-                success: function (response) {
-                    let rows = "";
-                    if (response.length > 0) {
-						updateTable(response);
-                    } 
-                },
-                error: function () {
-                    $("#usertable").html(`<tr><td colspan="6" class="text-center text-danger">Error fetching data</td></tr>`);
-                },
-				complete: function () {
-					// Hide loading modal after success or error
-					document.getElementById('loadingModal').style.display = 'none';
-				}
-            });
+
+    		document.getElementById('loadingModal').style.display = 'flex';
+
+					$.ajax({
+        url: "customers/statusSearch",
+        type: "GET",
+        data: { status: status },
+        success: function (response) {
+            if (response && response.length > 0) {
+                updateTable(response);  // same table update function you already have
+            } else {
+                $("#usertable").html(
+                    `<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
+                );
+            }
+        },
+        error: function () {
+            $("#usertable").html(
+                `<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
+            );
+        },
+        complete: function () {
+            document.getElementById('loadingModal').style.display = 'none';
         }
     });
-});
-</script>
+}
+
+
+
+
+
+
+
+	</script>
 
 
 	<script>
@@ -2531,19 +2659,54 @@ $(document).ready(function () {
 									MAINTENANCE - LIST</h6>
 							</div>
 
-							<button type="button" class="btn-primary big-btn float-right"
-								onclick="downloadExcel('CUSTOMER')">Download</button>
-							<button class="btn-primary big-btn btn-filter float-right"style="margin-right: 5px;">Filter</button>
-							<div class="float-right mr-4"
-								th:style="${module == 'module2'} ? 'display:block;' : 'display:none;'">
 
-								<select class="form-control-sm bg-white ml-2 w-100" id="approvedfilter"
-									onchange="handleFilterChange(1)" style="background-color: #e3e3e4;">
-									<option value="ALL" selected>All</option>
-									<option value="NOTAPPROVED">UnVerified</option>
-									<option value="APPROVED">Verified</option>
-								</select>
+
+
+
+							<!-- <button class="btn-primary big-btn btn-filter float-right"style="margin-right: 5px;">Filter</button> -->
+							<div class="float-right d-flex justify-content-end mr-4">
+								
+								<div class="mr-4"
+									th:style="${module == 'module1' || module =='module2'} ? 'display:block;' : 'display:none;'">
+
+									<select class="form-control-sm bg-white ml-2 w-100" id="filterselect2"
+										onchange="handleStatus()" style="background-color: #e3e3e4;">
+										<option>Status</option>
+										<option value="ACTIVE">ACTIVE</option>
+										<option value="INACTIVE">INACTIVE</option>
+										<option value="BLACKLISTED">BLACKLISTED</option>
+										<option value="EXITED">EXITED</option>
+										<option value="PENDING_APPROVAL">PENDING_APPROVAL</option>	
+										<option value="REJECTED">REJECTED</option>	
+									</select>
+								</div>
+								
+								<div class="mr-4"
+									th:style="${module == 'module1' || module =='module2'} ? 'display:block;' : 'display:none;'">
+
+									<select class="form-control-sm bg-white ml-2 w-100" id="filterselect"
+										onchange="handleMultipleFilterChange()" style="background-color: #e3e3e4;">
+										<option>Select Filter</option>
+										<option value="Email">Email</option>
+										<option value="Customer_ID">Customer ID</option>
+										<!-- <option value="National_ID">National Id</option> -->
+										<option value="Mobile_No">Mobile No</option>
+									</select>
+								</div>
+								<div class="mr-4"
+									th:style="${module == 'module2'} ? 'display:block;' : 'display:none;'">
+
+									<select class="form-control-sm bg-white ml-2 w-100" id="approvedfilter"
+										onchange="handleFilterChange(1)" style="background-color: #e3e3e4;">
+										<option value="ALL" selected>All</option>
+										<option value="NOTAPPROVED">UnVerified</option>
+										<option value="APPROVED">Verified</option>
+									</select>
+								</div>
+								<button type="button" class="btn-primary big-btn"
+									onclick="downloadExcel('CUSTOMER')">Download</button>
 							</div>
+
 
 						</div>
 						<div class="card-body" style="overflow-y: auto; border: 1px solid #ddd;">
@@ -2552,18 +2715,21 @@ $(document).ready(function () {
 									style="margin-bottom: 0px; font-size: initial;">
 									<thead class="thead-light"
 										style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
-									<tr class="filters">
-										<th style="width: 2%">S.NO</th>
-										<th style="width: 4%">
-										<input type="text" id="customerIdFilter" 
-												class="form-control"
-												placeholder="CUSTOMER ID" disabled>
-										</th>
-										<th style="width: 10%">CUSTOMER NAME</th>
-										<th style="width: 5%">DOB</th>
-										<th style="width: 5%">BRANCH ID</th>
-										<th style="width: 5%">STATUS</th>
-									</tr>
+										<tr class="filters">
+											<th style="width: 2%">S.NO</th>
+											<th style="width: 6%">
+												<input type="text" id="customerIdFilter" class="form-control"
+													placeholder="CUSTOMER ID" disabled>
+											</th>
+											<th style="width: 6%">CUSTOMER NAME</th>
+											<th style="width: 5%">DOB</th>
+											<th style="width: 5%">BRANCH ID</th>
+											<th style="width: 5%"><input type="text" id="mobileFilter"
+													class="form-control" placeholder="Mobile No" disabled></th>
+											<th style="width: 5%"><input type="text" id="emailFilter"
+													class="form-control" placeholder="Email" disabled></th>
+											<th style="width: 5%">STATUS</th>
+										</tr>
 									</thead>
 									<tbody th:if="${formmode}=='list' and ${module == 'module1'}" id="usertable1">
 										<!-- <tr th:each="list, iterator : ${list}" class="userlist">
@@ -2581,7 +2747,7 @@ $(document).ready(function () {
 
 										</tr> -->
 									</tbody>
-									
+
 									<tbody th:if="${formmode}=='list' and ${module == 'module2'}" id="usertable">
 										<!-- <tr th:each="list, iterator : ${list}" class="userlist">
 												<td style="font-size: 14px" th:text="${iterator.index +1}"></td>
@@ -2607,7 +2773,7 @@ $(document).ready(function () {
 								</table>
 							</div>
 						</div>
-						
+
 						<div id="pagination" class="d-flex justify-content-center my-2"></div>
 
 						<div class="card-footer text-center">

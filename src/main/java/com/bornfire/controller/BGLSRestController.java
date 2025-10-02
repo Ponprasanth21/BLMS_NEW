@@ -9220,7 +9220,26 @@ public List<LOAN_ACT_MST_ENTITY> searchLoan(@RequestParam String loanId) {
     return lOAN_ACT_MST_REPO.searchByLoanIdLike(loanId.trim());
 }
 
+@GetMapping("customers/mobilesearch")
+public List<CLIENT_MASTER_ENTITY> searchMobileCustomers(@RequestParam String mobile) {
+    if (mobile == null || mobile.trim().isEmpty()) {
+        return clientMasterRepo.findAll(); // return all if nothing entered
+    }
+    return clientMasterRepo.searchByMobileLike(mobile);
+}
 
+@GetMapping("customers/emailsearch")
+public List<CLIENT_MASTER_ENTITY> searchEmailCustomers(@RequestParam String email) {
+    if (email == null || email.trim().isEmpty()) {
+        return clientMasterRepo.findAll(); // return all if nothing entered
+    }
+    return clientMasterRepo.searchByEmailLike(email);
+}
+
+@GetMapping("customers/statusSearch")
+public List<CLIENT_MASTER_ENTITY> searchByStatus(@RequestParam String status) {
+    return clientMasterRepo.findByStatus(status);
+}
 
 
 

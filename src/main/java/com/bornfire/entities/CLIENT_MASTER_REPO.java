@@ -175,4 +175,22 @@ void CustomerMasterCopyTempTableToMainTable();
 @Query(value = "DELETE FROM CLIENT_MASTER_TBL_UPLOAD", nativeQuery = true)
 int CustomerMasterTempTableDelete();
 
+@Query(value = "SELECT * FROM CLIENT_MASTER_TBL " +
+        "WHERE LOWER(MOBILE_PHONE) LIKE LOWER('%' || :mobile || '%')",
+nativeQuery = true)
+List<CLIENT_MASTER_ENTITY> searchByMobileLike(@Param("mobile") String customerId);
+
+@Query(value = "SELECT * FROM CLIENT_MASTER_TBL " +
+        "WHERE LOWER(EMAIL_ADDRESS) LIKE LOWER('%' || :email || '%')",
+nativeQuery = true)
+List<CLIENT_MASTER_ENTITY> searchByEmailLike(@Param("email") String customerId);
+
+@Query(value = "SELECT * FROM CLIENT_MASTER_TBL " +
+        "WHERE client_state = :status FETCH FIRST 2000 ROWS ONLY",
+nativeQuery = true)
+List<CLIENT_MASTER_ENTITY> findByStatus(@Param("status") String status);
+
+
+
+
 }
