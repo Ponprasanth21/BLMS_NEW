@@ -191,6 +191,26 @@ nativeQuery = true)
 List<CLIENT_MASTER_ENTITY> findByStatus(@Param("status") String status);
 
 
+@Query(value = "SELECT * FROM CLIENT_MASTER_TBL " +
+        "WHERE LOWER(CUSTOMER_ID) LIKE LOWER('%' || :customerId || '%') " +
+        "AND (:status IS NULL OR CLIENT_STATE = :status) FETCH FIRST 2000 ROWS ONLY",
+        nativeQuery = true)
+List<CLIENT_MASTER_ENTITY> searchByCustomerIdAndStatus(@Param("customerId") String customerId,
+                                                       @Param("status") String status);
+
+@Query(value = "SELECT * FROM CLIENT_MASTER_TBL " +
+        "WHERE LOWER(MOBILE_PHONE) LIKE LOWER('%' || :mobile || '%') " +
+        "AND (:status IS NULL OR CLIENT_STATE = :status) FETCH FIRST 2000 ROWS ONLY",
+        nativeQuery = true)
+List<CLIENT_MASTER_ENTITY> searchByMobileAndStatus(@Param("mobile") String mobile,
+                                                   @Param("status") String status);
+
+@Query(value = "SELECT * FROM CLIENT_MASTER_TBL " +
+        "WHERE LOWER(EMAIL_ADDRESS) LIKE LOWER('%' || :email || '%') " +
+        "AND (:status IS NULL OR CLIENT_STATE = :status) FETCH FIRST 2000 ROWS ONLY",
+        nativeQuery = true)
+List<CLIENT_MASTER_ENTITY> searchByEmailAndStatus(@Param("email") String email,
+                                                  @Param("status") String status);
 
 
 }

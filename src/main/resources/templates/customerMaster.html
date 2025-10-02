@@ -2436,42 +2436,45 @@
 		}
 
 		$(document).ready(function () {
-			$("#emailFilter").on("keypress", function (e) {
-				if (e.which === 13) { // ENTER key
-					let email = $(this).val().trim();
+		$("#emailFilter").on("keypress", function (e) {
+			if (e.which === 13) { 
+				let email = $(this).val().trim();
+				console.log(email);
+				let status = $("#filterselect2").val(); 
+				console.log(status); // <-- get selected status
 
-					if (email === "") {
-						handleFilterChange(1);
-						return;
-					}
-					document.getElementById('loadingModal').style.display = 'flex';
-					$.ajax({
-						url: "customers/emailsearch",
-						type: "GET",
-						data: { email: email },
-						success: function (response) {
-							let rows = "";
-							if (response.length > 0) {
-								updateTable(response);
-							}
-						},
-						error: function () {
-							$("#usertable").html(`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`);
-						},
-						complete: function () {
-							// Hide loading modal after success or error
-							document.getElementById('loadingModal').style.display = 'none';
-						}
-					});
+				if (email === "") {
+					handleFilterChange(1);
+					return;
 				}
-			});
+
+				document.getElementById('loadingModal').style.display = 'flex';
+				$.ajax({
+					url: "customers/emailsearch",
+					type: "GET",
+					data: { email: email, status: status }, // send both email + status
+					success: function (response) {
+						if (response.length > 0) {
+							updateTable(response);
+						}
+					},
+					error: function () {
+						$("#usertable").html(`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`);
+					},
+					complete: function () {
+						document.getElementById('loadingModal').style.display = 'none';
+					}
+				});
+			}
 		});
+	});
 
 
 		$(document).ready(function () {
 			$("#mobileFilter").on("keypress", function (e) {
 				if (e.which === 13) { // ENTER key
 					let mobile = $(this).val().trim();
+					let status = $("#filterselect2").val();  // <-- get selected status
 
 					if (mobile === "") {
 						handleFilterChange(1);
@@ -2481,7 +2484,7 @@
 					$.ajax({
 						url: "customers/mobilesearch",
 						type: "GET",
-						data: { mobile: mobile },
+						data: { mobile: mobile , status: status },
 						success: function (response) {
 							let rows = "";
 							if (response.length > 0) {
@@ -2505,6 +2508,7 @@
 			$("#customerIdFilter").on("keypress", function (e) {
 				if (e.which === 13) { // ENTER key
 					let customerId = $(this).val().trim();
+					let status = $("#filterselect2").val();  // <-- get selected status
 
 					if (customerId === "") {
 						handleFilterChange(1);
@@ -2514,7 +2518,7 @@
 					$.ajax({
 						url: "customers/search",
 						type: "GET",
-						data: { customerId: customerId },
+						data: { customerId: customerId , status: status },
 						success: function (response) {
 							let rows = "";
 							if (response.length > 0) {

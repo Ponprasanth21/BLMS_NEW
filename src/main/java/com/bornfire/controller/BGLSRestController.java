@@ -9204,13 +9204,13 @@ public Map<String, Object> getLoans(
 }
 
 
-@GetMapping("customers/search")
-public List<CLIENT_MASTER_ENTITY> searchCustomers(@RequestParam String customerId) {
-    if (customerId == null || customerId.trim().isEmpty()) {
-        return clientMasterRepo.findAll(); // return all if nothing entered
-    }
-    return clientMasterRepo.searchByCustomerIdLike(customerId);
-}
+//@GetMapping("customers/search")
+//public List<CLIENT_MASTER_ENTITY> searchCustomers(@RequestParam String customerId) {
+//    if (customerId == null || customerId.trim().isEmpty()) {
+//        return clientMasterRepo.findAll(); // return all if nothing entered
+//    }
+//    return clientMasterRepo.searchByCustomerIdLike(customerId);
+//}
 
 
 @GetMapping("loan/search")
@@ -9221,21 +9221,21 @@ public List<LOAN_ACT_MST_ENTITY> searchLoan(@RequestParam String loanId) {
     return lOAN_ACT_MST_REPO.searchByLoanIdLike(loanId.trim());
 }
 
-@GetMapping("customers/mobilesearch")
-public List<CLIENT_MASTER_ENTITY> searchMobileCustomers(@RequestParam String mobile) {
-    if (mobile == null || mobile.trim().isEmpty()) {
-        return clientMasterRepo.findAll(); // return all if nothing entered
-    }
-    return clientMasterRepo.searchByMobileLike(mobile);
-}
-
-@GetMapping("customers/emailsearch")
-public List<CLIENT_MASTER_ENTITY> searchEmailCustomers(@RequestParam String email) {
-    if (email == null || email.trim().isEmpty()) {
-        return clientMasterRepo.findAll(); // return all if nothing entered
-    }
-    return clientMasterRepo.searchByEmailLike(email);
-}
+//@GetMapping("customers/mobilesearch")
+//public List<CLIENT_MASTER_ENTITY> searchMobileCustomers(@RequestParam String mobile) {
+//    if (mobile == null || mobile.trim().isEmpty()) {
+//        return clientMasterRepo.findAll(); // return all if nothing entered
+//    }
+//    return clientMasterRepo.searchByMobileLike(mobile);
+//}
+//
+//@GetMapping("customers/emailsearch")
+//public List<CLIENT_MASTER_ENTITY> searchEmailCustomers(@RequestParam String email) {
+//    if (email == null || email.trim().isEmpty()) {
+//        return clientMasterRepo.findAll(); // return all if nothing entered
+//    }
+//    return clientMasterRepo.searchByEmailLike(email);
+//}
 
 @GetMapping("customers/statusSearch")
 public List<CLIENT_MASTER_ENTITY> searchByStatus(@RequestParam String status) {
@@ -9252,6 +9252,32 @@ public List<Chart_Acc_Entity> filterChartAccounts(@RequestParam String type) {
     return chart_Acc_Rep.findAll();
 }
 
+@GetMapping("customers/mobilesearch")
+public List<CLIENT_MASTER_ENTITY> searchMobileCustomers(@RequestParam String mobile,
+                                                        @RequestParam(required = false) String status) {
+    if (((status == null || status.trim().isEmpty() || status.equals("Status")))) {
+        return clientMasterRepo.searchByMobileLike(mobile); // default fetch first 2000
+    }
+    return clientMasterRepo.searchByMobileAndStatus(mobile, status);
+}
+
+@GetMapping("customers/emailsearch")
+public List<CLIENT_MASTER_ENTITY> searchEmailCustomers(@RequestParam String email,
+                                                       @RequestParam(required = false) String status) {
+    if (((status == null || status.trim().isEmpty() || status.equals("Status")))) {
+        return clientMasterRepo.searchByEmailLike(email);
+    }
+    return clientMasterRepo.searchByEmailAndStatus(email, status);
+}
+
+@GetMapping("customers/search")
+public List<CLIENT_MASTER_ENTITY> searchCustomers(@RequestParam String customerId,
+                                                  @RequestParam(required = false) String status) {
+    if (((status == null || status.trim().isEmpty() || status.equals("Status")))) {
+        return clientMasterRepo.searchByCustomerIdLike(customerId);
+    }
+    return clientMasterRepo.searchByCustomerIdAndStatus(customerId, status);
+}
 
 
 
