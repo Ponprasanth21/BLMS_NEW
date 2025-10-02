@@ -190,10 +190,16 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
     int insertFromOldTable();
 
 	
+	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL ORDER BY id OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
+	List<LOAN_ACT_MST_ENTITY> getLoanActDetPaged(@Param("offset") int offset, @Param("limit") int limit);
+
     @Query(value = "SELECT *\r\n"
     		+ "FROM LOAN_ACCOUNT_MASTER_TBL\r\n"
     		+ "FETCH FIRST 100 ROWS ONLY", nativeQuery = true)
-	List<LOAN_ACT_MST_ENTITY> getLoanActDet();
+	List<LOAN_ACT_MST_ENTITY> getLoanActDet1();
+	
+	@Query(value = "SELECT COUNT(*) FROM LOAN_ACCOUNT_MASTER_TBL", nativeQuery = true)
+	Long getTotalLoans();
 
 	@Query(value = "SELECT * \r\n" + "FROM LOAN_ACCOUNT_MASTER_TBL \r\n" + "WHERE ENCODED_KEY IN (\r\n"
 			+ "    SELECT PARENT_ACCOUNT_KEY \r\n" + "    FROM LOAN_REPAYMENT_TBL \r\n"
@@ -320,11 +326,11 @@ Object[] getCustomer(@Param("tran_date") Date tran_date,
 List<Object[]> getDues(String encodedKey);
 
 
-	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL where  last_modified_date > approved_date", nativeQuery = true)
-	List<LOAN_ACT_MST_ENTITY> getLoanActFilterUnverified();
-
-	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL where  last_modified_date < approved_date", nativeQuery = true)
-	List<LOAN_ACT_MST_ENTITY> getLoanActFilterVerified();
+//	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL where  last_modified_date > approved_date", nativeQuery = true)
+//	List<LOAN_ACT_MST_ENTITY> getLoanActFilterUnverified();
+//
+//	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL where  last_modified_date < approved_date", nativeQuery = true)
+//	List<LOAN_ACT_MST_ENTITY> getLoanActFilterVerified();
 
 	@Query(value = "SELECT CASE WHEN last_modified_date > approved_date THEN 1 ELSE 0 END "
 			+ "FROM LOAN_ACCOUNT_MASTER_TBL WHERE id = ?1", nativeQuery = true)
@@ -369,5 +375,33 @@ List<Object[]> getActNo();
  	@Transactional
  	@Query(value = "delete from LOAN_ACCOUNT_MASTER_TBL where id IN (:id)", nativeQuery = true)
  	int delteid(@Param("id") List<String> id);
+	
+	
+	// All loans (Oracle 12c+)
+	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL ORDER BY id OFFSET ?1 ROWS FETCH NEXT ?2 ROWS ONLY", nativeQuery = true)
+	List<LOAN_ACT_MST_ENTITY> getLoanActDet(int offset, int limit);
+
+	// Not Approved loans (last_modified_date > approved_date)
+	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL WHERE last_modified_date > approved_date ORDER BY id OFFSET ?1 ROWS FETCH NEXT ?2 ROWS ONLY", nativeQuery = true)
+	List<LOAN_ACT_MST_ENTITY> getLoanActFilterUnverified(int offset, int limit);
+
+	// Approved loans (last_modified_date < approved_date)
+	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL WHERE last_modified_date < approved_date ORDER BY id OFFSET ?1 ROWS FETCH NEXT ?2 ROWS ONLY", nativeQuery = true)
+	List<LOAN_ACT_MST_ENTITY> getLoanActFilterVerified(int offset, int limit);
+
+    // Count total rows (for pagination)
+    @Query(value = "SELECT COUNT(*) FROM LOAN_ACCOUNT_MASTER_TBL", nativeQuery = true)
+    int countAllLoans();
+
+    @Query(value = "SELECT COUNT(*) FROM LOAN_ACCOUNT_MASTER_TBL WHERE last_modified_date > approved_date", nativeQuery = true)
+    int countUnverifiedLoans();
+
+    @Query(value = "SELECT COUNT(*) FROM LOAN_ACCOUNT_MASTER_TBL WHERE last_modified_date < approved_date", nativeQuery = true)
+    int countVerifiedLoans();
+
+    @Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL " +
+            "WHERE LOWER(ID) LIKE LOWER('%' || :loanId || '%')",
+    nativeQuery = true)
+List<LOAN_ACT_MST_ENTITY> searchByLoanIdLike(@Param("loanId") String loanId);
  	
 }

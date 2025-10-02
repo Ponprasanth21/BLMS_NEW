@@ -343,51 +343,127 @@ function submitformverify() {
 	}
 </script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    handleFilterChange(); // Automatically apply the filter on page load
+// document.addEventListener('DOMContentLoaded', function() {
+//     handleFilterChange(); // Automatically apply the filter on page load
+// });
+
+// function handleFilterChange(){
+//     var a = document.getElementById('approvedfilter').value;
+    
+//     if (a === 'ALL') {
+     	 
+//         $.ajax({
+//             url: './AllApprovedLoanMain',
+//             type: 'GET',
+//             success: function(data) {
+//                 updateTable(data);
+//             },
+//             error: function(err) {
+//                 console.error('Error fetching data:', err);
+//             }
+//         });
+//     } else if (a === 'NOTAPPROVED') {
+   
+//         $.ajax({
+//             url: './NotApprovedLoanMain',
+//             type: 'GET',
+//             success: function(data) {
+//                 updateTable(data);
+//             },
+//             error: function(err) {
+//                 console.error('Error fetching data:', err);
+//             }
+//         });
+//     }else if (a === 'APPROVED') {
+   
+//         $.ajax({
+//             url: './ApprovedLoanMain',
+//             type: 'GET',
+//             success: function(data) {
+//                 updateTable(data);
+//             },
+//             error: function(err) {
+//                 console.error('Error fetching data:', err);
+//             }
+//         });
+//     }
+// }
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    loadLoans('ALL', 1); // Load first page on page load
 });
 
-function handleFilterChange(){
-    var a = document.getElementById('approvedfilter').value;
-    
-    if (a === 'ALL') {
-     	 
-        $.ajax({
-            url: './AllApprovedLoanMain',
-            type: 'GET',
-            success: function(data) {
-                updateTable(data);
-            },
-            error: function(err) {
-                console.error('Error fetching data:', err);
-            }
-        });
-    } else if (a === 'NOTAPPROVED') {
-   
-        $.ajax({
-            url: './NotApprovedLoanMain',
-            type: 'GET',
-            success: function(data) {
-                updateTable(data);
-            },
-            error: function(err) {
-                console.error('Error fetching data:', err);
-            }
-        });
-    }else if (a === 'APPROVED') {
-   
-        $.ajax({
-            url: './ApprovedLoanMain',
-            type: 'GET',
-            success: function(data) {
-                updateTable(data);
-            },
-            error: function(err) {
-                console.error('Error fetching data:', err);
-            }
-        });
-    }
+function handleFilterChange() {
+    const filterValue = document.getElementById('approvedfilter').value;
+    loadLoans(filterValue, 1); // reset to first page on filter change
 }
+
+function loadLoans(filter, page = 1) {
+    let url = '';
+    if (filter === 'ALL') url = './AllApprovedLoanMain';
+    else if (filter === 'NOTAPPROVED') url = './NotApprovedLoanMain';
+    else if (filter === 'APPROVED') url = './ApprovedLoanMain';
+
+	document.getElementById('loadingModal').style.display = 'flex';
+
+    $.ajax({
+        url: url,
+        type: 'GET',
+        data: { page: page, limit: 200 }, // 200 rows per page
+        success: function(response) {
+            updateTable(response.data);       // populate table
+            updatePagination(response.currentPage, response.totalPages, filter); // create pagination buttons
+        },
+        error: function(err) {
+            console.error('Error fetching data:', err);
+        },
+				complete: function () {
+					// Hide loading modal after success or error
+					document.getElementById('loadingModal').style.display = 'none';
+				}
+    });
+}
+
+function updateTable(data) {
+    const tbody = $('#loanfilterbody');
+    tbody.empty();
+
+    if (!data || data.length === 0) {
+        tbody.append(`<tr style="font-size:14px"><td colspan="6" class="text-center text-danger">No data available</td></tr>`);
+        return;
+    }
+
+    data.forEach((item, index) => {
+        tbody.append(`
+            <tr style="font-size:14px" class="userlist">
+                <td>${index + 1}</td>
+                <td class="text-primary" data-id="${item?.id}" data-account_holderkey="${item?.account_holderkey}" onclick="viewscreen(this);">
+                    ${item?.id || ''}
+                </td>
+                <td>${item?.loan_name || ''}</td>
+                <td>${item?.retailer_name || ''}</td>
+                <td>${item?.retailer_branch || ''}</td>
+                <td>${item?.account_state || ''}</td>
+            </tr>
+        `);
+    });
+}
+
+function updatePagination(current, total, filter) {
+    const paginationDiv = $('#pagination');
+    paginationDiv.empty();
+
+    if (total <= 1) return; // no pagination needed
+
+    let html = `<button class="btn btn-sm btn-primary mx-1" ${current <= 1 ? 'disabled' : ''} onclick="loadLoans('${filter}', ${current - 1})">Prev</button>`;
+    html += `<span class="mx-2">Page ${current} of ${total}</span>`;
+    html += `<button class="btn btn-sm btn-primary mx-1" ${current >= total ? 'disabled' : ''} onclick="loadLoans('${filter}', ${current + 1})">Next</button>`;
+
+    paginationDiv.html(html);
+}
+
 
 function updateTable(data) {
     // Clear the table body before appending new rows
@@ -417,9 +493,9 @@ function updateTable(data) {
                     ${item?.id}
                 </td>
                 <td>${item?.loan_name || ''}</td>
-                <td>${item?.retailer_name || 'TEST'}</td>
-                <td>${item?.retailer_branch || 'TEST'}</td>
-                <td>${item?.account_state || 'TEST'}</td>
+                <td>${item?.retailer_name || ''}</td>
+                <td>${item?.retailer_branch || ''}</td>
+                <td>${item?.account_state || ''}</td>
             </tr>
             `;
             // Append the new row to the table body
@@ -447,37 +523,84 @@ $(document).ready(
 	$tbody.find('tr').show();
 	}
 });
-
-$('.filterable .filters input').keyup(
-function (e) {
-/* Ignore tab key */
-	var code = e.keyCode || e.which;
-	if (code == '9')return;
-	/* Useful DOM data and selectors */
-	var $input = $(this), inputContent = $input
-		.val().toLowerCase(), $panel = $input
-		.parents('.filterable'), column = $panel
-		.find('.filters th')
-		.index($input.parents('th')), $table = $panel
-		.find('.table'), $rows = $table.find('tbody tr');
-		console.log($input);
-	/* Dirtiest filter function ever ;) */
-	var $filteredRows = $rows.filter(function () {
-	var value = $(this).find('td').eq(column).text().toLowerCase();
-	console.log(value);
-	return value.indexOf(inputContent) === -1;});
-	/* Clean previous no-result if exist */
-	$table.find('tbody .no-result').remove();
-	/* Show all rows, hide filtered ones (never do that outside of a demo ! xD) */
-	$rows.show();
-	$filteredRows.hide();
-	/* Prepend no-result row if all rows are filtered */
-	if ($filteredRows.length === $rows.length) {
-	$table.find('tbody').prepend(
-	$('<tr class="no-result text-center"><td colspan="'+ $table.find('.filters th').length+ '">No result found</td></tr>'));
-		}
 	});
+
+// $('.filterable .filters input').keyup(
+// function (e) {
+// /* Ignore tab key */
+// 	var code = e.keyCode || e.which;
+// 	if (code == '9')return;
+// 	/* Useful DOM data and selectors */
+// 	var $input = $(this), inputContent = $input
+// 		.val().toLowerCase(), $panel = $input
+// 		.parents('.filterable'), column = $panel
+// 		.find('.filters th')
+// 		.index($input.parents('th')), $table = $panel
+// 		.find('.table'), $rows = $table.find('tbody tr');
+// 		console.log($input);
+// 	/* Dirtiest filter function ever ;) */
+// 	var $filteredRows = $rows.filter(function () {
+// 	var value = $(this).find('td').eq(column).text().toLowerCase();
+// 	console.log(value);
+// 	return value.indexOf(inputContent) === -1;});
+// 	/* Clean previous no-result if exist */
+// 	$table.find('tbody .no-result').remove();
+// 	/* Show all rows, hide filtered ones (never do that outside of a demo ! xD) */
+// 	$rows.show();
+// 	$filteredRows.hide();
+// 	/* Prepend no-result row if all rows are filtered */
+// 	if ($filteredRows.length === $rows.length) {
+// 	$table.find('tbody').prepend(
+// 	$('<tr class="no-result text-center"><td colspan="'+ $table.find('.filters th').length+ '">No result found</td></tr>'));
+// 		}
+// 	});
+// });
+
+
+$(document).ready(function () {
+    $("#loanIdFilter").on("keypress", function (e) {
+        if (e.which === 13) { // ENTER key
+            let loanId = $(this).val().trim();
+
+            if (loanId === "") {
+                loadLoans('ALL', 1); // default paginated fetch
+                return;
+            }
+
+            document.getElementById('loadingModal').style.display = 'flex';
+
+            $.ajax({
+                url: "loan/search",
+                type: "GET",
+                data: { loanId: loanId },
+                success: function (response) {
+                    if (response && response.length > 0) {
+                        updateTable(response); // function to populate table rows
+                    } else {
+                        $("#loanTableBody").html(
+                            `<tr><td colspan="6" class="text-center text-warning">No results found</td></tr>`
+                        );
+                    }
+                },
+                error: function () {
+                    $("#loanTableBody").html(
+                        `<tr><td colspan="6" class="text-center text-danger">Error fetching data</td></tr>`
+                    );
+                },
+                complete: function () {
+                    document.getElementById('loadingModal').style.display = 'none';
+                }
+            });
+        }
+    });
 });
+
+
+
+
+
+
+
 </script>
 <script type="text/javascript">
 function viewcustid(element) { 
@@ -539,21 +662,14 @@ $(function () {
 							<div class="table-responsive" id="cardBody">
 								<table class="table  table-bordered  table-hover table-sm"
 									style="margin-bottom: 0px; font-size: initial;" id="usertable">
-									<thead class="thead-light"
-										style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+									<thead class="thead-light" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
 										<tr class="filters">
-											<th style="width: 6%;"><input type="text" style="width: 80px" class="form-control font-weight-bold"
-													placeholder="S.NO" disabled></th>
-											<th style="width: 10%;"><input type="text" style="width: 80px" class="form-control font-weight-bold"
-													placeholder="LOAN ID" disabled></th>
-											<th><input type="text" style="width: 100px" class="form-control font-weight-bold" placeholder="LOAN NAME"
-													disabled></th>
-											<th><input type="text" style="width: 80px" class="form-control font-weight-bold"
-													placeholder="RETAILER NAME" disabled></th>
-											<th><input type="text" style="width: 80px" class="form-control font-weight-bold"
-													placeholder="RETAILER BRANCH ID" disabled></th>
-											<th style="width: 10%;"><input type="text" style="width: 80px" class="form-control font-weight-bold"
-													placeholder="STATUS" disabled></th>
+											<th style="width: 6%;">S.NO</th>
+											<th style="width: 10%;"><input type="text" id="loanIdFilter" class="form-control" placeholder="LOAN ID" disabled></th>
+											<th>LOAN NAME</th>
+											<th>RETAILER NAME</th>
+											<th>RETAILER BRANCH ID</th>
+											<th style="width: 10%;">STATUS</th>
 										</tr>
 									</thead>
 									<tbody id="loanfilterbody">
@@ -570,6 +686,7 @@ $(function () {
 								</table>
 							</div>
 						</div>
+						<div id="pagination" class="d-flex justify-content-center my-2"></div>
 						<div class="card-footer text-center">
 							<button class="btn-primary big-btn" onclick="home()">Home</button>
 							<button class="btn-primary big-btn" onclick="back()">Back</button>

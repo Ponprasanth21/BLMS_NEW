@@ -2724,22 +2724,78 @@ public class BGLSRestController {
 		return bACP_CUS_PROFILE_REPO.getnotapproved();
 	}
 
-	@GetMapping("AllApprovedLoanMain")
-	public List<LOAN_ACT_MST_ENTITY> AllApprovedLoanMain(@RequestParam(required = false) String tran_id,
-			@RequestParam(required = false) String part_tran_id) {
-		return lOAN_ACT_MST_REPO.getLoanActDet();
-	}
+//	@GetMapping("AllApprovedLoanMain")
+//	public List<LOAN_ACT_MST_ENTITY> AllApprovedLoanMain(@RequestParam(required = false) String tran_id,
+//			@RequestParam(required = false) String part_tran_id) {
+//		return lOAN_ACT_MST_REPO.getLoanActDet();
+//	}
+//
+//	@GetMapping("NotApprovedLoanMain")
+//	public List<LOAN_ACT_MST_ENTITY> NotApprovedLoanMain() {
+//		return lOAN_ACT_MST_REPO.getLoanActFilterUnverified();
+//	}
+//
+//	@GetMapping("ApprovedLoanMain")
+//	public List<LOAN_ACT_MST_ENTITY> ApprovedLoanMain() {
+//		return lOAN_ACT_MST_REPO.getLoanActFilterVerified();
+//	}
 
-	@GetMapping("NotApprovedLoanMain")
-	public List<LOAN_ACT_MST_ENTITY> NotApprovedLoanMain() {
-		return lOAN_ACT_MST_REPO.getLoanActFilterUnverified();
-	}
+	
+	@GetMapping("/AllApprovedLoanMain")
+    public Map<String, Object> getAllLoans(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "200") int limit) {
 
-	@GetMapping("ApprovedLoanMain")
-	public List<LOAN_ACT_MST_ENTITY> ApprovedLoanMain() {
-		return lOAN_ACT_MST_REPO.getLoanActFilterVerified();
-	}
+        int totalItems = lOAN_ACT_MST_REPO.countAllLoans();
+        int totalPages = (int) Math.ceil((double) totalItems / limit);
+        int offset = (page - 1) * limit;
 
+        List<LOAN_ACT_MST_ENTITY> data = lOAN_ACT_MST_REPO.getLoanActDet(offset, limit);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", data);
+        response.put("currentPage", page);
+        response.put("totalPages", totalPages);
+        return response;
+    }
+
+    @GetMapping("/NotApprovedLoanMain")
+    public Map<String, Object> getNotApprovedLoans(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "200") int limit) {
+
+        int totalItems = lOAN_ACT_MST_REPO.countUnverifiedLoans();
+        int totalPages = (int) Math.ceil((double) totalItems / limit);
+        int offset = (page - 1) * limit;
+
+        List<LOAN_ACT_MST_ENTITY> data = lOAN_ACT_MST_REPO.getLoanActFilterUnverified(offset, limit);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", data);
+        response.put("currentPage", page);
+        response.put("totalPages", totalPages);
+        return response;
+    }
+
+    @GetMapping("/ApprovedLoanMain")
+    public Map<String, Object> getApprovedLoans(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "200") int limit) {
+
+        int totalItems = lOAN_ACT_MST_REPO.countVerifiedLoans();
+        int totalPages = (int) Math.ceil((double) totalItems / limit);
+        int offset = (page - 1) * limit;
+
+        List<LOAN_ACT_MST_ENTITY> data = lOAN_ACT_MST_REPO.getLoanActFilterVerified(offset, limit);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", data);
+        response.put("currentPage", page);
+        response.put("totalPages", totalPages);
+        return response;
+    }
+    
+    
 	@GetMapping("loanflowDetails")
 	public List<Map<String, Object>> loanflowDetails(
 			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
@@ -5460,19 +5516,43 @@ public class BGLSRestController {
 		}
 	}
 
+//	@GetMapping("AllApprovedCust")
+//	public List<CLIENT_MASTER_ENTITY> AllApprovedCust(
+//	        @RequestParam(required = false) String tran_id,
+//	        @RequestParam(required = false) String part_tran_id,
+//	        @RequestParam(required = false) Long limit) {
+//
+//	    // If limit is null or zero, return all 1000 rows
+//	    if (limit == null || limit == 0) {
+//	        return clientMasterRepo.getLoanActDetAll();
+//	    }
+//
+//	    return clientMasterRepo.getLoanActDet(limit);
+//	}
+	
+	
 	@GetMapping("AllApprovedCust")
-	public List<CLIENT_MASTER_ENTITY> AllApprovedCust(
-	        @RequestParam(required = false) String tran_id,
-	        @RequestParam(required = false) String part_tran_id,
-	        @RequestParam(required = false) Long limit) {
+	public Map<String, Object> AllApprovedCust(
+	        @RequestParam(defaultValue = "1") int page,  // current page number
+	        @RequestParam(defaultValue = "200") int limit) {  // records per page
+		
+		System.out.println(page+":"+limit);
+	    if (page < 1) page = 1;
 
-	    // If limit is null or zero, return all 1000 rows
-	    if (limit == null || limit == 0) {
-	        return clientMasterRepo.getLoanActDetAll();
-	    }
+	    Long offset = (long) ((page - 1) * limit);
+	    List<CLIENT_MASTER_ENTITY> data = clientMasterRepo.getLoanActDetPaged(offset, (long) limit);
+	    Long totalRecords = clientMasterRepo.getTotalCount();
+	    int totalPages = (int) Math.ceil((double) totalRecords / limit);
 
-	    return clientMasterRepo.getLoanActDet(limit);
+	    Map<String, Object> response = new HashMap<>(); 
+	    response.put("data", data);
+	    response.put("currentPage", page);
+	    response.put("totalPages", totalPages);
+	    response.put("totalRecords", totalRecords);
+
+	    return response;
 	}
+
 
 	@GetMapping("getAccDet")
 	public List<Object[]> getAccDet(@RequestParam(required = false) String id) {
@@ -5482,15 +5562,59 @@ public class BGLSRestController {
 		return clientMasterRepo.getAccDet(id);
 	}
 
+//	@GetMapping("NotApprovedCust")
+//	public List<CLIENT_MASTER_ENTITY> NotApprovedCust() {
+//		return clientMasterRepo.getLoanActFilterUnverified();
+//	}
+//
+//	@GetMapping("ApprovedCust")
+//	public List<CLIENT_MASTER_ENTITY> ApprovedCust() {
+//		return clientMasterRepo.getLoanActFilterVerified();
+//	}
+	
+	
 	@GetMapping("NotApprovedCust")
-	public List<CLIENT_MASTER_ENTITY> NotApprovedCust() {
-		return clientMasterRepo.getLoanActFilterUnverified();
+	public Map<String, Object> NotApprovedCust(
+	        @RequestParam(defaultValue = "1") int page,
+	        @RequestParam(defaultValue = "200") int limit) {
+
+	    if (page < 1) page = 1;
+	    long offset = (long) ((page - 1) * limit);
+
+	    List<CLIENT_MASTER_ENTITY> data = clientMasterRepo.getLoanActFilterUnverifiedPaged(offset, (long) limit);
+	    long totalRecords = clientMasterRepo.getUnverifiedCount();
+	    int totalPages = (int) Math.ceil((double) totalRecords / limit);
+
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("data", data);
+	    response.put("currentPage", page);
+	    response.put("totalPages", totalPages);
+	    response.put("totalRecords", totalRecords);
+
+	    return response;
 	}
 
 	@GetMapping("ApprovedCust")
-	public List<CLIENT_MASTER_ENTITY> ApprovedCust() {
-		return clientMasterRepo.getLoanActFilterVerified();
+	public Map<String, Object> ApprovedCust(
+	        @RequestParam(defaultValue = "1") int page,
+	        @RequestParam(defaultValue = "200") int limit) {
+
+	    if (page < 1) page = 1;
+	    long offset = (long) ((page - 1) * limit);
+
+	    List<CLIENT_MASTER_ENTITY> data = clientMasterRepo.getLoanActFilterVerifiedPaged(offset, (long) limit);
+	    long totalRecords = clientMasterRepo.getVerifiedCount();
+	    int totalPages = (int) Math.ceil((double) totalRecords / limit);
+
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("data", data);
+	    response.put("currentPage", page);
+	    response.put("totalPages", totalPages);
+	    response.put("totalRecords", totalRecords);
+
+	    return response;
 	}
+
 
 	@GetMapping("loanflowDetailsvalues")
 	public String loanflowDetailsvalues(@RequestParam(required = false) String accountNum) {
@@ -8917,6 +9041,7 @@ public String lmsSchemesAdd(@RequestBody BglsLmsSchemesEntity request,HttpServle
 	request.setEntityFlg("Y");
 	request.setModifyFlg("N");
 	request.setVerifyFlg("Y");
+	request.setCreationDate(new Date());
 	
 	
 	
@@ -9088,6 +9213,49 @@ public Map<String, Object> verifyScheme(@RequestBody Map<String, String> payload
         response.put("message", e.getMessage());
     }
     return response;
+}
+
+
+
+@RequestMapping("/api/loans")
+public Map<String, Object> getLoans(
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "200") int limit) {
+
+    if (page < 1) page = 1;
+    int offset = (page - 1) * limit;
+
+    // Fetch paged loans
+    List<LOAN_ACT_MST_ENTITY> loans = lOAN_ACT_MST_REPO.getLoanActDetPaged(offset, limit);
+    Long totalRecords = lOAN_ACT_MST_REPO.getTotalLoans();
+    int totalPages = (int) Math.ceil((double) totalRecords / limit);
+
+    // Prepare JSON response
+    Map<String, Object> response = new HashMap<>();
+    response.put("data", loans);
+    response.put("currentPage", page);
+    response.put("totalPages", totalPages);
+    response.put("totalRecords", totalRecords);
+
+    return response;
+}
+
+
+@GetMapping("customers/search")
+public List<CLIENT_MASTER_ENTITY> searchCustomers(@RequestParam String customerId) {
+    if (customerId == null || customerId.trim().isEmpty()) {
+        return clientMasterRepo.findAll(); // return all if nothing entered
+    }
+    return clientMasterRepo.searchByCustomerIdLike(customerId);
+}
+
+
+@GetMapping("loan/search")
+public List<LOAN_ACT_MST_ENTITY> searchLoan(@RequestParam String loanId) {
+    if (loanId == null || loanId.trim().isEmpty()) {
+        return lOAN_ACT_MST_REPO.getLoanActDet(0, 200); // default 200 rows
+    }
+    return lOAN_ACT_MST_REPO.searchByLoanIdLike(loanId.trim());
 }
 
 

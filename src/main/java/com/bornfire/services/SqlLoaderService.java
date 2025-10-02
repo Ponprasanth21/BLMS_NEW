@@ -64,7 +64,7 @@ public class SqlLoaderService {
                 if("LOAN".equalsIgnoreCase(uploadPage)) {
                 	lOAN_ACT_MST_REPO.insertFromOldTable();
                 }else if("CUSTOMER".equalsIgnoreCase(uploadPage)) {
-                	clientMasterRepo.insertFromClientMasterTest();
+//                	clientMasterRepo.insertFromClientMasterTest();
                 }
                 
                 System.out.println("SQL*Loader executed successfully!");

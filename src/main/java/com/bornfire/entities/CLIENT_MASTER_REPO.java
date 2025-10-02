@@ -27,13 +27,32 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
     
     @Query(value = "SELECT * FROM CLIENT_MASTER_TBL FETCH FIRST 1000 ROWS ONLY", nativeQuery = true)
     List<CLIENT_MASTER_ENTITY> getLoanActDetAll();
+    
+    @Query(value = "SELECT * FROM CLIENT_MASTER_TBL OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
+    List<CLIENT_MASTER_ENTITY> getLoanActDetPaged(@Param("offset") Long offset, @Param("limit") Long limit);
 
-     @Query(value = "SELECT * FROM CLIENT_MASTER_TBL where  last_modified_date > approved_date", nativeQuery = true)
-     List<CLIENT_MASTER_ENTITY> getLoanActFilterUnverified();
-     
-     @Query(value = "SELECT * FROM CLIENT_MASTER_TBL where  last_modified_date < approved_date", nativeQuery = true)
-     List<CLIENT_MASTER_ENTITY> getLoanActFilterVerified();
-     
+    // Total count for pagination
+    @Query(value = "SELECT COUNT(*) FROM CLIENT_MASTER_TBL", nativeQuery = true)
+    Long getTotalCount();
+    
+    @Query(value = "SELECT * FROM CLIENT_MASTER_TBL " +
+            "WHERE (:status IS NULL OR client_state = :status) " +
+            "ORDER BY CUSTOMER_ID " +
+            "OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
+List<CLIENT_MASTER_ENTITY> getFilteredClients(
+     @Param("status") String status,
+     @Param("offset") Long offset,
+     @Param("limit") Long limit);
+
+@Query(value = "SELECT COUNT(*) FROM CLIENT_MASTER_TBL WHERE (:status IS NULL OR client_state = :status)", nativeQuery = true)
+Long getFilteredClientsCount(@Param("status") String status);
+
+//     @Query(value = "SELECT * FROM CLIENT_MASTER_TBL where  last_modified_date > approved_date", nativeQuery = true)
+//     List<CLIENT_MASTER_ENTITY> getLoanActFilterUnverified();
+//     
+//     @Query(value = "SELECT * FROM CLIENT_MASTER_TBL where  last_modified_date < approved_date", nativeQuery = true)
+//     List<CLIENT_MASTER_ENTITY> getLoanActFilterVerified();
+//     
      @Query(value = "SELECT CASE WHEN last_modified_date > approved_date THEN 1 ELSE 0 END " +
              "FROM CLIENT_MASTER_TBL WHERE CUSTOMER_ID = ?1", nativeQuery = true)
      Integer getUnverifiedStatus(String id);
@@ -65,5 +84,23 @@ List<Object[]> getAccDet(String id);
  	int delteid(@Param("CUSTOMER_ID") List<String> CUSTOMER_ID);
  	
 
+ // Unverified - paginated
+    @Query(value = "SELECT * FROM CLIENT_MASTER_TBL WHERE last_modified_date > approved_date OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
+    List<CLIENT_MASTER_ENTITY> getLoanActFilterUnverifiedPaged(@Param("offset") Long offset, @Param("limit") Long limit);
+
+    @Query(value = "SELECT COUNT(*) FROM CLIENT_MASTER_TBL WHERE last_modified_date > approved_date", nativeQuery = true)
+    Long getUnverifiedCount();
+
+    // Verified - paginated
+    @Query(value = "SELECT * FROM CLIENT_MASTER_TBL WHERE last_modified_date < approved_date OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
+    List<CLIENT_MASTER_ENTITY> getLoanActFilterVerifiedPaged(@Param("offset") Long offset, @Param("limit") Long limit);
+
+    @Query(value = "SELECT COUNT(*) FROM CLIENT_MASTER_TBL WHERE last_modified_date < approved_date", nativeQuery = true)
+    Long getVerifiedCount();
   
+    @Query(value = "SELECT * FROM CLIENT_MASTER_TBL " +
+            "WHERE LOWER(CUSTOMER_ID) LIKE LOWER('%' || :customerId || '%')",
+    nativeQuery = true)
+List<CLIENT_MASTER_ENTITY> searchByCustomerIdLike(@Param("customerId") String customerId);
+
 }

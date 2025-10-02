@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -3534,7 +3535,7 @@ public class BGLSNavigationController {
 
 		if (formmode == null || formmode.equals("list")) {
 			md.addAttribute("formmode", "list");
-			md.addAttribute("list", LOAN_ACT_MST_REPO.getLoanActDet());
+			md.addAttribute("list", LOAN_ACT_MST_REPO.getLoanActDet1());
 		} else if (formmode.equals("view")) {
 			md.addAttribute("formmode", "view");
 			System.out.println(holder_key);
@@ -3591,51 +3592,86 @@ public class BGLSNavigationController {
 	}
 
 	@RequestMapping(value = "loanMaster", method = { RequestMethod.GET, RequestMethod.POST })
-	public String loanMaster(@RequestParam(required = false) String formmode, Model model, String customer_id, Model md,
-			HttpServletRequest request, @RequestParam(required = false) String id,
-			@RequestParam(required = false) String holder_key) {
-		String user = (String) request.getSession().getAttribute("USERID");
+	public String loanMaster(
+	        @RequestParam(required = false) String formmode,
+	        @RequestParam(defaultValue = "1") int page,
+	        @RequestParam(defaultValue = "200") int limit,
+	        Model model, Model md,
+	        HttpServletRequest request,
+	        @RequestParam(required = false) String id,
+	        @RequestParam(required = false) String holder_key) {
 
-		if (formmode == null || formmode.equals("loanscrn")) {
-			model.addAttribute("formmode", "loanscrn");
-		} else if (formmode.equals("viewloan")) {
-			model.addAttribute("formmode", "viewloan");
-			md.addAttribute("user", user);
-			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
-			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
-		} else if (formmode.equals("list")) {
-			model.addAttribute("formmode", "list");
-			md.addAttribute("list", LOAN_ACT_MST_REPO.getLoanActDet());
-			md.addAttribute("user", user);
-		}
-		return "Loan_Master.html";
+	    String user = (String) request.getSession().getAttribute("USERID");
+
+	    if (formmode == null || formmode.equals("loanscrn")) {
+	        model.addAttribute("formmode", "loanscrn");
+
+	    } else if (formmode.equals("viewloan")) {
+	        model.addAttribute("formmode", "viewloan");
+	        md.addAttribute("user", user);
+	        md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+	        md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
+
+	    } else if (formmode.equals("list")) {
+	        model.addAttribute("formmode", "list");
+	        md.addAttribute("user", user);
+	    }
+	    System.out.println("returned");
+	    return "Loan_Master.html";
 	}
+
 
 	/* Aishu */
 	@RequestMapping(value = "Loan_Maintenance", method = { RequestMethod.GET, RequestMethod.POST })
-	public String Loan_Maintanance(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req,
-			@RequestParam(required = false) String id, @RequestParam(required = false) String holder_key) {
+	public String Loan_Maintanance(
+	        @RequestParam(required = false) String formmode,
+	        Model md,
+	        HttpServletRequest req,
+	        @RequestParam(required = false) String id,
+	        @RequestParam(required = false) String holder_key,
+	        @RequestParam(defaultValue = "1") int page // page number for pagination
+	) {
 
-		if (formmode == null || formmode.equals("list")) {
-			md.addAttribute("formmode", "list");
-			md.addAttribute("list", LOAN_ACT_MST_REPO.getLoanActDet());
-		} else if (formmode.equals("view")) {
-			md.addAttribute("formmode", "view");
-			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
-			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
-			Integer unverifiedStatus = LOAN_ACT_MST_REPO.getUnverifiedStatus(id);
-			Boolean isUnverified = unverifiedStatus != null && unverifiedStatus == 1;
-			md.addAttribute("Boolean", isUnverified);
-		} else if (formmode.equals("modify")) {
-			md.addAttribute("formmode", "modify");
-			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
-			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
-		} else if (formmode.equals("verify")) {
-			md.addAttribute("formmode", "verify");
-			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
-			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
-		}
-		return "Loan_Maintenance";
+	    int limit = 200; // 200 rows per page
+	    int offset = (page - 1) * limit;
+
+	    if (formmode == null || formmode.equals("list")) {
+	        md.addAttribute("formmode", "list");
+
+	        // Fetch paginated loan list
+	        List<LOAN_ACT_MST_ENTITY> loanList = LOAN_ACT_MST_REPO.getLoanActDet(offset, limit);
+	        md.addAttribute("list", loanList);
+
+	        // Calculate total pages for pagination
+	        int totalItems = LOAN_ACT_MST_REPO.countAllLoans();
+	        int totalPages = (int) Math.ceil((double) totalItems / limit);
+	        md.addAttribute("currentPage", page);
+	        md.addAttribute("totalPages", totalPages);
+
+	    } else if (formmode.equals("view")) {
+	        md.addAttribute("formmode", "view");
+
+	        // Fetch loan details for view
+	        md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+	        md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
+
+	        // Check unverified status
+	        Integer unverifiedStatus = LOAN_ACT_MST_REPO.getUnverifiedStatus(id);
+	        Boolean isUnverified = unverifiedStatus != null && unverifiedStatus == 1;
+	        md.addAttribute("Boolean", isUnverified);
+
+	    } else if (formmode.equals("modify")) {
+	        md.addAttribute("formmode", "modify");
+	        md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+	        md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
+
+	    } else if (formmode.equals("verify")) {
+	        md.addAttribute("formmode", "verify");
+	        md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+	        md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
+	    }
+
+	    return "Loan_Maintenance";
 	}
 
 	@RequestMapping(value = "loanSchedule", method = { RequestMethod.GET, RequestMethod.POST })
@@ -4126,5 +4162,59 @@ public class BGLSNavigationController {
 	    md.addAttribute("parameters", bglsLmsSchemesRepo.findByUniqueId(id));
 	    return "BACP/PARAMETERUPDATE.html";
 	}
+	
+	
+
+	
+	
+	
+	@RequestMapping(value = "BalancingReport", method = RequestMethod.GET)
+	public String balanceReport(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String acct_num, String keyword, Model md, HttpServletRequest req) {
+		if (formmode == null || formmode.equals("list")) {
+			md.addAttribute("formmode", "list");
+			md.addAttribute("chartaccount", chart_Acc_Rep.getListoffice());
+		} else if (formmode.equals("add")) {
+			md.addAttribute("formmode", "add");
+			md.addAttribute("Chart1", reference_code_Rep.getReferenceCode("COA_01"));
+			md.addAttribute("Chart2", reference_code_Rep.getReferenceCode("COA_02"));
+			md.addAttribute("Chart3", reference_code_Rep.getReferenceCode("COA_03"));
+			md.addAttribute("Chart4", reference_code_Rep.getReferenceCode("COA_04"));
+			md.addAttribute("Chart5", reference_code_Rep.getReferenceCode("COA_05"));
+			md.addAttribute("Chart6", reference_code_Rep.getReferenceCode("COA_06"));
+			md.addAttribute("Chart7", reference_code_Rep.getReferenceCode("COA_07"));
+			md.addAttribute("Chart8", reference_code_Rep.getReferenceCode("COA_08"));
+		} else if (formmode.equals("modify")) {
+			md.addAttribute("formmode", "modify");
+			md.addAttribute("chartaccount", chart_Acc_Rep.getaedit(acct_num));
+		} else if (formmode.equals("verify")) {
+			md.addAttribute("chartaccount", chart_Acc_Rep.getaedit(acct_num));
+			md.addAttribute("formmode", "verify");
+		} else if (formmode.equals("view")) {
+			md.addAttribute("formmode", "view");
+			md.addAttribute("chartaccount", chart_Acc_Rep.getaedit(acct_num));
+			md.addAttribute("Chart1", reference_code_Rep.getReferenceCode("COA_01"));
+			md.addAttribute("Chart2", reference_code_Rep.getReferenceCode("COA_02"));
+			md.addAttribute("Chart3", reference_code_Rep.getReferenceCode("COA_03"));
+			md.addAttribute("Chart4", reference_code_Rep.getReferenceCode("COA_04"));
+			md.addAttribute("Chart5", reference_code_Rep.getReferenceCode("COA_05"));
+			md.addAttribute("Chart6", reference_code_Rep.getReferenceCode("COA_06"));
+			md.addAttribute("Chart7", reference_code_Rep.getReferenceCode("COA_07"));
+			md.addAttribute("Chart8", reference_code_Rep.getReferenceCode("COA_08"));
+
+		} else if (formmode.equals("delete")) {
+			md.addAttribute("formmode", "delete");
+			md.addAttribute("chartaccount", chart_Acc_Rep.getaedit(acct_num));
+
+		}
+		return "Balancingreport.html";
+	}
+
+	
+	
+	
+	
+	
+	
 
 }

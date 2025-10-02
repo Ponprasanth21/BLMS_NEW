@@ -587,7 +587,7 @@ public class UploadService {
 					entity.setModifyFlg("N");
 					entity.setEntry_user(userID);
 					String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-					entity.setEntry_time(now);
+//					entity.setEntry_time(now);
 
 					logger.info("Start 7");
 					GeneralLedgerRep.save(entity);
