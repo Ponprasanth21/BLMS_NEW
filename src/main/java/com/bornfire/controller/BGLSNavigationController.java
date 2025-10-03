@@ -3580,29 +3580,29 @@ public class BGLSNavigationController {
 
 	}
 
-	@RequestMapping(value = "loanMaster", method = { RequestMethod.GET, RequestMethod.POST })
-	public String loanMaster(@RequestParam(required = false) String formmode,
-			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "200") int limit, Model model,
-			Model md, HttpServletRequest request, @RequestParam(required = false) String id,
-			@RequestParam(required = false) String holder_key) {
-
-		String user = (String) request.getSession().getAttribute("USERID");
-
-		if (formmode == null || formmode.equals("loanscrn")) {
-			model.addAttribute("formmode", "loanscrn");
-
-		} else if (formmode.equals("viewloan")) {
-			model.addAttribute("formmode", "viewloan");
-			md.addAttribute("user", user);
-			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
-			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
-		} else if (formmode.equals("list")) {
-			model.addAttribute("formmode", "list");
-			md.addAttribute("user", user);
-		}
-		System.out.println("returned");
-		return "Loan_Master.html";
-	}
+//	@RequestMapping(value = "loanMaster", method = { RequestMethod.GET, RequestMethod.POST })
+//	public String loanMaster(@RequestParam(required = false) String formmode,
+//			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "200") int limit, Model model,
+//			Model md, HttpServletRequest request, @RequestParam(required = false) String id,
+//			@RequestParam(required = false) String holder_key) {
+//
+//		String user = (String) request.getSession().getAttribute("USERID");
+//
+//		if (formmode == null || formmode.equals("loanscrn")) {
+//			model.addAttribute("formmode", "loanscrn");
+//
+//		} else if (formmode.equals("viewloan")) {
+//			model.addAttribute("formmode", "viewloan");
+//			md.addAttribute("user", user);
+//			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+//			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
+//		} else if (formmode.equals("list")) {
+//			model.addAttribute("formmode", "list");
+//			md.addAttribute("user", user);
+//		}
+//		System.out.println("returned");
+//		return "Loan_Master.html";
+//	}
 
 	/* Aishu */
 	@RequestMapping(value = "Loan_Maintenance", method = { RequestMethod.GET, RequestMethod.POST })
@@ -4179,5 +4179,60 @@ public class BGLSNavigationController {
 		}
 		return "Balancingreport.html";
 	}
+	
+	
+	
+	@RequestMapping(value = "loanMaster", method = { RequestMethod.GET, RequestMethod.POST })
+	public String loanMaster(
+	        @RequestParam(required = false) String formmode,
+	        @RequestParam(defaultValue = "1") int page,
+	        @RequestParam(defaultValue = "200") int limit,
+	        Model model, Model md,
+	        HttpServletRequest request,
+	        @RequestParam(required = false) String id,
+	        @RequestParam(required = false) String holder_key) {
+
+	    String user = (String) request.getSession().getAttribute("USERID");
+
+	    if (formmode == null || formmode.equals("loanscrn")) {
+	        model.addAttribute("formmode", "loanscrn");
+
+	    } else if (formmode.equals("viewloan")) {
+	        model.addAttribute("formmode", "viewloan");
+	        md.addAttribute("user", user);
+	        md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+	        Map<String,String> value = new HashMap<>();
+//	        LOAN_ACT_MST_REPO.getLoanValueList(holder_key);
+	        md.addAttribute("customer_id", LOAN_ACT_MST_REPO.getLoanValueCUSTOMER_ID(holder_key));
+	        md.addAttribute("customer_name", LOAN_ACT_MST_REPO.getLoanValueCUSTOMER_NAME(holder_key));
+	        
+//	        List<CLIENT_MASTER_ENTITY> clients = LOAN_ACT_MST_REPO.getLoanValueList(holder_key);
+
+//	        String customerId ="";
+//	        String customerName ="";
+//	        if (!clients.isEmpty()) {
+//	            customerId = clients.get(0).getCustomer_id();
+//	            customerName = clients.get(0).getFirst_name();
+//	            System.out.println("Customer ID: " + customerId);
+//	        }
+	        
+//	        for (CLIENT_MASTER_ENTITY client : clients) {
+//	            System.out.println("Client ID: " + clients[0].getCustomer_id());
+//	            System.out.println("First Name: " + clients.getFirst_name());
+//	            System.out.println("Last Name: " + client.getLastName());
+//	            System.out.println("Mobile: " + client.getMobilePhone());
+//	            System.out.println("---------------------");
+//	        }
+	        
+	    } else if (formmode.equals("list")) {
+	        model.addAttribute("formmode", "list");
+	        md.addAttribute("user", user);
+	    }
+	    System.out.println("returned");
+	    return "Loan_Master.html";
+	}
+	
+	
+	
 
 }
