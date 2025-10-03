@@ -293,7 +293,7 @@
 
 			// Get selected filter
 			let selected = $("#filterselect").val();
-
+			handleTableWithPagination(1);
 			if (selected === "LOAN_ID") {
 				$("#loanIdFilter").prop("disabled", false).focus();
 			} else if (selected === "LOAN_TYPE") { // you mapped as Customer ID

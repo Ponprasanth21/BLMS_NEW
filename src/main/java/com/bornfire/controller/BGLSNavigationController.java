@@ -3611,8 +3611,6 @@ public class BGLSNavigationController {
 	        md.addAttribute("user", user);
 	        md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
 	        md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
-	        System.out.println("-----------------------------");
-	        System.out.println(LOAN_ACT_MST_REPO.getLoanValue(holder_key));
 	    } else if (formmode.equals("list")) {
 	        model.addAttribute("formmode", "list");
 	        md.addAttribute("user", user);
