@@ -416,6 +416,22 @@ List<Object[]> getActNo();
     	    " WHERE LOWER(l.ID) LIKE  LOWER('%' || :loanId || '%')" ,
 		    nativeQuery = true)
 		List<Object[]> searchByLoanIdLike(@Param("loanId") String loanId);
+		
+		@Query(value =     " SELECT l.*, c.MOBILE_PHONE AS mobile_phone,c.FIRST_NAME AS first_name,c.LAST_NAME AS last_name    " +
+	    	    " FROM LOAN_ACCOUNT_MASTER_TBL l " +
+	    	    " INNER JOIN CLIENT_MASTER_TBL c " +
+	    	    "     ON c.ENCODED_KEY = l.ACCOUNT_HOLDERKEY " +
+	    	    " WHERE LOWER(l.LOAN_NAME) LIKE  LOWER('%' || :loanType || '%')" ,
+			    nativeQuery = true)
+			List<Object[]> searchByLoanTypeLike(@Param("loanType") String loanType);
+			
+		@Query(value =     " SELECT l.*, c.MOBILE_PHONE AS mobile_phone,c.FIRST_NAME AS first_name,c.LAST_NAME AS last_name    " +
+	    	    " FROM LOAN_ACCOUNT_MASTER_TBL l " +
+	    	    " INNER JOIN CLIENT_MASTER_TBL c " +
+	    	    "     ON c.ENCODED_KEY = l.ACCOUNT_HOLDERKEY " +
+	    	    " WHERE LOWER(c.MOBILE_PHONE) LIKE  LOWER('%' || :loanMobileNumber || '%')" ,
+			    nativeQuery = true)
+			List<Object[]> searchByLoanMobileNumbereLike(@Param("loanMobileNumber") String loanMobileNumber);
 
 @Procedure(procedureName = "ASPIRA.LoanMasterCopyTempTableToMainTable")
 void LoanMasterCopyTempTableToMainTableProcedure();

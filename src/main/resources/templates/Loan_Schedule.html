@@ -1042,11 +1042,11 @@
 	
 		function showResponse(response) { 
 			 if (response.status === 'success') {
-		    let message =
-		        "Upload Completed<br>" +
-		        "Total No of Rows Succeeded: " + response.TotalSucceeded + "<br>" +
-		        "Total No of Rows Failed: " + response.TotalFailed + "<br>" +
-		        "Total Rows Processed: " + response.TotalProcessed + "<br>";
+		    let message = "Upload Completed"
+		        // "Upload Completed<br>" +
+		        // "Total No of Rows Succeeded: " + response.TotalSucceeded + "<br>" +
+		        // "Total No of Rows Failed: " + response.TotalFailed + "<br>" +
+		        // "Total Rows Processed: " + response.TotalProcessed + "<br>";
 
 		    // ✅ Write to the same modal-body container
 		    $('#Successmsgpopup').html("<h6 class='text-center'>" + message + "</h6>");
@@ -1649,7 +1649,7 @@
 			role="document">
 			<div class="modal-content" style="min-height:212px;margin-left:0px;" >
 				<!-- Modal Body -->
-				<div class="modal-body">
+				<div class="modal-body" style="align-content: center;">
 					<h5  id="Successmsgpopup" style="font-size: 17px; color: black; padding: 15px;"></h5>
 				</div>
 				<!-- Modal Footer -->

@@ -9191,13 +9191,6 @@ public Map<String, Object> getLoans(
     List<Object[]> rows = lOAN_ACT_MST_REPO.getLoanActWithMobile(offset, limit);
     Long totalRecords = lOAN_ACT_MST_REPO.getTotalLoans();
     int totalPages = (int) Math.ceil((double) totalRecords / limit);
-
-//    for (Object[] row : rows) {
-//        for (int i = 0; i < row.length; i++) {
-//            System.out.println("Column " + i + ": " + row[i]);
-//        }
-//        System.out.println("=================================");
-//    }
     
     List<Map<String, Object>> result = new ArrayList<>();
 
@@ -9244,6 +9237,64 @@ public List<Map<String, Object>> searchLoan(@RequestParam String loanId) {
     	rows= lOAN_ACT_MST_REPO.getLoanActWithMobile(0, 200); // default 200 rows
     }else {
     	rows = lOAN_ACT_MST_REPO.searchByLoanIdLike(loanId.trim());
+    }
+    
+    List<Map<String, Object>> result = new ArrayList<>();
+
+    for (Object[] row : rows) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", row[1]);               // l.ID
+        map.put("account_holderkey", row[3]); // adjust index to match your query
+        map.put("loan_name", row[12]);
+        map.put("retailer_name", row[64]);
+        map.put("retailer_branch", row[65]);
+        map.put("account_state", row[9]);
+        map.put("last_name", row[row.length - 1]);
+        map.put("mobile_phone", row[row.length - 3]);
+        map.put("first_name", row[row.length - 2]);
+        result.add(map);
+    }
+
+    return result;
+}
+
+
+@GetMapping("loan_type/search")
+public List<Map<String, Object>> searchLoanType(@RequestParam String loanType) {
+	List<Object[]> rows;
+    if (loanType == null || loanType.trim().isEmpty()) {
+    	rows= lOAN_ACT_MST_REPO.getLoanActWithMobile(0, 200); // default 200 rows
+    }else {
+    	rows = lOAN_ACT_MST_REPO.searchByLoanTypeLike(loanType.trim());
+    }
+    
+    List<Map<String, Object>> result = new ArrayList<>();
+
+    for (Object[] row : rows) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", row[1]);               // l.ID
+        map.put("account_holderkey", row[3]); // adjust index to match your query
+        map.put("loan_name", row[12]);
+        map.put("retailer_name", row[64]);
+        map.put("retailer_branch", row[65]);
+        map.put("account_state", row[9]);
+        map.put("last_name", row[row.length - 1]);
+        map.put("mobile_phone", row[row.length - 3]);
+        map.put("first_name", row[row.length - 2]);
+        result.add(map);
+    }
+
+    return result;
+}
+
+
+@GetMapping("loan_mobile_number/search")
+public List<Map<String, Object>> searchLoanMobileNumber(@RequestParam String MobileNumber) {
+	List<Object[]> rows;
+    if (MobileNumber == null || MobileNumber.trim().isEmpty()) {
+    	rows= lOAN_ACT_MST_REPO.getLoanActWithMobile(0, 200); // default 200 rows
+    }else {
+    	rows = lOAN_ACT_MST_REPO.searchByLoanMobileNumbereLike(MobileNumber.trim());
     }
     
     List<Map<String, Object>> result = new ArrayList<>();
