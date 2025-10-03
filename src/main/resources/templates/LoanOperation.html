@@ -1466,75 +1466,75 @@
 
 
 		function handleCheckboxClickCollectiondata() {
-		    var selectedData = [];
-		    var fromdate = $('#fromdate').val();
-		    var todate = $('#todate').val();
+			var selectedData = [];
+			var fromdate = $('#fromdate').val();
+			var todate = $('#todate').val();
 
-		    if (!fromdate || !todate) {
-		        alert("Please select both From Date and To Date.");
-		        return;
-		    }
+			if (!fromdate || !todate) {
+				alert("Please select both From Date and To Date.");
+				return;
+			}
 
-		    var dateFrom = formatDateToDD(fromdate.trim());
-		    var dateTo = formatDateToDD(todate.trim());
+			var dateFrom = formatDateToDD(fromdate.trim());
+			var dateTo = formatDateToDD(todate.trim());
 
-		    // Loop through all rows in the table
-		    $("#flowIdTbody tr").each(function () {
-		        var row = $(this);
-		        var flowAmt = row.find("input[name='flow_amt']").val();
-		        var flowCode = row.find("input[name='flow_code']").val();
-		        var flowDate = row.find("input[name='flow_date']").val();
-		        var flowId = row.find("input[name='flow_id']").val();
-		        var loanAcctNo = row.find("input[name='loan_acct_no']").val();
-		        var acctName = row.find("input[name='acct_name']").val();
-		        var tranAmt = row.find("input[name='tran_amt']").val();
+			// Loop through all rows in the table
+			$("#flowIdTbody tr").each(function () {
+				var row = $(this);
+				var flowAmt = row.find("input[name='flow_amt']").val();
+				var flowCode = row.find("input[name='flow_code']").val();
+				var flowDate = row.find("input[name='flow_date']").val();
+				var flowId = row.find("input[name='flow_id']").val();
+				var loanAcctNo = row.find("input[name='loan_acct_no']").val();
+				var acctName = row.find("input[name='acct_name']").val();
+				var tranAmt = row.find("input[name='tran_amt']").val();
 
-		        // Get the radio in the row (checked or not)
-		        var radio = row.find("input[type='radio']");
-		        var encodedKey = radio.data("encoded_key") || "";
+				// Get the radio in the row (checked or not)
+				var radio = row.find("input[type='radio']");
+				var encodedKey = radio.data("encoded_key") || "";
 
-		        // ✅ Always take operationType from the radio's data-operation
-		        var operationType = radio.data("operation") || "";
+				// ✅ Always take operationType from the radio's data-operation
+				var operationType = radio.data("operation") || "";
 
-		        // Only include rows with necessary data
-		        if (flowCode && loanAcctNo) {
-		            selectedData.push({
-		                flow_amt: flowAmt ? flowAmt.replace(/,/g, '') : "0",
-		                flow_code: flowCode,
-		                flow_date: flowDate,
-		                flow_id: flowId,
-		                loan_acct_no: loanAcctNo,
-		                acct_name: acctName,
-		                tran_amt: tranAmt ? tranAmt.replace(/,/g, '') : "0",
-		                from_date: dateFrom,
-		                to_date: dateTo,
-		                encoded_key: encodedKey,
-		                operation_type: operationType // always passed
-		            });
-		        }
-		    });
+				// Only include rows with necessary data
+				if (flowCode && loanAcctNo) {
+					selectedData.push({
+						flow_amt: flowAmt ? flowAmt.replace(/,/g, '') : "0",
+						flow_code: flowCode,
+						flow_date: flowDate,
+						flow_id: flowId,
+						loan_acct_no: loanAcctNo,
+						acct_name: acctName,
+						tran_amt: tranAmt ? tranAmt.replace(/,/g, '') : "0",
+						from_date: dateFrom,
+						to_date: dateTo,
+						encoded_key: encodedKey,
+						operation_type: operationType // always passed
+					});
+				}
+			});
 
-		    if (selectedData.length === 0) {
-		        alert("No data found to submit.");
-		        return;
-		    }
+			if (selectedData.length === 0) {
+				alert("No data found to submit.");
+				return;
+			}
 
-		    console.log("Payload:", JSON.stringify(selectedData, null, 2));
+			console.log("Payload:", JSON.stringify(selectedData, null, 2));
 
-		    // AJAX call to send data to controller
-		    $.ajax({
-		        type: 'POST',
-		        url: './transactionCollectiondatas',
-		        contentType: 'application/json',
-		        data: JSON.stringify(selectedData),
-		        success: function (response) {
-		            alert("Transaction Saved Successfully!\nTransaction ID: " + response);
-		        },
-		        error: function () {
-		            $('#errorMessage').text('Error saving transactions');
-		            $('#errorModal').modal('show');
-		        }
-		    });
+			// AJAX call to send data to controller
+			$.ajax({
+				type: 'POST',
+				url: './transactionCollectiondatas',
+				contentType: 'application/json',
+				data: JSON.stringify(selectedData),
+				success: function (response) {
+					alert("Transaction Saved Successfully!\nTransaction ID: " + response);
+				},
+				error: function () {
+					$('#errorMessage').text('Error saving transactions');
+					$('#errorModal').modal('show');
+				}
+			});
 		}
 
 		function handleRadioClickBooking(selectedRadio) {
@@ -2032,6 +2032,93 @@
 			callflowDetails();
 		}
 
+
+		function callCollectionScreen11() {
+			location.href = 'loanOperation?formmode=view2';
+		}
+
+		//new radio button transaction
+
+		var mrowCount = 1;   // row index counter
+		var cell2Value = 2;  // part_tran_id starts from 2 since row 1 = 1
+
+		function addNewRow() {
+		    var table = document.getElementById("usertablemulti");
+		    var row = table.insertRow();
+
+		    // same tran_id for every row
+		    row.insertCell().innerHTML =
+		        '<input type="text" class="form-control" name="tran_id" id="tran_id' + mrowCount + '" ' +
+		        'value="' + tranIdFromBackend + '" readonly>';
+
+		    // increment part_tran_id using cell2Value
+		    row.insertCell().innerHTML =
+		        '<input type="text" class="form-control" name="part_tran_id" id="part_tran_id' + mrowCount + '" ' +
+		        'value="' + cell2Value + '" readonly>';
+
+		    row.insertCell().innerHTML =
+		        '<input type="text" class="form-control" name="acct_num" id="acct_num_mass' + mrowCount + '" ' +
+		        'onclick="openModalmassentries(this)">';
+
+		    row.insertCell().innerHTML =
+		        '<input type="text" class="form-control" name="acct_name" id="acct_name_mass' + mrowCount + '">';
+
+		    row.insertCell().innerHTML =
+		        '<input type="text" class="form-control" name="tran_amt" id="tran_amt' + mrowCount + '" oninput="calculate()">';
+
+		    row.insertCell().innerHTML =
+		        '<input type="text" class="form-control" name="tran_particular" id="tran_particular' + mrowCount + '">';
+
+		    row.insertCell().innerHTML =
+		        '<input type="text" class="form-control" name="tran_remarks" id="tran_remarks' + mrowCount + '">';
+
+		    row.insertCell().innerHTML =
+		        '<input type="text" class="form-control" name="rate_code" id="rate_code' + mrowCount + '">';
+
+		    row.insertCell().innerHTML =
+		        '<input type="text" class="form-control" name="rate" id="rate' + mrowCount + '">';
+
+		    row.insertCell().innerHTML =
+		        '<input type="radio" name="add_details" id="add_details' + mrowCount + '">';
+
+		    mrowCount++;
+		    cell2Value++; // move to next part_tran_id
+		}
+
+
+		function removeRow() {
+			var tableBody = document
+				.getElementById('usertablemulti'); // Get tbody element
+			var rows = tableBody.getElementsByTagName('tr'); // Get all rows within tbody
+
+			if (rows.length <= 2) { // Ensure at least the two initial rows remain
+				alert("There is no dynamically added row available to delete!");
+				return;
+			}
+
+			// Get the last dynamically added row (after the two initial rows)
+			var lastRow = rows[rows.length - 1]; // Target the last row
+
+			if (lastRow) {
+				lastRow.remove(); // Remove the last dynamically added row
+
+				cell2Value--;
+				console
+					.log("Dynamically added row deleted successfully.");
+			} else {
+				alert("No dynamically added rows found to delete.");
+			}
+		}
+
+		function updateRow() {
+			var table = document.getElementById('usertable')
+				.getElementsByTagName('tbody')[0];
+			var rows = table.getElementsByTagName('tr');
+			for (var i = 0; i < rows.length; i++) {
+				rows[i].cells[0].innerText = i + 1;
+			}
+		}
+
 	</script>
 </head>
 
@@ -2155,6 +2242,15 @@
 												onchange="callCollectionScreen(this);" name="collectionOption"
 												id="standing"> <label class="form-check-label" for="standing">Standing
 												Insection</label>
+										</div>
+									</div>
+
+									<div class="col-sm-3">
+										<div class="form-check">
+											<input class="form-check-input" type="radio"
+												onchange="callCollectionScreen11(this);" name="collectionOption"
+												id="standing"> <label class="form-check-label" for="standing">Multiple
+												Entries</label>
 										</div>
 									</div>
 								</div>
@@ -2324,16 +2420,172 @@
 						</button>
 						<button class="btn-primary big-btn" onclick="back();">Back</button>
 					</div>
+
+
+				</div>
+
+
+				<div th:if="${formmode}=='view2'">
+
+					<div class="card w-100 border">
+						<div class="card-header" style="background-color: #e9ecef; height: 50px">
+							<div class="float-left">
+								<h6 style="font-size: 1.2rem; color: black;">Bulk Collection</h6>
+							</div>
+						</div>
+						<div class="row formline" style="padding: 10px 10px 2px 50px; text-align: bottom;">
+							<div class="col-sm-1">TRAN ID</div>
+							<div class="col-sm-2">
+								<input type="text" name="tran_id" id="tran_id"
+									class="form-control form-control-sm bg-white border border-dark"
+									th:value="${tranId}" readonly />
+							</div>
+
+							<div class="col-sm-1">TRAN TYPE</div>
+							<div class="col-sm-2">
+								<input type="text" name="tran_type" id="tran_type" value="Transfer"
+									class="form-control form-control-sm bg-white border border-dark" readonly />
+							</div>
+
+							<div class="col-sm-3"></div>
+
+							<div class="col-sm-1">TRAN DATE</div>
+							<div class="col-sm-2">
+								<input type="text" name="tran_date" id="tran_date"
+									th:value="${#dates.format(TRANDATE, 'dd-MM-yyyy')}"
+									class="form-control form-control-sm bg-white border border-dark" readonly />
+							</div>
+						</div>
+						<div class="row formline mr-2" style="padding: 10px 10px 2px 50px; justify-content: right;">
+							<div style="background: transparent; color: black;">
+								<button type="button" class="big-btn btn-success" onclick="addNewRow()">Add</button>
+							</div>
+							<div style="background: transparent; color: red;">
+								<button type="button" class="big-btn btn-danger ml-1"
+									onclick="removeRow(this)">Remove</button>
+							</div>
+						</div>
+
+						<div class="card-body">
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<th>Transaction ID</th>
+										<th>Part Tran Id</th>
+										<th>Names</th>
+										<th>Reference</th>
+										<th>Mobile number</th>
+										<th>Amount</th>
+										<th>Allocated amount</th>
+										<th>Trans. time</th>
+										<th>Status</th>
+										<th style="text-align:center">Allocated</th>
+									</tr>
+								</thead>
+								<tbody id="usertablemulti">
+									<tr>
+										<td>
+											<input type="text" class="form-control" id="tran_id" name="tran_id"
+												th:value="${tranId}" onkeyup="this.value = this.value.toUpperCase();" />
+										</td>
+
+										<td><input type="text" class="form-control" th:value="1" id="part_tran_id"
+												name="part_tran_id" onkeyup="this.value = this.value.toUpperCase();" />
+										</td>
+										<td>
+											<input type="text" class="form-control" id="acct_num_mass0"
+												onclick="openModalmassentries(this)" name="acct_num"
+												onkeyup="this.value = this.value.toUpperCase();" />
+										</td>
+										<td><input type="text" class="form-control" id="acct_name_mass0"
+												name="acct_name" onkeyup="this.value = this.value.toUpperCase();" />
+										</td>
+										<td><input type="text" class="form-control" id="tran_amt" name="tran_amt"
+												oninput="calculate()" /></td>
+										<td><input type="text" class="form-control" id="tran_particular"
+												name="tran_particular"
+												onkeyup="this.value = this.value.toUpperCase();" /></td>
+										<td><input type="text" class="form-control" id="tran_remarks"
+												name="tran_remarks" onkeyup="this.value = this.value.toUpperCase();" />
+										</td>
+										<td><input type="text" class="form-control" id="rate_code" name="rate_code"
+												onkeyup="this.value = this.value.toUpperCase();" /></td>
+										<td><input type="text" class="form-control" id="rate" name="rate"
+												onkeyup="this.value = this.value.toUpperCase();" /></td>
+										<td><input type="radio" id="add_details" name="add_details"
+												onkeyup="this.value = this.value.toUpperCase();" /></td>
+
+									</tr>
+									<tr>
+										<td><input type="text" class="form-control" id="tran_id" name="tran_id"
+												th:value="${tranId}" onkeyup="this.value = this.value.toUpperCase();" />
+										</td>
+										<td><input type="text" class="form-control" th:value="2" id="part_tran_id"
+												name="part_tran_id" onkeyup="this.value = this.value.toUpperCase();" />
+										</td>
+										<td><input type="text" class="form-control" id="acct_num_mass1"
+												onclick="openModalmassentries(this)" name="acct_num"
+												onkeyup="this.value = this.value.toUpperCase();" /></td>
+										<td><input type="text" class="form-control" id="acct_name_mass1"
+												name="acct_name" onkeyup="this.value = this.value.toUpperCase();" />
+										</td>
+										<td><input type="text" class="form-control" id="tran_amt" name="tran_amt"
+												oninput="calculate()" /></td>
+										<td><input type="text" class="form-control" id="tran_particular"
+												name="tran_particular"
+												onkeyup="this.value = this.value.toUpperCase();" /></td>
+										<td><input type="text" class="form-control" id="tran_remarks"
+												name="tran_remarks" onkeyup="this.value = this.value.toUpperCase();" />
+										</td>
+										<td><input type="text" class="form-control" id="rate_code" name="rate_code"
+												onkeyup="this.value = this.value.toUpperCase();" /></td>
+										<td><input type="text" class="form-control" id="rate" name="rate"
+												onkeyup="this.value = this.value.toUpperCase();" /></td>
+										<td><input type="radio" id="add_details" name="add_details"
+												onkeyup="this.value = this.value.toUpperCase();" /></td>
+
+									</tr>
+								</tbody>
+							</table>
+							<div style="text-align: right;">
+								<p style="display: inline-flex; align-items: center;">
+									<span style="margin-right: 10px;">Total Credit: <span
+											id="totalCredit">0.00</span></span> |
+									<span style="margin-left: 10px;">Total Debit: <span
+											id="totalDebit">0.00</span></span>
+								</p>
+							</div>
+
+						</div>
+						<div class="row-formline"
+							style="display: flex; align-items: right; justify-content: right; margin-right: 30px; margin-top: 10px; margin-bottom: 10px;font-size:16px">
+
+							<div id="" style="text-align: right;font-weight: bold"></div>
+						</div>
+
+						<div class="card-footer text-center" style="background-color: #e9ecef">
+							<button class="btn-primary big-btn" onclick="Home();">Home</button>
+							<button class="btn-primary big-btn" onclick="Submitvalues(this);">Submit</button>
+							<button class="btn-primary big-btn" onclick="back();">Back</button>
+						</div>
+					</div>
 				</div>
 			</div>
+
+
+
 		</div>
 	</div>
+
+
+
 
 	<div class="modal fade" id="alertERE">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content" style="background-color: white;">
 				<div class="menu-title-header">
-					<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">ACCOUNT
+					<div class="modal-title" id="exampleModalLabel" style="text-align: center; color: white;">
+						ACCOUNT
 						DETAILS</div>
 				</div>
 				<div class="modal-body">

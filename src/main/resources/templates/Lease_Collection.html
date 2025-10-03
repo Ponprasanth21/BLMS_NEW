@@ -3,9 +3,9 @@
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="/ASPIRA/js/jquery.min.js"></script>
-<script src="/ASPIRA/js/jquery-ui.min.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="/ASPIRA/js/jquery.min.js"></script>
+	<script src="/ASPIRA/js/jquery-ui.min.js"></script>
 	<style>
 		.btns {
 			float: right;
@@ -40,7 +40,8 @@
 		.dataTables_wrapper .dataTables_paginate .paginate_button {
 			padding: 0px;
 		}
-.btn {
+
+		.btn {
 			line-height: 0.5rem;
 		}
 
@@ -75,8 +76,9 @@
 			padding-left: 15px;
 			margin-right: auto;
 			margin-left: 17.3%;
-	 
+
 		}
+
 		.filterable .filters input[disabled] {
 			background-color: transparent;
 			border: none;
@@ -137,9 +139,10 @@
 			animation-name: animatetop;
 			animation-duration: 0.4s
 		}
+
 		.big-btn {
-  font-size: 16px;
-}
+			font-size: 16px;
+		}
 	</style>
 	<script>
 		/* $(function() {
@@ -291,6 +294,10 @@
 			} else {
 				alert('Please select a file before uploading.');
 			}
+		}
+
+		function uploadlist() {
+			location.href = 'leasecollection?formmode=uploadlist';
 		}
 
 		function uploadlist() {
@@ -459,24 +466,27 @@
 			event.preventDefault();
 			location.reload();
 		}
+
+
 	</script>
 
 </head>
 
 <body>
-<div class="col-sm-2">
+	<div class="col-sm-2">
 		<div th:insert="BGLSHeaderMenu :: header"></div>
 	</div>
 	<div class="container-manager">
 		<div class="row">
 			<div class="col-sm-11 ml-5">
 
-				<div   th:if="${formmode}=='upload'">
+				<div th:if="${formmode}=='upload'">
 					<form action="#" method="post" autocomplete="off" style="width: 100%">
 						<div class="card" style="margin-top: 90px;">
-							<div class="card-header"  style="background-color: #e9ecef; HEIGHT: 50px;  ">
+							<div class="card-header" style="background-color: #e9ecef; HEIGHT: 50px;  ">
 								<div class="float-right"></div>
-								<h4 style="font-size: 1.2rem; color: black;" class="ml-2" >COLLECTION PROCESS - FILE UPLOAD</h4>
+								<h4 style="font-size: 1.2rem; color: black;" class="ml-2">COLLECTION PROCESS - FILE
+									UPLOAD</h4>
 							</div>
 							<div class="card-body p-0 mt-3">
 								<div class="panel-heading text-center">
@@ -503,11 +513,13 @@
 
 								</div>
 							</div>
-							<div class="card-footer text-center"  style="background-color: #e9ecef;">
+							<div class="card-footer text-center" style="background-color: #e9ecef;">
 								<button type="button" class="btn-primary big-btn" id="btnHome"
 									onclick="home();">Home</button>
 								<button type="button" class="btn-primary big-btn" id="btnHome"
 									onclick="uploadlist();">List</button>
+								<button type="button" class="btn-primary big-btn" id="btnHome"
+									onclick="functiondata();">List1</button>
 								<button type="button" class="btn-primary big-btn" id="nav"
 									onclick="submitexcelgst(this)">Upload</button>
 
@@ -653,8 +665,8 @@
 								<h4>
 									File Uploaded Successfully <span>&#9989;</span>
 								</h4>
-								<button type="button" class="btn-primary big-btn" data-dismiss="modal" aria-label="Close"
-									style="margin-top: 20px;">Close</button>
+								<button type="button" class="btn-primary big-btn" data-dismiss="modal"
+									aria-label="Close" style="margin-top: 20px;">Close</button>
 							</div>
 						</div>
 					</div>
@@ -669,8 +681,8 @@
 								<h4 style="text-align: center;">
 									File Upload Failure<span>&#10060;</span>
 								</h4>
-								<button type="button" class="btn-primary big-btn" data-dismiss="modal" aria-label="Close"
-									style="margin-left: 200px">Close</button>
+								<button type="button" class="btn-primary big-btn" data-dismiss="modal"
+									aria-label="Close" style="margin-left: 200px">Close</button>
 							</div>
 						</div>
 					</div>

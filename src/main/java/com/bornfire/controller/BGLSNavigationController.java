@@ -142,7 +142,6 @@ import com.monitorjbl.xlsx.exceptions.ParseException;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.repo.InputStreamResource;
 
-
 @Controller
 @ConfigurationProperties("default")
 public class BGLSNavigationController {
@@ -315,14 +314,13 @@ public class BGLSNavigationController {
 
 	@Autowired
 	LOAN_ACT_MST_REPO LOAN_ACT_MST_REPO;
-	
+
 	@Autowired
 	com.bornfire.entities.BglsHolidayMasterRep bglsHolidayMasterRep;
-	
+
 	@Autowired
 	BglsLmsSchemesRepo bglsLmsSchemesRepo;
-	
-	
+
 	@Autowired
 	DateChangeService DateChangeService;
 
@@ -384,7 +382,7 @@ public class BGLSNavigationController {
 	/* PRAVEEN */
 	@RequestMapping(value = "organizationDetails", method = { RequestMethod.GET, RequestMethod.POST })
 	public String organizationDetails(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String branch_name, String branch_code,Model md, HttpServletRequest req,
+			@RequestParam(required = false) String branch_name, String branch_code, Model md, HttpServletRequest req,
 			@RequestParam(required = false) BigDecimal record_srl) {
 
 		String userid = (String) req.getSession().getAttribute("USERID");
@@ -455,7 +453,7 @@ public class BGLSNavigationController {
 
 			md.addAttribute("formmode", formmode);
 
-			//md.addAttribute("currentDate", new Date());
+			// md.addAttribute("currentDate", new Date());
 			md.addAttribute("user", user);
 			md.addAttribute("getEmployeeDetails", employee_Profile_Rep.getEmployeeVeifiedList());
 
@@ -2194,31 +2192,29 @@ public class BGLSNavigationController {
 	/* pon prasanth */
 
 	@RequestMapping(value = "useractivities", method = { RequestMethod.GET, RequestMethod.POST })
-	public String useractivities(@RequestParam(required = false) String formmode, Model model, 
-	                             String cust_id,
-	                             @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") Date Fromdate,
-	                             HttpServletRequest request) {
+	public String useractivities(@RequestParam(required = false) String formmode, Model model, String cust_id,
+			@RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") Date Fromdate,
+			HttpServletRequest request) {
 
-	    // Get today's date
-	    LocalDate today = LocalDate.now();
+		// Get today's date
+		LocalDate today = LocalDate.now();
 
-	    // Determine the date to use: either Fromdate or today
-	    Date fromDateToUse = (Fromdate != null) ? Fromdate
-	                                            : Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		// Determine the date to use: either Fromdate or today
+		Date fromDateToUse = (Fromdate != null) ? Fromdate
+				: Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-	    // Pass the date to the view
-	    model.addAttribute("Fromdate", new SimpleDateFormat("dd-MM-yyyy").format(fromDateToUse));
+		// Pass the date to the view
+		model.addAttribute("Fromdate", new SimpleDateFormat("dd-MM-yyyy").format(fromDateToUse));
 
-	    if (formmode == null || formmode.equals("list")) {
-	        model.addAttribute("formmode", "list");
+		if (formmode == null || formmode.equals("list")) {
+			model.addAttribute("formmode", "list");
 
-	        // Fetch the audit list based on the determined date
-	        model.addAttribute("AuditList", bGLSAuditTable_Rep.getauditListLocalvals(fromDateToUse));
-	    }
+			// Fetch the audit list based on the determined date
+			model.addAttribute("AuditList", bGLSAuditTable_Rep.getauditListLocalvals(fromDateToUse));
+		}
 
-	    return "AuditTrailValues";
+		return "AuditTrailValues";
 	}
-
 
 //suriya
 	@RequestMapping(value = "dscr", method = { RequestMethod.GET, RequestMethod.POST })
@@ -2348,28 +2344,29 @@ public class BGLSNavigationController {
 			@RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") Date Fromdate,
 			HttpServletRequest request) {
 
-		//LocalDate today = LocalDate.now(); // Get today's date
-		//Date fromDateToUse; // Declare a variable for the date to use
-		
-		  LocalDate today = LocalDate.now();
-		    Date fromDateToUse = (Fromdate != null) ? Fromdate
-		                                            : Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
-		
-		    model.addAttribute("Fromdate", new SimpleDateFormat("dd-MM-yyyy").format(fromDateToUse));
-		    
-		//if (Fromdate != null) {
-			// If Fromdate has a value, use it
-			//fromDateToUse = Fromdate;
-		//} else {
-			// If Fromdate has no value, use today's date
-		//	fromDateToUse = Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
-		//}
+		// LocalDate today = LocalDate.now(); // Get today's date
+		// Date fromDateToUse; // Declare a variable for the date to use
+
+		LocalDate today = LocalDate.now();
+		Date fromDateToUse = (Fromdate != null) ? Fromdate
+				: Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+		model.addAttribute("Fromdate", new SimpleDateFormat("dd-MM-yyyy").format(fromDateToUse));
+
+		// if (Fromdate != null) {
+		// If Fromdate has a value, use it
+		// fromDateToUse = Fromdate;
+		// } else {
+		// If Fromdate has no value, use today's date
+		// fromDateToUse =
+		// Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		// }
 		if (formmode == null || formmode.equals("list")) {
 			model.addAttribute("formmode", "list");
 			model.addAttribute("AuditList", AdminOperServices.getauditListLocal(fromDateToUse));
 
 		}
-	   
+
 		return "BusinessTrail";
 	}
 
@@ -2535,10 +2532,10 @@ public class BGLSNavigationController {
 		System.out.println(TRANDATE + "TRANDATE");
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String formattedDate = dateFormat.format(TRANDATE);
-		
-		String Userid =(String) request.getSession().getAttribute("USERID");
-		
-		model.addAttribute("Userid",Userid);
+
+		String Userid = (String) request.getSession().getAttribute("USERID");
+
+		model.addAttribute("Userid", Userid);
 
 		model.addAttribute("Valuesfordebit", tRAN_MAIN_TRM_WRK_REP.getwofordebitvalues());
 		model.addAttribute("ValuesforCredit", tRAN_MAIN_TRM_WRK_REP.getwoforcreditvalues());
@@ -2816,7 +2813,7 @@ public class BGLSNavigationController {
 			 * " already exists for Account " + accountNum + ". Cannot be updated.");
 			 * continue; // Skip to the next account number }
 			 */
-			
+
 			List<BigDecimal> existingBalances = tRAN_MAIN_TRM_WRK_REP
 					.findLatestTRAN_DATE_BALByAccountNumber(accountNum);
 
@@ -2848,8 +2845,6 @@ public class BGLSNavigationController {
 																										// correct
 																										// format
 						netAmount, totalDebit, totalCredit);
-				
-				
 
 			} else {
 				// Insert new row with netAmount as TRAN_DATE_BAL
@@ -2862,21 +2857,19 @@ public class BGLSNavigationController {
 
 			}
 		}
-		 BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
-	    if (existingRecord != null) {
+		BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+		if (existingRecord != null) {
 
-	        // 2️⃣ Log past value
-	           existingRecord.setMov_dac("Completed");
+			// 2️⃣ Log past value
+			existingRecord.setMov_dac("Completed");
 
-	        // 4️⃣ Save updated record
-	        bGLS_CONTROL_TABLE_REP.save(existingRecord);
+			// 4️⃣ Save updated record
+			bGLS_CONTROL_TABLE_REP.save(existingRecord);
 
-	      
-	        
-	    } else {
-	        System.out.println("No record found in BGLS_Control_Table");
-	       
-	    }
+		} else {
+			System.out.println("No record found in BGLS_Control_Table");
+
+		}
 		return "Account balances successfully inserted";
 	}
 
@@ -3324,36 +3317,35 @@ public class BGLSNavigationController {
 				System.out.println("flag value is true"); // Still true if this record has no values
 			}
 		}
-		
+
 		// Return a message based on the flag
 		if (flag) {
 			System.out.println("Unsuccessful Updation");
-			 BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+			BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
 
-			    if (existingRecord != null) {
+			if (existingRecord != null) {
 
-			        // 2️⃣ Log past value
-			        System.out.println("Past Journal Cons: " + existingRecord.getJournal_cons());
+				// 2️⃣ Log past value
+				System.out.println("Past Journal Cons: " + existingRecord.getJournal_cons());
 
-			        // 3️⃣ Update current value
-			        existingRecord.setLedger_cons("Completed");
+				// 3️⃣ Update current value
+				existingRecord.setLedger_cons("Completed");
 
-			        // 4️⃣ Save updated record
-			        bGLS_CONTROL_TABLE_REP.save(existingRecord);
+				// 4️⃣ Save updated record
+				bGLS_CONTROL_TABLE_REP.save(existingRecord);
 
-			        System.out.println("Updated Journal Cons: " + existingRecord.getJournal_cons());
-			        
-			    } else {
-			        System.out.println("No record found in BGLS_Control_Table");
-			        
-			    }
-			 
+				System.out.println("Updated Journal Cons: " + existingRecord.getJournal_cons());
+
+			} else {
+				System.out.println("No record found in BGLS_Control_Table");
+
+			}
+
 			return "Successful Updation"; // No valid records found
 		} else {
 			return "Successful Updation"; // At least one valid record found
 		}
-		
-		 
+
 	}
 
 	@RequestMapping(value = "movementoftransaction", method = RequestMethod.POST)
@@ -3406,26 +3398,23 @@ public class BGLSNavigationController {
 				bGLS_Journal_History.setFlow_date(records.getFlow_date());
 
 				bGLS_Journal_History_Rep.save(bGLS_Journal_History);
-				
-				
-			    
-				
+
 			}
 		}
 		BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
 
-	    if (existingRecord != null) {
+		if (existingRecord != null) {
 
-	        // 2️⃣ Log past value
-	           existingRecord.setMov_journal("Completed");
+			// 2️⃣ Log past value
+			existingRecord.setMov_journal("Completed");
 
-	        // 4️⃣ Save updated record
-	        bGLS_CONTROL_TABLE_REP.save(existingRecord);
+			// 4️⃣ Save updated record
+			bGLS_CONTROL_TABLE_REP.save(existingRecord);
 
-	      } else {
-	        System.out.println("No record found in BGLS_Control_Table");
-	        
-	    }
+		} else {
+			System.out.println("No record found in BGLS_Control_Table");
+
+		}
 
 		return "Successfully Updated";
 	}
@@ -3592,85 +3581,76 @@ public class BGLSNavigationController {
 	}
 
 	@RequestMapping(value = "loanMaster", method = { RequestMethod.GET, RequestMethod.POST })
-	public String loanMaster(
-	        @RequestParam(required = false) String formmode,
-	        @RequestParam(defaultValue = "1") int page,
-	        @RequestParam(defaultValue = "200") int limit,
-	        Model model, Model md,
-	        HttpServletRequest request,
-	        @RequestParam(required = false) String id,
-	        @RequestParam(required = false) String holder_key) {
+	public String loanMaster(@RequestParam(required = false) String formmode,
+			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "200") int limit, Model model,
+			Model md, HttpServletRequest request, @RequestParam(required = false) String id,
+			@RequestParam(required = false) String holder_key) {
 
-	    String user = (String) request.getSession().getAttribute("USERID");
+		String user = (String) request.getSession().getAttribute("USERID");
 
-	    if (formmode == null || formmode.equals("loanscrn")) {
-	        model.addAttribute("formmode", "loanscrn");
+		if (formmode == null || formmode.equals("loanscrn")) {
+			model.addAttribute("formmode", "loanscrn");
 
-	    } else if (formmode.equals("viewloan")) {
-	        model.addAttribute("formmode", "viewloan");
-	        md.addAttribute("user", user);
-	        md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
-	        md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
-	    } else if (formmode.equals("list")) {
-	        model.addAttribute("formmode", "list");
-	        md.addAttribute("user", user);
-	    }
-	    System.out.println("returned");
-	    return "Loan_Master.html";
+		} else if (formmode.equals("viewloan")) {
+			model.addAttribute("formmode", "viewloan");
+			md.addAttribute("user", user);
+			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
+		} else if (formmode.equals("list")) {
+			model.addAttribute("formmode", "list");
+			md.addAttribute("user", user);
+		}
+		System.out.println("returned");
+		return "Loan_Master.html";
 	}
-
 
 	/* Aishu */
 	@RequestMapping(value = "Loan_Maintenance", method = { RequestMethod.GET, RequestMethod.POST })
-	public String Loan_Maintanance(
-	        @RequestParam(required = false) String formmode,
-	        Model md,
-	        HttpServletRequest req,
-	        @RequestParam(required = false) String id,
-	        @RequestParam(required = false) String holder_key,
-	        @RequestParam(defaultValue = "1") int page // page number for pagination
+	public String Loan_Maintanance(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req,
+			@RequestParam(required = false) String id, @RequestParam(required = false) String holder_key,
+			@RequestParam(defaultValue = "1") int page // page number for pagination
 	) {
 
-	    int limit = 200; // 200 rows per page
-	    int offset = (page - 1) * limit;
+		int limit = 200; // 200 rows per page
+		int offset = (page - 1) * limit;
 
-	    if (formmode == null || formmode.equals("list")) {
-	        md.addAttribute("formmode", "list");
+		if (formmode == null || formmode.equals("list")) {
+			md.addAttribute("formmode", "list");
 
-	        // Fetch paginated loan list
-	        List<Object[]> loanList = LOAN_ACT_MST_REPO.getLoanActWithMobile(offset, limit);
-	        md.addAttribute("list", loanList);
+			// Fetch paginated loan list
+			List<Object[]> loanList = LOAN_ACT_MST_REPO.getLoanActWithMobile(offset, limit);
+			md.addAttribute("list", loanList);
 
-	        // Calculate total pages for pagination
-	        int totalItems = LOAN_ACT_MST_REPO.countAllLoans();
-	        int totalPages = (int) Math.ceil((double) totalItems / limit);
-	        md.addAttribute("currentPage", page);
-	        md.addAttribute("totalPages", totalPages);
+			// Calculate total pages for pagination
+			int totalItems = LOAN_ACT_MST_REPO.countAllLoans();
+			int totalPages = (int) Math.ceil((double) totalItems / limit);
+			md.addAttribute("currentPage", page);
+			md.addAttribute("totalPages", totalPages);
 
-	    } else if (formmode.equals("view")) {
-	        md.addAttribute("formmode", "view");
+		} else if (formmode.equals("view")) {
+			md.addAttribute("formmode", "view");
 
-	        // Fetch loan details for view
-	        md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
-	        md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
+			// Fetch loan details for view
+			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
 
-	        // Check unverified status
-	        Integer unverifiedStatus = LOAN_ACT_MST_REPO.getUnverifiedStatus(id);
-	        Boolean isUnverified = unverifiedStatus != null && unverifiedStatus == 1;
-	        md.addAttribute("Boolean", isUnverified);
+			// Check unverified status
+			Integer unverifiedStatus = LOAN_ACT_MST_REPO.getUnverifiedStatus(id);
+			Boolean isUnverified = unverifiedStatus != null && unverifiedStatus == 1;
+			md.addAttribute("Boolean", isUnverified);
 
-	    } else if (formmode.equals("modify")) {
-	        md.addAttribute("formmode", "modify");
-	        md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
-	        md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
+		} else if (formmode.equals("modify")) {
+			md.addAttribute("formmode", "modify");
+			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
 
-	    } else if (formmode.equals("verify")) {
-	        md.addAttribute("formmode", "verify");
-	        md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
-	        md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
-	    }
+		} else if (formmode.equals("verify")) {
+			md.addAttribute("formmode", "verify");
+			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
+		}
 
-	    return "Loan_Maintenance";
+		return "Loan_Maintenance";
 	}
 
 	@RequestMapping(value = "loanSchedule", method = { RequestMethod.GET, RequestMethod.POST })
@@ -3688,7 +3668,7 @@ public class BGLSNavigationController {
 		// Convert TRAN_DATE to LocalDate for easy comparison
 		LocalDate tranDate = (tranDateObj instanceof java.sql.Date) ? ((java.sql.Date) tranDateObj).toLocalDate()
 				: tranDateObj.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		
+
 		Date Transaction_date = Date.from(tranDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
 		if (formmode == null || "viewloanschedule".equals(formmode)) {
@@ -3697,7 +3677,7 @@ public class BGLSNavigationController {
 		} else if ("viewloanschedule1".equals(formmode)) {
 			model.addAttribute("formmode", "viewloanschedule1");
 			System.out.println(encodedKey);
-			Object[] loanDetails = LOAN_ACT_MST_REPO.getCustomer(Transaction_date, holder_key, id,encodedKey);
+			Object[] loanDetails = LOAN_ACT_MST_REPO.getCustomer(Transaction_date, holder_key, id, encodedKey);
 			model.addAttribute("view", loanDetails);
 			model.addAttribute("dues", LOAN_ACT_MST_REPO.getDues(encodedKey));
 
@@ -3710,7 +3690,6 @@ public class BGLSNavigationController {
 
 		return "Loan_Schedule";
 	}
-	
 
 	/* Aishu */
 	@PostMapping(value = "Modifyloanmain")
@@ -3798,7 +3777,18 @@ public class BGLSNavigationController {
 		} else if (formmode.equals("view")) {
 			md.addAttribute("formmode", "view");
 
+		} else if (formmode.equals("view2")) {
+			md.addAttribute("formmode", "view2");
+
+			int refNo = Integer.parseInt(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1()); // convert String → int
+			String tranId = "TR" + String.format("%05d", refNo);
+
+			Date trandates = (Date) req.getSession().getAttribute("TRANDATE");
+			md.addAttribute("TRANDATE", trandates);
+
+			md.addAttribute("tranId", tranId);
 		}
+
 		return "LoanOperation";
 	}
 
@@ -3818,7 +3808,7 @@ public class BGLSNavigationController {
 		}
 		return "LoanClosure";
 	}
-	
+
 	@RequestMapping(value = "TransactionMigration", method = { RequestMethod.GET, RequestMethod.POST })
 	public String TransactionMigration(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String branch_name, Model md, HttpServletRequest req,
@@ -3830,7 +3820,7 @@ public class BGLSNavigationController {
 		if (formmode == null || formmode.equals("add")) {
 			md.addAttribute("formmode", "add");
 			List<Organization_Entity> organization = organization_Repo.getAllList();
-			//md.addAttribute("organization", organization.get(0));
+			// md.addAttribute("organization", organization.get(0));
 
 			md.addAttribute("OrgBranch", organization_Branch_Rep.getbranchlist());
 
@@ -3871,255 +3861,246 @@ public class BGLSNavigationController {
 		}
 		return "TransactionMigrat";
 	}
-	
-	
+
 	@RequestMapping(value = "balancesheet", method = { RequestMethod.GET, RequestMethod.POST })
 	public String balancesheet(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String branch_name, Model model, HttpServletRequest req,
 			@RequestParam(required = false) BigDecimal record_srl) {
 
-		//String userid = (String) req.getSession().getAttribute("USERID");
-	
-	if (formmode == null || formmode.equals("list")) {
+		// String userid = (String) req.getSession().getAttribute("USERID");
 
-		model.addAttribute("formmode", "list");
-		model.addAttribute("refList", reference_code_Rep.getRefList());
-	} else if (formmode.equals("nav")) {
+		if (formmode == null || formmode.equals("list")) {
 
-		model.addAttribute("formmode", "nav");
-		model.addAttribute("refType", reference_code_Rep.getReferenceType());
+			model.addAttribute("formmode", "list");
+			model.addAttribute("refList", reference_code_Rep.getRefList());
+		} else if (formmode.equals("nav")) {
+
+			model.addAttribute("formmode", "nav");
+			model.addAttribute("refType", reference_code_Rep.getReferenceType());
+		}
+		return "ReferenceCodeMaintenance";
 	}
-	return "ReferenceCodeMaintenance";
-}
+
 	@RequestMapping(value = "accountledgerdownload", method = RequestMethod.GET)
 	@ResponseBody
 	public FileSystemResource accountLedgerDownload(HttpServletResponse response,
-	        @RequestParam(required = false) String acct_num,
-	        @RequestParam(required = false) String fromdate,
-	        @RequestParam(required = false) String todate
-	) throws IOException, SQLException, JRException {
+			@RequestParam(required = false) String acct_num, @RequestParam(required = false) String fromdate,
+			@RequestParam(required = false) String todate) throws IOException, SQLException, JRException {
 
-	    String filetype = "Excel";
-	    File repfile = loginServices.getFileAccountLedger(filetype, acct_num);
+		String filetype = "Excel";
+		File repfile = loginServices.getFileAccountLedger(filetype, acct_num);
 
-	    response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-	    response.setHeader("Content-Disposition", "attachment; filename=" + repfile.getName());
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		response.setHeader("Content-Disposition", "attachment; filename=" + repfile.getName());
 
-	    return new FileSystemResource(repfile);
+		return new FileSystemResource(repfile);
 	}
-	
-	
-
 
 	@RequestMapping(value = "customer", method = { RequestMethod.GET, RequestMethod.POST })
-	public String customer(@RequestParam(required = false) String id,Model md) {
+	public String customer(@RequestParam(required = false) String id, Model md) {
 
-		md.addAttribute("refdetails",reference_code_Rep.getRefById(id) );
+		md.addAttribute("refdetails", reference_code_Rep.getRefById(id));
 		md.addAttribute("refType", reference_code_Rep.getReferenceType());
 
 		return "ReferenceCodeID";
 	}
 
 	@RequestMapping(value = "customer/refedit", method = { RequestMethod.GET, RequestMethod.POST })
-	public String customerEdit(@RequestParam(required = false) String id,Model md) {
+	public String customerEdit(@RequestParam(required = false) String id, Model md) {
 
-		md.addAttribute("refdetails",reference_code_Rep.getRefById(id) );
+		md.addAttribute("refdetails", reference_code_Rep.getRefById(id));
 		md.addAttribute("refType", reference_code_Rep.getReferenceType());
-		
+
 		return "ReferenceCodeIDEdit.html";
 	}
 
 	@RequestMapping(value = "customer/refdelete", method = { RequestMethod.GET, RequestMethod.POST })
-	public String customerDelete(@RequestParam(required = false) String id,Model md) {
+	public String customerDelete(@RequestParam(required = false) String id, Model md) {
 
-		md.addAttribute("refdetails",reference_code_Rep.getRefById(id) );
+		md.addAttribute("refdetails", reference_code_Rep.getRefById(id));
 		md.addAttribute("refType", reference_code_Rep.getReferenceType());
-		
+
 		return "ReferenceCodeIDDelete.html";
 	}
-	
 
 	@GetMapping("/checkControlStatus")
 	@ResponseBody
 	public Map<String, Boolean> checkControlStatus() {
-	    Map<String, Boolean> response = new HashMap<>();
+		Map<String, Boolean> response = new HashMap<>();
 
-	    // Fetch the only row (assuming only one row exists)
-	    List<BGLS_Control_Table> list = bGLS_CONTROL_TABLE_REP.findAll();
-	    if(list.isEmpty()) {
-	        response.put("allCompleted", false);
-	        return response;
-	    }
+		// Fetch the only row (assuming only one row exists)
+		List<BGLS_Control_Table> list = bGLS_CONTROL_TABLE_REP.findAll();
+		if (list.isEmpty()) {
+			response.put("allCompleted", false);
+			return response;
+		}
 
-	    BGLS_Control_Table control = list.get(0);
+		BGLS_Control_Table control = list.get(0);
 
-	    boolean allCompleted =
-	        "COMPLETED".equalsIgnoreCase(control.getJournal_cons()) &&
-	        "COMPLETED".equalsIgnoreCase(control.getLedger_cons()) &&
-	        "COMPLETED".equalsIgnoreCase(control.getAcct_cons()) &&
-	        "COMPLETED".equalsIgnoreCase(control.getHol_check()) &&
-	        "COMPLETED".equalsIgnoreCase(control.getMov_dac()) &&
-	        "COMPLETED".equalsIgnoreCase(control.getMov_journal());
+		boolean allCompleted = "COMPLETED".equalsIgnoreCase(control.getJournal_cons())
+				&& "COMPLETED".equalsIgnoreCase(control.getLedger_cons())
+				&& "COMPLETED".equalsIgnoreCase(control.getAcct_cons())
+				&& "COMPLETED".equalsIgnoreCase(control.getHol_check())
+				&& "COMPLETED".equalsIgnoreCase(control.getMov_dac())
+				&& "COMPLETED".equalsIgnoreCase(control.getMov_journal());
 
-	    response.put("allCompleted", allCompleted);
-	    return response;
+		response.put("allCompleted", allCompleted);
+		return response;
 	}
 
 	@PostMapping("/dcpupdate")
 	@ResponseBody
 	public Map<String, String> dcpupdate(@RequestBody Map<String, String> payload) {
 
-	    String user = payload.get("user");
-	    String trndate = payload.get("trndate");
-	    String nxtdate = payload.get("nxtdate");
+		String user = payload.get("user");
+		String trndate = payload.get("trndate");
+		String nxtdate = payload.get("nxtdate");
 
-	    Map<String, String> response = new HashMap<>();
-	    System.out.println("User: " + user + ", Current Date: " + trndate + ", Next Date: " + nxtdate);
+		Map<String, String> response = new HashMap<>();
+		System.out.println("User: " + user + ", Current Date: " + trndate + ", Next Date: " + nxtdate);
 
-	    List<BGLS_Control_Table> list = bGLS_CONTROL_TABLE_REP.findAll();
-	    if(list.isEmpty()) {
-	        response.put("status", "failure");
-	        return response;
-	    }
+		List<BGLS_Control_Table> list = bGLS_CONTROL_TABLE_REP.findAll();
+		if (list.isEmpty()) {
+			response.put("status", "failure");
+			return response;
+		}
 
-	    BGLS_Control_Table controlTable = list.get(0);
+		BGLS_Control_Table controlTable = list.get(0);
 
-	    // Update fields
-	    controlTable.setJournal_cons("PENDING");
-	    controlTable.setLedger_cons("PENDING");
-	    controlTable.setAcct_cons("PENDING");
-	    controlTable.setHol_check("PENDING");
-	    controlTable.setMov_dac("PENDING");
-	    controlTable.setMov_journal("PENDING");
+		// Update fields
+		controlTable.setJournal_cons("PENDING");
+		controlTable.setLedger_cons("PENDING");
+		controlTable.setAcct_cons("PENDING");
+		controlTable.setHol_check("PENDING");
+		controlTable.setMov_dac("PENDING");
+		controlTable.setMov_journal("PENDING");
 
-	    bGLS_CONTROL_TABLE_REP.save(controlTable);
+		bGLS_CONTROL_TABLE_REP.save(controlTable);
 
-	    response.put("status", "success");
-	    return response;
+		response.put("status", "success");
+		return response;
 	}
 
-	
 	@RequestMapping(value = "journalvalid", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public String journalvalid() {
 
-	    System.out.println("Journal Valid is Updated");
+		System.out.println("Journal Valid is Updated");
 
-	    BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+		BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
 
-	    if (existingRecord != null) {
+		if (existingRecord != null) {
 
-	        // 2️⃣ Log past value
-	        System.out.println("Past Journal Cons: " + existingRecord.getJournal_cons());
+			// 2️⃣ Log past value
+			System.out.println("Past Journal Cons: " + existingRecord.getJournal_cons());
 
-	        // 3️⃣ Update current value
-	        existingRecord.setJournal_cons("Completed");
+			// 3️⃣ Update current value
+			existingRecord.setJournal_cons("Completed");
 
-	        // 4️⃣ Save updated record
-	        bGLS_CONTROL_TABLE_REP.save(existingRecord);
+			// 4️⃣ Save updated record
+			bGLS_CONTROL_TABLE_REP.save(existingRecord);
 
-	        System.out.println("Updated Journal Cons: " + existingRecord.getJournal_cons());
-	        return "success";
-	    } else {
-	        System.out.println("No record found in BGLS_Control_Table");
-	        return "failure";
-	    }
+			System.out.println("Updated Journal Cons: " + existingRecord.getJournal_cons());
+			return "success";
+		} else {
+			System.out.println("No record found in BGLS_Control_Table");
+			return "failure";
+		}
 	}
+
 	@RequestMapping(value = "holidayCheck", method = RequestMethod.POST)
 	@ResponseBody
 	public String holidayCheck(Model md, HttpServletRequest rq) {
-	    Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
-	    
-	    System.out.println("incomeing Holiday Check");
-	    System.out.println(TRANDATE + " TRANDATE");
+		Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
 
-	    BGLS_Control_Table existingRecord1 = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+		System.out.println("incomeing Holiday Check");
+		System.out.println(TRANDATE + " TRANDATE");
 
-	    if (existingRecord1 != null) {
+		BGLS_Control_Table existingRecord1 = bGLS_CONTROL_TABLE_REP.findAll().get(0);
 
-	        // 3️⃣ Update current value
-	        existingRecord1.setHol_check("Completed");
+		if (existingRecord1 != null) {
 
-	        // 4️⃣ Save updated record
-	        bGLS_CONTROL_TABLE_REP.save(existingRecord1);
+			// 3️⃣ Update current value
+			existingRecord1.setHol_check("Completed");
 
-	        System.out.println("Updated Journal Cons: " + existingRecord1.getJournal_cons());
-	        
-	    } else {
-	        System.out.println("No record found in BGLS_Control_Table");
-	    }
-	    
-	    // Step 1: Check if holiday exists in HMT
-	    int holidayCount = bglsHolidayMasterRep.countByRecordDateAndDelFlg(TRANDATE, "N"); // JPA query method
-	    System.out.println("holidayCount"+holidayCount);
-	    int cnt = holidayCount;
-	    if (cnt == 0) {
-	        // Step 2: If not found, check if weekend
-	        Calendar cal = Calendar.getInstance();
-	        cal.setTime(TRANDATE);
-	        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+			// 4️⃣ Save updated record
+			bGLS_CONTROL_TABLE_REP.save(existingRecord1);
 
-	        if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
-	            cnt = 1; // weekend = holiday
-	        }
-	    }
+			System.out.println("Updated Journal Cons: " + existingRecord1.getJournal_cons());
 
-	    // Step 3: Business logic based on cnt
-	    if (cnt > 0) {
-	        // Means it is a holiday or weekend
-	        System.out.println("Holiday/Weekend detected");
+		} else {
+			System.out.println("No record found in BGLS_Control_Table");
+		}
 
-	        // Update control table (your existing logic)
-	        BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
-	        if (existingRecord != null) {
-	            System.out.println("Past Journal Cons: " + existingRecord.getJournal_cons());
-	            existingRecord.setLedger_cons("Completed");
-	            bGLS_CONTROL_TABLE_REP.save(existingRecord);
-	            System.out.println("Updated Journal Cons: " + existingRecord.getJournal_cons());
-	        }
-	        return "Holiday/Weekend - Updation Done";
-	    } else {
-	        // Not a holiday
-	        return "Working Day";
-	        
-	    }
-	    
-	    
+		// Step 1: Check if holiday exists in HMT
+		int holidayCount = bglsHolidayMasterRep.countByRecordDateAndDelFlg(TRANDATE, "N"); // JPA query method
+		System.out.println("holidayCount" + holidayCount);
+		int cnt = holidayCount;
+		if (cnt == 0) {
+			// Step 2: If not found, check if weekend
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(TRANDATE);
+			int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+
+			if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+				cnt = 1; // weekend = holiday
+			}
+		}
+
+		// Step 3: Business logic based on cnt
+		if (cnt > 0) {
+			// Means it is a holiday or weekend
+			System.out.println("Holiday/Weekend detected");
+
+			// Update control table (your existing logic)
+			BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+			if (existingRecord != null) {
+				System.out.println("Past Journal Cons: " + existingRecord.getJournal_cons());
+				existingRecord.setLedger_cons("Completed");
+				bGLS_CONTROL_TABLE_REP.save(existingRecord);
+				System.out.println("Updated Journal Cons: " + existingRecord.getJournal_cons());
+			}
+			return "Holiday/Weekend - Updation Done";
+		} else {
+			// Not a holiday
+			return "Working Day";
+
+		}
+
 	}
+
 	@RequestMapping(value = "consistencyCheck", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public String consistencyCheck() {
 
-	    System.out.println(" Consistency check is Updated");
+		System.out.println(" Consistency check is Updated");
 
-	    BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+		BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
 
-	    if (existingRecord != null) {
+		if (existingRecord != null) {
 
-	        // 2️⃣ Log past value
-	           existingRecord.setAcct_cons("Completed");
+			// 2️⃣ Log past value
+			existingRecord.setAcct_cons("Completed");
 
-	        // 4️⃣ Save updated record
-	        bGLS_CONTROL_TABLE_REP.save(existingRecord);
+			// 4️⃣ Save updated record
+			bGLS_CONTROL_TABLE_REP.save(existingRecord);
 
-	      
-	        return "success";
-	    } else {
-	        System.out.println("No record found in BGLS_Control_Table");
-	        return "failure";
-	    }
+			return "success";
+		} else {
+			System.out.println("No record found in BGLS_Control_Table");
+			return "failure";
+		}
 	}
 
-	
 	@RequestMapping(value = "dateChageProcess", method = RequestMethod.POST)
 	@ResponseBody
 	public String dateChageProcess(Model md, HttpServletRequest rq) {
-	    Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
+		Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
 
-	    System.out.println("Incoming Date Change Process");
-	    System.out.println(TRANDATE + " TRANDATE");
+		System.out.println("Incoming Date Change Process");
+		System.out.println(TRANDATE + " TRANDATE");
 
-	    return DateChangeService.dateChange(TRANDATE);
+		return DateChangeService.dateChange(TRANDATE);
 	}
 
 	@RequestMapping(value = "Parameteradd", method = { RequestMethod.GET, RequestMethod.POST })
@@ -4127,46 +4108,36 @@ public class BGLSNavigationController {
 
 //		md.addAttribute("refdetails",reference_code_Rep.getRefById(id) );
 //		md.addAttribute("refType", reference_code_Rep.getReferenceType());
-		
-		return "BACP/PARAMETERADD";  
-	}
 
+		return "BACP/PARAMETERADD";
+	}
 
 	@RequestMapping(value = "parameterview", method = { RequestMethod.GET, RequestMethod.POST })
-	public String parameterEdit(
-	        @RequestParam(required = false) String id,
-	        @RequestParam(required = false, defaultValue = "view") String formmode, // <--- add this
-	        Model md) {
+	public String parameterEdit(@RequestParam(required = false) String id,
+			@RequestParam(required = false, defaultValue = "view") String formmode, // <--- add this
+			Model md) {
 
-	    // Fetch the entity/entities
-	    md.addAttribute("parameters", bglsLmsSchemesRepo.findByUniqueId(id));
+		// Fetch the entity/entities
+		md.addAttribute("parameters", bglsLmsSchemesRepo.findByUniqueId(id));
 
-	    // Pass the mode to Thymeleaf
-	    md.addAttribute("formMode", formmode);
+		// Pass the mode to Thymeleaf
+		md.addAttribute("formMode", formmode);
 
-	    return "BACP/parameterview.html";
+		return "BACP/parameterview.html";
 	}
 
-
-
-	
 	@RequestMapping(value = "parameterdelete", method = { RequestMethod.GET, RequestMethod.POST })
 	public String parameterDELETE(@RequestParam(required = false) String id, Model md) {
-	    md.addAttribute("parameters", bglsLmsSchemesRepo.findByUniqueId(id));
-	    return "BACP/parameterdelete.html";
+		md.addAttribute("parameters", bglsLmsSchemesRepo.findByUniqueId(id));
+		return "BACP/parameterdelete.html";
 	}
-	
+
 	@RequestMapping(value = "parameterupdate", method = { RequestMethod.GET, RequestMethod.POST })
 	public String parameterUpdate(@RequestParam(required = false) String id, Model md) {
-	    md.addAttribute("parameters", bglsLmsSchemesRepo.findByUniqueId(id));
-	    return "BACP/PARAMETERUPDATE.html";
+		md.addAttribute("parameters", bglsLmsSchemesRepo.findByUniqueId(id));
+		return "BACP/PARAMETERUPDATE.html";
 	}
-	
-	
 
-	
-	
-	
 	@RequestMapping(value = "balancing_report", method = RequestMethod.GET)
 	public String balanceReport(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String acct_num, String keyword, Model md, HttpServletRequest req) {
@@ -4208,12 +4179,5 @@ public class BGLSNavigationController {
 		}
 		return "Balancingreport.html";
 	}
-
-	
-	
-	
-	
-	
-	
 
 }
