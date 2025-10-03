@@ -216,6 +216,61 @@ function home() {
 }
 </script>
 <script> 
+
+		
+function handleMultipleFilterChange() {
+			// Disable all filter inputs first
+			$("#loanIdFilter, #loanTypeFilter, #mobileFilter").prop("disabled", true).val("");
+
+			// Get selected filter
+			let selected = $("#filterselect").val();
+			handleTableWithPagination(1);
+			if (selected === "LOAN_ID") {
+				$("#loanIdFilter").prop("disabled", false).focus();
+			} else if (selected === "LOAN_TYPE") { // you mapped as Customer ID
+				$("#loanTypeFilter").prop("disabled", false).focus();
+			} else if (selected === "MOBILE_PHONE") { // National Id / Mobile No (need unique values)
+				$("#mobileFilter").prop("disabled", false).focus();
+			}
+		}
+
+		function handleStatus(){
+
+			let status = $("#filterselect2").val();
+
+			// If default option selected, load pagination (or reset table)
+			if (status === "STATUS" || status.trim() === "") {
+				// handleFilterChange(1);  // your default pagination function
+				return;
+			}
+
+    		document.getElementById('loadingModal').style.display = 'flex';
+
+	$.ajax({
+        url: "loan/statusSearch",
+        type: "GET",
+        data: { status: status },
+        success: function (response) {
+            if (response && response.length > 0) {
+                updateTable(response);  // same table update function you already have
+            } else {
+                $("#usertable").html(
+                    `<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
+                );
+            }
+        },
+        error: function () {
+            $("#usertable").html(
+                `<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
+            );
+        },
+        complete: function () {
+            document.getElementById('loadingModal').style.display = 'none';
+        }
+    });
+}
+
+
 function back() {
 	event.preventDefault();
 	window.history.back();
@@ -395,6 +450,140 @@ document.addEventListener('DOMContentLoaded', function () {
     loadLoans('ALL', 1); // Load first page on page load
 });
 
+function handleTableWithPagination(page = 1) {
+
+	document.getElementById('loadingModal').style.display = 'flex';
+    $.ajax({
+        url: `api/loans?page=${page}&limit=200`,
+        type: 'GET',
+        success: function(response) {
+            // response contains JSON
+            updateTable(response.data);
+
+            // Update pagination
+            updatePagination(response.currentPage, response.totalPages);
+        },
+        error: function(err) {
+            console.error('Error fetching data:', err);
+        },
+				complete: function () {
+					// Hide loading modal after success or error
+					document.getElementById('loadingModal').style.display = 'none';
+				}
+    });
+}
+
+    $(document).ready(function () {
+		$("#loanIdFilter").on("keypress", function (e) {
+			if (e.which === 13) { // ENTER key
+				let loanId = $(this).val().trim();
+
+				if (loanId === "") {
+					handleTableWithPagination(1); // default paginated fetch
+					return;
+				}
+
+				document.getElementById('loadingModal').style.display = 'flex';
+
+				$.ajax({
+					url: "loan/search",
+					type: "GET",
+					data: { loanId: loanId },
+					success: function (response) {
+						console.log(response.length);
+						if (response && response.length > 0) {
+							updateTable(response); // function to populate table rows
+						} else {
+							$("#loanfilterbody").html(
+								`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
+							);
+						}
+					},
+					error: function () {
+						$("#loanfilterbody").html(
+							`<tr><td colspan="6" class="text-center text-danger">Error fetching data</td></tr>`
+						);
+					},
+					complete: function () {
+						document.getElementById('loadingModal').style.display = 'none';
+					}
+				});
+			}
+		});
+
+		$("#loanTypeFilter").on("keypress", function (e) {
+			if (e.which === 13) { // ENTER key
+				let loanType = $(this).val().trim();
+
+				if (loanType === "") {
+					handleTableWithPagination(1); // default paginated fetch
+					return;
+				}
+
+				document.getElementById('loadingModal').style.display = 'flex';
+
+				$.ajax({
+					url: "loan_type/search",
+					type: "GET",
+					data: { loanType: loanType },
+					success: function (response) {
+						if (response && response.length > 0) {
+							updateTable(response); // function to populate table rows
+						} else {
+							$("#loanfilterbody").html(
+								`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
+							);
+						}
+					},
+					error: function () {
+						$("#loanfilterbody").html(
+							`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
+						);
+					},
+					complete: function () {
+						document.getElementById('loadingModal').style.display = 'none';
+					}
+				});
+			}
+		});
+
+		$("#mobileFilter").on("keypress", function (e) {
+			if (e.which === 13) { // ENTER key
+				let MobileNumber = $(this).val().trim();
+
+				if (MobileNumber === "") {
+					handleTableWithPagination(1); // default paginated fetch
+					return;
+				}
+
+				document.getElementById('loadingModal').style.display = 'flex';
+
+				$.ajax({
+					url: "loan_mobile_number/search",
+					type: "GET",
+					data: { MobileNumber: MobileNumber },
+					success: function (response) {
+						if (response && response.length > 0) {
+							updateTable(response); // function to populate table rows
+						} else {
+							$("#loanfilterbody").html(
+								`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
+							);
+						}
+					},
+					error: function () {
+						$("#loanfilterbody").html(
+							`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
+						);
+					},
+					complete: function () {
+						document.getElementById('loadingModal').style.display = 'none';
+					}
+				});
+			}
+		});
+});
+
 function handleFilterChange() {
     const filterValue = document.getElementById('approvedfilter').value;
     loadLoans(filterValue, 1); // reset to first page on filter change
@@ -434,16 +623,16 @@ function updateTable(data) {
         tbody.append(`<tr style="font-size:14px"><td colspan="6" class="text-center text-danger">No data available</td></tr>`);
         return;
     }
-
     data.forEach((item, index) => {
         tbody.append(`
             <tr style="font-size:14px" class="userlist">
-                <td>${index + 1}</td>
+                 <td>${index + 1}</td>
                 <td class="text-primary" data-id="${item?.id}" data-account_holderkey="${item?.account_holderkey}" onclick="viewscreen(this);">
                     ${item?.id || ''}
                 </td>
                 <td>${item?.loan_name || ''}</td>
-                <td>${item?.retailer_name || ''}</td>
+                <td>${item?.first_name+" "+item?.last_name || ''}</td>
+                <td>${item?.mobile_phone || ''}</td>
                 <td>${item?.retailer_branch || ''}</td>
                 <td>${item?.account_state || ''}</td>
             </tr>
@@ -482,18 +671,16 @@ function updateTable(data) {
     	$('#loanfilterbody').empty(); 
         // Iterate over the data if available
         data.forEach((item, index) => {
-           
+        //    <td>${item?.retailer_name || ''}</td>
             const row = `
             	 <tr style="font-size:14px" class="userlist">
-                <td>${index + 1}</td>
-                <td class="text-primary"
-                    data-id="${item?.id}"
-                    data-account_holderkey="${item?.account_holderkey}"
-                    onclick="viewscreen(this);">
-                    ${item?.id}
+                 <td>${index + 1}</td>
+                <td class="text-primary" data-id="${item?.id}" data-account_holderkey="${item?.account_holderkey}" onclick="viewscreen(this);">
+                    ${item?.id || ''}
                 </td>
                 <td>${item?.loan_name || ''}</td>
-                <td>${item?.retailer_name || ''}</td>
+                <td>${item?.first_name+" "+item?.last_name || ''}</td>
+                <td>${item?.mobile_phone || ''}</td>
                 <td>${item?.retailer_branch || ''}</td>
                 <td>${item?.account_state || ''}</td>
             </tr>
@@ -648,14 +835,28 @@ $(function () {
 							<div class="float-right">
 								<!-- <button type="button" class="btn btn-xs btn-primary btns p-2"
 										onclick="Home(this)">DashBoard</button> -->
-								<select class="form-control-sm bg-white mr-2"
+								<select class="form-control-sm bg-white"
 									id="approvedfilter" onchange="handleFilterChange()"
-									style="background-color: #e3e3e4;margin-left: -13%;">
+									style="background-color: #e3e3e4;margin-left: -13%;width: 150px !important;margin-left: auto;">
 									<option value="ALL">All</option>
 									<option value="NOTAPPROVED" selected>UnVerified</option>
 									<option value="APPROVED" selected>Verified</option>
 								</select>
-								<button type="button" class="btn-primary big-btn btn-filter">Filter</button></div>
+								<select class="form-control-sm bg-white  w-100" id="filterselect2"
+											onchange="handleStatus()" style="background-color: #e3e3e4;width: 150px !important;">
+											<option value="STATUS">STATUS</option>
+											<option value="ACTIVE">ACTIVE</option>
+											<option value="ACTIVE_IN_ARREARS">ACTIVE IN ARREARS</option>
+											<option value="APPROVED">APPROVED</option>
+								</select>
+								<select class="form-control-sm bg-white " id="filterselect" onchange="handleMultipleFilterChange()" style="background-color: #e3e3e4;width: 156px !important;">
+										<option>Select Filter</option>
+										<option value="LOAN_ID">LOAN ID</option>
+										<option value="LOAN_TYPE">LOAN TYPE</option>
+										<option value="MOBILE_PHONE">MOBILE NUMBER</option>
+								</select>
+								 <!-- <button type="button" class="btn-primary big-btn btn-filter">Filter</button> -->
+								</div>
 						</div>
 						<div class="card-body"
 							style="overflow-y: auto; border: 1px solid #ddd;">
@@ -666,8 +867,10 @@ $(function () {
 										<tr class="filters">
 											<th style="width: 6%;">S.NO</th>
 											<th style="width: 10%;"><input type="text" id="loanIdFilter" class="form-control" placeholder="LOAN ID" disabled></th>
+											<th><input type="text" id="loanTypeFilter" class="form-control" placeholder="LOAN TYPE" disabled></th>
 											<th>LOAN NAME</th>
-											<th>RETAILER NAME</th>
+											<th><input type="text" id="mobileFilter" class="form-control" placeholder="MOBILE NUMBER" disabled></th>
+											<!-- <th>RETAILER NAME</th> -->
 											<th>RETAILER BRANCH ID</th>
 											<th style="width: 10%;">STATUS</th>
 										</tr>

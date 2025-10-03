@@ -223,12 +223,13 @@ input:hover+.password-info {
 			$("#normalalertmsg").text("Please fill out the Employee Id field.");
 			$('#normalalert').modal('show');
 	        
-	    }else if (!photoFile) {
-			document.getElementById('loadingModal').style.display = 'none';
-			$("#normalalertmsg").text("Please select a photo file.");
-			$('#normalalert').modal('show');
-			flag = false;
-		}
+	    }
+		// else if (!photoFile) {
+		// 	document.getElementById('loadingModal').style.display = 'none';
+		// 	$("#normalalertmsg").text("Please select a photo file.");
+		// 	$('#normalalert').modal('show');
+		// 	flag = false;
+		// }
 
 		if(flag == true){
 	    document.getElementById('loadingModal').style.display = 'flex';
@@ -286,12 +287,13 @@ input:hover+.password-info {
 			$("#normalalertmsg").text("Please fill out the Employee Id field.");
 			$('#normalalert').modal('show');
 	        
-	    }else if (!photoFile) {
-			document.getElementById('loadingModal').style.display = 'none';
-			$("#normalalertmsg").text("Please select a photo file.");
-			$('#normalalert').modal('show');
-			flag = false;
-		}
+	    }
+		// else if (!photoFile) {
+		// 	document.getElementById('loadingModal').style.display = 'none';
+		// 	$("#normalalertmsg").text("Please select a photo file.");
+		// 	$('#normalalert').modal('show');
+		// 	flag = false;
+		// }
 
 		if(flag == true){
 			document.getElementById('loadingModal').style.display = 'flex';

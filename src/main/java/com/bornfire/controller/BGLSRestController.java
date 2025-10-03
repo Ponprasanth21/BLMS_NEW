@@ -2752,10 +2752,28 @@ public class BGLSRestController {
         int totalPages = (int) Math.ceil((double) totalItems / limit);
         int offset = (page - 1) * limit;
 
-        List<LOAN_ACT_MST_ENTITY> data = lOAN_ACT_MST_REPO.getLoanActDet(offset, limit);
+        List<Object[]> data = lOAN_ACT_MST_REPO.getLoanActWithMobile(offset, limit);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("data", data);
+        
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (Object[] row : data) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", row[1]);               // l.ID
+            map.put("account_holderkey", row[3]); // adjust index to match your query
+            map.put("loan_name", row[12]);
+            map.put("retailer_name", row[64]);
+            map.put("retailer_branch", row[65]);
+            map.put("account_state", row[9]);
+            map.put("last_name", row[row.length - 1]);
+            map.put("mobile_phone", row[row.length - 3]);
+            map.put("first_name", row[row.length - 2]);
+            result.add(map);
+        }
+
+        
+        response.put("data", result);
         response.put("currentPage", page);
         response.put("totalPages", totalPages);
         return response;
@@ -2770,10 +2788,26 @@ public class BGLSRestController {
         int totalPages = (int) Math.ceil((double) totalItems / limit);
         int offset = (page - 1) * limit;
 
-        List<LOAN_ACT_MST_ENTITY> data = lOAN_ACT_MST_REPO.getLoanActFilterUnverified(offset, limit);
+        List<Object[]> data = lOAN_ACT_MST_REPO.getLoanActFilterUnverified(offset, limit);
+        
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (Object[] row : data) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", row[1]);               // l.ID
+            map.put("account_holderkey", row[3]); // adjust index to match your query
+            map.put("loan_name", row[12]);
+            map.put("retailer_name", row[64]);
+            map.put("retailer_branch", row[65]);
+            map.put("account_state", row[9]);
+            map.put("last_name", row[row.length - 1]);
+            map.put("mobile_phone", row[row.length - 3]);
+            map.put("first_name", row[row.length - 2]);
+            result.add(map);
+        }
 
         Map<String, Object> response = new HashMap<>();
-        response.put("data", data);
+        response.put("data", result);
         response.put("currentPage", page);
         response.put("totalPages", totalPages);
         return response;
@@ -2788,10 +2822,27 @@ public class BGLSRestController {
         int totalPages = (int) Math.ceil((double) totalItems / limit);
         int offset = (page - 1) * limit;
 
-        List<LOAN_ACT_MST_ENTITY> data = lOAN_ACT_MST_REPO.getLoanActFilterVerified(offset, limit);
+        List<Object[]> data = lOAN_ACT_MST_REPO.getLoanActFilterVerified(offset, limit);
+        
+
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (Object[] row : data) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", row[1]);               // l.ID
+            map.put("account_holderkey", row[3]); // adjust index to match your query
+            map.put("loan_name", row[12]);
+            map.put("retailer_name", row[64]);
+            map.put("retailer_branch", row[65]);
+            map.put("account_state", row[9]);
+            map.put("last_name", row[row.length - 1]);
+            map.put("mobile_phone", row[row.length - 3]);
+            map.put("first_name", row[row.length - 2]);
+            result.add(map);
+        }
 
         Map<String, Object> response = new HashMap<>();
-        response.put("data", data);
+        response.put("data", result);
         response.put("currentPage", page);
         response.put("totalPages", totalPages);
         return response;

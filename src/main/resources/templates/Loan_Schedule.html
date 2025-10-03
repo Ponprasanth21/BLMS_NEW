@@ -1095,6 +1095,21 @@
     });
 }
 
+function handleMultipleFilterChange() {
+			// Disable all filter inputs first
+			$("#loanIdFilter, #loanTypeFilter, #mobileFilter").prop("disabled", true).val("");
+
+			// Get selected filter
+			let selected = $("#filterselect").val();
+			handleTableWithPagination(1);
+			if (selected === "LOAN_ID") {
+				$("#loanIdFilter").prop("disabled", false).focus();
+			} else if (selected === "LOAN_TYPE") { // you mapped as Customer ID
+				$("#loanTypeFilter").prop("disabled", false).focus();
+			} else if (selected === "MOBILE_PHONE") { // National Id / Mobile No (need unique values)
+				$("#mobileFilter").prop("disabled", false).focus();
+			}
+		}
   
 /*  function downloadExcel(type) {
 	 document.getElementById('loadingModal').style.display = 'flex';
@@ -1286,9 +1301,15 @@
 									<h6 style="font-size: 1.2rem;">LOAN SCHEDULE - LIST</h6>
 								</div>
 								<div class="float-right">
-								
-									<button type="button"
-										class="btn-primary big-btn btn-filter">Filter</button>
+									<select class="form-control-sm bg-white " id="filterselect" onchange="handleMultipleFilterChange()" style="background-color: #e3e3e4;width: 156px !important;">
+										<option>Select Filter</option>
+										<option value="LOAN_ID">LOAN ID</option>
+										<option value="LOAN_NAME">LOAN TYPE</option>
+										<option value="RETAILER_NAME">RETAILER NAME</option>
+										<option value="RETAILER_BRANCH_ID">RETAILER BRANCH ID</option>
+										<option value="STATUS">STATUS</option>
+								</select>
+									<!-- <button type="button" class="btn-primary big-btn btn-filter">Filter</button> -->
 								<!-- <button type="button"
 										class="btn-primary big-btn" onclick="downloadExcel('REPAYMENT')">Download</button> -->
 								</div>
@@ -1301,21 +1322,21 @@
 											style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
 											<tr class="filters">
 												<th style="width: 8%;"><input type="text" 
-														class="form-control font-weight-bold" placeholder="S.NO"
+														class="form-control font-weight-bold" id="s_no" placeholder="S.NO"
 														disabled></th>
-												<th style="width: 10%;"><input type="text" 
+												<th style="width: 10%;"><input type="text"  id="loan_id"
 														class="form-control font-weight-bold" placeholder="LOAN ID"
 														disabled></th>
-												<th><input type="text" 
+												<th><input type="text"  id="loan_name"
 														class="form-control font-weight-bold" placeholder="LOAN NAME"
 														disabled></th>
-												<th><input type="text" 
+												<th><input type="text" id="retailer_name"
 														class="form-control font-weight-bold"
 														placeholder="RETAILER NAME" disabled></th>
-												<th><input type="text" 
+												<th><input type="text"  id="retailer_branch_id"
 														class="form-control font-weight-bold"
 														placeholder="RETAILER BRANCH ID" disabled></th>
-												<th style="width: 10%;"><input type="text" 
+												<th style="width: 10%;"><input type="text" id="status"
 														class="form-control font-weight-bold" placeholder="STATUS"
 														disabled></th>
 											</tr>
