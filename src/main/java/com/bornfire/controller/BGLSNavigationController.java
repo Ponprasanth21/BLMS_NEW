@@ -4167,7 +4167,7 @@ public class BGLSNavigationController {
 	
 	
 	
-	@RequestMapping(value = "BalancingReport", method = RequestMethod.GET)
+	@RequestMapping(value = "balancing_report", method = RequestMethod.GET)
 	public String balanceReport(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String acct_num, String keyword, Model md, HttpServletRequest req) {
 		if (formmode == null || formmode.equals("list")) {

@@ -2456,6 +2456,9 @@
 					success: function (response) {
 						if (response.length > 0) {
 							updateTable(response);
+						}else {
+							$("#usertable").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
+							$("#usertable1").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
 						}
 					},
 					error: function () {
@@ -2490,6 +2493,10 @@
 							if (response.length > 0) {
 								updateTable(response);
 							}
+							else {
+							$("#usertable").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
+							$("#usertable1").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
+						}
 						},
 						error: function () {
 							$("#usertable").html(`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`);
@@ -2524,6 +2531,10 @@
 							if (response.length > 0) {
 								updateTable(response);
 							}
+							else {
+							$("#usertable").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
+							$("#usertable1").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
+						}
 						},
 						error: function () {
 							$("#usertable").html(`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`);

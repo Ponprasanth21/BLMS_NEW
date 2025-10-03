@@ -9003,7 +9003,7 @@ public String lmsSchemesAdd(@RequestBody BglsLmsSchemesEntity request,HttpServle
 	request.setDelFlg("N");    
 	request.setEntityFlg("Y");
 	request.setModifyFlg("N");
-	request.setVerifyFlg("Y");
+	request.setVerifyFlg("N");
 	request.setCreationDate(new Date());
 	
 	
