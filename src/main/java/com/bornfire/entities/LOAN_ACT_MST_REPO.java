@@ -213,6 +213,8 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
 			+ "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.ENCODED_KEY = b.ACCOUNT_HOLDERKEY "
 			+ "WHERE b.ACCOUNT_HOLDERKEY = ?1", nativeQuery = true)
 	List<String> getLoanValue(String holderKey);
+	
+	
 
 	@Query(value = "WITH ZeroBalanceDue AS ( " +
             "    SELECT DUE_DATE AS LAST_ZERO_BAL_DATE " +
@@ -378,8 +380,8 @@ List<Object[]> getActNo();
 	
 	
 	// All loans (Oracle 12c+)
-//	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL ORDER BY id OFFSET ?1 ROWS FETCH NEXT ?2 ROWS ONLY", nativeQuery = true)
-//	List<LOAN_ACT_MST_ENTITY> getLoanActDet(int offset, int limit);
+	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL ORDER BY id OFFSET ?1 ROWS FETCH NEXT ?2 ROWS ONLY", nativeQuery = true)
+	List<LOAN_ACT_MST_ENTITY> getLoanActDet(int offset, int limit);
 	
     @Query(value = 
             "  SELECT l.*, c.MOBILE_PHONE AS mobile_phone,c.FIRST_NAME AS first_name,c.LAST_NAME AS last_name   " +
@@ -391,6 +393,16 @@ List<Object[]> getActNo();
             , nativeQuery = true)
         List<Object[]> getLoanActWithMobile(int offset, int limit);
 
+        @Query(value = 
+                "  SELECT l.*, c.MOBILE_PHONE AS mobile_phone,c.FIRST_NAME AS first_name,c.LAST_NAME AS last_name   " +
+                "  FROM LOAN_ACCOUNT_MASTER_TBL l  " +
+                "  INNER JOIN CLIENT_MASTER_TBL c  " +
+                "      ON c.ENCODED_KEY = l.ACCOUNT_HOLDERKEY  " +
+                "  ORDER BY l.ID  " +
+                "  OFFSET ?1 ROWS FETCH NEXT ?2 ROWS ONLY  "
+                , nativeQuery = true)
+            List<Object[]> getLoanMaintanceActWithMobile(int offset, int limit);
+            
 	// Not Approved loans (last_modified_date > approved_date)
 	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL WHERE last_modified_date > approved_date ORDER BY id OFFSET ?1 ROWS FETCH NEXT ?2 ROWS ONLY", nativeQuery = true)
 	List<LOAN_ACT_MST_ENTITY> getLoanActFilterUnverified(int offset, int limit);

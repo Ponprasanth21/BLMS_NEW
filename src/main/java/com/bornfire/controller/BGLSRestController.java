@@ -2752,7 +2752,7 @@ public class BGLSRestController {
         int totalPages = (int) Math.ceil((double) totalItems / limit);
         int offset = (page - 1) * limit;
 
-        List<Object[]> data = lOAN_ACT_MST_REPO.getLoanActWithMobile(offset, limit);
+        List<LOAN_ACT_MST_ENTITY> data = lOAN_ACT_MST_REPO.getLoanActDet(offset, limit);
 
         Map<String, Object> response = new HashMap<>();
         response.put("data", data);
