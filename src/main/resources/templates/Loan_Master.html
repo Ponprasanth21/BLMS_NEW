@@ -876,7 +876,7 @@ function updateTable(data) {
     tbody.empty();
 
     if (!data || data.length === 0) {
-        tbody.append(`<tr><td colspan="6" class="text-center text-danger">No data available</td></tr>`);
+        tbody.append(`<tr><td colspan="7" class="text-center text-danger">No data available</td></tr>`);
         return;
     }
 
@@ -1183,14 +1183,14 @@ $(document).ready(
 											<label>Customer Id</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${loan[0][0]}" name="customer_id"
+											<input type="text" th:value="${customer_id != null and !customer_id.isEmpty() ? customer_id[0] : ''}" name="customer_id"
 												id="customer_id" readonly />
 										</div>
 										<div class="col-sm-2">
 											<label>Customer Name</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${loan[0][1]}" name="employer_name"
+											<input type="text" th:value="${customer_name != null and !customer_name.isEmpty() ? customer_name[0] : ''}" name="employer_name"
 												id="employer_name" readonly />
 										</div>
 

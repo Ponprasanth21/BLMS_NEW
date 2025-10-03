@@ -214,6 +214,16 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
 			+ "WHERE b.ACCOUNT_HOLDERKEY = ?1", nativeQuery = true)
 	List<String> getLoanValue(String holderKey);
 
+	@Query(value = "SELECT a.CUSTOMER_ID FROM CLIENT_MASTER_TBL a "
+			+ "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.ENCODED_KEY = b.ACCOUNT_HOLDERKEY "
+			+ "WHERE b.ACCOUNT_HOLDERKEY = ?1", nativeQuery = true)
+	List<String> getLoanValueCUSTOMER_ID(String holderKey);
+	
+	@Query(value = "SELECT a.FIRST_NAME FROM CLIENT_MASTER_TBL a "
+			+ "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.ENCODED_KEY = b.ACCOUNT_HOLDERKEY "
+			+ "WHERE b.ACCOUNT_HOLDERKEY = ?1", nativeQuery = true)
+	List<String> getLoanValueCUSTOMER_NAME(String holderKey);
+	
 	@Query(value = "WITH ZeroBalanceDue AS ( " +
             "    SELECT DUE_DATE AS LAST_ZERO_BAL_DATE " +
             "    FROM LOAN_REPAYMENT_TBL " +

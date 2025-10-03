@@ -308,6 +308,7 @@ input:hover+.password-info {
 	            formData.append("photoFile", photoFile);
 	            formData.append("employeeId", employeeId);
 
+ 			if (photoFile) {
 	            // Second AJAX call to upload the photo
 	            $.ajax({
 	                url: './employeeAdd1',
@@ -326,6 +327,11 @@ input:hover+.password-info {
 	                    $('#alert').modal("show");
 	                }
 	            });
+			}else{
+				$('#Successmsgpopup').html("<h6 class='text-center'>" + data + "</h6>");
+				$('#SuccesPopUp').modal('show');
+				document.getElementById('loadingModal').style.display = 'none';
+			}
 	        },
 	        error: function(xhr, status, error) {
 	            var detailedError = xhr.responseText || error;
