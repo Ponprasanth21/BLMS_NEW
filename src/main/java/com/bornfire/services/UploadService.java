@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bornfire.config.SequenceGenerator;
 import com.bornfire.entities.BGLSAuditTable;
 import com.bornfire.entities.BGLSAuditTable_Rep;
 import com.bornfire.entities.CLIENT_MASTER_ENTITY;
@@ -39,6 +41,8 @@ import com.bornfire.entities.LOAN_ACT_MST_ENTITY;
 import com.bornfire.entities.LOAN_ACT_MST_REPO;
 import com.bornfire.entities.LOAN_REPAYMENT_ENTITY;
 import com.bornfire.entities.LOAN_REPAYMENT_REPO;
+import com.bornfire.entities.MULTIPLE_TRANSACTION_ENTITY;
+import com.bornfire.entities.MULTIPLE_TRANSACTION_REPO;
 
 @Service
 @ConfigurationProperties("output")
@@ -68,7 +72,13 @@ public class UploadService {
 	GeneralLedgerRep GeneralLedgerRep;
 	
 	@Autowired
+	MULTIPLE_TRANSACTION_REPO multiple_TRANSACTION_REPO;
+	
+	@Autowired
 	Chart_Acc_Rep chart_Acc_Rep;
+	
+	@Autowired
+	private SequenceGenerator sequence;
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public int delteCustId(List<String> duplicateTr) {
@@ -592,6 +602,80 @@ public class UploadService {
 
 					logger.info("Start 7");
 					GeneralLedgerRep.save(entity);
+					successCount++;
+					//System.out.println("FINAL COUNTS -> Succeeded: " + successCount + ", Failed: " + failureCount);
+				} catch (Exception ex) {
+					failureCount++;
+					ex.printStackTrace();
+				}
+			}
+			logger.info("Start 8");
+		} catch (Exception e) {
+			e.printStackTrace();
+			resultMap.put("status", "error");
+			resultMap.put("message", "File upload failed: " + e.getMessage());
+		}
+		logger.info("Start 9");	
+		saveAudit(userID, userName, "GL File Upload!", " BGLS_GENERAL_LED", auditRefNo);
+		logger.info("Start 10");
+		resultMap.put("status", "success");
+		resultMap.put("TotalSucceeded", successCount);
+		resultMap.put("TotalFailed", failureCount);
+		resultMap.put("TotalProcessed", (successCount + failureCount));
+
+		return resultMap;
+	}
+//transaction upload
+	public Map<String, Object> saveTranFile(MultipartFile file, String userID, String userName,boolean overwrite ,String auditRefNo) throws SQLException {
+		int successCount = 0, failureCount = 0;
+		Map<String, Object> resultMap = new LinkedHashMap<>();
+		logger.info("Start 1");
+		try (InputStream inputStream = file.getInputStream();
+			     Workbook workbook = WorkbookFactory.create(inputStream)) {
+
+			logger.info("Start 2");
+			List<HashMap<Integer, String>> mapList = new ArrayList<>();
+			for (Sheet s : workbook) {
+			    for (Row r : s) {
+			        if (!isRowEmpty(r)) {
+			            if (r.getRowNum() < 2)
+			                continue;
+
+			            HashMap<Integer, String> map = new HashMap<>();
+			            for (int j = 0; j < 50; j++) {
+			                Cell cell = r.getCell(j);
+			                DataFormatter formatter1 = new DataFormatter();
+			                String text = formatter1.formatCellValue(cell);
+			                map.put(j, text);
+			            }
+			            mapList.add(map);
+			        }
+			    }
+			}
+			logger.info("Start 3");
+			//upload start
+			for (HashMap<Integer, String> item : mapList) {
+				logger.info("Start 4");
+				try {
+					logger.info("Start 5");
+					MULTIPLE_TRANSACTION_ENTITY entity = new MULTIPLE_TRANSACTION_ENTITY();
+
+					entity.setTransaction_id(item.get(0));    
+					entity.setNames(item.get(1));
+					entity.setReference(item.get(2));
+					entity.setMobile_number(item.get(3));
+					entity.setAmount(DateParser.parseBigDecimal(item.get(4)));
+					entity.setAllocated_amount(DateParser.parseBigDecimal(item.get(5)));
+					entity.setTrans_time(DateParser.parseDateSafe(item.get(6)));
+					entity.setStatus(item.get(7));
+					entity.setSrl_no(sequence.generateRequestUUId());
+					entity.setEntity_flg("Y");
+					entity.setDel_flg("N");
+					entity.setEntry_user(userID);
+			    	entity.setEntry_time(new Date());
+
+					logger.info("Start 7");
+					multiple_TRANSACTION_REPO.save(entity);
 					successCount++;
 					//System.out.println("FINAL COUNTS -> Succeeded: " + successCount + ", Failed: " + failureCount);
 				} catch (Exception ex) {

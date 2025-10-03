@@ -28,7 +28,7 @@
 			padding: 20px;
 			border: 1px solid #888;
 			width: 100%;
-			height: 50%;
+			height: 25%;
 			margin-left: 200px;
 		}
 
@@ -2165,7 +2165,110 @@
         row.parentNode.removeChild(row);
     }
 </script>
+	<script th:inline="javascript">
+		document.addEventListener('DOMContentLoaded', function () {
 
+			const fileInput = document.getElementById('fileInput');
+			const submitBtn = document.getElementById('submitBtn');
+
+			// Step 1: Open file chooser when submit button is clicked
+			submitBtn.addEventListener('click', () => {
+				fileInput.click();
+			});
+
+			// Step 2: When file is selected, upload it
+			fileInput.addEventListener('change', () => {
+				if (fileInput.files.length > 0) {
+					submitData(fileInput.files[0]); // pass the selected file
+				}
+			});
+
+			function submitData(file) {
+				document.getElementById('loadingModal').style.display = 'flex';
+				var form = $('#reportform_cust')[0];
+				var data = new FormData(form);
+				data.append("overwrite", false);
+				data.append("fileInput", "TRANSACTION");
+				data.append("file", file);
+				$.ajax({
+					type: "POST",
+					url: "UploadFileData",
+					data: data,
+					processData: false,
+					contentType: false,
+					success: function (response) {
+						document.getElementById('loadingModal').style.display = 'none';
+						console.log(response);
+						if (response.status === "duplicate") {
+							$('#alertmsgpopup')
+								.text(`Duplicate Customer Id(s) found: ${response.id.join(", ")}. Do you want to overwrite them?`)
+								.css("white-space", "nowrap");
+							window.lastData = data;
+							window.lastType = "CUSTOMER";
+
+							$('#datacancel').modal("show");
+							return;
+						}
+						showResponse(response);
+					},
+					error: function (error) {
+						document.getElementById('loadingModal').style.display = 'none';
+						showResponse("Error: " + error.responseText);
+					}
+				});
+			}
+		});
+
+		function showResponse(response) {
+			let message = "Upload Completed"
+				// "Upload Completed<br>" +
+				// "Total No of Rows Succeeded: " + response.TotalSucceeded + "<br>" +
+				// "Total No of Rows Failed: " + response.TotalFailed + "<br>" +
+				// "Total Rows Processed: " + response.TotalProcessed + "<br>";
+
+			// ✅ Write to the same modal-body container
+			$('#Successmsgpopup').html("<h6 class='text-center'>" + message + "</h6>");
+			$('#SuccesPopUp').modal('show');
+		}
+		function backs() {
+			$("#normalalertvalues").modal("hide");
+		}
+
+		// DELETE REF
+		function deleteRecUpload(btn) {
+			$('#datacancel').modal('hide');
+			document.getElementById('loadingModal').style.display = 'flex';
+
+			// ✅ Reuse stored FormData
+			var formData = window.lastData;
+			if (!formData) {
+				console.error("No form data found from last upload");
+				return;
+			}
+
+			// ✅ Ensure overwrite is set to true
+			formData.set("overwrite", true);
+
+			$.ajax({
+				url: './UploadFileData',
+				type: 'POST',
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function (response) {
+					document.getElementById('loadingModal').style.display = 'none';
+					showResponse(response);
+
+				},
+				error: function (xhr, status, error) {
+					document.getElementById('loadingModal').style.display = 'none';
+					$('#alertmsg').text("Overwrite Upload failed");
+					$('#alert').modal("toggle");
+				}
+			});
+		}
+
+	</script>
 <body>
 
 	<div class="col-sm-2">
@@ -2472,9 +2575,15 @@
 				<div th:if="${formmode}=='view2'">
 
 					<div class="card w-100 border">
+						<form id="reportform_cust">
+							<input type="file" id="fileInput" name="file" style="display: none" />
+						</form>
 						<div class="card-header" style="background-color: #e9ecef; height: 50px">
 							<div class="float-left">
 								<h6 style="font-size: 1.2rem; color: black;">Bulk Collection</h6>
+							</div>
+							<div class="btn-group nav-buttons float-right">
+									<button type="button" class="btn-primary big-btn" id="submitBtn">Upload</button>
 							</div>
 						</div>
 						<div class="row formline" style="padding: 10px 10px 2px 50px; text-align: bottom;">
@@ -2693,7 +2802,24 @@
 			</div>
 		</div>
 	</div>
+	<!-- success pop up -->
+	<div class="modal fade" id="SuccesPopUp" style="background: #000000b0;margin-bottom:10px;" role="dialog"
+		aria-labelledby="deleteModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+			<div class="modal-content" style="min-height:212px;">
+				<!-- Modal Body -->
+				<div class="modal-body" style="align-content: center;">
+					<h5 id="Successmsgpopup" style="font-size: 17px; color: black; padding: 15px;"></h5>
+				</div>
+				<!-- Modal Footer -->
+				<div style="padding: 10px; text-align: center;">
+					<button type="button" class="btn btn-outline-dark me-3" style="font-size: 16px;"
+						onclick="$('#SuccesPopUp').modal('hide')">Cancel</button>
+				</div>
 
+			</div>
+		</div>
+	</div>
 
 	<div class="modal fade" data-backdrop="false" data-keyboard="false" id="alert" tabindex="-1" role="dialog"
 		aria-hidden="true">

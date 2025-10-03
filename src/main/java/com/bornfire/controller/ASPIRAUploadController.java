@@ -105,7 +105,9 @@ public class ASPIRAUploadController {
 	        	    	 uploadExcel(file,CSVfileName,"REPAYMENT");
 	        }else if ("GL_CODE".equalsIgnoreCase(fileInput)) {
 	            resultMap = UploadService.saveGLFile(file, userID, userName, overwrite,  auditRefNo);
-	        }  else {
+	        } else if ("TRANSACTION".equalsIgnoreCase(fileInput)) {
+	            resultMap = UploadService.saveTranFile(file, userID, userName, overwrite,  auditRefNo);
+	        } else {
 	            resultMap.put("message", "Invalid file type specified");
 	        }
 
