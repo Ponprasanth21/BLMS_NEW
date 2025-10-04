@@ -2041,50 +2041,46 @@
 
 		//new radio button transaction
 
-		var mrowCount = 1;   // row index counter
-		var cell2Value = 2;  // part_tran_id starts from 2 since row 1 = 1
+		var mrowCount = 2; // Starting index for mrowCount
+		var cell2Value = 3; // Starting value for cell2
+		// To keep track of the maximum value used for cell2
 
 		function addNewRow() {
-		    var table = document.getElementById("usertablemulti");
-		    var row = table.insertRow();
+			var table = document.getElementById("usertablemulti");
+			var row = table.insertRow();
 
-		    // same tran_id for every row
-		    row.insertCell().innerHTML =
-		        '<input type="text" class="form-control" name="tran_id" id="tran_id' + mrowCount + '" ' +
-		        'value="' + tranIdFromBackend + '" readonly>';
+			// 1. Transaction ID
+			row.insertCell().innerHTML = '<input type="text" class="form-control form-control-sm" value="' + plusonetranValue + '" readonly>';
 
-		    // increment part_tran_id using cell2Value
-		    row.insertCell().innerHTML =
-		        '<input type="text" class="form-control" name="part_tran_id" id="part_tran_id' + mrowCount + '" ' +
-		        'value="' + cell2Value + '" readonly>';
+			// 2. Part Tran Id
+			row.insertCell().innerHTML = '<input type="text" class="form-control form-control-sm" value="' + cell2Value + '" readonly>';
+			cell2Value++;
 
-		    row.insertCell().innerHTML =
-		        '<input type="text" class="form-control" name="acct_num" id="acct_num_mass' + mrowCount + '" ' +
-		        'onclick="openModalmassentries(this)">';
+			// 3. Names
+			row.insertCell().innerHTML = '<input type="text" class="form-control form-control-sm">';
 
-		    row.insertCell().innerHTML =
-		        '<input type="text" class="form-control" name="acct_name" id="acct_name_mass' + mrowCount + '">';
+			// 4. Reference
+			row.insertCell().innerHTML = '<input type="text" class="form-control form-control-sm">';
 
-		    row.insertCell().innerHTML =
-		        '<input type="text" class="form-control" name="tran_amt" id="tran_amt' + mrowCount + '" oninput="calculate()">';
+			// 5. Mobile number
+			row.insertCell().innerHTML = '<input type="text" class="form-control form-control-sm">';
 
-		    row.insertCell().innerHTML =
-		        '<input type="text" class="form-control" name="tran_particular" id="tran_particular' + mrowCount + '">';
+			// 6. Amount
+			row.insertCell().innerHTML = '<input type="text" class="form-control form-control-sm" oninput="calculate()">';
 
-		    row.insertCell().innerHTML =
-		        '<input type="text" class="form-control" name="tran_remarks" id="tran_remarks' + mrowCount + '">';
+			// 7. Allocated amount
+			row.insertCell().innerHTML = '<input type="text" class="form-control form-control-sm">';
 
-		    row.insertCell().innerHTML =
-		        '<input type="text" class="form-control" name="rate_code" id="rate_code' + mrowCount + '">';
+			// 8. Trans. time
+			row.insertCell().innerHTML = '<input type="text" class="form-control form-control-sm">';
 
-		    row.insertCell().innerHTML =
-		        '<input type="text" class="form-control" name="rate" id="rate' + mrowCount + '">';
+			// 9. Status
+			row.insertCell().innerHTML = '<input type="text" class="form-control form-control-sm">';
 
-		    row.insertCell().innerHTML =
-		        '<input type="radio" name="add_details" id="add_details' + mrowCount + '">';
+			// 10. Allocated (radio)
+			row.insertCell().innerHTML = '<input type="radio" name="allocated">';
 
-		    mrowCount++;
-		    cell2Value++; // move to next part_tran_id
+			mrowCount++;
 		}
 
 
@@ -2124,13 +2120,13 @@
 	</script>
 </head>
 <script>
-    // Function to add a new row
-    function addNewRows() {
-        let table = document.getElementById("usertablemulti");
-        let rowCount = table.rows.length;
-        let newRow = table.insertRow();
+	// Function to add a new row
+	function addNewRows() {
+		let table = document.getElementById("usertablemulti");
+		let rowCount = table.rows.length;
+		let newRow = table.insertRow();
 
-        newRow.innerHTML = `
+		newRow.innerHTML = `
             <td><input type="text" class="form-control" name="tran_id" 
                 onkeyup="this.value = this.value.toUpperCase();" /></td>
             <td><input type="text" class="form-control" name="part_tran_id" value="${rowCount + 1}" 
@@ -2157,118 +2153,203 @@
 			</td>
 
         `;
-    }
+	}
 
-    // Function to remove a row
-    function removeRows(button) {
-        let row = button.closest("tr");
-        row.parentNode.removeChild(row);
-    }
+	// Function to remove a row
+	function removeRows(button) {
+		let row = button.closest("tr");
+		row.parentNode.removeChild(row);
+	}
 </script>
-	<script th:inline="javascript">
-		document.addEventListener('DOMContentLoaded', function () {
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		const input = document.getElementById("rate_code");
+		const now = new Date();
+		const formatted =
+			now.getDate().toString().padStart(2, '0') + "-" +
+			(now.getMonth() + 1).toString().padStart(2, '0') + "-" +
+			now.getFullYear() + " " +
+			now.getHours().toString().padStart(2, '0') + ":" +
+			now.getMinutes().toString().padStart(2, '0');
+		input.value = formatted;
+	});
+</script>
+<script>
+	function openModal() {
+		document.getElementById("myModaldatas").style.display = "block";
+	}
 
-			const fileInput = document.getElementById('fileInput');
-			const submitBtn = document.getElementById('submitBtn');
+	function closeModal() {
+		document.getElementById("myModaldatas").style.display = "none";
+		document.getElementById("myModal").style.display = "none";
+	}
 
-			// Step 1: Open file chooser when submit button is clicked
-			submitBtn.addEventListener('click', () => {
-				fileInput.click();
-			});
+	/*function selectAccount(row) {
+		let accNo = row.cells[0].innerText;
+		let accName = row.cells[1].innerText;
+		console.log("Selected:", accNo, accName);
+		closeModal();
+	}*/
+</script>
+<script th:inline="javascript">
+	document.addEventListener('DOMContentLoaded', function () {
 
-			// Step 2: When file is selected, upload it
-			fileInput.addEventListener('change', () => {
-				if (fileInput.files.length > 0) {
-					submitData(fileInput.files[0]); // pass the selected file
-				}
-			});
+		const fileInput = document.getElementById('fileInput');
+		const submitBtn = document.getElementById('submitBtn');
 
-			function submitData(file) {
-				document.getElementById('loadingModal').style.display = 'flex';
-				var form = $('#reportform_cust')[0];
-				var data = new FormData(form);
-				data.append("overwrite", false);
-				data.append("fileInput", "TRANSACTION");
-				data.append("file", file);
-				$.ajax({
-					type: "POST",
-					url: "UploadFileData",
-					data: data,
-					processData: false,
-					contentType: false,
-					success: function (response) {
-						document.getElementById('loadingModal').style.display = 'none';
-						console.log(response);
-						if (response.status === "duplicate") {
-							$('#alertmsgpopup')
-								.text(`Duplicate Customer Id(s) found: ${response.id.join(", ")}. Do you want to overwrite them?`)
-								.css("white-space", "nowrap");
-							window.lastData = data;
-							window.lastType = "CUSTOMER";
+		// Step 1: Open file chooser when submit button is clicked
+		submitBtn.addEventListener('click', () => {
+			fileInput.click();
+		});
 
-							$('#datacancel').modal("show");
-							return;
-						}
-						showResponse(response);
-					},
-					error: function (error) {
-						document.getElementById('loadingModal').style.display = 'none';
-						showResponse("Error: " + error.responseText);
-					}
-				});
+		// Step 2: When file is selected, upload it
+		fileInput.addEventListener('change', () => {
+			if (fileInput.files.length > 0) {
+				submitData(fileInput.files[0]); // pass the selected file
 			}
 		});
 
-		function showResponse(response) {
-			let message = "Upload Completed"
-				// "Upload Completed<br>" +
-				// "Total No of Rows Succeeded: " + response.TotalSucceeded + "<br>" +
-				// "Total No of Rows Failed: " + response.TotalFailed + "<br>" +
-				// "Total Rows Processed: " + response.TotalProcessed + "<br>";
-
-			// ✅ Write to the same modal-body container
-			$('#Successmsgpopup').html("<h6 class='text-center'>" + message + "</h6>");
-			$('#SuccesPopUp').modal('show');
-		}
-		function backs() {
-			$("#normalalertvalues").modal("hide");
-		}
-
-		// DELETE REF
-		function deleteRecUpload(btn) {
-			$('#datacancel').modal('hide');
+		function submitData(file) {
 			document.getElementById('loadingModal').style.display = 'flex';
-
-			// ✅ Reuse stored FormData
-			var formData = window.lastData;
-			if (!formData) {
-				console.error("No form data found from last upload");
-				return;
-			}
-
-			// ✅ Ensure overwrite is set to true
-			formData.set("overwrite", true);
-
+			var form = $('#reportform_cust')[0];
+			var data = new FormData(form);
+			data.append("overwrite", false);
+			data.append("fileInput", "TRANSACTION");
+			data.append("file", file);
 			$.ajax({
-				url: './UploadFileData',
-				type: 'POST',
-				data: formData,
-				contentType: false,
+				type: "POST",
+				url: "UploadFileData",
+				data: data,
 				processData: false,
+				contentType: false,
 				success: function (response) {
 					document.getElementById('loadingModal').style.display = 'none';
-					showResponse(response);
+					console.log(response);
+					if (response.status === "duplicate") {
+						$('#alertmsgpopup')
+							.text(`Duplicate Customer Id(s) found: ${response.id.join(", ")}. Do you want to overwrite them?`)
+							.css("white-space", "nowrap");
+						window.lastData = data;
+						window.lastType = "CUSTOMER";
 
+						$('#datacancel').modal("show");
+						return;
+					}
+					showResponse(response);
 				},
-				error: function (xhr, status, error) {
+				error: function (error) {
 					document.getElementById('loadingModal').style.display = 'none';
-					$('#alertmsg').text("Overwrite Upload failed");
-					$('#alert').modal("toggle");
+					showResponse("Error: " + error.responseText);
 				}
 			});
 		}
+	});
 
-	</script>
+	function showResponse(response) {
+		let message = "Upload Completed"
+		// "Upload Completed<br>" +
+		// "Total No of Rows Succeeded: " + response.TotalSucceeded + "<br>" +
+		// "Total No of Rows Failed: " + response.TotalFailed + "<br>" +
+		// "Total Rows Processed: " + response.TotalProcessed + "<br>";
+
+		// ✅ Write to the same modal-body container
+		$('#Successmsgpopup').html("<h6 class='text-center'>" + message + "</h6>");
+		$('#SuccesPopUp').modal('show');
+	}
+	function backs() {
+		$("#normalalertvalues").modal("hide");
+	}
+
+	// DELETE REF
+	function deleteRecUpload(btn) {
+		$('#datacancel').modal('hide');
+		document.getElementById('loadingModal').style.display = 'flex';
+
+		// ✅ Reuse stored FormData
+		var formData = window.lastData;
+		if (!formData) {
+			console.error("No form data found from last upload");
+			return;
+		}
+
+		// ✅ Ensure overwrite is set to true
+		formData.set("overwrite", true);
+
+		$.ajax({
+			url: './UploadFileData',
+			type: 'POST',
+			data: formData,
+			contentType: false,
+			processData: false,
+			success: function (response) {
+				document.getElementById('loadingModal').style.display = 'none';
+				showResponse(response);
+
+			},
+			error: function (xhr, status, error) {
+				document.getElementById('loadingModal').style.display = 'none';
+				$('#alertmsg').text("Overwrite Upload failed");
+				$('#alert').modal("toggle");
+			}
+		});
+	}
+
+</script>
+<script>
+	function openModalMassEntries() {
+	    // Get value from the input by ID
+	    const customerInput = document.getElementById("acct_name_mass0");
+	    const customerId = customerInput.value.trim();  // get trimmed value
+
+	    if (!customerId) {
+	        alert("Please enter a Customer ID first.");
+	        return;
+	    }
+
+	    // Show modal
+	    document.getElementById("myModaldatas").style.display = "block";
+
+	    // Clear previous rows
+	    const tbody = document.getElementById("modalTableBody");
+	    tbody.innerHTML = "";
+
+	    // AJAX call to get account data
+	    fetch(`/ASPIRA/getAccountDetails?customerId=${customerId}`)
+	        .then(response => response.json())
+	        .then(data => {
+	            data.forEach(row => {
+	                const tr = document.createElement("tr");
+	                tr.innerHTML = `
+	                    <td>${row.dueDate}</td>
+	                    <td>${row.flowId}</td>
+	                    <td>${row.flowCode}</td>
+	                    <td style="text-align:center;">${row.flowAmt}</td>
+	                    <td>${row.loanAcctNo}</td>
+	                    <td>${row.acctName}</td>
+	                    <td style="text-align:center;">
+	                        <input type="radio" name="selectRow" onclick="selectRow('${row.loanAcctNo}', '${row.flowAmt}')">
+	                    </td>
+	                `;
+	                tbody.appendChild(tr);
+	            });
+	        })
+	        .catch(err => {
+	            console.error("Error fetching account details:", err);
+	            alert("Failed to fetch data.");
+	        });
+	}
+
+	function closeModal(btn) {
+	    const modal = btn.closest(".modal");
+	    if (modal) modal.style.display = "none";
+	}
+
+	function selectRow(acctNo, flowAmt) {
+	    console.log("Selected:", acctNo, flowAmt);
+	    // populate input fields or perform other actions
+	}
+</script>
+
 <body>
 
 	<div class="col-sm-2">
@@ -2583,7 +2664,7 @@
 								<h6 style="font-size: 1.2rem; color: black;">Bulk Collection</h6>
 							</div>
 							<div class="btn-group nav-buttons float-right">
-									<button type="button" class="btn-primary big-btn" id="submitBtn">Upload</button>
+								<button type="button" class="btn-primary big-btn" id="submitBtn">Upload</button>
 							</div>
 						</div>
 						<div class="row formline" style="padding: 10px 10px 2px 50px; text-align: bottom;">
@@ -2613,7 +2694,7 @@
 							<div style="background: transparent; color: black;">
 								<button type="button" class="big-btn btn-success" onclick="addNewRows()">Add</button>
 							</div>
-							
+
 						</div>
 
 						<div class="card-body">
@@ -2644,7 +2725,7 @@
 										</td>
 										<td>
 											<input type="text" class="form-control" id="acct_num_mass0"
-												onclick="openModalmassentries(this)" name="acct_num"
+												name="acct_num"
 												onkeyup="this.value = this.value.toUpperCase();" />
 										</td>
 										<td><input type="text" class="form-control" id="acct_name_mass0"
@@ -2656,14 +2737,17 @@
 												name="tran_particular"
 												onkeyup="this.value = this.value.toUpperCase();" /></td>
 										<td><input type="text" class="form-control" id="tran_remarks"
-												name="tran_remarks" onkeyup="this.value = this.value.toUpperCase();" />
+												name="tran_remarks" value="0"
+												onkeyup="this.value = this.value.toUpperCase();" />
 										</td>
 										<td><input type="text" class="form-control" id="rate_code" name="rate_code"
 												onkeyup="this.value = this.value.toUpperCase();" /></td>
 										<td><input type="text" class="form-control" id="rate" name="rate"
-												onkeyup="this.value = this.value.toUpperCase();" /></td>
+												value="UNALLOCATED" onkeyup="this.value = this.value.toUpperCase();" />
+										</td>
 										<td><input type="radio" id="add_details" name="add_details"
-												onkeyup="this.value = this.value.toUpperCase();" /></td>
+												onkeyup="this.value = this.value.toUpperCase();"
+												onclick="openModalMassEntries(this)" /></td>
 
 									</tr>
 									<tr>
@@ -2685,14 +2769,17 @@
 												name="tran_particular"
 												onkeyup="this.value = this.value.toUpperCase();" /></td>
 										<td><input type="text" class="form-control" id="tran_remarks"
-												name="tran_remarks" onkeyup="this.value = this.value.toUpperCase();" />
+												name="tran_remarks" value="0"
+												onkeyup="this.value = this.value.toUpperCase();" />
 										</td>
 										<td><input type="text" class="form-control" id="rate_code" name="rate_code"
 												onkeyup="this.value = this.value.toUpperCase();" /></td>
 										<td><input type="text" class="form-control" id="rate" name="rate"
-												onkeyup="this.value = this.value.toUpperCase();" /></td>
+												value="UNALLOCATED" onkeyup="this.value = this.value.toUpperCase();" />
+										</td>
 										<td><input type="radio" id="add_details" name="add_details"
-												onkeyup="this.value = this.value.toUpperCase();" /></td>
+												onkeyup="this.value = this.value.toUpperCase();"
+												onclick="openModalMassEntries()" /></td>
 
 									</tr>
 								</tbody>
@@ -2721,8 +2808,6 @@
 					</div>
 				</div>
 			</div>
-
-
 
 		</div>
 	</div>
@@ -2817,6 +2902,37 @@
 						onclick="$('#SuccesPopUp').modal('hide')">Cancel</button>
 				</div>
 
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal -->
+	<div id="myModaldatas" class="modal" style="font-size:120%; display:none;">
+		<div class="modal-content1">
+			<div class="close text-right" onclick="closeModal(this);">&times;</div>
+			<div class="panel panel-primary filterable">
+				<button type="button" class="btn text-white btn-filter btn-primary float-right">Filter</button>
+				<div style="max-height: 350px; overflow-y: auto;">
+					<table class="table table-bordered table-sm" id="modalTable">
+						<thead>
+							<tr>
+								<th style="white-space:nowrap;">Flow Date</th>
+								<th style="white-space:nowrap;">Flow ID</th>
+								<th style="white-space:nowrap;">Flow Code</th>
+								<th style="text-align:center; white-space:nowrap;">Flow Amt</th>
+								<th style="white-space:nowrap;">Acct No</th>
+								<th style="white-space:nowrap;">Acct Name</th>
+								<th style="text-align:center; white-space:nowrap;">Select</th>
+							</tr>
+						</thead>
+						<tbody id="modalTableBody">
+							<!-- Rows will be appended here dynamically -->
+						</tbody>
+					</table>
+				</div>
+				<div class="text-center mt-2">
+					<button type="button" class="btn-primary big-btn" onclick="closeModal(this);">Close</button>
+				</div>
 			</div>
 		</div>
 	</div>
