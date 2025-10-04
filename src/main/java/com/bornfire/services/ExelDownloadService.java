@@ -382,46 +382,49 @@ public class ExelDownloadService {
 	            // Header
 	            Row header = sheet.createRow(rowIdx++);
 	            String[] headers = {
-	                    "ENCODEDKEY","ASSIGNEDBRANCHKEY","ASSIGNEDUSERKEY","DUEDATE","INTERESTDUE","INTERESTPAID","LASTPAIDDATE",
-	                    "LASTPENALTYAPPLIEDDATE", "NOTES","PARENTACCOUNTKEY","PRINCIPALDUE", "PRINCIPALPAID", "REPAIDDATE", "STATE",
-	                    "ASSIGNEDCENTREKEY","FEESDUE","FEESPAID","PENALTYDUE","PENALTYPAID","TAXINTERESTDUE","TAXINTERESTPAID",
-	                    "TAXFEESDUE", "TAXFEESPAID","TAXPENALTYDUE","TAXPENALTYPAID","ORGANIZATIONCOMMISSIONDUE",
-	                    "FUNDERSINTERESTDUE","CREATIONDATE","LASTMODIFIEDDATE","ADDITIONS"
-	            };
+	            	    "ENCODEDKEY",
+	            	    "PARENTACCOUNTKEY",
+	            	    "ASSIGNEDBRANCHKEY",
+	            	    "ASSIGNEDUSERKEY",
+	            	    "DUEDATE",
+	            	    "LASTPAIDDATE",
+	            	    "REPAIDDATE",
+	            	    "STATE",
+	            	    "PRINCIPALPAID",
+	            	    "PRINCIPALDUE",
+	            	    "INTERESTEXP",
+	            	    "INTERESTPAID",
+	            	    "INTERESTDUE",
+	            	    "PENALTYPAYED",
+	            	    "PENALTYDUE"
+	            	};
+
 	            for (int i = 0; i < headers.length; i++) header.createCell(i).setCellValue(headers[i]);
 
 	            for (ASPIRA_LOAN_REPAYMENT_ENTITY entity : dataList) {
 	                Row excelRow = sheet.createRow(rowIdx++);
 	                excelRow.createCell(0).setCellValue(entity.getEncodedkey());
-	                excelRow.createCell(1).setCellValue(entity.getAssignedbranchkey());
-	                excelRow.createCell(2).setCellValue(entity.getAssigneduserkey());
-	                excelRow.createCell(3).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDuedate()));
-	                excelRow.createCell(4).setCellValue(entity.getInterestdue() == null ? "" : entity.getInterestdue().toPlainString());
-	                excelRow.createCell(5).setCellValue(entity.getInterestpaid() == null ? "" : entity.getInterestpaid().toPlainString());
-	                excelRow.createCell(6).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getLastpaiddate()));
-	                excelRow.createCell(7).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getLastpenaltyapplieddate()));
-	                excelRow.createCell(8).setCellValue(entity.getNotes());
-	                excelRow.createCell(9).setCellValue(entity.getParentaccountkey());
-	                excelRow.createCell(10).setCellValue(entity.getPrincipaldue() == null ? "" : entity.getPrincipaldue().toPlainString());
-	                excelRow.createCell(11).setCellValue(entity.getPrincipalpaid() == null ? "" : entity.getPrincipalpaid().toPlainString());
-	                excelRow.createCell(12).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getRepaiddate()));
-	                excelRow.createCell(13).setCellValue(entity.getState());
-	                excelRow.createCell(14).setCellValue(entity.getAssignedcentrekey());
-	                excelRow.createCell(15).setCellValue(entity.getFeesdue() == null ? "" : entity.getFeesdue().toPlainString());
-	                excelRow.createCell(16).setCellValue(entity.getFeespaid() == null ? "" : entity.getFeespaid().toPlainString());
-	                excelRow.createCell(17).setCellValue(entity.getPenaltydue() == null ? "" : entity.getPenaltydue().toPlainString());
-	                excelRow.createCell(18).setCellValue(entity.getPenaltypaid() == null ? "" : entity.getPenaltypaid().toPlainString());
-	                excelRow.createCell(19).setCellValue(entity.getTaxinterestdue() == null ? "" : entity.getTaxinterestdue().toPlainString());
-	                excelRow.createCell(20).setCellValue(entity.getTaxinterestpaid() == null ? "" : entity.getTaxinterestpaid().toPlainString());
-	                excelRow.createCell(21).setCellValue(entity.getTaxfeesdue() == null ? "" : entity.getTaxfeesdue().toPlainString());
-	                excelRow.createCell(22).setCellValue(entity.getTaxfeespaid() == null ? "" : entity.getTaxfeespaid().toPlainString());
-	                excelRow.createCell(23).setCellValue(entity.getTaxpenaltydue() == null ? "" : entity.getTaxpenaltydue().toPlainString());
-	                excelRow.createCell(24).setCellValue(entity.getTaxpenaltypaid() == null ? "" : entity.getTaxpenaltypaid().toPlainString());
-	                excelRow.createCell(25).setCellValue(entity.getOrganizationcommissiondue() == null ? "" : entity.getOrganizationcommissiondue().toPlainString());
-	                excelRow.createCell(26).setCellValue(entity.getFundersinterestdue() == null ? "" : entity.getFundersinterestdue().toPlainString());
-	                excelRow.createCell(27).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getCreationdate()));
-	                excelRow.createCell(28).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getLastmodifieddate()));
-	                excelRow.createCell(29).setCellValue(entity.getAdditions());
+	                excelRow.createCell(1).setCellValue(entity.getParentaccountkey());
+	                excelRow.createCell(2).setCellValue(entity.getAssignedbranchkey());
+	                excelRow.createCell(3).setCellValue(entity.getAssigneduserkey());
+	                excelRow.createCell(4).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDuedate()));
+	                excelRow.createCell(5).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getLastpaiddate()));
+	                excelRow.createCell(6).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getRepaiddate()));
+	                excelRow.createCell(7).setCellValue(entity.getState()); // payment_state
+//	                excelRow.createCell(8).setCellValue(entity.getIs_payment_holiday() ? "Yes" : "No"); 
+//	                excelRow.createCell(9).setCellValue(entity.getPrincipal_exp() == null ? "" : entity.getPrincipal_exp().toPlainString());
+	                excelRow.createCell(10).setCellValue(entity.getPrincipalpaid() == null ? "" : entity.getPrincipalpaid().toPlainString());
+	                excelRow.createCell(11).setCellValue(entity.getPrincipaldue() == null ? "" : entity.getPrincipaldue().toPlainString());
+//	                excelRow.createCell(12).setCellValue(entity.getInterest_exp() == null ? "" : entity.getInterest_exp().toPlainString());
+	                excelRow.createCell(13).setCellValue(entity.getInterestpaid() == null ? "" : entity.getInterestpaid().toPlainString());
+	                excelRow.createCell(14).setCellValue(entity.getInterestdue() == null ? "" : entity.getInterestdue().toPlainString());
+//	                excelRow.createCell(15).setCellValue(entity.getFee_exp() == null ? "" : entity.getFee_exp().toPlainString());
+//	                excelRow.createCell(16).setCellValue(entity.getFeespaid() == null ? "" : entity.getFee_paid().toPlainString());
+//	                excelRow.createCell(17).setCellValue(entity.getFeesdue() == null ? "" : entity.getFee_due().toPlainString());
+//	                excelRow.createCell(18).setCellValue(entity.getPenalty_exp() == null ? "" : entity.getPenalty_exp().toPlainString());
+	                excelRow.createCell(19).setCellValue(entity.getPenaltypaid() == null ? "" : entity.getPenaltypaid().toPlainString());
+	                excelRow.createCell(20).setCellValue(entity.getPenaltydue() == null ? "" : entity.getPenaltydue().toPlainString());
+
 	            }
 
 	            saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
@@ -432,40 +435,59 @@ public class ExelDownloadService {
 
 	            Row header = sheet.createRow(rowIdx++);
 	            String[] headers = {
-	                    "ENCODEDKEY", "ID", "CLIENTSTATE", "CREATIONDATE", "LASTMODIFIEDDATE", "ACTIVATIONDATE",
-	                    "APPROVEDDATE", "FIRSTNAME", "LASTNAME", "MOBILEPHONE", "EMAILADDRESS", "PREFERREDLANGUAGE",
-	                    "BIRTHDATE", "GENDER", "ASSIGNEDBRANCHKEY", "CLIENTROLEKEY", "LOANCYCLE", "GROUPLOANCYCLE",
-	                    "ADDRESSLINE1", "ADDRESSLINE2", "ADDRESSLINE3", "CITY", "SUBURB", "ASSIGNEDUSERKEY", "ASONDATE"
-	            };
+	            	    "ENCODEDKEY",            // a.encoded_key
+	            	    "CLIENTSTATE",           // initcap(a.client_state)
+	            	    "CREATIONDATE",          // a.creation_date
+	            	    "APPROVEDDATE",          // a.approved_date
+	            	    "ACTIVATIONDATE",        // a.activation_date
+	            	    "LASTMODIFIEDDATE",      // a.last_modified_date
+	            	    "CUSTOMERID",            // a.customer_id
+	            	    "FULLNAME",              // initcap(a.first_name)||' '||initcap(a.last_name)
+	            	    "FIRSTNAME",             // initcap(a.first_name)
+	            	    "LASTNAME",              // initcap(a.last_name)
+	            	    "GENDER",                // initcap(a.gender)
+	            	    "MOBILEPHONE",           // a.mobile_phone
+	            	    "EMAILADDRESS",          // a.email_address
+	            	    "SUBURB",                // a.suburb
+	            	    "CITY",                  // a.city
+	            	    "FULLADDRESS",           // a.address_line1||'-'||a.address_line2||'-'||address_line2
+	            	    "PREFERREDLANGUAGE",     // a.preferred_language
+	            	    "ASSIGNEDBRANCHKEY",     // a.assigned_branch_key
+	            	    "ASSIGNEDUSERKEY",       // a.assigned_user_key
+	            	    "CLIENTROLEKEY",         // a.client_role_key
+	            	    "LOANCYCLE",             // a.loan_cycle
+	            	    "GROUPLOANCYCLE",        // a.group_loan_cycle
+	            	    "ASONDATE"               // a.asondate
+	            	};
+
 	            for (int i = 0; i < headers.length; i++) header.createCell(i).setCellValue(headers[i]);
 
 	            for (CLIENT_MASTER_ENTITY entity : dataList) {
 	                Row excelRow = sheet.createRow(rowIdx++);
 	                excelRow.createCell(0).setCellValue(entity.getEncoded_key());
-	                excelRow.createCell(1).setCellValue(entity.getCustomer_id());
-	                excelRow.createCell(2).setCellValue(entity.getClient_state());
-	                excelRow.createCell(3).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getCreation_date()));
-	                excelRow.createCell(4).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getLast_modified_date()));
-	                excelRow.createCell(5).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getActivation_date()));
-	                excelRow.createCell(6).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getApproved_date()));
-	                excelRow.createCell(7).setCellValue(entity.getFirst_name());
-	                excelRow.createCell(8).setCellValue(entity.getLast_name());
-	                excelRow.createCell(9).setCellValue(entity.getMobile_phone());
-	                excelRow.createCell(10).setCellValue(entity.getEmail_address());
-	                excelRow.createCell(11).setCellValue(entity.getPreferred_language());
-	                excelRow.createCell(12).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getBirth_date()));
-	                excelRow.createCell(13).setCellValue(entity.getGender());
-	                excelRow.createCell(14).setCellValue(entity.getAssigned_branch_key());
-	                excelRow.createCell(15).setCellValue(entity.getClient_role_key());
-	                excelRow.createCell(16).setCellValue(entity.getLoan_cycle() == null ? "" : entity.getLoan_cycle().toPlainString());
-	                excelRow.createCell(17).setCellValue(entity.getGroup_loan_cycle() == null ? "" : entity.getGroup_loan_cycle().toPlainString());
-	                excelRow.createCell(18).setCellValue(entity.getAddress_line1());
-	                excelRow.createCell(19).setCellValue(entity.getAddress_line2());
-	                excelRow.createCell(20).setCellValue(entity.getAddress_line3());
-	                excelRow.createCell(21).setCellValue(entity.getCity());
-	                excelRow.createCell(22).setCellValue(entity.getSuburb());
-	                excelRow.createCell(23).setCellValue(entity.getAssigned_user_key());
-	                excelRow.createCell(24).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getAsondate()));
+	                excelRow.createCell(1).setCellValue(entity.getClient_state());
+	                excelRow.createCell(2).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getCreation_date()));
+	                excelRow.createCell(3).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getApproved_date()));
+	                excelRow.createCell(4).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getActivation_date()));
+	                excelRow.createCell(5).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getLast_modified_date()));
+	                excelRow.createCell(6).setCellValue(entity.getCustomer_id());
+	                excelRow.createCell(7).setCellValue(entity.getFirst_name() + " " + entity.getLast_name()); // Full name
+	                excelRow.createCell(8).setCellValue(entity.getFirst_name());
+	                excelRow.createCell(9).setCellValue(entity.getLast_name());
+	                excelRow.createCell(10).setCellValue(entity.getGender());
+	                excelRow.createCell(11).setCellValue(entity.getMobile_phone());
+	                excelRow.createCell(12).setCellValue(entity.getEmail_address());
+	                excelRow.createCell(13).setCellValue(entity.getSuburb());
+	                excelRow.createCell(14).setCellValue(entity.getCity());
+	                excelRow.createCell(15).setCellValue(entity.getAddress_line1() + "-" + entity.getAddress_line2() + "-" + entity.getAddress_line2()); // Full address
+	                excelRow.createCell(16).setCellValue(entity.getPreferred_language());
+	                excelRow.createCell(17).setCellValue(entity.getAssigned_branch_key());
+	                excelRow.createCell(18).setCellValue(entity.getAssigned_user_key());
+	                excelRow.createCell(19).setCellValue(entity.getClient_role_key());
+	                excelRow.createCell(20).setCellValue(entity.getLoan_cycle() == null ? "" : entity.getLoan_cycle().toPlainString());
+	                excelRow.createCell(21).setCellValue(entity.getGroup_loan_cycle() == null ? "" : entity.getGroup_loan_cycle().toPlainString());
+	                excelRow.createCell(22).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getAsondate()));
+
 	            }
 
 	            saveAudit(userID, userName, "Customer File Download!", "CLIENT_MASTER_TBL", auditRefNo);
@@ -475,7 +497,44 @@ public class ExelDownloadService {
 	            List<LOAN_ACT_MST_ENTITY> dataList = loanMasterRepo.findAll();
 
 	            Row header = sheet.createRow(rowIdx++);
-	            String[] headers = { /* same as your Loan headers */ };
+	            String[] headers = {
+	            	    "ENCODEDKEY",             // a.encoded_key
+	            	    "ID",                     // a.id
+	            	    "ACCOUNTHOLDERTYPE",      // a.account_holdertype
+	            	    "ACCOUNTHOLDERKEY",       // a.account_holderkey
+	            	    "APPROVEDDATE",           // a.approved_date
+	            	    "CLOSEDDATE",             // a.closed_date
+	            	    "ACCOUNTSTATE",           // a.account_state
+	            	    "ACCOUNTSUBSTATE",        // a.account_substate
+	            	    "PRODUCTTYPEKEY",         // a.product_typekey
+	            	    "LOANNAME",               // a.loan_name
+	            	    "PAYMENTMETHOD",          // a.payment_method
+	            	    "ASSIGNEDBRANCHKEY",      // a.assigned_branchkey
+	            	    "LOANAMOUNT",             // a.loan_amount
+	            	    "INTERESTRATE",           // a.interest_rate
+	            	    "PENALTYRATE",            // a.penalty_rate
+	            	    "ACCRUEDINTEREST",        // a.accrued_interest
+	            	    "ACCRUEDPENALTY",         // a.accrued_penalty
+	            	    "PRINCIPALDUE",           // a.principal_due
+	            	    "PRINCIPALPAID",          // a.principal_paid
+	            	    "PRINCIPALBALANCE",       // a.principal_balance
+	            	    "INTERESTDUE",            // a.interest_due
+	            	    "INTERESTPAID",           // a.interest_paid
+	            	    "INTERESTBALANCE",        // a.interest_balance
+	            	    "FEESDUE",                // a.fees_due
+	            	    "FEESPAID",               // a.fees_paid
+	            	    "FEESBALANCE",            // a.fees_balance
+	            	    "PENALTYDUE",             // a.penalty_due
+	            	    "PENALTYPAYED",           // a.penalty_paid
+	            	    "PENALTYBALANCE",         // a.penalty_balance
+	            	    "DISBURSEMENTDATE",       // a.disbursement_date
+	            	    "FIRSTREPAYMENTDATE",     // a.first_repaymentdate
+	            	    "GRACEPERIOD",            // a.grace_period
+	            	    "REPAYMENTINSTALLMENTS",  // a.repayment_installments
+	            	    "REPAYMENTPERIODCOUNT",   // a.repayment_periodcount
+	            	    "DAYSLATE"                // a.days_late
+	            	};
+
 	            for (int i = 0; i < headers.length; i++) header.createCell(i).setCellValue(headers[i]);
 
 	            for (LOAN_ACT_MST_ENTITY entity : dataList) {
@@ -485,99 +544,38 @@ public class ExelDownloadService {
 	                excelRow.createCell(1).setCellValue(entity.getId());
 	                excelRow.createCell(2).setCellValue(entity.getAccount_holdertype());
 	                excelRow.createCell(3).setCellValue(entity.getAccount_holderkey());
-	                excelRow.createCell(4).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getCreation_date()));
-	                excelRow.createCell(5).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getApproved_date()));
-	                excelRow.createCell(6).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getLast_modified_date()));
-	                excelRow.createCell(7).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getClosed_date()));
-	                excelRow.createCell(8).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getLast_account_appraisaldate()));
-	                excelRow.createCell(9).setCellValue(entity.getAccount_state());
-	                excelRow.createCell(10).setCellValue(entity.getAccount_substate());
-	                excelRow.createCell(11).setCellValue(entity.getProduct_typekey());
-	                excelRow.createCell(12).setCellValue(entity.getLoan_name());
-	                excelRow.createCell(13).setCellValue(entity.getPayment_method());
-	                excelRow.createCell(14).setCellValue(entity.getAssigned_branchkey());
+	                excelRow.createCell(4).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getApproved_date()));
+	                excelRow.createCell(5).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getClosed_date()));
+	                excelRow.createCell(6).setCellValue(entity.getAccount_state());
+	                excelRow.createCell(7).setCellValue(entity.getAccount_substate());
+	                excelRow.createCell(8).setCellValue(entity.getProduct_typekey());
+	                excelRow.createCell(9).setCellValue(entity.getLoan_name());
+	                excelRow.createCell(10).setCellValue(entity.getPayment_method());
+	                excelRow.createCell(11).setCellValue(entity.getAssigned_branchkey());
+	                excelRow.createCell(12).setCellValue(entity.getLoan_amount() == null ? "" : entity.getLoan_amount().toPlainString());
+	                excelRow.createCell(13).setCellValue(entity.getInterest_rate() == null ? "" : entity.getInterest_rate().toPlainString());
+	                excelRow.createCell(14).setCellValue(entity.getPenalty_rate() == null ? "" : entity.getPenalty_rate().toPlainString());
+	                excelRow.createCell(15).setCellValue(entity.getAccrued_interest() == null ? "" : entity.getAccrued_interest().toPlainString());
+	                excelRow.createCell(16).setCellValue(entity.getAccrued_penalty() == null ? "" : entity.getAccrued_penalty().toPlainString());
+	                excelRow.createCell(17).setCellValue(entity.getPrincipal_due() == null ? "" : entity.getPrincipal_due().toPlainString());
+	                excelRow.createCell(18).setCellValue(entity.getPrincipal_paid() == null ? "" : entity.getPrincipal_paid().toPlainString());
+	                excelRow.createCell(19).setCellValue(entity.getPrincipal_balance() == null ? "" : entity.getPrincipal_balance().toPlainString());
+	                excelRow.createCell(20).setCellValue(entity.getInterest_due() == null ? "" : entity.getInterest_due().toPlainString());
+	                excelRow.createCell(21).setCellValue(entity.getInterest_paid() == null ? "" : entity.getInterest_paid().toPlainString());
+	                excelRow.createCell(22).setCellValue(entity.getInterest_balance() == null ? "" : entity.getInterest_balance().toPlainString());
+	                excelRow.createCell(23).setCellValue(entity.getFees_due() == null ? "" : entity.getFees_due().toPlainString());
+	                excelRow.createCell(24).setCellValue(entity.getFees_paid() == null ? "" : entity.getFees_paid().toPlainString());
+	                excelRow.createCell(25).setCellValue(entity.getFees_balance() == null ? "" : entity.getFees_balance().toPlainString());
+	                excelRow.createCell(26).setCellValue(entity.getPenalty_due() == null ? "" : entity.getPenalty_due().toPlainString());
+	                excelRow.createCell(27).setCellValue(entity.getPenalty_paid() == null ? "" : entity.getPenalty_paid().toPlainString());
+	                excelRow.createCell(28).setCellValue(entity.getPenalty_balance() == null ? "" : entity.getPenalty_balance().toPlainString());
+	                excelRow.createCell(29).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDisbursement_date()));
+	                excelRow.createCell(30).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getFirst_repaymentdate()));
+	                excelRow.createCell(31).setCellValue(entity.getGrace_period() == null ? "" : entity.getGrace_period().toPlainString());
+	                excelRow.createCell(32).setCellValue(entity.getRepayment_installments() == null ? "" : entity.getRepayment_installments().toPlainString());
+	                excelRow.createCell(33).setCellValue(entity.getRepayment_periodcount() == null ? "" : entity.getRepayment_periodcount().toPlainString());
+	                excelRow.createCell(34).setCellValue(entity.getDays_late() == null ? "" : entity.getDays_late().toPlainString());
 
-	                // BigDecimal / numeric columns
-	                excelRow.createCell(15).setCellValue(entity.getLoan_amount() == null ? "" : entity.getLoan_amount().toPlainString());
-	                excelRow.createCell(16).setCellValue(entity.getInterest_rate() == null ? "" : entity.getInterest_rate().toPlainString());
-	                excelRow.createCell(17).setCellValue(entity.getPenalty_rate() == null ? "" : entity.getPenalty_rate().toPlainString());
-	                excelRow.createCell(18).setCellValue(entity.getAccrued_interest() == null ? "" : entity.getAccrued_interest().toPlainString());
-	                excelRow.createCell(19).setCellValue(entity.getAccrued_penalty() == null ? "" : entity.getAccrued_penalty().toPlainString());
-	                excelRow.createCell(20).setCellValue(entity.getPrincipal_due() == null ? "" : entity.getPrincipal_due().toPlainString());
-	                excelRow.createCell(21).setCellValue(entity.getPrincipal_paid() == null ? "" : entity.getPrincipal_paid().toPlainString());
-	                excelRow.createCell(22).setCellValue(entity.getPrincipal_balance() == null ? "" : entity.getPrincipal_balance().toPlainString());
-	                excelRow.createCell(23).setCellValue(entity.getInterest_due() == null ? "" : entity.getInterest_due().toPlainString());
-	                excelRow.createCell(24).setCellValue(entity.getInterest_paid() == null ? "" : entity.getInterest_paid().toPlainString());
-	                excelRow.createCell(25).setCellValue(entity.getInterest_balance() == null ? "" : entity.getInterest_balance().toPlainString());
-	                excelRow.createCell(26).setCellValue(entity.getInterest_fromarrearsbalance() == null ? "" : entity.getInterest_fromarrearsbalance().toPlainString());
-	                excelRow.createCell(27).setCellValue(entity.getInterest_fromarrearsdue() == null ? "" : entity.getInterest_fromarrearsdue().toPlainString());
-	                excelRow.createCell(28).setCellValue(entity.getInterest_fromarrearspaid() == null ? "" : entity.getInterest_fromarrearspaid().toPlainString());
-	                excelRow.createCell(29).setCellValue(entity.getFees_due() == null ? "" : entity.getFees_due().toPlainString());
-	                excelRow.createCell(30).setCellValue(entity.getFees_paid() == null ? "" : entity.getFees_paid().toPlainString());
-	                excelRow.createCell(31).setCellValue(entity.getFees_balance() == null ? "" : entity.getFees_balance().toPlainString());
-	                excelRow.createCell(32).setCellValue(entity.getPenalty_due() == null ? "" : entity.getPenalty_due().toPlainString());
-	                excelRow.createCell(33).setCellValue(entity.getPenalty_paid() == null ? "" : entity.getPenalty_paid().toPlainString());
-	                excelRow.createCell(34).setCellValue(entity.getPenalty_balance() == null ? "" : entity.getPenalty_balance().toPlainString());
-
-	                // Dates
-	                excelRow.createCell(35).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getExpected_disbursementdate()));
-	                excelRow.createCell(36).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDisbursement_date()));
-	                excelRow.createCell(37).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getFirst_repaymentdate()));
-
-	                // More numeric columns
-	                excelRow.createCell(38).setCellValue(entity.getGrace_period() == null ? "" : entity.getGrace_period().toPlainString());
-	                excelRow.createCell(39).setCellValue(entity.getRepayment_installments() == null ? "" : entity.getRepayment_installments().toPlainString());
-	                excelRow.createCell(40).setCellValue(entity.getRepayment_periodcount() == null ? "" : entity.getRepayment_periodcount().toPlainString());
-	                excelRow.createCell(41).setCellValue(entity.getDays_late() == null ? "" : entity.getDays_late().toPlainString());
-	                excelRow.createCell(42).setCellValue(entity.getDays_inarrears() == null ? "" : entity.getDays_inarrears().toPlainString());
-
-	                // Strings / codes
-	                excelRow.createCell(43).setCellValue(entity.getRepayment_schedule_method());
-	                excelRow.createCell(44).setCellValue(entity.getCurrency_code());
-	                excelRow.createCell(45).setCellValue(entity.getSale_processedbyvgid());
-	                excelRow.createCell(46).setCellValue(entity.getSale_processedfor());
-	                excelRow.createCell(47).setCellValue(entity.getSale_referredby());
-	                excelRow.createCell(48).setCellValue(entity.getEmployment_status());
-	                excelRow.createCell(49).setCellValue(entity.getJob_title());
-	                excelRow.createCell(50).setCellValue(entity.getEmployer_name());
-
-	                // TU numeric columns
-	                excelRow.createCell(51).setCellValue(entity.getTuscore() == null ? "" : entity.getTuscore().toPlainString());
-	                excelRow.createCell(52).setCellValue(entity.getTuprobability() == null ? "" : entity.getTuprobability().toPlainString());
-
-	                // TU strings
-	                excelRow.createCell(53).setCellValue(entity.getTufullname());
-	                excelRow.createCell(54).setCellValue(entity.getTureason1());
-	                excelRow.createCell(55).setCellValue(entity.getTureason2());
-	                excelRow.createCell(56).setCellValue(entity.getTureason3());
-	                excelRow.createCell(57).setCellValue(entity.getTureason4());
-
-	                // Financial numbers
-	                excelRow.createCell(58).setCellValue(entity.getDisposable_income() == null ? "" : entity.getDisposable_income().toPlainString());
-	                excelRow.createCell(59).setCellValue(entity.getManualoverride_amount() == null ? "" : entity.getManualoverride_amount().toPlainString());
-
-	                // Dates
-	                excelRow.createCell(60).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getManualoverride_expiry_date()));
-
-	                // Numbers
-	                excelRow.createCell(61).setCellValue(entity.getCpfees() == null ? "" : entity.getCpfees().toPlainString());
-	                excelRow.createCell(62).setCellValue(entity.getDeposit_amount() == null ? "" : entity.getDeposit_amount().toPlainString());
-	                excelRow.createCell(63).setCellValue(entity.getTotal_product_price() == null ? "" : entity.getTotal_product_price().toPlainString());
-
-	                // Strings
-	                excelRow.createCell(64).setCellValue(entity.getRetailer_name());
-	                excelRow.createCell(65).setCellValue(entity.getRetailer_branch());
-	                excelRow.createCell(66).setCellValue(entity.getVg_application_id());
-	                excelRow.createCell(67).setCellValue(entity.getContract_signed());
-
-	                // Dates
-	                excelRow.createCell(68).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDate_of_first_call()));
-
-	                // Strings
-	                excelRow.createCell(69).setCellValue(entity.getLast_call_outcome());
-
-	                // Date
-	                excelRow.createCell(70).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getAsondate()));
 	            }
 
 
