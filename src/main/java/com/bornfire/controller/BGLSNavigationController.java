@@ -1,7 +1,6 @@
 package com.bornfire.controller;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -39,14 +38,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -109,10 +107,11 @@ import com.bornfire.entities.LOAN_ACT_MST_REPO;
 import com.bornfire.entities.Lease_Loan_Master_Entity;
 import com.bornfire.entities.Lease_Loan_Master_Repo;
 import com.bornfire.entities.Lease_Loan_Work_Repo;
+import com.bornfire.entities.MULTIPLE_TRANSACTION_ENTITY;
+import com.bornfire.entities.MULTIPLE_TRANSACTION_REPO;
 import com.bornfire.entities.NoticeDetailsGeneral0Rep;
 import com.bornfire.entities.NoticeDetailsPayment0Rep;
 import com.bornfire.entities.NoticeDetailsSlabDetails0Rep;
-import com.bornfire.entities.Organization_Branch_Entity;
 import com.bornfire.entities.Organization_Branch_Rep;
 import com.bornfire.entities.Organization_Entity;
 import com.bornfire.entities.Organization_Repo;
@@ -136,11 +135,11 @@ import com.bornfire.services.AdminOperServices;
 import com.bornfire.services.BGLS_Inventeryservice;
 import com.bornfire.services.DateChangeService;
 import com.bornfire.services.LoginServices;
+import com.bornfire.services.MultipleTransactionService;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.monitorjbl.xlsx.exceptions.ParseException;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.repo.InputStreamResource;
 
 @Controller
 @ConfigurationProperties("default")
@@ -153,9 +152,15 @@ public class BGLSNavigationController {
 
 	@Autowired
 	Collateral_management_Repo collateral_management_Repo;
+	
+	@Autowired
+	MULTIPLE_TRANSACTION_REPO MULTIPLE_TRANSACTION_REPO;
 
 	@Autowired
 	DataSource srcdataSource;
+	
+	@Autowired
+	MultipleTransactionService multipleTransactionService;
 
 	@Autowired
 	LOAN_ACT_MST_REPO loan_act_mst_repo;
@@ -3774,6 +3779,10 @@ public class BGLSNavigationController {
 			md.addAttribute("booking", LOAN_ACT_MST_REPO.getActNo());
 			md.addAttribute("booking1", depositRep.getexistingData());
 
+		} else if (formmode.equals("list1")) {
+			md.addAttribute("formmode", "list1");
+			md.addAttribute("getlist", MULTIPLE_TRANSACTION_REPO.getdata());
+
 		} else if (formmode.equals("view")) {
 			md.addAttribute("formmode", "view");
 
@@ -4232,7 +4241,23 @@ public class BGLSNavigationController {
 	    return "Loan_Master.html";
 	}
 	
-	
-	
-
+	@PostMapping("/submitBulkCollection")
+	@ResponseBody
+	public ResponseEntity<?> submitBulkCollection(HttpServletRequest request,
+	                                              @RequestBody List<MULTIPLE_TRANSACTION_ENTITY> transactions) {
+	    String user = (String) request.getSession().getAttribute("USERID");
+	    String username = (String) request.getSession().getAttribute("USERNAME");
+	    try {
+	    	multipleTransactionService.saveBulkCollection(transactions, user, username);
+	        return ResponseEntity.ok("Bulk collection saved successfully!");
+	    } catch (IllegalArgumentException e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+	                .body("Validation failed: " + e.getMessage());
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body("Error saving bulk collection: " + e.getMessage());
+	    }
+	}
 }

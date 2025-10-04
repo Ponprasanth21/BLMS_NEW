@@ -2036,6 +2036,9 @@
 
 
 		function callCollectionScreen11() {
+			location.href = 'loanOperation?formmode=list1';
+		}
+		function callCollectionScreen12() {
 			location.href = 'loanOperation?formmode=view2';
 		}
 
@@ -2184,6 +2187,51 @@
 		let row = button.closest("tr");
 		row.parentNode.removeChild(row);
 	}
+// Collect all rows and submit
+function Submitvalues() {
+    let table = document.getElementById("usertablemulti");
+    let dataList = [];
+
+    for (let row of table.rows) {
+        let tranInput = row.querySelector("input[name='tran_id']");
+        let partTranInput = row.querySelector("input[name='part_tran_id']");
+        let acctNameInput = row.querySelector("input[name='acct_namedata']");
+        let mobileInput = row.querySelector("input[name='mobile_num']");
+        let amountInput = row.querySelector("input[name='tran_amt']");
+
+        if (!tranInput || !tranInput.value.trim()) {
+            alert("Transaction ID cannot be empty!");
+            tranInput.focus();
+            return;
+        }
+
+        dataList.push({
+            transaction_id: tranInput.value.trim(),          // use tran_id input
+            part_tran_id: partTranInput ? partTranInput.value.trim() : "",
+            names: acctNameInput ? acctNameInput.value.trim() : "",
+            mobile_number: mobileInput ? mobileInput.value.trim() : "",
+            allocated_amount: amountInput ? parseFloat(amountInput.value.trim() || 0) : 0,
+            trans_time: new Date(),
+            status: "PENDING"  // or any default
+        });
+    }
+
+    $.ajax({
+        url: window.location.origin + '/ASPIRA/submitBulkCollection',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(dataList),
+        success: function(res) {
+            $("#Successmsgpopup").text("Bulk collection saved successfully!");
+            $("#SuccesPopUp").modal('show');
+        },
+        error: function(err) {
+            console.error(err);
+            $("#Successmsgpopup").text("Error saving bulk collection!");
+            $("#SuccesPopUp").modal('show');
+        }
+    });
+}
 </script>
 <script>
 	function openModal() {
@@ -2685,13 +2733,71 @@
 						</button>
 						<button class="btn-primary big-btn" onclick="back();">Back</button>
 					</div>
-
-
 				</div>
 
+	<div th:if="${formmode == 'list1'}">
+					<div class="card w-100 border">
+						<div
+							class="card-header d-flex justify-content-between align-items-center"
+							style="background-color: #e9ecef; height: 50px;">
+
+							<h6 class="m-0" style="font-size: 1.2rem;">BULK COLLECTION -
+								LIST</h6>
+
+							<button type="button" class="btn-success btn-sm big-btn"
+								onclick="callCollectionScreen12()">Add</button>
+						</div>
+
+						<div class="card-body"
+							style="overflow-y: auto; border: 1px solid #ddd;">
+							<div class="table-responsive" id="cardBody">
+								<table class="table table-bordered table-hover table-sm"
+									style="margin-bottom: 0; font-size: initial;">
+									<thead class="thead-light"
+										style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+										<tr>
+											<th>Srl No</th>
+											<th>Transaction ID</th>
+											<th>Names</th>
+											<th>Reference</th>
+											<th>Mobile Number</th>
+											<th>Amount</th>
+											<th>Allocated Amount</th>
+											<th>Trans. Time</th>
+											<th>Status</th>
+										</tr>
+									</thead>
+									<tbody id="usertablemulti">
+										<tr th:each="list, iterator : ${getlist}">
+											<td style="font-size: 14px" th:text="${iterator.index +1}"></td>
+											<td style="font-size: 14px"
+												th:attr="data-id=${list?.transaction_id}"
+												th:text="${list?.transaction_id}">
+											</td>
+											<td style="font-size: 14px" th:text="${list?.names}"></td>
+											<td style="font-size: 14px" th:text="${list?.reference}"></td>
+											<td style="font-size: 14px" th:text="${list?.mobile_number}"></td>
+											<td style="font-size: 14px" th:text="${list?.amount}"></td>
+											<td style="font-size: 14px"
+												th:text="${list?.allocated_amount}"></td>
+											<td style="font-size: 14px" th:text="${list?.trans_time}"></td>
+											<td style="font-size: 14px" th:text="${list?.status}"></td>
+
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<div class="card-footer text-center"
+							style="background-color: #e9ecef;">
+							<button class="btn-primary big-btn" onclick="Home();">Home</button>
+							<button class="btn-primary big-btn" onclick="back();">Back</button>
+						</div>
+					</div>
+				</div>
 
 				<div th:if="${formmode}=='view2'">
-
 					<div class="card w-100 border">
 						<form id="reportform_cust">
 							<input type="file" id="fileInput" name="file" style="display: none" />
@@ -2840,17 +2946,14 @@
 
 						<div class="card-footer text-center" style="background-color: #e9ecef">
 							<button class="btn-primary big-btn" onclick="Home();">Home</button>
-							<button class="btn-primary big-btn">Submit</button>
+							<button class="btn-primary big-btn" onclick="Submitvalues();">Submit</button>
 							<button class="btn-primary big-btn" onclick="back();">Back</button>
 						</div>
 					</div>
 				</div>
 			</div>
-
 		</div>
 	</div>
-
-
 
 
 	<div class="modal fade" id="alertERE">
