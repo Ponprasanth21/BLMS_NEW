@@ -499,6 +499,13 @@ int LoanMasterTempTableDelete();
 	" FETCH FIRST 2000 ROWS ONLY ", 
 	nativeQuery = true)
 	List<Object[]> getLoanActWithStatus(String status);
+	
+	
+	@Query(value = "SELECT *, " +
+            "FROM LOAN_ACCOUNT_MASTER_TBL " +
+            "ORDER BY ID", 
+    nativeQuery = true)
+List<LOAN_ACT_MST_ENTITY> getloanDetails();
 
 
 

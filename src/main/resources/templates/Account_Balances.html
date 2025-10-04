@@ -572,12 +572,11 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 
 		function clicktoacctloan(a) {
-			var loan_accountno = a.getAttribute("data-acct");
+    var loan_accountno = a.getAttribute("data-acct");
 
-			location.href = 'drawDownLoanMaintanace?formmode=view&loan_accountno='
-					+ loan_accountno;
+    location.href = 'drawDownLoanMaintanace?formmode=view&loan_accountno=' + encodeURIComponent(loan_accountno);
+}
 
-		}
 		function clicktoacctdeposit(a) {
 			var actno = a.getAttribute("data-acct");
 
@@ -773,7 +772,7 @@ document.addEventListener('DOMContentLoaded', function() {
 													</tr>
 													
 												</thead>
-												<tbody id="leasetbody">
+												<!-- <tbody id="leasetbody">
 													<tr th:if="${#lists.isEmpty(leaseaccount)}">
 														<td colspan="9" style="text-align: center; color: red;">No
 															data available</td>
@@ -797,7 +796,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 													</tr>
-												</tbody>
+												</tbody> -->
+
+												<tbody id="leasetbody">
+    <!-- If no records -->
+    <tr th:if="${#lists.isEmpty(leaseaccount)}">
+        <td colspan="6" style="text-align: center; color: red;">No data available</td>
+    </tr>
+
+    <!-- Loop rows -->
+    <tr th:each="lease,iter : ${leaseaccount}">
+        <td th:text="${iter.index + 1}"></td>
+        <td th:text="${lease[0]}" class="text-primary"
+            th:attr="data-customer_id=${lease[0]}, data-loan_id=${lease[0]}"
+            onclick="viewCustomerMaster(this);"></td>
+        <td th:text="${lease[1]}" class="text-primary"
+            th:attr="data-acct=${lease[1]}"
+            onclick="clicktoacctloan(this)"></td>
+        <td th:text="${lease[2]}"></td>
+        <td th:text="${#dates.format(lease[3], 'dd-MM-yyyy')}"></td>
+        <td align="right"
+            th:text="${lease[4] != null ? #numbers.formatDecimal(lease[4], 2, 'COMMA', 0, 'POINT') : '0.00'}"></td>
+        <td align="right"
+            th:text="${lease[5] != null ? #numbers.formatDecimal(lease[5], 2, 'COMMA', 0, 'POINT') : '0.00'}"></td>
+    </tr>
+</tbody>
+
 											</table>
 										</div>
 									</div>

@@ -3178,7 +3178,8 @@ public class BGLSNavigationController {
 		 */
 		if (formmode == null || formmode.equals("Lease")) {
 			model.addAttribute("formmode", "Lease");
-			model.addAttribute("leaseaccount", lease_Loan_Master_Repo.getLeaseBalTran(TRANDATE));
+//			model.addAttribute("leaseaccount", lease_Loan_Master_Repo.getLeaseBalTran(TRANDATE));
+			model.addAttribute("leaseaccount", lease_Loan_Master_Repo.getLeaseBalTran());
 			model.addAttribute("TRANDATE", TRANDATE);
 		} else if (formmode.equals("Deposit")) {
 			model.addAttribute("formmode", "Deposit");

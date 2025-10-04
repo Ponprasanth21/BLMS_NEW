@@ -9025,7 +9025,7 @@ public class BGLSRestController {
 		request.setEntityFlg("Y");
 		request.setModifyFlg("N");
 		request.setVerifyFlg("N");
-		request.setCreationDate(new Date());
+//		request.setCreationDate(new Date());
 
 		try {
 			bgls_lms_scheme_repo.save(request);

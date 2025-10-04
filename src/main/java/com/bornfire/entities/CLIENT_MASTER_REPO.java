@@ -183,5 +183,15 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 		    "ORDER BY due_date", 
 		    nativeQuery = true)
 		List<Object[]> getLoanFlowsByCustomer(Date toDate, String customerId);
+		
+		
+		@Query(value = "SELECT *, " +
+	               "FROM CLIENT_MASTER_TBL " +
+	               "ORDER BY CLIENT_STATE, CUSTOMER_ID", 
+	       nativeQuery = true)
+	List<CLIENT_MASTER_ENTITY> getClientDetails();
+
+	
+
 
 }
