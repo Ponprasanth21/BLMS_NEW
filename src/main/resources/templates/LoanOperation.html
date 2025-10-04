@@ -2120,39 +2120,63 @@
 	</script>
 </head>
 <script>
-	// Function to add a new row
 	function addNewRows() {
-		let table = document.getElementById("usertablemulti");
-		let rowCount = table.rows.length;
-		let newRow = table.insertRow();
+		const table = document.getElementById("usertablemulti");
+		const rowCount = table.rows.length;
+		const newRow = table.insertRow();
+
+		// Get tranId from the first row
+		const firstTranInput = table.querySelector('input[name="tran_id"]');
+		const tranIdValue = firstTranInput ? firstTranInput.value : '';
 
 		newRow.innerHTML = `
-            <td><input type="text" class="form-control" name="tran_id" 
-                onkeyup="this.value = this.value.toUpperCase();" /></td>
-            <td><input type="text" class="form-control" name="part_tran_id" value="${rowCount + 1}" 
-                onkeyup="this.value = this.value.toUpperCase();" /></td>
-            <td><input type="text" class="form-control" id="acct_num_mass${rowCount}" 
-                onclick="openModalmassentries(this)" name="acct_num" 
-                onkeyup="this.value = this.value.toUpperCase();" /></td>
-            <td><input type="text" class="form-control" id="acct_name_mass${rowCount}" 
-                name="acct_name" onkeyup="this.value = this.value.toUpperCase();" /></td>
-            <td><input type="text" class="form-control" name="tran_amt" oninput="calculate()" /></td>
-            <td><input type="text" class="form-control" name="tran_particular" 
-                onkeyup="this.value = this.value.toUpperCase();" /></td>
-            <td><input type="text" class="form-control" name="tran_remarks" 
-                onkeyup="this.value = this.value.toUpperCase();" /></td>
-            <td><input type="text" class="form-control" name="rate_code" 
-                onkeyup="this.value = this.value.toUpperCase();" /></td>
-            <td><input type="text" class="form-control" name="rate" 
-                onkeyup="this.value = this.value.toUpperCase();" /></td>
-            <td><input type="radio" name="add_details" /></td>
-			<td>
-			    <button type="button" class="btn btn-link text-danger p-0" onclick="removeRow(this)">
-			        <i class="bi bi-trash-fill"></i>
-			    </button>
-			</td>
+	        <td><input type="text" class="form-control" name="tran_id" value="${tranIdValue}" 
+	            onkeyup="this.value = this.value.toUpperCase();" /></td>
 
-        `;
+	        <td><input type="text" class="form-control" name="part_tran_id" value="${rowCount + 1}" 
+	            onkeyup="this.value = this.value.toUpperCase();" /></td>
+
+	        <td><input type="text" class="form-control" id="acct_num_mass${rowCount}" 
+	            onclick="openModalMassEntries(this)" name="acct_num" 
+	            onkeyup="this.value = this.value.toUpperCase();" /></td>
+
+	        <td><input type="text" class="form-control" id="acct_name_mass${rowCount}" 
+	            name="acct_namedata" onkeyup="this.value = this.value.toUpperCase();" /></td>
+
+	        <td><input type="text" class="form-control" name="tran_amt" oninput="calculate()" /></td>
+
+	        <td><input type="text" class="form-control" name="tran_particular" 
+	            onkeyup="this.value = this.value.toUpperCase();" /></td>
+
+	        <td><input type="text" class="form-control" name="tran_remarks" value="0"
+	            onkeyup="this.value = this.value.toUpperCase();" /></td>
+
+	        <td><input type="text" class="form-control" name="transaction_date" readonly /></td>
+
+	        <td><input type="text" class="form-control" name="rate" value="UNALLOCATED" 
+	            onkeyup="this.value = this.value.toUpperCase();" /></td>
+
+	        <td><input type="radio" name="add_details" onclick="openModalMassEntries(this)" /></td>
+
+	        <td>
+	            <button type="button" class="btn btn-link text-danger p-0" onclick="removeRow(this)">
+	                <i class="bi bi-trash-fill"></i>
+	            </button>
+	        </td>
+	    `;
+
+		// auto-fill transaction_date column
+		const dateInput = newRow.querySelector('input[name="transaction_date"]');
+		if (dateInput) {
+			const now = new Date();
+			const formatted =
+				String(now.getDate()).padStart(2, '0') + "-" +
+				String(now.getMonth() + 1).padStart(2, '0') + "-" +
+				now.getFullYear() + " " +
+				String(now.getHours()).padStart(2, '0') + ":" +
+				String(now.getMinutes()).padStart(2, '0');
+			dateInput.value = formatted;
+		}
 	}
 
 	// Function to remove a row
@@ -2287,9 +2311,13 @@
 	    // find the row of the clicked element
 	    const row = element.closest("tr");
 
-	    // get the value from acct_num in that row
+	    // get the value from acct_namedata in that row
 	    const customerInput = row.querySelector('input[name="acct_namedata"]');
 	    const customerId = customerInput ? customerInput.value.trim() : "";
+
+	    // get the value from tran_particulardata in that row
+	    const transactionInput = row.querySelector('input[name="tran_particulardata"]');
+	    const transactionAmt = transactionInput ? transactionInput.value.trim() : "";
 
 	    if (!customerId) {
 	        alert("Please enter an Account Number first.");
@@ -2303,8 +2331,8 @@
 	    const tbody = document.getElementById("modalTableBody");
 	    tbody.innerHTML = "";
 
-	    // AJAX call
-	    fetch(`/ASPIRA/getAccountDetails?customerId=${customerId}`)
+	    // AJAX call - pass both customerId and transactionAmt
+	    fetch(`/ASPIRA/getAccountDetails?customerId=${customerId}&transactionAmt=${transactionAmt}`)
 	        .then(response => response.json())
 	        .then(data => {
 	            data.forEach(rowData => {
@@ -2742,7 +2770,7 @@
 										<td><input type="text" class="form-control" id="tran_amt" name="tran_amt"
 												oninput="calculate()" /></td>
 										<td><input type="text" class="form-control" id="tran_particular"
-												name="tran_particular"
+												name="tran_particulardata"
 												onkeyup="this.value = this.value.toUpperCase();" /></td>
 										<td><input type="text" class="form-control" id="tran_remarks"
 												name="tran_remarks" value="0"
@@ -2775,7 +2803,7 @@
 										<td><input type="text" class="form-control" id="tran_amt" name="tran_amt"
 												oninput="calculate()" /></td>
 										<td><input type="text" class="form-control" id="tran_particular"
-												name="tran_particular"
+												name="tran_particulardata"
 												onkeyup="this.value = this.value.toUpperCase();" /></td>
 										<td><input type="text" class="form-control" id="tran_remarks"
 												name="tran_remarks" value="0"
@@ -2812,7 +2840,7 @@
 
 						<div class="card-footer text-center" style="background-color: #e9ecef">
 							<button class="btn-primary big-btn" onclick="Home();">Home</button>
-							<button class="btn-primary big-btn" onclick="Submitvalues(this);">Submit</button>
+							<button class="btn-primary big-btn">Submit</button>
 							<button class="btn-primary big-btn" onclick="back();">Back</button>
 						</div>
 					</div>
