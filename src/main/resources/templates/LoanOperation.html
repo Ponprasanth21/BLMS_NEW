@@ -2162,19 +2162,6 @@
 	}
 </script>
 <script>
-	document.addEventListener("DOMContentLoaded", function () {
-		const input = document.getElementById("rate_code");
-		const now = new Date();
-		const formatted =
-			now.getDate().toString().padStart(2, '0') + "-" +
-			(now.getMonth() + 1).toString().padStart(2, '0') + "-" +
-			now.getFullYear() + " " +
-			now.getHours().toString().padStart(2, '0') + ":" +
-			now.getMinutes().toString().padStart(2, '0');
-		input.value = formatted;
-	});
-</script>
-<script>
 	function openModal() {
 		document.getElementById("myModaldatas").style.display = "block";
 	}
@@ -2296,38 +2283,42 @@
 
 </script>
 <script>
-	function openModalMassEntries() {
-	    // Get value from the input by ID
-	    const customerInput = document.getElementById("acct_name_mass0");
-	    const customerId = customerInput.value.trim();  // get trimmed value
+	function openModalMassEntries(element) {
+	    // find the row of the clicked element
+	    const row = element.closest("tr");
+
+	    // get the value from acct_num in that row
+	    const customerInput = row.querySelector('input[name="acct_namedata"]');
+	    const customerId = customerInput ? customerInput.value.trim() : "";
 
 	    if (!customerId) {
-	        alert("Please enter a Customer ID first.");
+	        alert("Please enter an Account Number first.");
 	        return;
 	    }
 
-	    // Show modal
+	    // show modal
 	    document.getElementById("myModaldatas").style.display = "block";
 
-	    // Clear previous rows
+	    // clear old rows
 	    const tbody = document.getElementById("modalTableBody");
 	    tbody.innerHTML = "";
 
-	    // AJAX call to get account data
+	    // AJAX call
 	    fetch(`/ASPIRA/getAccountDetails?customerId=${customerId}`)
 	        .then(response => response.json())
 	        .then(data => {
-	            data.forEach(row => {
+	            data.forEach(rowData => {
 	                const tr = document.createElement("tr");
 	                tr.innerHTML = `
-	                    <td>${row.dueDate}</td>
-	                    <td>${row.flowId}</td>
-	                    <td>${row.flowCode}</td>
-	                    <td style="text-align:center;">${row.flowAmt}</td>
-	                    <td>${row.loanAcctNo}</td>
-	                    <td>${row.acctName}</td>
+	                    <td>${rowData.dueDate}</td>
+	                    <td>${rowData.flowId}</td>
+	                    <td>${rowData.flowCode}</td>
+	                    <td style="text-align:center;">${rowData.flowAmt}</td>
+	                    <td>${rowData.loanAcctNo}</td>
+	                    <td>${rowData.acctName}</td>
 	                    <td style="text-align:center;">
-	                        <input type="radio" name="selectRow" onclick="selectRow('${row.loanAcctNo}', '${row.flowAmt}')">
+	                        <input type="radio" name="selectRow"
+	                               onclick="selectRow('${rowData.loanAcctNo}', '${rowData.flowAmt}')">
 	                    </td>
 	                `;
 	                tbody.appendChild(tr);
@@ -2340,18 +2331,36 @@
 	}
 
 	function closeModal(btn) {
-	    const modal = btn.closest(".modal");
-	    if (modal) modal.style.display = "none";
+		const modal = btn.closest(".modal");
+		if (modal) modal.style.display = "none";
 	}
 
 	function selectRow(acctNo, flowAmt) {
-	    console.log("Selected:", acctNo, flowAmt);
-	    // populate input fields or perform other actions
+		console.log("Selected:", acctNo, flowAmt);
+		// populate input fields or perform other actions
 	}
+</script>
+<script>
+	function setTransactionDateTime() {
+		const now = new Date();
+		const formatted =
+			String(now.getDate()).padStart(2, '0') + "-" +
+			String(now.getMonth() + 1).padStart(2, '0') + "-" +
+			now.getFullYear() + " " +
+			String(now.getHours()).padStart(2, '0') + ":" +
+			String(now.getMinutes()).padStart(2, '0');
+
+		// Fill all inputs in all rows
+		document.querySelectorAll('#usertablemulti input[name="transaction_date"]').forEach(function (input) {
+			input.value = formatted;
+		});
+	}
+
+	// Run on page load
+	document.addEventListener("DOMContentLoaded", setTransactionDateTime);
 </script>
 
 <body>
-
 	<div class="col-sm-2">
 		<div th:insert="BGLSHeaderMenu :: header"></div>
 	</div>
@@ -2724,12 +2733,11 @@
 												name="part_tran_id" onkeyup="this.value = this.value.toUpperCase();" />
 										</td>
 										<td>
-											<input type="text" class="form-control" id="acct_num_mass0"
-												name="acct_num"
+											<input type="text" class="form-control" id="acct_num_mass0" name="acct_num"
 												onkeyup="this.value = this.value.toUpperCase();" />
 										</td>
 										<td><input type="text" class="form-control" id="acct_name_mass0"
-												name="acct_name" onkeyup="this.value = this.value.toUpperCase();" />
+												name="acct_namedata" onkeyup="this.value = this.value.toUpperCase();" />
 										</td>
 										<td><input type="text" class="form-control" id="tran_amt" name="tran_amt"
 												oninput="calculate()" /></td>
@@ -2740,7 +2748,8 @@
 												name="tran_remarks" value="0"
 												onkeyup="this.value = this.value.toUpperCase();" />
 										</td>
-										<td><input type="text" class="form-control" id="rate_code" name="rate_code"
+										<td><input type="text" class="form-control" id="rate_code"
+												name="transaction_date"
 												onkeyup="this.value = this.value.toUpperCase();" /></td>
 										<td><input type="text" class="form-control" id="rate" name="rate"
 												value="UNALLOCATED" onkeyup="this.value = this.value.toUpperCase();" />
@@ -2761,7 +2770,7 @@
 												onclick="openModalmassentries(this)" name="acct_num"
 												onkeyup="this.value = this.value.toUpperCase();" /></td>
 										<td><input type="text" class="form-control" id="acct_name_mass1"
-												name="acct_name" onkeyup="this.value = this.value.toUpperCase();" />
+												name="acct_namedata" onkeyup="this.value = this.value.toUpperCase();" />
 										</td>
 										<td><input type="text" class="form-control" id="tran_amt" name="tran_amt"
 												oninput="calculate()" /></td>
@@ -2772,14 +2781,15 @@
 												name="tran_remarks" value="0"
 												onkeyup="this.value = this.value.toUpperCase();" />
 										</td>
-										<td><input type="text" class="form-control" id="rate_code" name="rate_code"
+										<td><input type="text" class="form-control" id="rate_code"
+												name="transaction_date"
 												onkeyup="this.value = this.value.toUpperCase();" /></td>
 										<td><input type="text" class="form-control" id="rate" name="rate"
 												value="UNALLOCATED" onkeyup="this.value = this.value.toUpperCase();" />
 										</td>
 										<td><input type="radio" id="add_details" name="add_details"
 												onkeyup="this.value = this.value.toUpperCase();"
-												onclick="openModalMassEntries()" /></td>
+												onclick="openModalMassEntries(this)" /></td>
 
 									</tr>
 								</tbody>

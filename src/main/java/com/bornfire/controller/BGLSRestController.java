@@ -9405,63 +9405,72 @@ public class BGLSRestController {
 		return clientMasterRepo.searchByCustomerIdAndStatus(customerId, status);
 	}
 
-	 @GetMapping("/getAccountDetails")
-	    @ResponseBody
-	    public List<Map<String, Object>> getAccountDetails(@RequestParam String customerId) {
+	@GetMapping("/getAccountDetails")
+	@ResponseBody
+	public List<Map<String, Object>> getAccountDetails(@RequestParam String customerId) {
 
-	        // 1️⃣ Fetch the latest TRAN_DATE from control table
-	        Date tranDateObj = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
-	        System.out.println("The fetched TRAN_DATE is: " + tranDateObj);
+	    Date tranDateObj = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
+	    System.out.println("The fetched TRAN_DATE is: " + tranDateObj);
 
-	        // 2️⃣ Convert TRAN_DATE to LocalDate
-	        LocalDate tranDate = (tranDateObj instanceof java.sql.Date)
-	                ? ((java.sql.Date) tranDateObj).toLocalDate()
-	                : tranDateObj.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	    if (tranDateObj == null) {
+	        System.out.println("No TRAN_DATE found in control table.");
+	        return Collections.emptyList();
+	    }
 
-	        // 3️⃣ Convert LocalDate back to Date for repository query
-	        Date transactionDate = Date.from(tranDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-	        System.out.println("Transaction Date object passed to query: " + transactionDate);
+	    LocalDate tranDate = (tranDateObj instanceof java.sql.Date)
+	            ? ((java.sql.Date) tranDateObj).toLocalDate()
+	            : tranDateObj.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-	        // ✅ Query repo
-	        List<Object[]> results = cLIENT_MASTER_REPO.getLoanFlowsByCustomer(transactionDate, customerId);
+	    Date transactionDate = Date.from(tranDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+	    System.out.println("Transaction Date object passed to query: " + transactionDate);
 
-	        // 4️⃣ Formatters
-	        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy"); // format [0]
-	        DecimalFormat decimalFormatter = new DecimalFormat("#,##0.00");     // format [3]
+	    List<Object[]> results = cLIENT_MASTER_REPO.getLoanFlowsByCustomer(transactionDate, customerId);
 
-	        // 5️⃣ Map results
-	        List<Map<String, Object>> data = new ArrayList<>();
-	        for (Object[] row : results) {
-	            Map<String, Object> map = new HashMap<>();
+	    // 🔍 Debug prints
+	    System.out.println("CustomerId received = " + customerId);
+	    System.out.println("Repo returned " + results.size() + " rows");
 
-	            // Format date
-	            String dueDate = null;
-	            if (row[0] instanceof Date) {
-	                dueDate = dateFormatter.format((Date) row[0]);
-	            } else if (row[0] != null) {
-	                dueDate = row[0].toString();
-	            }
+	    SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+	    DecimalFormat decimalFormatter = new DecimalFormat("#,##0.00");
 
-	            // Format amount
-	            String flowAmt = null;
-	            if (row[3] instanceof Number) {
-	                flowAmt = decimalFormatter.format(((Number) row[3]).doubleValue());
-	            } else if (row[3] != null) {
-	                flowAmt = row[3].toString();
-	            }
+	    List<Map<String, Object>> data = new ArrayList<>();
+	    for (Object[] row : results) {
+	        Map<String, Object> map = new HashMap<>();
 
-	            map.put("dueDate", dueDate);          // [0] formatted dd-MM-yyyy
-	            map.put("flowId", row[1]);
-	            map.put("flowCode", row[2]);
-	            map.put("flowAmt", flowAmt);          // [3] formatted 2,492.00
-	            map.put("loanAcctNo", row[4]);
-	            map.put("acctName", row[5]);
-	            map.put("loanEncodedKey", row[6]);
-
-	            data.add(map);
+	        String dueDate = null;
+	        if (row[0] instanceof Date) {
+	            dueDate = dateFormatter.format((Date) row[0]);
+	        } else if (row[0] != null) {
+	            dueDate = row[0].toString();
 	        }
 
-	        return data;
+	        String flowAmt = null;
+	        if (row[3] instanceof Number) {
+	            flowAmt = decimalFormatter.format(((Number) row[3]).doubleValue());
+	        } else if (row[3] != null) {
+	            flowAmt = row[3].toString();
+	        }
+
+	        // 🔍 Print every row
+	        System.out.println("MAPPED ROW: dueDate=" + dueDate +
+	                ", flowId=" + row[1] +
+	                ", flowCode=" + row[2] +
+	                ", flowAmt=" + flowAmt +
+	                ", loanAcctNo=" + row[4] +
+	                ", acctName=" + row[5]);
+
+	        map.put("dueDate", dueDate);
+	        map.put("flowId", row[1] != null ? row[1].toString() : "");
+	        map.put("flowCode", row[2] != null ? row[2].toString() : "");
+	        map.put("flowAmt", flowAmt);
+	        map.put("loanAcctNo", row[4] != null ? row[4].toString() : "");
+	        map.put("acctName", row[5] != null ? row[5].toString() : "");
+	        map.put("loanEncodedKey", row[6] != null ? row[6].toString() : "");
+
+	        data.add(map);
 	    }
+
+	    return data;
+	}
 
 }
