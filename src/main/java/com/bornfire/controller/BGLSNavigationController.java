@@ -3638,6 +3638,7 @@ public class BGLSNavigationController {
 
 			// Fetch loan details for view
 			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+			md.addAttribute("acct_bal", chart_Acc_Rep.getacctbal(id));
 			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
 
 			// Check unverified status
@@ -3648,11 +3649,13 @@ public class BGLSNavigationController {
 		} else if (formmode.equals("modify")) {
 			md.addAttribute("formmode", "modify");
 			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+			md.addAttribute("acct_bal", chart_Acc_Rep.getacctbal(id));
 			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
 
 		} else if (formmode.equals("verify")) {
 			md.addAttribute("formmode", "verify");
 			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+			md.addAttribute("acct_bal", chart_Acc_Rep.getacctbal(id));
 			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
 		}
 
@@ -4211,6 +4214,7 @@ public class BGLSNavigationController {
 	        model.addAttribute("formmode", "viewloan");
 	        md.addAttribute("user", user);
 	        md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+	        md.addAttribute("acct_bal", chart_Acc_Rep.getacctbal(id));
 	        Map<String,String> value = new HashMap<>();
 //	        LOAN_ACT_MST_REPO.getLoanValueList(holder_key);
 	        md.addAttribute("customer_id", LOAN_ACT_MST_REPO.getLoanValueCUSTOMER_ID(holder_key));

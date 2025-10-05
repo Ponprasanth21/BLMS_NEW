@@ -9409,68 +9409,103 @@ public class BGLSRestController {
 	@ResponseBody
 	public List<Map<String, Object>> getAccountDetails(@RequestParam String customerId) {
 
-	    Date tranDateObj = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
-	    System.out.println("The fetched TRAN_DATE is: " + tranDateObj);
+		Date tranDateObj = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
+		System.out.println("The fetched TRAN_DATE is: " + tranDateObj);
 
-	    if (tranDateObj == null) {
-	        System.out.println("No TRAN_DATE found in control table.");
-	        return Collections.emptyList();
-	    }
+		if (tranDateObj == null) {
+			System.out.println("No TRAN_DATE found in control table.");
+			return Collections.emptyList();
+		}
 
-	    LocalDate tranDate = (tranDateObj instanceof java.sql.Date)
-	            ? ((java.sql.Date) tranDateObj).toLocalDate()
-	            : tranDateObj.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate tranDate = (tranDateObj instanceof java.sql.Date) ? ((java.sql.Date) tranDateObj).toLocalDate()
+				: tranDateObj.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-	    Date transactionDate = Date.from(tranDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-	    System.out.println("Transaction Date object passed to query: " + transactionDate);
+		Date transactionDate = Date.from(tranDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		System.out.println("Transaction Date object passed to query: " + transactionDate);
 
-	    List<Object[]> results = cLIENT_MASTER_REPO.getLoanFlowsByCustomer(transactionDate, customerId);
+		List<Object[]> results = cLIENT_MASTER_REPO.getLoanFlowsByCustomer(transactionDate, customerId);
 
-	    // 🔍 Debug prints
-	    System.out.println("CustomerId received = " + customerId);
-	    System.out.println("Repo returned " + results.size() + " rows");
+		// 🔍 Debug prints
+		System.out.println("CustomerId received = " + customerId);
+		System.out.println("Repo returned " + results.size() + " rows");
 
-	    SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
-	    DecimalFormat decimalFormatter = new DecimalFormat("#,##0.00");
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
+		DecimalFormat decimalFormatter = new DecimalFormat("#,##0.00");
 
-	    List<Map<String, Object>> data = new ArrayList<>();
-	    for (Object[] row : results) {
-	        Map<String, Object> map = new HashMap<>();
+		List<Map<String, Object>> data = new ArrayList<>();
+		for (Object[] row : results) {
+			Map<String, Object> map = new HashMap<>();
 
-	        String dueDate = null;
-	        if (row[0] instanceof Date) {
-	            dueDate = dateFormatter.format((Date) row[0]);
-	        } else if (row[0] != null) {
-	            dueDate = row[0].toString();
-	        }
+			String dueDate = null;
+			if (row[0] instanceof Date) {
+				dueDate = dateFormatter.format((Date) row[0]);
+			} else if (row[0] != null) {
+				dueDate = row[0].toString();
+			}
 
-	        String flowAmt = null;
-	        if (row[3] instanceof Number) {
-	            flowAmt = decimalFormatter.format(((Number) row[3]).doubleValue());
-	        } else if (row[3] != null) {
-	            flowAmt = row[3].toString();
-	        }
+			String flowAmt = null;
+			if (row[3] instanceof Number) {
+				flowAmt = decimalFormatter.format(((Number) row[3]).doubleValue());
+			} else if (row[3] != null) {
+				flowAmt = row[3].toString();
+			}
 
-	        // 🔍 Print every row
-	        System.out.println("MAPPED ROW: dueDate=" + dueDate +
-	                ", flowId=" + row[1] +
-	                ", flowCode=" + row[2] +
-	                ", flowAmt=" + flowAmt +
-	                ", loanAcctNo=" + row[4] +
-	                ", acctName=" + row[5]);
+			// 🔍 Print every row
+			System.out.println("MAPPED ROW: dueDate=" + dueDate + ", flowId=" + row[1] + ", flowCode=" + row[2]
+					+ ", flowAmt=" + flowAmt + ", loanAcctNo=" + row[4] + ", acctName=" + row[5]);
 
-	        map.put("dueDate", dueDate);
-	        map.put("flowId", row[1] != null ? row[1].toString() : "");
-	        map.put("flowCode", row[2] != null ? row[2].toString() : "");
-	        map.put("flowAmt", flowAmt);
-	        map.put("loanAcctNo", row[4] != null ? row[4].toString() : "");
-	        map.put("acctName", row[5] != null ? row[5].toString() : "");
-	        map.put("loanEncodedKey", row[6] != null ? row[6].toString() : "");
+			map.put("dueDate", dueDate);
+			map.put("flowId", row[1] != null ? row[1].toString() : "");
+			map.put("flowCode", row[2] != null ? row[2].toString() : "");
+			map.put("flowAmt", flowAmt);
+			map.put("loanAcctNo", row[4] != null ? row[4].toString() : "");
+			map.put("acctName", row[5] != null ? row[5].toString() : "");
+			map.put("loanEncodedKey", row[6] != null ? row[6].toString() : "");
 
-	        data.add(map);
-	    }
+			data.add(map);
+		}
 
-	    return data;
+		return data;
+	}
+
+	@PostMapping(value = "/saveMultipleTransactions", consumes = "application/json", produces = "application/json")
+	public Map<String, Object> saveMultipleTransactions(@RequestBody List<Map<String, Object>> transactions) {
+		Map<String, Object> response = new HashMap<>();
+		try {
+			System.out.println("✅ Received " + transactions.size() + " rows from frontend:");
+
+			for (int i = 0; i < transactions.size(); i++) {
+				Map<String, Object> t = transactions.get(i);
+
+				String tranId = (String) t.get("tran_id");
+				String acctNum = (String) t.get("acct_num");
+				String acctName = (String) t.get("acct_namedata");
+				Double tranAmt = t.get("tran_amt") != null ? Double.parseDouble(t.get("tran_amt").toString()) : 0.0;
+				String tranParticular = (String) t.get("tran_particulardata");
+				String tranRemarks = (String) t.get("tran_remarks");
+				String tranDate = (String) t.get("transaction_date");
+				String rate = (String) t.get("rate");
+
+				System.out.println("Row " + (i + 1) + ":");
+				System.out.println("  tran_id: " + tranId);
+				System.out.println("  acct_num: " + acctNum);
+				System.out.println("  acct_namedata: " + acctName);
+				System.out.println("  tran_amt: " + tranAmt);
+				System.out.println("  tran_particulardata: " + tranParticular);
+				System.out.println("  tran_remarks: " + tranRemarks);
+				System.out.println("  transaction_date: " + tranDate);
+				System.out.println("  rate: " + rate);
+				System.out.println("----------------------------------------------------");
+			}
+
+			response.put("status", "success");
+			response.put("message", "All transaction rows printed in console!");
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.put("status", "error");
+			response.put("message", "Failed to process transactions.");
+		}
+		return response;
 	}
 
 }

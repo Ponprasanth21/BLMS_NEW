@@ -42,6 +42,10 @@
 			color: #333;
 		}
 
+		.new-color {
+			background-color: rgba(0, 0, 0, .03) !important;
+		}
+
 		.filterable .filters input[disabled]:-ms-input-placeholder {
 			color: #333;
 		}
@@ -1073,11 +1077,11 @@
 			</div>
 			<div class="card-body">
 				<div class="panel panel-primary">
-					<div class="panel-heading" style="height: 50px">
+					<div class="panel-heading new-color" style="height: 50px">
 						<div class="form-group ">
 							<div class="row col-sm-12 ">
 								<div class="col-sm-1 "></div>
-								<label class="col-sm-2 control-label" style="margin-top: 4px;">
+								<label class="col-sm-2">
 									<font size="4" color="black">Current Date</font><span
 										style="color: red; font-size: 19px;" class="mant">*</span>
 								</label>
@@ -1107,13 +1111,12 @@
 
 					<table class="table table-bordered" id="desc">
 
-						<tr id="tr1" style="line-height: 2; height: 25px;">
+						<tr id="tr1" style="height: 25px;">
 							<td style="padding: 2px;"><b>Batch Job</b></td>
 							<td style="padding-left: 5px;">Interest Accural</td>
 							<td width="205px;" id="td1"
 								style="text-align: center; vertical-align: middle; padding: 2px;">
-								<button type="button" class="btn btn-xs btn-info" value="Start" id="play1"
-									style="background-color: gray; border: none">
+								<button type="button" class="btn-primary big-btn" value="Start" id="play1">
 									Start
 								</button>
 							</td>
@@ -1125,8 +1128,7 @@
 							<td style="padding-left: 5px;">Interest Demand Generation</td>
 							<td width="205px;" id="td2"
 								style="text-align: center; vertical-align: middle; padding: 2px;"><button type="button"
-									class="btn btn-xs btn-info" value="Start" id="play2"
-									style="background-color: gray; border: none">Start</button>
+									class="btn-primary big-btn" value="Start" id="play2">Start</button>
 							</td>
 						</tr>
 						<tr id="tr3">
@@ -1134,8 +1136,7 @@
 							<td style="padding-left: 5px;">Fee Demand Generation</td>
 							<td width="205px;" id="td3"
 								style="text-align: center; vertical-align: middle; padding: 2px;"><button type="button"
-									class="btn btn-xs btn-info" value="Start" id="play3"
-									style="background-color: gray; border: none">Start</button>
+									class="btn-primary big-btn" value="Start" id="play3">Start</button>
 							</td>
 						</tr>
 						<tr id="tr3">
@@ -1143,28 +1144,24 @@
 							<td style="padding-left: 5px;">Penalty</td>
 							<td width="205px;" id="td3"
 								style="text-align: center; vertical-align: middle; padding: 2px;"><button type="button"
-									class="btn btn-xs btn-info" value="Start" id="play3"
-									style="background-color: gray; border: none">Start</button>
+									class="btn-primary big-btn" value="Start" id="play3">Start</button>
 							</td>
 						</tr>
-						<tr id="tr1" style="line-height: 2; height: 25px;">
-							<td style="padding: 2px;"><b>Other Batch Job</b></td>
-							<td style="padding-left: 5px;"></td>
+						<tr id="tr3">
+							<td style="padding: 2px;"></td>
+							<td style="padding-left: 5px;">Other Batch Job</td>
 							<td width="205px;" id="td1"
-								style="text-align: center; vertical-align: middle; padding: 2px;">
-								<button type="button" class="btn btn-xs btn-info" value="Start" id="play1"
-									style="background-color: gray; border: none">
-									Start
-								</button>
+								style="text-align: center; vertical-align: middle; padding: 2px;"><button type="button"
+									class="btn-primary big-btn" value="Start" id="play1">Start</button>
 							</td>
 						</tr>
+
 						<tr id="tr4">
 							<td style="padding: 2px;"><b>Validation</b></td>
 							<td style="padding-left: 5px;">Journal</td>
 							<td width="205px;" id="td4"
 								style="text-align: center; vertical-align: middle;padding: 2px;"><button type="button"
-									class="btn btn-xs btn-info" value="Start" id="play4"
-									style="background-color: gray; border: none">Start</button>
+									class="btn-primary big-btn" value="Start" id="play4">Start</button>
 							</td>
 						</tr>
 						<tr id="tr5">
@@ -1172,8 +1169,7 @@
 							<td style="padding-left: 5px;">Account Ledger</td>
 							<td width="205px;" id="td5"
 								style="text-align: center; vertical-align: middle;padding: 2px;"><button type="button"
-									class="btn btn-xs btn-info" value="Start" id="play5"
-									style="background-color: gray; border: none">Start</button>
+									class="btn-primary big-btn" value="Start" id="play5">Start</button>
 							</td>
 						</tr>
 						<tr id="tr6">
@@ -1181,8 +1177,7 @@
 							<td style="padding-left: 5px;">Holiday Check</td>
 							<td width="205px;" id="td6"
 								style="text-align: center; vertical-align: middle;padding: 2px;"><button type="button"
-									class="btn btn-xs btn-info" value="Start" id="play6"
-									style="background-color: gray; border: none">Start</button>
+									class="btn-primary big-btn" value="Start" id="play6">Start</button>
 							</td>
 						</tr>
 						<tr id="tr7">
@@ -1190,8 +1185,8 @@
 							<td style="padding-left: 5px;">Daily Account Balance</td>
 							<td width="205px;" id="td7"
 								style="text-align: center; vertical-align: middle;padding: 2px;">
-								<button type="button" class="btn btn-xs btn-info" onclick="Doatranscation()"
-									value="Start" id="play7" style="background-color: gray; border: none">Start</button>
+								<button type="button" class="btn-primary big-btn" onclick="Doatranscation()"
+									value="Start" id="play7">Start</button>
 							</td>
 						</tr>
 						<tr id="tr8">
@@ -1199,8 +1194,7 @@
 							<td style="padding-left: 5px;">Consistency Check</td>
 							<td width="205px;" id="td8"
 								style="text-align: center; vertical-align: middle;padding: 2px;"><button type="button"
-									class="btn btn-xs btn-info" value="Start" id="play8"
-									style="background-color: gray; border: none">Start</button>
+									class="btn-primary big-btn" value="Start" id="play8">Start</button>
 							</td>
 						</tr>
 						<tr id="tr9">
@@ -1208,8 +1202,7 @@
 							<td style="padding-left: 5px;">GL Consolidation</td>
 							<td width="205px;" id="td9"
 								style="text-align: center; vertical-align: middle;padding: 2px;"><button type="button"
-									class="btn btn-xs btn-info" value="Start" id="play9"
-									style="background-color: gray; border: none">Start</button>
+									class="btn-primary big-btn" value="Start" id="play9">Start</button>
 							</td>
 						</tr>
 						<tr id="tr10">
@@ -1217,8 +1210,7 @@
 							<td style="padding-left: 5px;">Movement of Transactions</td>
 							<td width="205px;" id="td10"
 								style="text-align: center; vertical-align: middle;padding: 2px;"><button type="button"
-									class="btn btn-xs btn-info" value="Start" id="play10"
-									style="background-color: gray; border: none">Start</button>
+									class="btn-primary big-btn" value="Start" id="play10">Start</button>
 							</td>
 						</tr>
 						<tr id="tr11">
@@ -1226,8 +1218,8 @@
 							<td style="padding-left: 5px;">Date Change Process</td>
 							<td width="205px;" id="td11"
 								style="text-align: center; vertical-align: middle;padding: 2px;"><button type="button"
-									class="btn btn-xs btn-info" value="Start" id="play11" onclick="DateChangeProcess()"
-									style="background-color: gray; border: none">Start</button>
+									class="btn-primary big-btn" value="Start" id="play11"
+									onclick="DateChangeProcess()">Start</button>
 							</td>
 						</tr>
 					</table>

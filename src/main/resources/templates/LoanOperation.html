@@ -1539,6 +1539,118 @@
 			});
 		}
 
+		// ✅ Collect all rows & send AJAX
+		function submitAllRows() {
+		    const rows = document.querySelectorAll("#usertablemulti tr");
+		    const payload = [];
+
+		    rows.forEach(row => {
+		        const tranId = row.querySelector('input[name="tran_id"]')?.value || "";
+		        const acctNum = row.querySelector('input[name="acct_num"]')?.value || "";
+		        const acctName = row.querySelector('input[name="acct_namedata"]')?.value || "";
+		        const tranAmt = parseFloat(row.querySelector('input[name="tran_amt"]')?.value || 0);
+		        const tranParticular = row.querySelector('input[name="tran_particulardata"]')?.value || "";
+		        const tranRemarks = row.querySelector('input[name="tran_remarks"]')?.value || "0";
+		        const tranDate = row.querySelector('input[name="transaction_date"]')?.value || "";
+		        const rate = row.querySelector('input[name="rate"]')?.value || "UNALLOCATED";
+
+		        payload.push({
+		            tran_id: tranId,
+		            acct_num: acctNum,
+		            acct_namedata: acctName,
+		            tran_amt: tranAmt,
+		            tran_particulardata: tranParticular,
+		            tran_remarks: tranRemarks,
+		            transaction_date: tranDate,
+		            rate: rate
+		        });
+		    });
+
+		    console.log("Payload to send:", payload);
+
+		    fetch("/saveMultipleTransactions", {
+		        method: "POST",
+		        headers: {
+		            "Content-Type": "application/json",
+		            "Accept": "application/json"
+		        },
+		        body: JSON.stringify(payload)
+		    })
+		    .then(res => {
+		        if (!res.ok) {
+		            throw new Error("Server returned " + res.status);
+		        }
+		        return res.json();
+		    })
+		    .then(data => {
+		        console.log("✅ Server response:", data);
+		        alert(data.message);
+		    })
+		    .catch(err => {
+		        console.error("❌ AJAX error:", err);
+		        alert("Error saving data. " + err.message);
+		    });
+		}
+
+		
+				
+		function handleCheckboxClickCollectiondata101() {
+			var selectedData = [];
+			var fromdate = $('#fromdate').val();
+			var todate = $('#todate').val();
+
+			if (!fromdate || !todate) {
+				alert("Please select both From Date and To Date.");
+				return;
+			}
+
+			var dateFrom = formatDateToDD(fromdate.trim());
+			var dateTo = formatDateToDD(todate.trim());
+
+			// Loop through all rows in the table
+			$("#flowIdTbody tr").each(function () {
+				var row = $(this);
+				var flowAmt = row.find("input[name='flow_amt']").val();
+				var flowCode = row.find("input[name='flow_code']").val();
+				var flowDate = row.find("input[name='flow_date']").val();
+				var flowId = row.find("input[name='flow_id']").val();
+				var loanAcctNo = row.find("input[name='loan_acct_no']").val();
+				var acctName = row.find("input[name='acct_name']").val();
+				var tranAmt = row.find("input[name='tran_amt']").val();
+
+				// Get the radio in the row (checked or not)
+				var radio = row.find("input[type='radio']");
+				var encodedKey = radio.data("encoded_key") || "";
+
+				// ✅ Always take operationType from the radio's data-operation
+				var operationType = radio.data("operation") || "";
+
+				// Only include rows with necessary data
+				if (flowCode && loanAcctNo) {
+					selectedData.push({
+						flow_amt: flowAmt ? flowAmt.replace(/,/g, '') : "0",
+						flow_code: flowCode,
+						flow_date: flowDate,
+						flow_id: flowId,
+						loan_acct_no: loanAcctNo,
+						acct_name: acctName,
+						tran_amt: tranAmt ? tranAmt.replace(/,/g, '') : "0",
+						from_date: dateFrom,
+						to_date: dateTo,
+						encoded_key: encodedKey,
+						operation_type: operationType // always passed
+					});
+				}
+			});
+
+			if (selectedData.length === 0) {
+				alert("No data found to submit.");
+				return;
+			}
+
+			console.log("Payload:", JSON.stringify(selectedData, null, 2));
+		}
+
 		function handleRadioClickBooking(selectedRadio) {
 			var flow_amt = selectedRadio.getAttribute("data-flow_amt").replace(/,/g, '');
 			var flow_code = selectedRadio.getAttribute("data-flow_code");
@@ -2036,9 +2148,6 @@
 
 
 		function callCollectionScreen11() {
-			location.href = 'loanOperation?formmode=list1';
-		}
-		function callCollectionScreen12() {
 			location.href = 'loanOperation?formmode=view2';
 		}
 
@@ -2128,39 +2237,20 @@
 		const rowCount = table.rows.length;
 		const newRow = table.insertRow();
 
-		// Get tranId from the first row
-		const firstTranInput = table.querySelector('input[name="tran_id"]');
-		const tranIdValue = firstTranInput ? firstTranInput.value : '';
-
 		newRow.innerHTML = `
-	        <td><input type="text" class="form-control" name="tran_id" value="${tranIdValue}" 
-	            onkeyup="this.value = this.value.toUpperCase();" /></td>
-
-	        <td><input type="text" class="form-control" name="part_tran_id" value="${rowCount + 1}" 
-	            onkeyup="this.value = this.value.toUpperCase();" /></td>
-
+	        <td><input type="text" class="form-control" name="tran_id" value="" /></td>
 	        <td><input type="text" class="form-control" id="acct_num_mass${rowCount}" 
 	            onclick="openModalMassEntries(this)" name="acct_num" 
 	            onkeyup="this.value = this.value.toUpperCase();" /></td>
-
 	        <td><input type="text" class="form-control" id="acct_name_mass${rowCount}" 
 	            name="acct_namedata" onkeyup="this.value = this.value.toUpperCase();" /></td>
-
 	        <td><input type="text" class="form-control" name="tran_amt" oninput="calculate()" /></td>
-
-	        <td><input type="text" class="form-control" name="tran_particular" 
+	        <td><input type="text" class="form-control" name="tran_particulardata" 
 	            onkeyup="this.value = this.value.toUpperCase();" /></td>
-
-	        <td><input type="text" class="form-control" name="tran_remarks" value="0"
-	            onkeyup="this.value = this.value.toUpperCase();" /></td>
-
+	        <td><input type="text" class="form-control" name="tran_remarks" value="0" /></td>
 	        <td><input type="text" class="form-control" name="transaction_date" readonly /></td>
-
-	        <td><input type="text" class="form-control" name="rate" value="UNALLOCATED" 
-	            onkeyup="this.value = this.value.toUpperCase();" /></td>
-
+	        <td><input type="text" class="form-control" name="rate" value="UNALLOCATED" readonly /></td>
 	        <td><input type="radio" name="add_details" onclick="openModalMassEntries(this)" /></td>
-
 	        <td>
 	            <button type="button" class="btn btn-link text-danger p-0" onclick="removeRow(this)">
 	                <i class="bi bi-trash-fill"></i>
@@ -2168,7 +2258,7 @@
 	        </td>
 	    `;
 
-		// auto-fill transaction_date column
+		// ✅ Auto-fill current date-time in transaction_date
 		const dateInput = newRow.querySelector('input[name="transaction_date"]');
 		if (dateInput) {
 			const now = new Date();
@@ -2187,51 +2277,6 @@
 		let row = button.closest("tr");
 		row.parentNode.removeChild(row);
 	}
-// Collect all rows and submit
-function Submitvalues() {
-    let table = document.getElementById("usertablemulti");
-    let dataList = [];
-
-    for (let row of table.rows) {
-        let tranInput = row.querySelector("input[name='tran_id']");
-        let partTranInput = row.querySelector("input[name='part_tran_id']");
-        let acctNameInput = row.querySelector("input[name='acct_namedata']");
-        let mobileInput = row.querySelector("input[name='mobile_num']");
-        let amountInput = row.querySelector("input[name='tran_amt']");
-
-        if (!tranInput || !tranInput.value.trim()) {
-            alert("Transaction ID cannot be empty!");
-            tranInput.focus();
-            return;
-        }
-
-        dataList.push({
-            transaction_id: tranInput.value.trim(),          // use tran_id input
-            part_tran_id: partTranInput ? partTranInput.value.trim() : "",
-            names: acctNameInput ? acctNameInput.value.trim() : "",
-            mobile_number: mobileInput ? mobileInput.value.trim() : "",
-            allocated_amount: amountInput ? parseFloat(amountInput.value.trim() || 0) : 0,
-            trans_time: new Date(),
-            status: "PENDING"  // or any default
-        });
-    }
-
-    $.ajax({
-        url: window.location.origin + '/ASPIRA/submitBulkCollection',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(dataList),
-        success: function(res) {
-            $("#Successmsgpopup").text("Bulk collection saved successfully!");
-            $("#SuccesPopUp").modal('show');
-        },
-        error: function(err) {
-            console.error(err);
-            $("#Successmsgpopup").text("Error saving bulk collection!");
-            $("#SuccesPopUp").modal('show');
-        }
-    });
-}
 </script>
 <script>
 	function openModal() {
@@ -2356,54 +2401,59 @@ function Submitvalues() {
 </script>
 <script>
 	function openModalMassEntries(element) {
-	    // find the row of the clicked element
-	    const row = element.closest("tr");
+		// Find the row of the clicked element
+		const row = element.closest("tr");
 
-	    // get the value from acct_namedata in that row
-	    const customerInput = row.querySelector('input[name="acct_namedata"]');
-	    const customerId = customerInput ? customerInput.value.trim() : "";
+		// Get the value from acct_namedata in that row
+		const customerInput = row.querySelector('input[name="acct_namedata"]');
+		const customerId = customerInput ? customerInput.value.trim() : "";
 
-	    // get the value from tran_particulardata in that row
-	    const transactionInput = row.querySelector('input[name="tran_particulardata"]');
-	    const transactionAmt = transactionInput ? transactionInput.value.trim() : "";
+		// Get the value from tran_particulardata in that row
+		const transactionInput = row.querySelector('input[name="tran_particulardata"]');
+		const transactionAmt = transactionInput ? transactionInput.value.trim() : "";
 
-	    if (!customerId) {
-	        alert("Please enter an Account Number first.");
-	        return;
-	    }
+		if (!customerId) {
+			return;
+		}
 
-	    // show modal
-	    document.getElementById("myModaldatas").style.display = "block";
+		// Show modal
+		const modal = document.getElementById("myModaldatas");
+		modal.style.display = "block";
 
-	    // clear old rows
-	    const tbody = document.getElementById("modalTableBody");
-	    tbody.innerHTML = "";
+		// Clear old rows
+		const tbody = document.getElementById("modalTableBody");
+		tbody.innerHTML = "";
 
-	    // AJAX call - pass both customerId and transactionAmt
-	    fetch(`/ASPIRA/getAccountDetails?customerId=${customerId}&transactionAmt=${transactionAmt}`)
-	        .then(response => response.json())
-	        .then(data => {
-	            data.forEach(rowData => {
-	                const tr = document.createElement("tr");
-	                tr.innerHTML = `
-	                    <td>${rowData.dueDate}</td>
-	                    <td>${rowData.flowId}</td>
-	                    <td>${rowData.flowCode}</td>
-	                    <td style="text-align:center;">${rowData.flowAmt}</td>
-	                    <td>${rowData.loanAcctNo}</td>
-	                    <td>${rowData.acctName}</td>
+		// AJAX call - pass both customerId and transactionAmt
+		fetch(`/ASPIRA/getAccountDetails?customerId=${encodeURIComponent(customerId)}&transactionAmt=${encodeURIComponent(transactionAmt)}`)
+			.then(response => {
+				if (!response.ok) throw new Error("Network response was not ok");
+				return response.json();
+			})
+			.then(data => {
+				if (!Array.isArray(data)) data = [];
+
+				data.forEach(rowData => {
+					const tr = document.createElement("tr");
+					tr.innerHTML = `
+	                    <td>${rowData.dueDate || ''}</td>
+	                    <td>${rowData.flowId || ''}</td>
+	                    <td>${rowData.flowCode || ''}</td>
+	                    <td style="text-align:center;">${rowData.flowAmt || ''}</td>
+	                    <td>${rowData.loanAcctNo || ''}</td>
+	                    <td>${rowData.acctName || ''}</td>
 	                    <td style="text-align:center;">
 	                        <input type="radio" name="selectRow"
-	                               onclick="selectRow('${rowData.loanAcctNo}', '${rowData.flowAmt}')">
+	                               onclick="selectRow('${rowData.loanAcctNo || ''}', '${rowData.flowAmt || ''}')">
 	                    </td>
 	                `;
-	                tbody.appendChild(tr);
-	            });
-	        })
-	        .catch(err => {
-	            console.error("Error fetching account details:", err);
-	            alert("Failed to fetch data.");
-	        });
+					tbody.appendChild(tr);
+				});
+			})
+			.catch(err => {
+				console.error("Error fetching account details:", err);
+				alert("Failed to fetch account details.");
+			});
 	}
 
 	function closeModal(btn) {
@@ -2733,71 +2783,13 @@ function Submitvalues() {
 						</button>
 						<button class="btn-primary big-btn" onclick="back();">Back</button>
 					</div>
+
+
 				</div>
 
-	<div th:if="${formmode == 'list1'}">
-					<div class="card w-100 border">
-						<div
-							class="card-header d-flex justify-content-between align-items-center"
-							style="background-color: #e9ecef; height: 50px;">
-
-							<h6 class="m-0" style="font-size: 1.2rem;">BULK COLLECTION -
-								LIST</h6>
-
-							<button type="button" class="btn-success btn-sm big-btn"
-								onclick="callCollectionScreen12()">Add</button>
-						</div>
-
-						<div class="card-body"
-							style="overflow-y: auto; border: 1px solid #ddd;">
-							<div class="table-responsive" id="cardBody">
-								<table class="table table-bordered table-hover table-sm"
-									style="margin-bottom: 0; font-size: initial;">
-									<thead class="thead-light"
-										style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
-										<tr>
-											<th>Srl No</th>
-											<th>Transaction ID</th>
-											<th>Names</th>
-											<th>Reference</th>
-											<th>Mobile Number</th>
-											<th>Amount</th>
-											<th>Allocated Amount</th>
-											<th>Trans. Time</th>
-											<th>Status</th>
-										</tr>
-									</thead>
-									<tbody id="usertablemulti">
-										<tr th:each="list, iterator : ${getlist}">
-											<td style="font-size: 14px" th:text="${iterator.index +1}"></td>
-											<td style="font-size: 14px"
-												th:attr="data-id=${list?.transaction_id}"
-												th:text="${list?.transaction_id}">
-											</td>
-											<td style="font-size: 14px" th:text="${list?.names}"></td>
-											<td style="font-size: 14px" th:text="${list?.reference}"></td>
-											<td style="font-size: 14px" th:text="${list?.mobile_number}"></td>
-											<td style="font-size: 14px" th:text="${list?.amount}"></td>
-											<td style="font-size: 14px"
-												th:text="${list?.allocated_amount}"></td>
-											<td style="font-size: 14px" th:text="${list?.trans_time}"></td>
-											<td style="font-size: 14px" th:text="${list?.status}"></td>
-
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-
-						<div class="card-footer text-center"
-							style="background-color: #e9ecef;">
-							<button class="btn-primary big-btn" onclick="Home();">Home</button>
-							<button class="btn-primary big-btn" onclick="back();">Back</button>
-						</div>
-					</div>
-				</div>
 
 				<div th:if="${formmode}=='view2'">
+
 					<div class="card w-100 border">
 						<form id="reportform_cust">
 							<input type="file" id="fileInput" name="file" style="display: none" />
@@ -2845,7 +2837,6 @@ function Submitvalues() {
 								<thead>
 									<tr>
 										<th>Transaction ID</th>
-										<th>Part Tran Id</th>
 										<th>Names</th>
 										<th>Reference</th>
 										<th>Mobile number</th>
@@ -2860,11 +2851,7 @@ function Submitvalues() {
 									<tr>
 										<td>
 											<input type="text" class="form-control" id="tran_id" name="tran_id"
-												th:value="${tranId}" onkeyup="this.value = this.value.toUpperCase();" />
-										</td>
-
-										<td><input type="text" class="form-control" th:value="1" id="part_tran_id"
-												name="part_tran_id" onkeyup="this.value = this.value.toUpperCase();" />
+												onkeyup="this.value = this.value.toUpperCase();" />
 										</td>
 										<td>
 											<input type="text" class="form-control" id="acct_num_mass0" name="acct_num"
@@ -2891,14 +2878,10 @@ function Submitvalues() {
 										<td><input type="radio" id="add_details" name="add_details"
 												onkeyup="this.value = this.value.toUpperCase();"
 												onclick="openModalMassEntries(this)" /></td>
-
 									</tr>
 									<tr>
 										<td><input type="text" class="form-control" id="tran_id" name="tran_id"
-												th:value="${tranId}" onkeyup="this.value = this.value.toUpperCase();" />
-										</td>
-										<td><input type="text" class="form-control" th:value="2" id="part_tran_id"
-												name="part_tran_id" onkeyup="this.value = this.value.toUpperCase();" />
+												onkeyup="this.value = this.value.toUpperCase();" />
 										</td>
 										<td><input type="text" class="form-control" id="acct_num_mass1"
 												onclick="openModalmassentries(this)" name="acct_num"
@@ -2946,12 +2929,14 @@ function Submitvalues() {
 
 						<div class="card-footer text-center" style="background-color: #e9ecef">
 							<button class="btn-primary big-btn" onclick="Home();">Home</button>
-							<button class="btn-primary big-btn" onclick="Submitvalues();">Submit</button>
+							<button class="btn-primary big-btn"
+								onclick="submitAllRows(this);">Submit</button>
 							<button class="btn-primary big-btn" onclick="back();">Back</button>
 						</div>
 					</div>
 				</div>
 			</div>
+
 		</div>
 	</div>
 

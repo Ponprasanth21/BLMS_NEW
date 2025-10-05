@@ -1,224 +1,229 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <!--
 	CREATED BY : Aishwarya
 	DATE : 12-03-25
     VERSION    : 01
 -->
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="/ASPIRA/js/jquery.min.js"></script>
-<script src="/ASPIRA/js/jquery-ui.min.js"></script>
-<style>
-body {
-	font-size: 0.8rem;
-}
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="/ASPIRA/js/jquery.min.js"></script>
+	<script src="/ASPIRA/js/jquery-ui.min.js"></script>
+	<style>
+		body {
+			font-size: 0.8rem;
+		}
 
-.btn {
-	line-height: 0.5rem;
-}
+		.btn {
+			line-height: 0.5rem;
+		}
 
-.container-manager {
-	width: 83.5%;
-	padding-right: 15px;
-	padding-left: 15px;
-	margin-right: auto;
-	margin-left: 17.3%;
-	margin-top: 80px;
-	margin-top: 80px;
-}
+		.container-manager {
+			width: 83.5%;
+			padding-right: 15px;
+			padding-left: 15px;
+			margin-right: auto;
+			margin-left: 17.3%;
+			margin-top: 80px;
+			margin-top: 80px;
+		}
 
-.table .thead-light th {
-	color: #495057;
-	background-color: #e9ecef;
-	border-color: #dee2e6;
-	width: 23px;
-}
+		.table .thead-light th {
+			color: #495057;
+			background-color: #e9ecef;
+			border-color: #dee2e6;
+			width: 23px;
+		}
 
-.tablinks {
-	background-color: #f2f2f2;
-	color: #000;
-}
+		.tablinks {
+			background-color: #f2f2f2;
+			color: #000;
+		}
 
-.tablinks.active {
-	background-color: #007bff;
-	color: #fff;
-}
+		.tablinks.active {
+			background-color: #007bff;
+			color: #fff;
+		}
 
-.tab {
-	overflow: hidden;
-	border: 1px solid #ccc;
-	background-color: #f1f1f1;
-}
+		.tab {
+			overflow: hidden;
+			border: 1px solid #ccc;
+			background-color: #f1f1f1;
+		}
 
-.scroll {
-	max-height: 60vh;
-	overflow-y: scroll;
-	overflow-x: hidden;
-}
+		.scroll {
+			max-height: 60vh;
+			overflow-y: scroll;
+			overflow-x: hidden;
+		}
 
-.tab button {
-	background-color: inherit;
-	float: left;
-	border: none;
-	outline: none;
-	cursor: pointer;
-	padding: 14px 16px;
-	transition: 0.3s;
-	font-size: 17px;
-}
+		.tab button {
+			background-color: inherit;
+			float: left;
+			border: none;
+			outline: none;
+			cursor: pointer;
+			padding: 14px 16px;
+			transition: 0.3s;
+			font-size: 17px;
+		}
 
-.tab button:hover {
-	background-color: #ddd;
-}
+		.tab button:hover {
+			background-color: #ddd;
+		}
 
-.tabcontent {
-	display: none;
-	padding: 6px 12px;
-	border: 0px solid #ccc;
-	border-top: none;
-}
+		.tabcontent {
+			display: none;
+			padding: 6px 12px;
+			border: 0px solid #ccc;
+			border-top: none;
+		}
 
-#myPieChart {
-	width: 100px;
-	height: 100px;
-}
+		#myPieChart {
+			width: 100px;
+			height: 100px;
+		}
 
-.input-group-text {
-	cursor: pointer;
-}
+		.input-group-text {
+			cursor: pointer;
+		}
 
-#eyeIcon {
-	font-size: 1.2rem;
-}
+		#eyeIcon {
+			font-size: 1.2rem;
+		}
 
-input, select {
-	width: 75% !important;
-	padding: 2px;
-}
+		input,
+		select {
+			width: 75% !important;
+			padding: 2px;
+		}
 
-.mmdd {
-	height: 25px;
-	width: 35% !important;
-}
+		.mmdd {
+			height: 25px;
+			width: 35% !important;
+		}
 
-.ml-2 {
-	margin-left: 1px;
-}
+		.ml-2 {
+			margin-left: 1px;
+		}
 
-button:focus {
-	outline: unset !important;
-	border: unset !important;
-}
+		button:focus {
+			outline: unset !important;
+			border: unset !important;
+		}
 
-.borderRemove {
-	border: none;
-}
-</style>
-<style>
-.modal {
-	display: none;
-	position: fixed;
-	z-index: 1;
-	left: 0;
-	top: 0;
-	width: 100%;
-	overflow: auto;
-	background-color: rgba(0, 0, 0, 0.4);
-}
+		.borderRemove {
+			border: none;
+		}
+	</style>
+	<style>
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1;
+			left: 0;
+			top: 0;
+			width: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.4);
+		}
 
-.modal-content {
-	background-color: #fefefe;
-	margin: 15% auto;
-	padding: 20px;
-	border: 1px solid #888;
-	width: 70%;
-	height: 14%;
-	margin-left: 200px;
-}
+		.modal-content {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 70%;
+			height: 14%;
+			margin-left: 200px;
+		}
 
-.modal-pass {
-	background-color: #fefefe;
-	margin: 15% auto;
-	padding: 20px;
-	border: 1px solid #888;
-	width: 40%;
-	height: 25%;
-	margin-left: 400PX;
-	margin-right: auto;
-	border-radius: 10px;
-	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
-	font-family: Arial, sans-serif;
-}
+		.modal-pass {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 40%;
+			height: 25%;
+			margin-left: 400PX;
+			margin-right: auto;
+			border-radius: 10px;
+			box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+			font-family: Arial, sans-serif;
+		}
 
-.close {
-	color: red;
-	font-size: 28px;
-	font-weight: bold;
-}
+		.close {
+			color: red;
+			font-size: 28px;
+			font-weight: bold;
+		}
 
-.close:hover, .close:focus {
-	color: black;
-	text-decoration: none;
-	cursor: pointer;
-}
-</style>
-<style>
-.password-info {
-	visibility: hidden;
-	width: 320px;
-	background-color: #333;
-	color: #fff;
-	text-align: left;
-	border-radius: 10px;
-	padding: 10px;
-	position: absolute;
-	z-index: 1;
-	top: calc(100% + 10px);
-	left: 50%;
-	transform: translateX(-50%);
-	opacity: 0;
-	transition: opacity 0.3s;
-}
-input:hover+.password-info {
-	visibility: visible;
-	opacity: 0.8;
-}
-.filterable .filters input[disabled] {
-	background-color: transparent;
-	border: none;
-	cursor: auto;
-	box-shadow: none;
-	padding: 0;
-	height: auto;
-}
+		.close:hover,
+		.close:focus {
+			color: black;
+			text-decoration: none;
+			cursor: pointer;
+		}
+	</style>
+	<style>
+		.password-info {
+			visibility: hidden;
+			width: 320px;
+			background-color: #333;
+			color: #fff;
+			text-align: left;
+			border-radius: 10px;
+			padding: 10px;
+			position: absolute;
+			z-index: 1;
+			top: calc(100% + 10px);
+			left: 50%;
+			transform: translateX(-50%);
+			opacity: 0;
+			transition: opacity 0.3s;
+		}
 
-.filterable .filters input[disabled]::-webkit-input-placeholder {
-	color: #333;
-}
+		input:hover+.password-info {
+			visibility: visible;
+			opacity: 0.8;
+		}
 
-.filterable .filters input[disabled]::-moz-placeholder {
-	color: #333;
-}
+		.filterable .filters input[disabled] {
+			background-color: transparent;
+			border: none;
+			cursor: auto;
+			box-shadow: none;
+			padding: 0;
+			height: auto;
+		}
 
-.filterable .filters input[disabled]:-ms-input-placeholder {
-	color: #333;
-}
-.big-btn {
-  font-size: 16px;
-}
-</style>
-<script>
-function home() {
-	location.href = 'Dashboard';
-}
-</script>
-<script> 
+		.filterable .filters input[disabled]::-webkit-input-placeholder {
+			color: #333;
+		}
 
-		
-function handleMultipleFilterChange() {
+		.filterable .filters input[disabled]::-moz-placeholder {
+			color: #333;
+		}
+
+		.filterable .filters input[disabled]:-ms-input-placeholder {
+			color: #333;
+		}
+
+		.big-btn {
+			font-size: 16px;
+		}
+	</style>
+	<script>
+		function home() {
+			location.href = 'Dashboard';
+		}
+	</script>
+	<script>
+
+
+		function handleMultipleFilterChange() {
 			// Disable all filter inputs first
 			$("#loanIdFilter, #loanTypeFilter, #mobileFilter").prop("disabled", true).val("");
 
@@ -234,7 +239,7 @@ function handleMultipleFilterChange() {
 			}
 		}
 
-		function handleStatus(){
+		function handleStatus() {
 
 			let status = $("#filterselect2").val();
 
@@ -244,578 +249,579 @@ function handleMultipleFilterChange() {
 				return;
 			}
 
-    		document.getElementById('loadingModal').style.display = 'flex';
+			document.getElementById('loadingModal').style.display = 'flex';
 
-	$.ajax({
-        url: "loan/statusSearch",
-        type: "GET",
-        data: { status: status },
-        success: function (response) {
-            if (response && response.length > 0) {
-                updateTable(response);  // same table update function you already have
-            } else {
-                $("#usertable").html(
-                    `<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
-                );
-            }
-        },
-        error: function () {
-            $("#usertable").html(
-                `<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
-            );
-        },
-        complete: function () {
-            document.getElementById('loadingModal').style.display = 'none';
-        }
-    });
-}
-
-
-function back() {
-	event.preventDefault();
-	window.history.back();
-}
-
-
-function schedule() {
-	event.preventDefault();
-	var id = document.getElementById("id").value;
-	var holder_key = document.getElementById("account_holderkey").value;
-	var encodedKey = document.getElementById("encoded_key").value;
-	location.href = 'loanSchedule?formmode=viewloanschedule1&id=' + id +
-			'&holder_key=' + holder_key +
-			'&encodedKey=' + encodedKey;
-}
-function ledger() {
-	event.preventDefault();
-	var id = document.getElementById("id").value;
-	location.href = 'accountLedger2?formmode=view&acct_num='
-				+ id;
-}
-function listPage() {
-	event.preventDefault();
-	location.href = 'drawDownLoanMaintanace?formmode=list';
-}
-function viewscreen(a) {
-	var id = a.getAttribute("data-id");
-	var holder_key = a.getAttribute("data-account_holderkey");
-	location.href = 'Loan_Maintenance?formmode=view&id=' + id  +'&holder_key=' +holder_key;
-}
-function verifyscreen(a) {
-	event.preventDefault();
-	var id = a.getAttribute("data-id"); 
-	var holder_key = a.getAttribute("data-account_holderkey"); 
-	location.href = 'Loan_Maintenance?formmode=verify&id=' + id   +'&holder_key=' +holder_key;
-}
-</script>
-<script>
-function modifyscreen(a) {
-	event.preventDefault();
-	var id = a.getAttribute("data-id");
-	var holder_key = a.getAttribute("data-account_holderkey");
-	location.href = 'Loan_Maintenance?formmode=modify&id=' + id  +'&holder_key=' +holder_key;
-}
-function submitformverify() {
-	event.preventDefault();
-	
-	var id = document.getElementById("id").value;
- 
-	$.ajax({
-		url: './Verifyloanmain?id=' +id ,
-		type: 'POST', // Note: 'post' should be in lowercase
-		success: function (response) {		   
-               $('#mypopup22').modal('show'); 
-               $("#popupmsg_body").html(response); 
-		},
-		error: function (error) {
-		console.error("Error: " + error.responseText);
-		alert("Please fill the mandatory feilds");
+			$.ajax({
+				url: "loan/statusSearch",
+				type: "GET",
+				data: {status: status},
+				success: function (response) {
+					if (response && response.length > 0) {
+						updateTable(response);  // same table update function you already have
+					} else {
+						$("#usertable").html(
+							`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
+						);
+					}
+				},
+				error: function () {
+					$("#usertable").html(
+						`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
+					);
+				},
+				complete: function () {
+					document.getElementById('loadingModal').style.display = 'none';
+				}
+			});
 		}
-	});
-}
 
- function BackToLoanMaint(){
-	 location.href = 'Loan_Maintenance?formmode=list';
- }
 
-</script>
-<script>
-	function submitformmodify() {
-		event.preventDefault();
+		function back() {
+			event.preventDefault();
+			window.history.back();
+		}
 
-		// Remove commas and format dates BEFORE serializing
-		["disposable_income", "interest_paid", "interest_due", "interest_balance", "loan_amount", "manualoverride_amount", "cpfees", "fees_balance", "fees_paid",
-			"principal_balance", "principal_paid", "total_product_price", "principal_due", "fees_due", "penalty_due", "penalty_paid", "penalty_balance", "deposit_amount"]
-			.forEach(function (fieldId) {
-				var field = document.getElementById(fieldId);
-				if (field && field.value) {
-					field.value = field.value.replace(/,/g, ""); // Remove commas
+
+		function schedule() {
+			event.preventDefault();
+			var id = document.getElementById("id").value;
+			var holder_key = document.getElementById("account_holderkey").value;
+			var encodedKey = document.getElementById("encoded_key").value;
+			location.href = 'loanSchedule?formmode=viewloanschedule1&id=' + id +
+				'&holder_key=' + holder_key +
+				'&encodedKey=' + encodedKey;
+		}
+		function ledger() {
+			event.preventDefault();
+			var id = document.getElementById("id").value;
+			location.href = 'accountLedger2?formmode=view&acct_num='
+				+ id;
+		}
+		function listPage() {
+			event.preventDefault();
+			location.href = 'drawDownLoanMaintanace?formmode=list';
+		}
+		function viewscreen(a) {
+			var id = a.getAttribute("data-id");
+			var holder_key = a.getAttribute("data-account_holderkey");
+			location.href = 'Loan_Maintenance?formmode=view&id=' + id + '&holder_key=' + holder_key;
+		}
+		function verifyscreen(a) {
+			event.preventDefault();
+			var id = a.getAttribute("data-id");
+			var holder_key = a.getAttribute("data-account_holderkey");
+			location.href = 'Loan_Maintenance?formmode=verify&id=' + id + '&holder_key=' + holder_key;
+		}
+	</script>
+	<script>
+		function modifyscreen(a) {
+			event.preventDefault();
+			var id = a.getAttribute("data-id");
+			var holder_key = a.getAttribute("data-account_holderkey");
+			location.href = 'Loan_Maintenance?formmode=modify&id=' + id + '&holder_key=' + holder_key;
+		}
+		function submitformverify() {
+			event.preventDefault();
+
+			var id = document.getElementById("id").value;
+
+			$.ajax({
+				url: './Verifyloanmain?id=' + id,
+				type: 'POST', // Note: 'post' should be in lowercase
+				success: function (response) {
+					$('#mypopup22').modal('show');
+					$("#popupmsg_body").html(response);
+				},
+				error: function (error) {
+					console.error("Error: " + error.responseText);
+					alert("Please fill the mandatory feilds");
+				}
+			});
+		}
+
+		function BackToLoanMaint() {
+			location.href = 'Loan_Maintenance?formmode=list';
+		}
+
+	</script>
+	<script>
+		function submitformmodify() {
+			event.preventDefault();
+
+			// Remove commas and format dates BEFORE serializing
+			["disposable_income", "interest_paid", "interest_due", "interest_balance", "loan_amount", "manualoverride_amount", "cpfees", "fees_balance", "fees_paid",
+				"principal_balance", "principal_paid", "total_product_price", "principal_due", "fees_due", "penalty_due", "penalty_paid", "penalty_balance", "deposit_amount"]
+				.forEach(function (fieldId) {
+					var field = document.getElementById(fieldId);
+					if (field && field.value) {
+						field.value = field.value.replace(/,/g, ""); // Remove commas
+					}
+				});
+
+			// Serialize the updated form data
+			var formData = $("#loanmain").serializeArray();
+
+			// Format date fields correctly
+			formData.forEach(function (field) {
+				if (isDateField(field.name) && field.value.trim() !== "") {
+					let date = new Date(field.value);
+					field.value = formatDateWithMidnight(date);
 				}
 			});
 
-		// Serialize the updated form data
-		var formData = $("#loanmain").serializeArray();
-
-		// Format date fields correctly
-		formData.forEach(function (field) {
-			if (isDateField(field.name) && field.value.trim() !== "") {
-				let date = new Date(field.value);
-				field.value = formatDateWithMidnight(date);
-			}
-		});
-
-		$.ajax({
-			url: './Modifyloanmain',
-			data: $.param(formData),
-			type: 'post',
-			success: function (response) {
-			$('#mypopup22').modal('show'); 
-            $("#popupmsg_body").html(response); 
-			},
-			error: function (error) {
-				console.error("Error: " + error.responseText);
-				alert("Please fill the mandatory fields");
-			}
-		});
-	}
-
-	// Function to check if a field is a date field
-	function isDateField(fieldName) {
-		return ["creation_date", "last_modified_date", "closed_date", "approved_date", "first_repaymentdate",
-			"date_of_first_call", "disbursement_date", "asondate", "manualoverride_expiry_date"
-		].includes(fieldName);
-	}
-
-	// Function to format date as "dd-MM-yyyy 00:00:00"
-	function formatDateWithMidnight(date) {
-		if (isNaN(date.getTime())) {
-			return ""; // Return an empty string if the date is invalid
+			$.ajax({
+				url: './Modifyloanmain',
+				data: $.param(formData),
+				type: 'post',
+				success: function (response) {
+					$('#mypopup22').modal('show');
+					$("#popupmsg_body").html(response);
+				},
+				error: function (error) {
+					console.error("Error: " + error.responseText);
+					alert("Please fill the mandatory fields");
+				}
+			});
 		}
-		let dd = String(date.getDate()).padStart(2, '0');
-		let MM = String(date.getMonth() + 1).padStart(2, '0');
-		let yyyy = date.getFullYear();
-		return `${dd}-${MM}-${yyyy} 00:00:00`;
-	}
-</script>
-<script>
-// document.addEventListener('DOMContentLoaded', function() {
-//     handleFilterChange(); // Automatically apply the filter on page load
-// });
 
-// function handleFilterChange(){
-//     var a = document.getElementById('approvedfilter').value;
-    
-//     if (a === 'ALL') {
-     	 
-//         $.ajax({
-//             url: './AllApprovedLoanMain',
-//             type: 'GET',
-//             success: function(data) {
-//                 updateTable(data);
-//             },
-//             error: function(err) {
-//                 console.error('Error fetching data:', err);
-//             }
-//         });
-//     } else if (a === 'NOTAPPROVED') {
-   
-//         $.ajax({
-//             url: './NotApprovedLoanMain',
-//             type: 'GET',
-//             success: function(data) {
-//                 updateTable(data);
-//             },
-//             error: function(err) {
-//                 console.error('Error fetching data:', err);
-//             }
-//         });
-//     }else if (a === 'APPROVED') {
-   
-//         $.ajax({
-//             url: './ApprovedLoanMain',
-//             type: 'GET',
-//             success: function(data) {
-//                 updateTable(data);
-//             },
-//             error: function(err) {
-//                 console.error('Error fetching data:', err);
-//             }
-//         });
-//     }
-// }
+		// Function to check if a field is a date field
+		function isDateField(fieldName) {
+			return ["creation_date", "last_modified_date", "closed_date", "approved_date", "first_repaymentdate",
+				"date_of_first_call", "disbursement_date", "asondate", "manualoverride_expiry_date"
+			].includes(fieldName);
+		}
+
+		// Function to format date as "dd-MM-yyyy 00:00:00"
+		function formatDateWithMidnight(date) {
+			if (isNaN(date.getTime())) {
+				return ""; // Return an empty string if the date is invalid
+			}
+			let dd = String(date.getDate()).padStart(2, '0');
+			let MM = String(date.getMonth() + 1).padStart(2, '0');
+			let yyyy = date.getFullYear();
+			return `${dd}-${MM}-${yyyy} 00:00:00`;
+		}
+	</script>
+	<script>
+		// document.addEventListener('DOMContentLoaded', function() {
+		//     handleFilterChange(); // Automatically apply the filter on page load
+		// });
+
+		// function handleFilterChange(){
+		//     var a = document.getElementById('approvedfilter').value;
+
+		//     if (a === 'ALL') {
+
+		//         $.ajax({
+		//             url: './AllApprovedLoanMain',
+		//             type: 'GET',
+		//             success: function(data) {
+		//                 updateTable(data);
+		//             },
+		//             error: function(err) {
+		//                 console.error('Error fetching data:', err);
+		//             }
+		//         });
+		//     } else if (a === 'NOTAPPROVED') {
+
+		//         $.ajax({
+		//             url: './NotApprovedLoanMain',
+		//             type: 'GET',
+		//             success: function(data) {
+		//                 updateTable(data);
+		//             },
+		//             error: function(err) {
+		//                 console.error('Error fetching data:', err);
+		//             }
+		//         });
+		//     }else if (a === 'APPROVED') {
+
+		//         $.ajax({
+		//             url: './ApprovedLoanMain',
+		//             type: 'GET',
+		//             success: function(data) {
+		//                 updateTable(data);
+		//             },
+		//             error: function(err) {
+		//                 console.error('Error fetching data:', err);
+		//             }
+		//         });
+		//     }
+		// }
 
 
 
-document.addEventListener('DOMContentLoaded', function () {
-    loadLoans('ALL', 1); // Load first page on page load
-});
+		document.addEventListener('DOMContentLoaded', function () {
+			loadLoans('ALL', 1); // Load first page on page load
+		});
 
-function handleTableWithPagination(page = 1) {
+		function handleTableWithPagination(page = 1) {
 
-	document.getElementById('loadingModal').style.display = 'flex';
-    $.ajax({
-        url: `api/loans?page=${page}&limit=200`,
-        type: 'GET',
-        success: function(response) {
-            // response contains JSON
-            updateTable(response.data);
+			document.getElementById('loadingModal').style.display = 'flex';
+			$.ajax({
+				url: `api/loans?page=${page}&limit=200`,
+				type: 'GET',
+				success: function (response) {
+					// response contains JSON
+					updateTable(response.data);
 
-            // Update pagination
-            updatePagination(response.currentPage, response.totalPages);
-        },
-        error: function(err) {
-            console.error('Error fetching data:', err);
-        },
+					// Update pagination
+					updatePagination(response.currentPage, response.totalPages);
+				},
+				error: function (err) {
+					console.error('Error fetching data:', err);
+				},
 				complete: function () {
 					// Hide loading modal after success or error
 					document.getElementById('loadingModal').style.display = 'none';
 				}
-    });
-}
+			});
+		}
 
-    $(document).ready(function () {
-		$("#loanIdFilter").on("keypress", function (e) {
-			if (e.which === 13) { // ENTER key
-				let loanId = $(this).val().trim();
+		$(document).ready(function () {
+			$("#loanIdFilter").on("keypress", function (e) {
+				if (e.which === 13) { // ENTER key
+					let loanId = $(this).val().trim();
 
-				if (loanId === "") {
-					handleTableWithPagination(1); // default paginated fetch
-					return;
-				}
-
-				document.getElementById('loadingModal').style.display = 'flex';
-
-				$.ajax({
-					url: "loan/search",
-					type: "GET",
-					data: { loanId: loanId },
-					success: function (response) {
-						console.log(response.length);
-						if (response && response.length > 0) {
-							updateTable(response); // function to populate table rows
-						} else {
-							$("#loanfilterbody").html(
-								`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
-							);
-						}
-					},
-					error: function () {
-						$("#loanfilterbody").html(
-							`<tr><td colspan="6" class="text-center text-danger">Error fetching data</td></tr>`
-						);
-					},
-					complete: function () {
-						document.getElementById('loadingModal').style.display = 'none';
+					if (loanId === "") {
+						handleTableWithPagination(1); // default paginated fetch
+						return;
 					}
-				});
-			}
+
+					document.getElementById('loadingModal').style.display = 'flex';
+
+					$.ajax({
+						url: "loan/search",
+						type: "GET",
+						data: {loanId: loanId},
+						success: function (response) {
+							console.log(response.length);
+							if (response && response.length > 0) {
+								updateTable(response); // function to populate table rows
+							} else {
+								$("#loanfilterbody").html(
+									`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
+								);
+							}
+						},
+						error: function () {
+							$("#loanfilterbody").html(
+								`<tr><td colspan="6" class="text-center text-danger">Error fetching data</td></tr>`
+							);
+						},
+						complete: function () {
+							document.getElementById('loadingModal').style.display = 'none';
+						}
+					});
+				}
+			});
+
+			$("#loanTypeFilter").on("keypress", function (e) {
+				if (e.which === 13) { // ENTER key
+					let loanType = $(this).val().trim();
+
+					if (loanType === "") {
+						handleTableWithPagination(1); // default paginated fetch
+						return;
+					}
+
+					document.getElementById('loadingModal').style.display = 'flex';
+
+					$.ajax({
+						url: "loan_type/search",
+						type: "GET",
+						data: {loanType: loanType},
+						success: function (response) {
+							if (response && response.length > 0) {
+								updateTable(response); // function to populate table rows
+							} else {
+								$("#loanfilterbody").html(
+									`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
+								);
+							}
+						},
+						error: function () {
+							$("#loanfilterbody").html(
+								`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
+							);
+						},
+						complete: function () {
+							document.getElementById('loadingModal').style.display = 'none';
+						}
+					});
+				}
+			});
+
+			$("#mobileFilter").on("keypress", function (e) {
+				if (e.which === 13) { // ENTER key
+					let MobileNumber = $(this).val().trim();
+
+					if (MobileNumber === "") {
+						handleTableWithPagination(1); // default paginated fetch
+						return;
+					}
+
+					document.getElementById('loadingModal').style.display = 'flex';
+
+					$.ajax({
+						url: "loan_mobile_number/search",
+						type: "GET",
+						data: {MobileNumber: MobileNumber},
+						success: function (response) {
+							if (response && response.length > 0) {
+								updateTable(response); // function to populate table rows
+							} else {
+								$("#loanfilterbody").html(
+									`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
+								);
+							}
+						},
+						error: function () {
+							$("#loanfilterbody").html(
+								`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
+							);
+						},
+						complete: function () {
+							document.getElementById('loadingModal').style.display = 'none';
+						}
+					});
+				}
+			});
 		});
 
-		$("#loanTypeFilter").on("keypress", function (e) {
-			if (e.which === 13) { // ENTER key
-				let loanType = $(this).val().trim();
+		function handleFilterChange() {
+			const filterValue = document.getElementById('approvedfilter').value;
+			loadLoans(filterValue, 1); // reset to first page on filter change
+		}
 
-				if (loanType === "") {
-					handleTableWithPagination(1); // default paginated fetch
-					return;
-				}
+		function loadLoans(filter, page = 1) {
+			let url = '';
+			if (filter === 'ALL') url = './AllApprovedLoanMain';
+			else if (filter === 'NOTAPPROVED') url = './NotApprovedLoanMain';
+			else if (filter === 'APPROVED') url = './ApprovedLoanMain';
 
-				document.getElementById('loadingModal').style.display = 'flex';
+			document.getElementById('loadingModal').style.display = 'flex';
 
-				$.ajax({
-					url: "loan_type/search",
-					type: "GET",
-					data: { loanType: loanType },
-					success: function (response) {
-						if (response && response.length > 0) {
-							updateTable(response); // function to populate table rows
-						} else {
-							$("#loanfilterbody").html(
-								`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
-							);
-						}
-					},
-					error: function () {
-						$("#loanfilterbody").html(
-							`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
-						);
-					},
-					complete: function () {
-						document.getElementById('loadingModal').style.display = 'none';
-					}
-				});
-			}
-		});
-
-		$("#mobileFilter").on("keypress", function (e) {
-			if (e.which === 13) { // ENTER key
-				let MobileNumber = $(this).val().trim();
-
-				if (MobileNumber === "") {
-					handleTableWithPagination(1); // default paginated fetch
-					return;
-				}
-
-				document.getElementById('loadingModal').style.display = 'flex';
-
-				$.ajax({
-					url: "loan_mobile_number/search",
-					type: "GET",
-					data: { MobileNumber: MobileNumber },
-					success: function (response) {
-						if (response && response.length > 0) {
-							updateTable(response); // function to populate table rows
-						} else {
-							$("#loanfilterbody").html(
-								`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
-							);
-						}
-					},
-					error: function () {
-						$("#loanfilterbody").html(
-							`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
-						);
-					},
-					complete: function () {
-						document.getElementById('loadingModal').style.display = 'none';
-					}
-				});
-			}
-		});
-});
-
-function handleFilterChange() {
-    const filterValue = document.getElementById('approvedfilter').value;
-    loadLoans(filterValue, 1); // reset to first page on filter change
-}
-
-function loadLoans(filter, page = 1) {
-    let url = '';
-    if (filter === 'ALL') url = './AllApprovedLoanMain';
-    else if (filter === 'NOTAPPROVED') url = './NotApprovedLoanMain';
-    else if (filter === 'APPROVED') url = './ApprovedLoanMain';
-
-	document.getElementById('loadingModal').style.display = 'flex';
-
-    $.ajax({
-        url: url,
-        type: 'GET',
-        data: { page: page, limit: 200 }, // 200 rows per page
-        success: function(response) {
-            updateTable(response.data);       // populate table
-            updatePagination(response.currentPage, response.totalPages, filter); // create pagination buttons
-        },
-        error: function(err) {
-            console.error('Error fetching data:', err);
-        },
+			$.ajax({
+				url: url,
+				type: 'GET',
+				data: {page: page, limit: 200}, // 200 rows per page
+				success: function (response) {
+					updateTable(response.data);       // populate table
+					updatePagination(response.currentPage, response.totalPages, filter); // create pagination buttons
+				},
+				error: function (err) {
+					console.error('Error fetching data:', err);
+				},
 				complete: function () {
 					// Hide loading modal after success or error
 					document.getElementById('loadingModal').style.display = 'none';
 				}
-    });
-}
+			});
+		}
 
-function updateTable(data) {
-    const tbody = $('#loanfilterbody');
-    tbody.empty();
+		function updateTable(data) {
+			const tbody = $('#loanfilterbody');
+			tbody.empty();
 
-    if (!data || data.length === 0) {
-        tbody.append(`<tr style="font-size:14px"><td colspan="6" class="text-center text-danger">No data available</td></tr>`);
-        return;
-    }
-    data.forEach((item, index) => {
-        tbody.append(`
+			if (!data || data.length === 0) {
+				tbody.append(`<tr style="font-size:14px"><td colspan="6" class="text-center text-danger">No data available</td></tr>`);
+				return;
+			}
+			data.forEach((item, index) => {
+				tbody.append(`
             <tr style="font-size:14px" class="userlist">
                  <td>${index + 1}</td>
                 <td class="text-primary" data-id="${item?.id}" data-account_holderkey="${item?.account_holderkey}" onclick="viewscreen(this);">
                     ${item?.id || ''}
                 </td>
                 <td>${item?.loan_name || ''}</td>
-                <td>${item?.first_name+" "+item?.last_name || ''}</td>
+                <td>${item?.first_name + " " + item?.last_name || ''}</td>
                 <td>${item?.mobile_phone || ''}</td>
                 <td>${item?.retailer_branch || ''}</td>
                 <td>${item?.account_state || ''}</td>
             </tr>
         `);
-    });
-}
+			});
+		}
 
-function updatePagination(current, total, filter) {
-    const paginationDiv = $('#pagination');
-    paginationDiv.empty();
+		function updatePagination(current, total, filter) {
+			const paginationDiv = $('#pagination');
+			paginationDiv.empty();
 
-    if (total <= 1) return; // no pagination needed
+			if (total <= 1) return; // no pagination needed
 
-    let html = `<button class="btn btn-sm btn-primary mx-1" ${current <= 1 ? 'disabled' : ''} onclick="loadLoans('${filter}', ${current - 1})">Prev</button>`;
-    html += `<span class="mx-2">Page ${current} of ${total}</span>`;
-    html += `<button class="btn btn-sm btn-primary mx-1" ${current >= total ? 'disabled' : ''} onclick="loadLoans('${filter}', ${current + 1})">Next</button>`;
+			let html = `<button class="btn btn-sm btn-primary mx-1" ${current <= 1 ? 'disabled' : ''} onclick="loadLoans('${filter}', ${current - 1})">Prev</button>`;
+			html += `<span class="mx-2">Page ${current} of ${total}</span>`;
+			html += `<button class="btn btn-sm btn-primary mx-1" ${current >= total ? 'disabled' : ''} onclick="loadLoans('${filter}', ${current + 1})">Next</button>`;
 
-    paginationDiv.html(html);
-}
+			paginationDiv.html(html);
+		}
 
 
-function updateTable(data) {
-    // Clear the table body before appending new rows
-    $('#loanfilterbody').empty();
-    
-    if (data.length === 0) {
-		 $('#loanfilterbody').empty();
-        // If no data is returned, append a row with "No data available"
-        const noDataRow = `
+		function updateTable(data) {
+			// Clear the table body before appending new rows
+			$('#loanfilterbody').empty();
+
+			if (data.length === 0) {
+				$('#loanfilterbody').empty();
+				// If no data is returned, append a row with "No data available"
+				const noDataRow = `
             <tr style="font-size:14px">
                 <td colspan="6" style="text-align:center; color: red;">No data available</td>
             </tr>
         `;
-        $('#loanfilterbody').append(noDataRow);
-    } else {
-    	$('#loanfilterbody').empty(); 
-        // Iterate over the data if available
-        data.forEach((item, index) => {
-        //    <td>${item?.retailer_name || ''}</td>
-            const row = `
+				$('#loanfilterbody').append(noDataRow);
+			} else {
+				$('#loanfilterbody').empty();
+				// Iterate over the data if available
+				data.forEach((item, index) => {
+					//    <td>${item?.retailer_name || ''}</td>
+					const row = `
             	 <tr style="font-size:14px" class="userlist">
                  <td>${index + 1}</td>
                 <td class="text-primary" data-id="${item?.id}" data-account_holderkey="${item?.account_holderkey}" onclick="viewscreen(this);">
                     ${item?.id || ''}
                 </td>
                 <td>${item?.loan_name || ''}</td>
-                <td>${item?.first_name+" "+item?.last_name || ''}</td>
+                <td>${item?.first_name + " " + item?.last_name || ''}</td>
                 <td>${item?.mobile_phone || ''}</td>
                 <td>${item?.retailer_branch || ''}</td>
                 <td>${item?.account_state || ''}</td>
             </tr>
             `;
-            // Append the new row to the table body
-            $('#loanfilterbody').append(row);
-            
-        });
-    }
-}
-</script>
-<script>
-$(document).ready(
-	function () {
-	$('.filterable .btn-filter').click(
-	function () {
-	 var $panel = $(this).parents(
-	'.filterable'), $filters = $panel
-	.find('.filters input'), $tbody = $panel
-	.find('.table tbody');
-	if ($filters.prop('disabled') == true) {
-	$filters.prop('disabled', false);
-	$filters.first().focus();
-	} else {
-	$filters.val('').prop('disabled', true);
-	$tbody.find('.no-result').remove();
-	$tbody.find('tr').show();
-	}
-});
-	});
+					// Append the new row to the table body
+					$('#loanfilterbody').append(row);
 
-// $('.filterable .filters input').keyup(
-// function (e) {
-// /* Ignore tab key */
-// 	var code = e.keyCode || e.which;
-// 	if (code == '9')return;
-// 	/* Useful DOM data and selectors */
-// 	var $input = $(this), inputContent = $input
-// 		.val().toLowerCase(), $panel = $input
-// 		.parents('.filterable'), column = $panel
-// 		.find('.filters th')
-// 		.index($input.parents('th')), $table = $panel
-// 		.find('.table'), $rows = $table.find('tbody tr');
-// 		console.log($input);
-// 	/* Dirtiest filter function ever ;) */
-// 	var $filteredRows = $rows.filter(function () {
-// 	var value = $(this).find('td').eq(column).text().toLowerCase();
-// 	console.log(value);
-// 	return value.indexOf(inputContent) === -1;});
-// 	/* Clean previous no-result if exist */
-// 	$table.find('tbody .no-result').remove();
-// 	/* Show all rows, hide filtered ones (never do that outside of a demo ! xD) */
-// 	$rows.show();
-// 	$filteredRows.hide();
-// 	/* Prepend no-result row if all rows are filtered */
-// 	if ($filteredRows.length === $rows.length) {
-// 	$table.find('tbody').prepend(
-// 	$('<tr class="no-result text-center"><td colspan="'+ $table.find('.filters th').length+ '">No result found</td></tr>'));
-// 		}
-// 	});
-// });
+				});
+			}
+		}
+	</script>
+	<script>
+		$(document).ready(
+			function () {
+				$('.filterable .btn-filter').click(
+					function () {
+						var $panel = $(this).parents(
+							'.filterable'), $filters = $panel
+								.find('.filters input'), $tbody = $panel
+									.find('.table tbody');
+						if ($filters.prop('disabled') == true) {
+							$filters.prop('disabled', false);
+							$filters.first().focus();
+						} else {
+							$filters.val('').prop('disabled', true);
+							$tbody.find('.no-result').remove();
+							$tbody.find('tr').show();
+						}
+					});
+			});
 
-
-$(document).ready(function () {
-    $("#loanIdFilter").on("keypress", function (e) {
-        if (e.which === 13) { // ENTER key
-            let loanId = $(this).val().trim();
-
-            if (loanId === "") {
-                loadLoans('ALL', 1); // default paginated fetch
-                return;
-            }
-
-            document.getElementById('loadingModal').style.display = 'flex';
-
-            $.ajax({
-                url: "loan/search",
-                type: "GET",
-                data: { loanId: loanId },
-                success: function (response) {
-                    if (response && response.length > 0) {
-                        updateTable(response); // function to populate table rows
-                    } else {
-                        $("#loanTableBody").html(
-                            `<tr><td colspan="6" class="text-center text-warning">No results found</td></tr>`
-                        );
-                    }
-                },
-                error: function () {
-                    $("#loanTableBody").html(
-                        `<tr><td colspan="6" class="text-center text-danger">Error fetching data</td></tr>`
-                    );
-                },
-                complete: function () {
-                    document.getElementById('loadingModal').style.display = 'none';
-                }
-            });
-        }
-    });
-});
+		// $('.filterable .filters input').keyup(
+		// function (e) {
+		// /* Ignore tab key */
+		// 	var code = e.keyCode || e.which;
+		// 	if (code == '9')return;
+		// 	/* Useful DOM data and selectors */
+		// 	var $input = $(this), inputContent = $input
+		// 		.val().toLowerCase(), $panel = $input
+		// 		.parents('.filterable'), column = $panel
+		// 		.find('.filters th')
+		// 		.index($input.parents('th')), $table = $panel
+		// 		.find('.table'), $rows = $table.find('tbody tr');
+		// 		console.log($input);
+		// 	/* Dirtiest filter function ever ;) */
+		// 	var $filteredRows = $rows.filter(function () {
+		// 	var value = $(this).find('td').eq(column).text().toLowerCase();
+		// 	console.log(value);
+		// 	return value.indexOf(inputContent) === -1;});
+		// 	/* Clean previous no-result if exist */
+		// 	$table.find('tbody .no-result').remove();
+		// 	/* Show all rows, hide filtered ones (never do that outside of a demo ! xD) */
+		// 	$rows.show();
+		// 	$filteredRows.hide();
+		// 	/* Prepend no-result row if all rows are filtered */
+		// 	if ($filteredRows.length === $rows.length) {
+		// 	$table.find('tbody').prepend(
+		// 	$('<tr class="no-result text-center"><td colspan="'+ $table.find('.filters th').length+ '">No result found</td></tr>'));
+		// 		}
+		// 	});
+		// });
 
 
+		$(document).ready(function () {
+			$("#loanIdFilter").on("keypress", function (e) {
+				if (e.which === 13) { // ENTER key
+					let loanId = $(this).val().trim();
+
+					if (loanId === "") {
+						loadLoans('ALL', 1); // default paginated fetch
+						return;
+					}
+
+					document.getElementById('loadingModal').style.display = 'flex';
+
+					$.ajax({
+						url: "loan/search",
+						type: "GET",
+						data: {loanId: loanId},
+						success: function (response) {
+							if (response && response.length > 0) {
+								updateTable(response); // function to populate table rows
+							} else {
+								$("#loanTableBody").html(
+									`<tr><td colspan="6" class="text-center text-warning">No results found</td></tr>`
+								);
+							}
+						},
+						error: function () {
+							$("#loanTableBody").html(
+								`<tr><td colspan="6" class="text-center text-danger">Error fetching data</td></tr>`
+							);
+						},
+						complete: function () {
+							document.getElementById('loadingModal').style.display = 'none';
+						}
+					});
+				}
+			});
+		});
 
 
 
 
 
-</script>
-<script type="text/javascript">
-function viewcustid(element) { 
-    var id = element.getAttribute("data-id");
-    var holder_key = element.getAttribute("data-account_holderkey");
-    location.href = `./customerMaster?formmode=view&module=module1&id=` + id; 
-}
-</script> 
-<script>
-$(function () {
-    $("#creation_date, #last_modified_date, #closed_date, #approved_date, #first_repaymentdate, #date_of_first_call, #disbursement_date, #asondate, #manualoverride_expiry_date").datepicker({
-        dateFormat: "dd-mm-yy"
-    });
-});
-</script>
-<script>
-	function adjustHeight() {
-		const cardBody = document.getElementById("cardBody");
-		const viewportHeight = window.innerHeight;
-		cardBody.style.maxHeight = `${viewportHeight * 0.95}px`; // Adjust 80% of the viewport height
-	}
 
-	window.addEventListener("resize", adjustHeight);
-	document.addEventListener("DOMContentLoaded", adjustHeight);
-</script>
+
+	</script>
+	<script type="text/javascript">
+		function viewcustid(element) {
+			var id = element.getAttribute("data-id");
+			var holder_key = element.getAttribute("data-account_holderkey");
+			location.href = `./customerMaster?formmode=view&module=module1&id=` + id;
+		}
+	</script>
+	<script>
+		$(function () {
+			$("#creation_date, #last_modified_date, #closed_date, #approved_date, #first_repaymentdate, #date_of_first_call, #disbursement_date, #asondate, #manualoverride_expiry_date").datepicker({
+				dateFormat: "dd-mm-yy"
+			});
+		});
+	</script>
+	<script>
+		function adjustHeight() {
+			const cardBody = document.getElementById("cardBody");
+			const viewportHeight = window.innerHeight;
+			cardBody.style.maxHeight = `${viewportHeight * 0.95}px`; // Adjust 80% of the viewport height
+		}
+
+		window.addEventListener("resize", adjustHeight);
+		document.addEventListener("DOMContentLoaded", adjustHeight);
+	</script>
 
 </head>
 <title>ASPIRA</title>
+
 <body>
 	<div class="col-sm-2">
 		<div th:insert="BGLSHeaderMenu :: header"></div>
@@ -826,57 +832,62 @@ $(function () {
 			<div class="col-sm-11 ml-5" style="font-size: 0.8rem;">
 				<div th:if="${formmode}=='list'">
 					<div class="panel panel-primary filterable">
-					<div class="card">
-						<div class="card-header"
-							style="background-color: #e9ecef; height: 50px">
-							<div class="float-left">
-								<h6 style="font-size: 1.2rem;">LOAN MAINTENANCE- LIST</h6>
-							</div>
-							<div class="float-right">
-								<!-- <button type="button" class="btn btn-xs btn-primary btns p-2"
+						<div class="card">
+							<div class="card-header" style="background-color: #e9ecef; height: 50px">
+								<div class="float-left">
+									<h6 style="font-size: 1.2rem;">LOAN MAINTENANCE- LIST</h6>
+								</div>
+								<div class="float-right">
+									<!-- <button type="button" class="btn btn-xs btn-primary btns p-2"
 										onclick="Home(this)">DashBoard</button> -->
-								<select class="form-control-sm bg-white"
-									id="approvedfilter" onchange="handleFilterChange()"
-									style="background-color: #e3e3e4;margin-left: -13%;width: 150px !important;margin-left: auto;">
-									<option value="ALL">All</option>
-									<option value="NOTAPPROVED" selected>UnVerified</option>
-									<option value="APPROVED" selected>Verified</option>
-								</select>
-								<select class="form-control-sm bg-white  w-100" id="filterselect2"
-											onchange="handleStatus()" style="background-color: #e3e3e4;width: 150px !important;">
-											<option value="STATUS">STATUS</option>
-											<option value="ACTIVE">ACTIVE</option>
-											<option value="ACTIVE_IN_ARREARS">ACTIVE IN ARREARS</option>
-											<option value="APPROVED">APPROVED</option>
-								</select>
-								<select class="form-control-sm bg-white " id="filterselect" onchange="handleMultipleFilterChange()" style="background-color: #e3e3e4;width: 156px !important;">
+									<select class="form-control-sm bg-white" id="approvedfilter"
+										onchange="handleFilterChange()"
+										style="background-color: #e3e3e4;margin-left: -13%;width: 150px !important;margin-left: auto;">
+										<option value="ALL">All</option>
+										<option value="NOTAPPROVED" selected>UnVerified</option>
+										<option value="APPROVED" selected>Verified</option>
+									</select>
+									<select class="form-control-sm bg-white  w-100" id="filterselect2"
+										onchange="handleStatus()"
+										style="background-color: #e3e3e4;width: 150px !important;">
+										<option value="STATUS">STATUS</option>
+										<option value="ACTIVE">ACTIVE</option>
+										<option value="ACTIVE_IN_ARREARS">ACTIVE IN ARREARS</option>
+										<option value="APPROVED">APPROVED</option>
+									</select>
+									<select class="form-control-sm bg-white " id="filterselect"
+										onchange="handleMultipleFilterChange()"
+										style="background-color: #e3e3e4;width: 156px !important;">
 										<option>Select Filter</option>
 										<option value="LOAN_ID">LOAN ID</option>
 										<option value="LOAN_TYPE">LOAN TYPE</option>
 										<option value="MOBILE_PHONE">MOBILE NUMBER</option>
-								</select>
-								 <!-- <button type="button" class="btn-primary big-btn btn-filter">Filter</button> -->
+									</select>
+									<!-- <button type="button" class="btn-primary big-btn btn-filter">Filter</button> -->
 								</div>
-						</div>
-						<div class="card-body"
-							style="overflow-y: auto; border: 1px solid #ddd;">
-							<div class="table-responsive" id="cardBody">
-								<table class="table  table-bordered  table-hover table-sm"
-									style="margin-bottom: 0px; font-size: initial;" id="usertable">
-									<thead class="thead-light" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
-										<tr class="filters">
-											<th style="width: 6%;">S.NO</th>
-											<th style="width: 10%;"><input type="text" id="loanIdFilter" class="form-control" placeholder="LOAN ID" disabled></th>
-											<th><input type="text" id="loanTypeFilter" class="form-control" placeholder="LOAN TYPE" disabled></th>
-											<th>LOAN NAME</th>
-											<th><input type="text" id="mobileFilter" class="form-control" placeholder="MOBILE NUMBER" disabled></th>
-											<!-- <th>RETAILER NAME</th> -->
-											<th>RETAILER BRANCH ID</th>
-											<th style="width: 10%;">STATUS</th>
-										</tr>
-									</thead>
-									<tbody id="loanfilterbody">
-										<!-- <tr th:each="list, iterator : ${list}" class="userlist">
+							</div>
+							<div class="card-body" style="overflow-y: auto; border: 1px solid #ddd;">
+								<div class="table-responsive" id="cardBody">
+									<table class="table  table-bordered  table-hover table-sm"
+										style="margin-bottom: 0px; font-size: initial;" id="usertable">
+										<thead class="thead-light"
+											style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+											<tr class="filters">
+												<th style="width: 6%;">S.NO</th>
+												<th style="width: 10%;"><input type="text" id="loanIdFilter"
+														class="form-control" placeholder="LOAN ID" disabled></th>
+												<th><input type="text" id="loanTypeFilter" class="form-control"
+														placeholder="LOAN TYPE" disabled></th>
+												<th>LOAN NAME</th>
+												<th><input type="text" id="mobileFilter" class="form-control"
+														placeholder="MOBILE NUMBER" disabled></th>
+												<!-- <th>RETAILER NAME</th> -->
+												<th>RETAILER BRANCH ID</th>
+												<th style="width: 10%;">STATUS</th>
+											</tr>
+										</thead>
+										<tbody id="loanfilterbody">
+											<!-- <tr th:each="list, iterator : ${list}" class="userlist">
 										<td style="font-size: 14px" th:text="${iterator.index +1}"></td>
 										<td style="font-size: 14px" class="text-primary" th:attr="data-id=${list?.id}, data-account_holderkey=${list?.account_holderkey}"
 											th:text="${list?.id}" onclick="viewscreen(this);"></td>
@@ -885,29 +896,27 @@ $(function () {
 										<td style="font-size: 14px" th:text="${list?.retailer_branch}">TEST</td>
 										<td style="font-size: 14px" th:text="${list?.account_state}">TEST</td>
 									</tr> -->
-									</tbody>
-								</table>
+										</tbody>
+									</table>
+								</div>
 							</div>
-						</div>
-						<div id="pagination" class="d-flex justify-content-center my-2"></div>
-						<div class="card-footer text-center">
-							<button class="btn-primary big-btn" onclick="home()">Home</button>
-							<button class="btn-primary big-btn" onclick="back()">Back</button>
+							<div id="pagination" class="d-flex justify-content-center my-2"></div>
+							<div class="card-footer text-center">
+								<button class="btn-primary big-btn" onclick="home()">Home</button>
+								<button class="btn-primary big-btn" onclick="back()">Back</button>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 				<!-------------------------------------------------------------------------- user view starts ------------------------------------------------------------>
-				<div th:if="${formmode}=='view' or ${formmode}=='modify'"
-					class="mt-3">
+				<div th:if="${formmode}=='view' or ${formmode}=='modify'" class="mt-3">
 					<div class="card">
-						<div class="card-header"
-							style="background-color: #e9ecef; height: 50px">
+						<div class="card-header" style="background-color: #e9ecef; height: 50px">
 							<div class="float-left">
-								<h6 style="font-size: 1.2rem;" class="ml-3"
-									th:if="${formmode}=='view'">LOAN MAINTENANCE - VIEW</h6>
-								<h6 style="font-size: 1.2rem;" class="ml-3"
-									th:if="${formmode}=='modify'">LOAN MAINTENANCE - MODIFY</h6>
+								<h6 style="font-size: 1.2rem;" class="ml-3" th:if="${formmode}=='view'">LOAN MAINTENANCE
+									- VIEW</h6>
+								<h6 style="font-size: 1.2rem;" class="ml-3" th:if="${formmode}=='modify'">LOAN
+									MAINTENANCE - MODIFY</h6>
 							</div>
 							<div class="float-right">
 								<button class="tablinks btn-primary big-btn" onclick="schedule()">SCHEDULE</button>
@@ -915,9 +924,8 @@ $(function () {
 							</div>
 						</div>
 						<div class="card-body">
-							<form action="#" th:object="${drawDownDetails}" method="post"
-								id="loanmain" autocomplete="off" name="drawDownDetailsData"
-								th:fragment="finuserapply">
+							<form action="#" th:object="${drawDownDetails}" method="post" id="loanmain"
+								autocomplete="off" name="drawDownDetailsData" th:fragment="finuserapply">
 								<!-------------------------------------------------------------------------- LOAN DETAILS ------------------------------------------------------------>
 								<div>
 									<div class="ml-4">
@@ -929,49 +937,48 @@ $(function () {
 											<label>Customer Id</label>
 										</div>
 										<div class="col-sm-2 d-flex align-items-center">
-											<input type="text" th:value="${loan[0]}"
-												name="customer_id" id="customer_id" readonly /> <img
-												th:src="@{/images/info.png}"
+											<input type="text" th:value="${loan[0]}" name="customer_id" id="customer_id"
+												readonly /> <img th:src="@{/images/info.png}"
 												style="width: 25px; height: 25px; margin-left: 5px;"
-												onclick="viewcustid(this)" id="openModaldoc"
-												data-toggle="modal" data-target=".bd-example-modal-lg"
+												onclick="viewcustid(this)" id="openModaldoc" data-toggle="modal"
+												data-target=".bd-example-modal-lg"
 												th:attr="data-id=${loan[0]}, data-account_holderkey=${view?.account_holderkey}">
 										</div>
 										<div class="col-sm-2">
 											<label>Customer Name</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.employer_name}"
-												name="employer_name" id="employer_name"
-												th:if="${formmode}=='view'" readonly /> <input type="text"
-												th:value="${view?.employer_name}" name="employer_name"
+											<input type="text" th:value="${view?.employer_name}" name="employer_name"
+												id="employer_name" th:if="${formmode}=='view'" readonly /> <input
+												type="text" th:value="${view?.employer_name}" name="employer_name"
 												id="employer_name" th:if="${formmode}=='modify'" />
 										</div>
 										<div class="col-sm-2">
 											<label>Customer Status</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" name="account_state"
-												id="account_state"
-												th:value="${view?.account_state}"
-												th:if="${formmode}=='view'" readonly /> <input type="text"
-												name="account_state" id="account_state"
-												th:value="${view?.account_state}"
-												th:if="${formmode}=='modify'" readonly/>
+											<input type="text" name="account_state" id="account_state"
+												th:value="${view?.account_state}" th:if="${formmode}=='view'"
+												readonly /> <input type="text" name="account_state" id="account_state"
+												th:value="${view?.account_state}" th:if="${formmode}=='modify'"
+												readonly />
 										</div>
 									</div>
 
 									<div class="row formline  ml-2 mt-1">
 										<div class="col-sm-2">
-										<label>Account Type</label>
+											<label>Account Type</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.account_holdertype}" name="account_holdertype" id="account_holdertype" th:if="${formmode}=='view'"
-												readonly /> <input type="text" name="account_holdertype"
-												th:value="${view?.account_holdertype}"
+											<input type="text" th:value="${view?.account_holdertype}"
+												name="account_holdertype" id="account_holdertype"
+												th:if="${formmode}=='view'" readonly /> <input type="text"
+												name="account_holdertype" th:value="${view?.account_holdertype}"
 												id="account_holdertype" th:if="${formmode}=='modify'" />
-												<input type="text" name="account_holderkey" id="account_holderkey" th:value="${view?.account_holderkey}" readonly hidden />
-                                                <input type="text" name="encoded_key" id="encoded_key" th:value="${view?.encoded_key}" readonly hidden />
+											<input type="text" name="account_holderkey" id="account_holderkey"
+												th:value="${view?.account_holderkey}" readonly hidden />
+											<input type="text" name="encoded_key" id="encoded_key"
+												th:value="${view?.encoded_key}" readonly hidden />
 										</div>
 										<div class="col-sm-2">
 											<label>Loan No</label>
@@ -980,17 +987,16 @@ $(function () {
 											<input type="text" th:value="${view?.id}" name="id" id="id"
 												th:if="${formmode}=='view'" readonly /> <input type="text"
 												th:value="${view?.id}" name="id" id="id"
-												th:if="${formmode}=='modify'"/>
+												th:if="${formmode}=='modify'" />
 										</div>
 										<div class="col-sm-2">
 											<label>Loan Name</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.loan_name}"
-												name="" id="loan_name" th:if="${formmode}=='view'"
-												readonly /> <input type="text"
-												th:value="${view?.loan_name}" name=""
-												id="loan_name" th:if="${formmode}=='modify'" readonly/>
+											<input type="text" th:value="${view?.loan_name}" name="" id="loan_name"
+												th:if="${formmode}=='view'" readonly /> <input type="text"
+												th:value="${view?.loan_name}" name="" id="loan_name"
+												th:if="${formmode}=='modify'" readonly />
 										</div>
 									</div>
 
@@ -999,10 +1005,12 @@ $(function () {
 											<label>Assigned Branch</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.assigned_branchkey}" name="assigned_branchkey"
-												id="assigned_branchkey" th:if="${formmode}=='view'" readonly />
-											<input type="text" th:value="${view?.assigned_branchkey}" name="assigned_branchkey"
-												id="assigned_branchkey" th:if="${formmode}=='modify'" />
+											<input type="text" th:value="${view?.assigned_branchkey}"
+												name="assigned_branchkey" id="assigned_branchkey"
+												th:if="${formmode}=='view'" readonly />
+											<input type="text" th:value="${view?.assigned_branchkey}"
+												name="assigned_branchkey" id="assigned_branchkey"
+												th:if="${formmode}=='modify'" />
 										</div>
 										<div class="col-sm-2">
 											<label>Open Date</label>
@@ -1010,11 +1018,10 @@ $(function () {
 										<div class="col-sm-2">
 											<input type="text"
 												th:value="${#dates.format(view?.creation_date, 'dd-MM-yyyy')}"
-												name="creation_date" id="creation_date"
-												th:if="${formmode}=='view'" disabled /><input type="text"
+												name="creation_date" id="creation_date" th:if="${formmode}=='view'"
+												disabled /><input type="text"
 												th:value="${#dates.format(view?.creation_date, 'dd-MM-yyyy')}"
-												name="creation_date" id="creation_date"
-												th:if="${formmode}=='modify'" />
+												name="creation_date" id="creation_date" th:if="${formmode}=='modify'" />
 										</div>
 										<div class="col-sm-2">
 											<label> Approval Date</label>
@@ -1048,21 +1055,19 @@ $(function () {
 										<div class="col-sm-2">
 											<input type="text"
 												th:value="${#dates.format(view?.closed_date, 'dd-MM-yyyy')}"
-												name="closed_date" id="closed_date"
-												th:if="${formmode}=='view'" readonly /> <input type="text"
+												name="closed_date" id="closed_date" th:if="${formmode}=='view'"
+												readonly /> <input type="text"
 												th:value="${#dates.format(view?.closed_date, 'dd-MM-yyyy')}"
-												name="closed_date" id="closed_date"
-												th:if="${formmode}=='modify'" />
+												name="closed_date" id="closed_date" th:if="${formmode}=='modify'" />
 										</div>
 										<div class="col-sm-2">
 											<label> Account Status </label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.account_state}"
-												name="account_state" id="account_state"
-												th:if="${formmode}=='view'" readonly /> <input type="text"
-												th:value="${view?.account_state}" name="account_state"
-												id="account_state" th:if="${formmode}=='modify'" readonly/>
+											<input type="text" th:value="${view?.account_state}" name="account_state"
+												id="account_state" th:if="${formmode}=='view'" readonly /> <input
+												type="text" th:value="${view?.account_state}" name="account_state"
+												id="account_state" th:if="${formmode}=='modify'" readonly />
 										</div>
 									</div>
 
@@ -1081,10 +1086,10 @@ $(function () {
 											<label>Currency Code</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" name="currency_code" id="currency_code"
-												value="KES" th:if="${formmode}=='view'" readonly /> <input
-												type="text" name="currency_code" id="currency_code"
-												value="KES" th:if="${formmode}=='modify'" />
+											<input type="text" name="currency_code" id="currency_code" value="KES"
+												th:if="${formmode}=='view'" readonly /> <input type="text"
+												name="currency_code" id="currency_code" value="KES"
+												th:if="${formmode}=='modify'" />
 										</div>
 										<div class="col-sm-2">
 											<label>Loan Amount</label>
@@ -1104,10 +1109,9 @@ $(function () {
 											<label>Payment Method</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" name="payment_method"
-												th:value="${view?.payment_method}" id="payment_method"
-												th:if="${formmode}=='view'" readonly /> <input type="text"
-												name="payment_method" th:value="${view?.payment_method}"
+											<input type="text" name="payment_method" th:value="${view?.payment_method}"
+												id="payment_method" th:if="${formmode}=='view'" readonly /> <input
+												type="text" name="payment_method" th:value="${view?.payment_method}"
 												id="payment_method" th:if="${formmode}=='modify'" />
 										</div>
 										<div class="col-sm-2">
@@ -1117,20 +1121,19 @@ $(function () {
 											<input type="text" name="penalty_rate" id="penalty_rate"
 												th:value="${view?.penalty_rate}" oninput="numberOnly(this);"
 												th:if="${formmode}=='view'" readonly /> <input type="text"
-												name="penalty_rate" id="penalty_rate"
-												th:value="${view?.penalty_rate}" oninput="numberOnly(this);"
-												th:if="${formmode}=='modify'" />
+												name="penalty_rate" id="penalty_rate" th:value="${view?.penalty_rate}"
+												oninput="numberOnly(this);" th:if="${formmode}=='modify'" />
 										</div>
 										<div class="col-sm-2">
 											<label>Rate of Interest</label>
 										</div>
 										<div class="col-sm-2">
 											<input type="text" name="interest_rate" id="interest_rate"
-												th:value="${view?.interest_rate}"
-												oninput="numberOnly(this);" th:if="${formmode}=='view'"
-												readonly /> <input type="text" name="interest_rate"
-												id="interest_rate" th:value="${view?.interest_rate}"
-												oninput="numberOnly(this);" th:if="${formmode}=='modify'" />
+												th:value="${view?.interest_rate}" oninput="numberOnly(this);"
+												th:if="${formmode}=='view'" readonly /> <input type="text"
+												name="interest_rate" id="interest_rate"
+												th:value="${view?.interest_rate}" oninput="numberOnly(this);"
+												th:if="${formmode}=='modify'" />
 										</div>
 									</div>
 									<div class="row formline ml-2  mt-1">
@@ -1140,8 +1143,8 @@ $(function () {
 										<div class="col-sm-2">
 											<input type="text" id="disbursement_date"
 												th:value="${#dates.format(view?.expected_disbursementdate, 'dd-MM-yyyy')}"
-												name="disbursement_date" th:if="${formmode}=='view'"
-												readonly /> <input type="text" id="disbursement_date"
+												name="disbursement_date" th:if="${formmode}=='view'" readonly /> <input
+												type="text" id="disbursement_date"
 												th:value="${#dates.format(view?.expected_disbursementdate, 'dd-MM-yyyy')}"
 												name="disbursement_date" th:if="${formmode}=='modify'" />
 										</div>
@@ -1151,8 +1154,8 @@ $(function () {
 										<div class="col-sm-2">
 											<input type="text" id="first_repaymentdate"
 												th:value="${#dates.format(view?.first_repaymentdate, 'dd-MM-yyyy')}"
-												name="first_repaymentdate" th:if="${formmode}=='view'"
-												readonly /> <input type="text" id="first_repaymentdate"
+												name="first_repaymentdate" th:if="${formmode}=='view'" readonly />
+											<input type="text" id="first_repaymentdate"
 												th:value="${#dates.format(view?.first_repaymentdate, 'dd-MM-yyyy')}"
 												name="first_repaymentdate" th:if="${formmode}=='modify'" />
 										</div>
@@ -1171,9 +1174,8 @@ $(function () {
 										<div class="col-sm-2">
 											<input type="text" name="repayment_schedule_method"
 												th:value="${view?.repayment_schedule_method}"
-												id="repayment_schedule_method" th:if="${formmode}=='view'"
-												readonly /> <input type="text"
-												name="repayment_schedule_method"
+												id="repayment_schedule_method" th:if="${formmode}=='view'" readonly />
+											<input type="text" name="repayment_schedule_method"
 												th:value="${view?.repayment_schedule_method}"
 												id="repayment_schedule_method" th:if="${formmode}=='modify'" />
 										</div>
@@ -1185,8 +1187,8 @@ $(function () {
 												th:value="${view?.repayment_installments}" readonly
 												name="repayment_installments" th:if="${formmode}=='view'" />
 											<input type="text" id="repayment_installments"
-												th:value="${view?.repayment_installments}"
-												name="repayment_installments" th:if="${formmode}=='modify'" />
+												th:value="${view?.repayment_installments}" name="repayment_installments"
+												th:if="${formmode}=='modify'" />
 										</div>
 										<div class="col-sm-2">
 											<label>Remarks 2</label>
@@ -1201,10 +1203,10 @@ $(function () {
 											<label>Principal Due</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="principal_due"
+											<input type="text" id="principal_due" style="background-color:yellow;"
 												th:value="${view?.principal_due == 0 ? '0.00' :#numbers.formatDecimal(view?.principal_due, 0, 'COMMA', 2, 'POINT')}"
 												readonly name="principal_due" th:if="${formmode}=='view'" />
-											<input type="text" id="principal_due"
+											<input type="text" id="principal_due" style="background-color:yellow;"
 												th:value="${view?.principal_due == 0 ? '0.00' :#numbers.formatDecimal(view?.principal_due, 0, 'COMMA', 2, 'POINT')}"
 												readonly name="principal_due" th:if="${formmode}=='modify'" />
 										</div>
@@ -1213,9 +1215,10 @@ $(function () {
 										</div>
 										<div class="col-sm-2">
 											<input type="text" th:if="${formmode}=='view'"
+												style="background-color:yellow;"
 												th:value="${view?.principal_paid == 0 ? '0.00' :#numbers.formatDecimal(view?.principal_paid, 0, 'COMMA', 2, 'POINT')}"
-												name="principal_paid" id="principal_paid" readonly /> <input
-												type="text" th:if="${formmode}=='modify'"
+												name="principal_paid" id="principal_paid" readonly /> <input type="text"
+												th:if="${formmode}=='modify'" style="background-color:yellow;"
 												th:value="${view?.principal_paid == 0 ? '0.00' :#numbers.formatDecimal(view?.principal_paid, 0, 'COMMA', 2, 'POINT')}"
 												name="principal_paid" id="principal_paid" />
 										</div>
@@ -1223,11 +1226,12 @@ $(function () {
 											<label>Principal Balance</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="principal_balance"
+											<input type="text" id="principal_balance" style="background-color:yellow;"
 												th:if="${formmode}=='view'"
 												th:value="${view?.principal_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.principal_balance, 0, 'COMMA', 2, 'POINT')}"
 												readonly name="principal_balance" /> <input type="text"
-												id="principal_balance" th:if="${formmode}=='modify'"
+												style="background-color:yellow;" id="principal_balance"
+												th:if="${formmode}=='modify'"
 												th:value="${view?.principal_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.principal_balance, 0, 'COMMA', 2, 'POINT')}"
 												name="principal_balance" />
 										</div>
@@ -1238,11 +1242,12 @@ $(function () {
 											<label>Interest Due</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="interest_due"
+											<input type="text" id="interest_due" style="background-color:yellow;"
 												th:if="${formmode}=='view'"
 												th:value="${view?.interest_due == 0 ? '0.00' :#numbers.formatDecimal(view?.interest_due, 0, 'COMMA', 2, 'POINT')}"
 												name="interest_due" readonly /> <input type="text"
-												id="interest_due" th:if="${formmode}=='modify'"
+												style="background-color:yellow;" id="interest_due"
+												th:if="${formmode}=='modify'"
 												th:value="${view?.interest_due == 0 ? '0.00' :#numbers.formatDecimal(view?.interest_due, 0, 'COMMA', 2, 'POINT')}"
 												name="interest_due" />
 										</div>
@@ -1250,11 +1255,12 @@ $(function () {
 											<label>Interest Paid</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="interest_paid"
+											<input type="text" id="interest_paid" style="background-color:yellow;"
 												th:if="${formmode}=='view'"
 												th:value="${view?.interest_paid == 0 ? '0.00' :#numbers.formatDecimal(view?.interest_paid, 0, 'COMMA', 2, 'POINT')}"
 												name="interest_paid" readonly /> <input type="text"
-												id="interest_paid" th:if="${formmode}=='modify'"
+												style="background-color:yellow;" id="interest_paid"
+												th:if="${formmode}=='modify'"
 												th:value="${view?.interest_paid == 0 ? '0.00' :#numbers.formatDecimal(view?.interest_paid, 0, 'COMMA', 2, 'POINT')}"
 												name="interest_paid" />
 										</div>
@@ -1262,11 +1268,12 @@ $(function () {
 											<label>Interest Balance</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="interest_balance"
+											<input type="text" id="interest_balance" style="background-color:yellow;"
 												th:if="${formmode}=='view'"
 												th:value="${view?.interest_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.interest_balance, 0, 'COMMA', 2, 'POINT')}"
 												name="interest_balance" readonly /> <input type="text"
-												id="interest_balance" th:if="${formmode}=='modify'"
+												style="background-color:yellow;" id="interest_balance"
+												th:if="${formmode}=='modify'"
 												th:value="${view?.interest_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.interest_balance, 0, 'COMMA', 2, 'POINT')}"
 												name="interest_balance" />
 										</div>
@@ -1278,10 +1285,11 @@ $(function () {
 										</div>
 										<div class="col-sm-2">
 											<input type="text" name="fees_due" id="fees_due"
-												th:if="${formmode}=='view'"
+												style="background-color:yellow;" th:if="${formmode}=='view'"
 												th:value="${view?.fees_due == 0 ? '0.00' :#numbers.formatDecimal(view?.fees_due, 0, 'COMMA', 2, 'POINT')}"
 												readonly /> <input type="text" name="fees_due"
-												id="fees_due" th:if="${formmode}=='modify'"
+												style="background-color:yellow;" id="fees_due"
+												th:if="${formmode}=='modify'"
 												th:value="${view?.fees_due == 0 ? '0.00' :#numbers.formatDecimal(view?.fees_due, 0, 'COMMA', 2, 'POINT')}" />
 										</div>
 										<div class="col-sm-2 ">
@@ -1289,9 +1297,11 @@ $(function () {
 										</div>
 										<div class="col-sm-2">
 											<input type="text" id="fees_paid" th:if="${formmode}=='view'"
+												style="background-color:yellow;"
 												th:value="${view?.fees_paid == 0 ? '0.00' :#numbers.formatDecimal(view?.fees_paid, 0, 'COMMA', 2, 'POINT')}"
 												name="fees_paid" readonly /> <input type="text"
-												id="fees_paid" th:if="${formmode}=='modify'"
+												style="background-color:yellow;" id="fees_paid"
+												th:if="${formmode}=='modify'"
 												th:value="${view?.fees_paid == 0 ? '0.00' :#numbers.formatDecimal(view?.fees_paid, 0, 'COMMA', 2, 'POINT')}"
 												name="fees_paid" />
 										</div>
@@ -1299,11 +1309,12 @@ $(function () {
 											<label>Fee Balance</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="fees_balance"
+											<input type="text" id="fees_balance" style="background-color:yellow;"
 												th:if="${formmode}=='view'"
 												th:value="${view?.fees_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.fees_balance, 0, 'COMMA', 2, 'POINT')}"
 												name="fees_balance" readonly /> <input type="text"
-												id="fees_balance" th:if="${formmode}=='modify'"
+												style="background-color:yellow;" id="fees_balance"
+												th:if="${formmode}=='modify'"
 												th:value="${view?.fees_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.fees_balance, 0, 'COMMA', 2, 'POINT')}"
 												name="fees_balance" />
 										</div>
@@ -1314,11 +1325,12 @@ $(function () {
 											<label>Penalty Due</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="penalty_due"
+											<input type="text" id="penalty_due" style="background-color:yellow;"
 												th:if="${formmode}=='view'"
 												th:value="${view?.penalty_due == 0 ? '0.00' :#numbers.formatDecimal(view?.penalty_due, 0, 'COMMA', 2, 'POINT')}"
 												name="penalty_due" readonly /> <input type="text"
-												id="penalty_due" th:if="${formmode}=='modify'"
+												style="background-color:yellow;" id="penalty_due"
+												th:if="${formmode}=='modify'"
 												th:value="${view?.penalty_due == 0 ? '0.00' :#numbers.formatDecimal(view?.penalty_due, 0, 'COMMA', 2, 'POINT')}"
 												name="penalty_due" />
 										</div>
@@ -1327,21 +1339,23 @@ $(function () {
 										</div>
 										<div class="col-sm-2">
 											<input type="text" name="penalty_paid" id="penalty_paid"
-												th:if="${formmode}=='view'"
+												style="background-color:yellow;" th:if="${formmode}=='view'"
 												th:value="${view?.penalty_paid == 0 ? '0.00' :#numbers.formatDecimal(view?.penalty_paid, 0, 'COMMA', 2, 'POINT')}"
 												readonly /> <input type="text" name="penalty_paid"
-												id="penalty_paid" th:if="${formmode}=='modify'"
+												style="background-color:yellow;" id="penalty_paid"
+												th:if="${formmode}=='modify'"
 												th:value="${view?.penalty_paid == 0 ? '0.00' :#numbers.formatDecimal(view?.penalty_paid, 0, 'COMMA', 2, 'POINT')}" />
 										</div>
 										<div class="col-sm-2">
 											<label>Penalty Balance</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="penalty_balance"
+											<input type="text" id="penalty_balance" style="background-color:yellow;"
 												th:if="${formmode}=='view'"
 												th:value="${view?.penalty_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.penalty_balance, 0, 'COMMA', 2, 'POINT')}"
 												name="penalty_balance" readonly /> <input type="text"
-												id="penalty_balance" th:if="${formmode}=='modify'"
+												style="background-color:yellow;" id="penalty_balance"
+												th:if="${formmode}=='modify'"
 												th:value="${view?.penalty_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.penalty_balance, 0, 'COMMA', 2, 'POINT')}"
 												name="penalty_balance" />
 										</div>
@@ -1361,9 +1375,8 @@ $(function () {
 											<input type="text" th:value="${view?.sale_processedbyvgid}"
 												name="sale_processedbyvgid" th:if="${formmode}=='view'"
 												id="sale_processedbyvgid" readonly /> <input type="text"
-												th:value="${view?.sale_processedbyvgid}"
-												name="sale_processedbyvgid" th:if="${formmode}=='modify'"
-												id="sale_processedbyvgid" />
+												th:value="${view?.sale_processedbyvgid}" name="sale_processedbyvgid"
+												th:if="${formmode}=='modify'" id="sale_processedbyvgid" />
 										</div>
 										<div class="col-sm-2">
 											<label>Sales Processed For</label>
@@ -1372,9 +1385,8 @@ $(function () {
 											<input type="text" th:value="${view?.sale_processedfor}"
 												name="sale_processedfor" id="sale_processedfor"
 												th:if="${formmode}=='view'" readonly /> <input type="text"
-												th:value="${view?.sale_processedfor}"
-												name="sale_processedfor" id="sale_processedfor"
-												th:if="${formmode}=='modify'" />
+												th:value="${view?.sale_processedfor}" name="sale_processedfor"
+												id="sale_processedfor" th:if="${formmode}=='modify'" />
 										</div>
 
 										<div class="col-sm-2">
@@ -1382,10 +1394,10 @@ $(function () {
 										</div>
 										<div class="col-sm-2">
 											<input type="text" th:value="${view?.sale_referredby}"
+												name="sale_referredby" id="sale_referredby" th:if="${formmode}=='view'"
+												readonly /> <input type="text" th:value="${view?.sale_referredby}"
 												name="sale_referredby" id="sale_referredby"
-												th:if="${formmode}=='view'" readonly /> <input type="text"
-												th:value="${view?.sale_referredby}" name="sale_referredby"
-												id="sale_referredby" th:if="${formmode}=='modify'" />
+												th:if="${formmode}=='modify'" />
 										</div>
 									</div>
 									<div class="row formline  ml-2 mt-1">
@@ -1397,29 +1409,26 @@ $(function () {
 											<input type="text" name="employment_status"
 												th:value="${view?.employment_status}" id="employment_status"
 												th:if="${formmode}=='view'" readonly /> <input type="text"
-												name="employment_status"
-												th:value="${view?.employment_status}" id="employment_status"
-												th:if="${formmode}=='modify'" />
+												name="employment_status" th:value="${view?.employment_status}"
+												id="employment_status" th:if="${formmode}=='modify'" />
 										</div>
 										<div class="col-sm-2">
 											<label>Job Title</label>
 										</div>
 										<div class="col-sm-2">
 											<input type="text" name="job_title" id="job_title"
-												th:value="${view?.job_title}" th:if="${formmode}=='view'"
-												readonly /> <input type="text" name="job_title"
-												id="job_title" th:value="${view?.job_title}"
-												th:if="${formmode}=='modify'" />
+												th:value="${view?.job_title}" th:if="${formmode}=='view'" readonly />
+											<input type="text" name="job_title" id="job_title"
+												th:value="${view?.job_title}" th:if="${formmode}=='modify'" />
 										</div>
 
 										<div class="col-sm-2">
 											<label>Employer Name</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" name="employer_name"
-												th:value="${view?.employer_name}" id="employer_name"
-												th:if="${formmode}=='view'" readonly /> <input type="text"
-												name="employer_name" th:value="${view?.employer_name}"
+											<input type="text" name="employer_name" th:value="${view?.employer_name}"
+												id="employer_name" th:if="${formmode}=='view'" readonly /> <input
+												type="text" name="employer_name" th:value="${view?.employer_name}"
 												id="employer_name" th:if="${formmode}=='modify'" />
 										</div>
 									</div>
@@ -1428,19 +1437,18 @@ $(function () {
 											<label>TU Core</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.tuscore}" name="tuscore"
-												id="tuscore" th:if="${formmode}=='view'" readonly /> <input
-												type="text" th:value="${view?.tuscore}" name="tuscore"
-												id="tuscore" th:if="${formmode}=='modify'" />
+											<input type="text" th:value="${view?.tuscore}" name="tuscore" id="tuscore"
+												th:if="${formmode}=='view'" readonly /> <input type="text"
+												th:value="${view?.tuscore}" name="tuscore" id="tuscore"
+												th:if="${formmode}=='modify'" />
 										</div>
 										<div class="col-sm-2">
 											<label>TU Probability</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.tuprobability}"
-												name="tuprobability" id="tuprobability"
-												th:if="${formmode}=='view'" readonly /> <input type="text"
-												th:value="${view?.tuprobability}" name="tuprobability"
+											<input type="text" th:value="${view?.tuprobability}" name="tuprobability"
+												id="tuprobability" th:if="${formmode}=='view'" readonly /> <input
+												type="text" th:value="${view?.tuprobability}" name="tuprobability"
 												id="tuprobability" th:if="${formmode}=='modify'" />
 										</div>
 
@@ -1450,8 +1458,7 @@ $(function () {
 										<div class="col-sm-2">
 											<input type="text" name="tufullname" id="tufullname"
 												th:if="${formmode}=='view'" readonly /> <input type="text"
-												name="tufullname" id="tufullname"
-												th:if="${formmode}=='modify'" />
+												name="tufullname" id="tufullname" th:if="${formmode}=='modify'" />
 										</div>
 									</div>
 									<div class="row formline  ml-2 mt-1">
@@ -1459,30 +1466,27 @@ $(function () {
 											<label>TU Reasons</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.tufullname}"
-												name="tufullname" id="tufullname"
-												th:if="${formmode}=='view'" readonly /> <input type="text"
-												th:value="${view?.tufullname}" name="tufullname"
+											<input type="text" th:value="${view?.tufullname}" name="tufullname"
+												id="tufullname" th:if="${formmode}=='view'" readonly /> <input
+												type="text" th:value="${view?.tufullname}" name="tufullname"
 												id="tufullname" th:if="${formmode}=='modify'" />
 										</div>
 										<div class="col-sm-2">
 											<label>Tureason 1</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="tureason1"
-												th:value="${view?.tureason1}" name="tureason1"
-												th:if="${formmode}=='view'" readonly /> <input type="text"
-												id="tureason1" th:value="${view?.tureason1}"
+											<input type="text" id="tureason1" th:value="${view?.tureason1}"
+												name="tureason1" th:if="${formmode}=='view'" readonly /> <input
+												type="text" id="tureason1" th:value="${view?.tureason1}"
 												name="tureason1" th:if="${formmode}=='modify'" />
 										</div>
 										<div class="col-sm-2">
 											<label>Tureason 2</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="tureason2"
-												th:value="${view?.tureason2}" name="tureason2"
-												th:if="${formmode}=='view'" readonly /> <input type="text"
-												id="tureason2" th:value="${view?.tureason2}"
+											<input type="text" id="tureason2" th:value="${view?.tureason2}"
+												name="tureason2" th:if="${formmode}=='view'" readonly /> <input
+												type="text" id="tureason2" th:value="${view?.tureason2}"
 												name="tureason2" th:if="${formmode}=='modify'" />
 										</div>
 									</div>
@@ -1493,8 +1497,8 @@ $(function () {
 										<label>Disposable Income</label>
 									</div>
 									<div class="col-sm-2">
-										<input type="text" name="disposable_income"
-											id="disposable_income" th:if="${formmode}=='view'"
+										<input type="text" name="disposable_income" id="disposable_income"
+											th:if="${formmode}=='view'"
 											th:value="${view?.disposable_income == 0 ? '0.00' :#numbers.formatDecimal(view?.disposable_income, 0, 'COMMA', 2, 'POINT')}"
 											readonly /> <input type="text" name="disposable_income"
 											id="disposable_income" th:if="${formmode}=='modify'"
@@ -1506,8 +1510,8 @@ $(function () {
 									<div class="col-sm-2">
 										<input type="text" th:if="${formmode}=='view'"
 											th:value="${view?.manualoverride_amount == 0 ? '0.00' :#numbers.formatDecimal(view?.manualoverride_amount, 0, 'COMMA', 2, 'POINT')}"
-											name="manualoverride_amount" id="manualoverride_amount"
-											readonly /> <input type="text" th:if="${formmode}=='modify'"
+											name="manualoverride_amount" id="manualoverride_amount" readonly /> <input
+											type="text" th:if="${formmode}=='modify'"
 											th:value="${view?.manualoverride_amount == 0 ? '0.00' :#numbers.formatDecimal(view?.manualoverride_amount, 0, 'COMMA', 2, 'POINT')}"
 											name="manualoverride_amount" id="manualoverride_amount" />
 									</div>
@@ -1519,11 +1523,9 @@ $(function () {
 										<input type="text"
 											th:value="${#dates.format(view?.manualoverride_expiry_date, 'dd-MM-yyyy')}"
 											th:if="${formmode}=='view'" name="manualoverride_expiry_date"
-											id="manualoverride_expiry_date" readonly /> <input
-											type="text"
+											id="manualoverride_expiry_date" readonly /> <input type="text"
 											th:value="${#dates.format(view?.manualoverride_expiry_date, 'dd-MM-yyyy')}"
-											th:if="${formmode}=='modify'"
-											name="manualoverride_expiry_date"
+											th:if="${formmode}=='modify'" name="manualoverride_expiry_date"
 											id="manualoverride_expiry_date" />
 									</div>
 								</div>
@@ -1546,8 +1548,8 @@ $(function () {
 									<div class="col-sm-2">
 										<input type="text" th:if="${formmode}=='view'"
 											th:value="${view?.deposit_amount == 0 ? '0.00' :#numbers.formatDecimal(view?.deposit_amount, 0, 'COMMA', 2, 'POINT')}"
-											name="deposit_amount" id="deposit_amount" readonly /> <input
-											type="text" th:if="${formmode}=='modify'"
+											name="deposit_amount" id="deposit_amount" readonly /> <input type="text"
+											th:if="${formmode}=='modify'"
 											th:value="${view?.deposit_amount == 0 ? '0.00' :#numbers.formatDecimal(view?.deposit_amount, 0, 'COMMA', 2, 'POINT')}"
 											name="deposit_amount" id="deposit_amount" />
 									</div>
@@ -1556,8 +1558,8 @@ $(function () {
 										<label>Total Product Price</label>
 									</div>
 									<div class="col-sm-2">
-										<input type="text" name="total_product_price"
-											id="total_product_price" th:if="${formmode}=='view'"
+										<input type="text" name="total_product_price" id="total_product_price"
+											th:if="${formmode}=='view'"
 											th:value="${view?.total_product_price == 0 ? '0.00' :#numbers.formatDecimal(view?.total_product_price, 0, 'COMMA', 2, 'POINT')}"
 											readonly /> <input type="text" name="total_product_price"
 											id="total_product_price" th:if="${formmode}=='modify'"
@@ -1570,20 +1572,18 @@ $(function () {
 										<label>Retailer Name</label>
 									</div>
 									<div class="col-sm-2">
-										<input type="text" th:value="${view?.retailer_name}"
-											name="retailer_name" id="retailer_name"
-											th:if="${formmode}=='view'" readonly /> <input type="text"
-											th:value="${view?.retailer_name}" name="retailer_name"
+										<input type="text" th:value="${view?.retailer_name}" name="retailer_name"
+											id="retailer_name" th:if="${formmode}=='view'" readonly /> <input
+											type="text" th:value="${view?.retailer_name}" name="retailer_name"
 											id="retailer_name" th:if="${formmode}=='modify'" />
 									</div>
 									<div class="col-sm-2">
 										<label>Retailer Branch</label>
 									</div>
 									<div class="col-sm-2">
-										<input type="text" th:value="${view?.retailer_branch}"
-											name="retailer_branch" id="retailer_branch"
-											th:if="${formmode}=='view'" readonly /> <input type="text"
-											th:value="${view?.retailer_branch}" name="retailer_branch"
+										<input type="text" th:value="${view?.retailer_branch}" name="retailer_branch"
+											id="retailer_branch" th:if="${formmode}=='view'" readonly /> <input
+											type="text" th:value="${view?.retailer_branch}" name="retailer_branch"
 											id="retailer_branch" th:if="${formmode}=='modify'" />
 									</div>
 
@@ -1592,9 +1592,8 @@ $(function () {
 									</div>
 									<div class="col-sm-2">
 										<input type="text" th:value="${view?.vg_application_id}"
-											name="vg_application_id" id="vg_application_id"
-											th:if="${formmode}=='view'" readonly /> <input type="text"
-											th:value="${view?.vg_application_id}"
+											name="vg_application_id" id="vg_application_id" th:if="${formmode}=='view'"
+											readonly /> <input type="text" th:value="${view?.vg_application_id}"
 											name="vg_application_id" id="vg_application_id"
 											th:if="${formmode}=='modify'" />
 									</div>
@@ -1605,10 +1604,9 @@ $(function () {
 										<label>Contract Signed</label>
 									</div>
 									<div class="col-sm-2">
-										<input type="text" th:value="${view?.contract_signed}"
-											name="contract_signed" id="contract_signed"
-											th:if="${formmode}=='view'" readonly /> <input type="text"
-											th:value="${view?.contract_signed}" name="contract_signed"
+										<input type="text" th:value="${view?.contract_signed}" name="contract_signed"
+											id="contract_signed" th:if="${formmode}=='view'" readonly /> <input
+											type="text" th:value="${view?.contract_signed}" name="contract_signed"
 											id="contract_signed" th:if="${formmode}=='modify'" />
 									</div>
 									<div class="col-sm-2">
@@ -1628,9 +1626,8 @@ $(function () {
 									</div>
 									<div class="col-sm-2">
 										<input type="text" th:value="${view?.last_call_outcome}"
-											name="last_call_outcome" id="last_call_outcome"
-											th:if="${formmode}=='view'" readonly /> <input type="text"
-											th:value="${view?.last_call_outcome}"
+											name="last_call_outcome" id="last_call_outcome" th:if="${formmode}=='view'"
+											readonly /> <input type="text" th:value="${view?.last_call_outcome}"
 											name="last_call_outcome" id="last_call_outcome"
 											th:if="${formmode}=='modify'" />
 									</div>
@@ -1640,11 +1637,9 @@ $(function () {
 										<label>As On Date</label>
 									</div>
 									<div class="col-sm-2">
-										<input type="text"
-											th:value="${#dates.format(view?.asondate, 'dd-MM-yyyy')}"
-											name="asondate" id="asondate" th:if="${formmode}=='view'"
-											readonly /> <input type="text"
-											th:value="${#dates.format(view?.asondate, 'dd-MM-yyyy')}"
+										<input type="text" th:value="${#dates.format(view?.asondate, 'dd-MM-yyyy')}"
+											name="asondate" id="asondate" th:if="${formmode}=='view'" readonly /> <input
+											type="text" th:value="${#dates.format(view?.asondate, 'dd-MM-yyyy')}"
 											name="asondate" id="asondate" th:if="${formmode}=='modify'" />
 									</div>
 									<div class="col-sm-2">
@@ -1654,84 +1649,88 @@ $(function () {
 										<input type="text" name=" " id=" " readonly />
 									</div>
 									<div class="col-sm-2">
-										<label>Remarks 2</label>
+										<label>Balance Outstanding</label>
 									</div>
 									<div class="col-sm-2">
-										<input type="text" name=" " id=" " readonly />
+										<input type="text" name=" "
+											th:value="${acct_bal == 0 ? '0.00' :#numbers.formatDecimal(acct_bal, 0, 'COMMA', 2, 'POINT')}"
+											id=" " readonly />
 									</div>
 								</div>
 								<div class="card-footer text-center mt-4">
 									<button class="btn-primary big-btn">Home</button>
-									<button class="btn-primary big-btn"
-										th:if="${Boolean} and ${formmode}=='view'"
-										th:attr="data-id=${view?.id},data-account_holderkey=${view?.account_holderkey}" onclick="verifyscreen(this);">
+									<button class="btn-primary big-btn" th:if="${Boolean} and ${formmode}=='view'"
+										th:attr="data-id=${view?.id},data-account_holderkey=${view?.account_holderkey}"
+										onclick="verifyscreen(this);">
 										Verify</button>
 
 									<!-- Submit Button (Shown when Boolean is false) -->
 									<button type="button" class="btn-primary big-btn"
-										th:if="!${Boolean} and ${formmode}=='view'"
-										data-dismiss="modal"
+										th:if="!${Boolean} and ${formmode}=='view'" data-dismiss="modal"
 										th:attr="data-id=${view?.id}, data-account_holderkey=${view?.account_holderkey}"
 										onclick="modifyscreen(this);">Modify</button>
-									<button type="button" class="btn-primary big-btn"
-										th:if="${formmode}=='modify'" data-dismiss="modal"
-										onclick="submitformmodify(this);">Submit</button>
+									<button type="button" class="btn-primary big-btn" th:if="${formmode}=='modify'"
+										data-dismiss="modal" onclick="submitformmodify(this);">Submit</button>
 									<button class="btn-primary big-btn" onclick="back();">Back</button>
 								</div>
 								<!-------------------------------------------------------------------------- footer ------------------------------------------------------------>
 								<table
 									Style="border: 1px solid #ccc; width: 100%; max-width: 100%; margin: 0 auto; box-sizing: border-box;">
 									<tr>
-										<td class="col-sm-2" style="text-align: center;"><font
-											size="2"><B>Entry User :</B></font></td>
+										<td class="col-sm-2" style="text-align: center;">
+											<font size="2"><B>Entry User :</B></font>
+										</td>
 										<td class="col-sm-2" style="width: 112px; margin-right: 20px;"><input
-											type="text" id="entryuser" name="ub.entryuser" value="System"
-											style="border: none; outline: none; background-color: transparent; font-size: 12px;"
-											readonly></td>
-										<td class="col-sm-2" style="text-align: center;"><font
-											size="2"><B>Modify User :</B></font></td>
-										<td class="col-sm-2" style="width: 112px;"><input
-											type="text" id="modifyuser" name="ub.modifyuser"
-											value="System"
-											style="border: none; outline: none; background-color: transparent; font-size: 12px;"
-											readonly></td>
-										<td class="col-sm-2" style="text-align: center;"><font
-											size="2"><B>Verify User :</B></font></td>
-										<td class="col-sm-2" style="width: 112px;"><input
-											type="text" id="verifyuser" name="ub.verifyuser"
-											value="System"
-											style="border: none; outline: none; background-color: transparent; font-size: 12px;"
-											readonly></td>
+												type="text" id="entryuser" name="ub.entryuser" value="System"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px;"
+												readonly></td>
+										<td class="col-sm-2" style="text-align: center;">
+											<font size="2"><B>Modify User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px;"><input type="text" id="modifyuser"
+												name="ub.modifyuser" value="System"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px;"
+												readonly></td>
+										<td class="col-sm-2" style="text-align: center;">
+											<font size="2"><B>Verify User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px;"><input type="text" id="verifyuser"
+												name="ub.verifyuser" value="System"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px;"
+												readonly></td>
 									</tr>
 									<tr>
-										<td style="text-align: center;"><font size="2"><B>Entry
-													Time :</B></font></td>
-										<td style="width: 112px"><input type="text"
-											id="entrytime" name="ub.entrytime"
-											th:value="${#dates.format(view?.creation_date, 'dd-MM-yyyy HH:mm:ss')}"
-											readonly
-											style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;">
+										<td style="text-align: center;">
+											<font size="2"><B>Entry
+													Time :</B></font>
 										</td>
-										<td style="text-align: center;"><font size="2"><B>Modify
-													Time :</B></font></td>
-									 
-										<td style="width: 112px" th:if="${formmode}=='view'"><input
-											type="text" id="modifytime" name="ub.modifytime"
-											th:value="${#dates.format(view?.last_modified_date, 'dd-MM-yyyy HH:mm:ss')}"
-											style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
-											readonly></td>
-										<td style="width: 112px"th:if="${formmode}=='modify'"><input
-											type="text" id="modifytime" name="ub.modifytime"
-											 th:value="${#dates.format(#dates.createNow(), 'dd-MM-yyyy HH:mm:ss')}"
-											style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
-											readonly></td>
-										<td style="text-align: center; font-size: 15px;"><font
-											size="2"><B>Verify Time :</B></font></td>
-										<td style="width: 112px"><input type="text"
-											id="verifytime" name="ub.verifytime"
-											th:value="${#dates.format(view?.approved_date, 'dd-MM-yyyy HH:mm:ss')}"
-											style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
-											readonly></td>
+										<td style="width: 112px"><input type="text" id="entrytime" name="ub.entrytime"
+												th:value="${#dates.format(view?.creation_date, 'dd-MM-yyyy HH:mm:ss')}"
+												readonly
+												style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;">
+										</td>
+										<td style="text-align: center;">
+											<font size="2"><B>Modify
+													Time :</B></font>
+										</td>
+
+										<td style="width: 112px" th:if="${formmode}=='view'"><input type="text"
+												id="modifytime" name="ub.modifytime"
+												th:value="${#dates.format(view?.last_modified_date, 'dd-MM-yyyy HH:mm:ss')}"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
+												readonly></td>
+										<td style="width: 112px" th:if="${formmode}=='modify'"><input type="text"
+												id="modifytime" name="ub.modifytime"
+												th:value="${#dates.format(#dates.createNow(), 'dd-MM-yyyy HH:mm:ss')}"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
+												readonly></td>
+										<td style="text-align: center; font-size: 15px;">
+											<font size="2"><B>Verify Time :</B></font>
+										</td>
+										<td style="width: 112px"><input type="text" id="verifytime" name="ub.verifytime"
+												th:value="${#dates.format(view?.approved_date, 'dd-MM-yyyy HH:mm:ss')}"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
+												readonly></td>
 									</tr>
 								</table>
 
@@ -1742,17 +1741,15 @@ $(function () {
 				<!--------------------------------------------------------------------footer end------------------------------------------------------------>
 				<div th:if="${formmode}=='verify'" class="mt-3">
 					<div class="card">
-						<div class="card-header"
-							style="background-color: #e9ecef; height: 50px">
+						<div class="card-header" style="background-color: #e9ecef; height: 50px">
 							<div class="float-left">
-								<h6 style="font-size: 1.2rem;" class="ml-3"
-									th:if="${formmode}=='verify'">LOAN MAINTENANCE - VERIFY</h6>
+								<h6 style="font-size: 1.2rem;" class="ml-3" th:if="${formmode}=='verify'">LOAN
+									MAINTENANCE - VERIFY</h6>
 							</div>
 						</div>
 						<div class="card-body">
-							<form action="#" th:object="${drawDownDetails}" method="post"
-								id="loanver" autocomplete="off" name="drawDownDetailsData"
-								th:fragment="finuserapply">
+							<form action="#" th:object="${drawDownDetails}" method="post" id="loanver"
+								autocomplete="off" name="drawDownDetailsData" th:fragment="finuserapply">
 								<!-------------------------------------------------------------------------- LOAN DETAILS ------------------------------------------------------------>
 								<div>
 									<div class="ml-4">
@@ -1764,50 +1761,49 @@ $(function () {
 											<label>Customer Id</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${loan[0][0]}"
-												name="customer_id" id="customer_id" readonly />
+											<input type="text" th:value="${loan[0][0]}" name="customer_id"
+												id="customer_id" readonly />
 										</div>
 										<div class="col-sm-2">
 											<label>Customer Name</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${loan[0][1]}"
-												name="employer_name" id="employer_name" readonly />
+											<input type="text" th:value="${loan[0][1]}" name="employer_name"
+												id="employer_name" readonly />
 										</div>
 										<div class="col-sm-2">
 											<label>Customer Status</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" name="account_state"
-												id="account_state"
+											<input type="text" name="account_state" id="account_state"
 												th:value="${view?.account_state}" readonly />
 										</div>
 									</div>
 
 									<div class="row formline  ml-2 mt-1">
 										<div class="col-sm-2">
-										<label>Account Type</label>
+											<label>Account Type</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" name="account_holdertype"
-												id="account_holdertype"
+											<input type="text" name="account_holdertype" id="account_holdertype"
 												th:value="${view?.account_holdertype}" readonly />
-												<input type="text" name="account_holderkey" id="account_holderkey" th:value="${view?.account_holderkey}" readonly hidden />
-                                                <input type="text" name="encoded_key" id="encoded_key" th:value="${view?.encoded_key}" readonly hidden />
+											<input type="text" name="account_holderkey" id="account_holderkey"
+												th:value="${view?.account_holderkey}" readonly hidden />
+											<input type="text" name="encoded_key" id="encoded_key"
+												th:value="${view?.encoded_key}" readonly hidden />
 										</div>
 										<div class="col-sm-2">
 											<label>Loan No</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.id}" name="id" id="id"
-												readonly />
+											<input type="text" th:value="${view?.id}" name="id" id="id" readonly />
 										</div>
 										<div class="col-sm-2">
 											<label>Loan Name</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.loan_name}"
-												name="loan_name" id="loan_name" readonly />
+											<input type="text" th:value="${view?.loan_name}" name="loan_name"
+												id="loan_name" readonly />
 										</div>
 									</div>
 
@@ -1816,8 +1812,8 @@ $(function () {
 											<label>Assigned Branch</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.assigned_branchkey}" name="assigned_branchkey"
-												id="assigned_branchkey" readonly />
+											<input type="text" th:value="${view?.assigned_branchkey}"
+												name="assigned_branchkey" id="assigned_branchkey" readonly />
 										</div>
 										<div class="col-sm-2">
 											<label>Open Date</label>
@@ -1858,8 +1854,8 @@ $(function () {
 											<label> Account Status </label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.account_state}"
-												name="account_state" id="account_state" readonly />
+											<input type="text" th:value="${view?.account_state}" name="account_state"
+												id="account_state" readonly />
 										</div>
 									</div>
 
@@ -1875,8 +1871,8 @@ $(function () {
 											<label>Currency Code</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" name="currency_code" id="currency_code"
-												value="KES" readonly />
+											<input type="text" name="currency_code" id="currency_code" value="KES"
+												readonly />
 										</div>
 										<div class="col-sm-2">
 											<label>Loan Amount</label>
@@ -1893,25 +1889,23 @@ $(function () {
 											<label>Payment Method</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" name="payment_method"
-												th:value="${view?.payment_method}" id="payment_method"
-												readonly />
+											<input type="text" name="payment_method" th:value="${view?.payment_method}"
+												id="payment_method" readonly />
 										</div>
 										<div class="col-sm-2">
 											<label>Penalty Rate</label>
 										</div>
 										<div class="col-sm-2">
 											<input type="text" name="penalty_rate" id="penalty_rate"
-												th:value="${view?.penalty_rate}" oninput="numberOnly(this);"
-												readonly />
+												th:value="${view?.penalty_rate}" oninput="numberOnly(this);" readonly />
 										</div>
 										<div class="col-sm-2">
 											<label>Rate of Interest</label>
 										</div>
 										<div class="col-sm-2">
 											<input type="text" name="interest_rate" id="interest_rate"
-												th:value="${view?.interest_rate}"
-												oninput="numberOnly(this);" readonly />
+												th:value="${view?.interest_rate}" oninput="numberOnly(this);"
+												readonly />
 										</div>
 									</div>
 									<div class="row formline ml-2  mt-1">
@@ -2084,8 +2078,7 @@ $(function () {
 										</div>
 										<div class="col-sm-2">
 											<input type="text" th:value="${view?.sale_processedbyvgid}"
-												name="sale_processedbyvgid" id="sale_processedbyvgid"
-												readonly />
+												name="sale_processedbyvgid" id="sale_processedbyvgid" readonly />
 										</div>
 										<div class="col-sm-2">
 											<label>Sales Processed For</label>
@@ -2110,8 +2103,7 @@ $(function () {
 										</div>
 										<div class="col-sm-2">
 											<input type="text" name="employment_status"
-												th:value="${view?.employment_status}" id="employment_status"
-												readonly />
+												th:value="${view?.employment_status}" id="employment_status" readonly />
 										</div>
 										<div class="col-sm-2">
 											<label>Job Title</label>
@@ -2125,9 +2117,8 @@ $(function () {
 											<label>Employer Name</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" name="employer_name"
-												th:value="${view?.employer_name}" id="employer_name"
-												readonly />
+											<input type="text" name="employer_name" th:value="${view?.employer_name}"
+												id="employer_name" readonly />
 										</div>
 									</div>
 									<div class="row formline  ml-2 mt-1">
@@ -2136,15 +2127,15 @@ $(function () {
 											<label>TU Core</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.tuscore}" name="tuscore"
-												id="tuscore" readonly />
+											<input type="text" th:value="${view?.tuscore}" name="tuscore" id="tuscore"
+												readonly />
 										</div>
 										<div class="col-sm-2">
 											<label>TU Probability</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.tuprobability}"
-												name="tuprobability" id="tuprobability" readonly />
+											<input type="text" th:value="${view?.tuprobability}" name="tuprobability"
+												id="tuprobability" readonly />
 										</div>
 
 										<div class="col-sm-2">
@@ -2160,22 +2151,22 @@ $(function () {
 											<label>TU Reasons</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.tufullname}"
-												name="tufullname" id="tufullname" readonly />
+											<input type="text" th:value="${view?.tufullname}" name="tufullname"
+												id="tufullname" readonly />
 										</div>
 										<div class="col-sm-2">
 											<label>Tureason 1</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="tureason1"
-												th:value="${view?.tureason1}" name="tureason1" readonly />
+											<input type="text" id="tureason1" th:value="${view?.tureason1}"
+												name="tureason1" readonly />
 										</div>
 										<div class="col-sm-2">
 											<label>Tureason 2</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="tureason2"
-												th:value="${view?.tureason2}" name="tureason2" readonly />
+											<input type="text" id="tureason2" th:value="${view?.tureason2}"
+												name="tureason2" readonly />
 										</div>
 									</div>
 
@@ -2186,8 +2177,7 @@ $(function () {
 									</div>
 									<div class="col-sm-2">
 
-										<input type="text" name="disposable_income"
-											id="disposable_income"
+										<input type="text" name="disposable_income" id="disposable_income"
 											th:value="${view?.disposable_income == 0 ? '0.00' :#numbers.formatDecimal(view?.disposable_income, 0, 'COMMA', 2, 'POINT')}"
 											readonly />
 									</div>
@@ -2197,8 +2187,7 @@ $(function () {
 									<div class="col-sm-2">
 										<input type="text"
 											th:value="${view?.manualoverride_amount == 0 ? '0.00' :#numbers.formatDecimal(view?.manualoverride_amount, 0, 'COMMA', 2, 'POINT')}"
-											name="manualoverride_amount" id="manualoverride_amount"
-											readonly />
+											name="manualoverride_amount" id="manualoverride_amount" readonly />
 									</div>
 
 									<div class="col-sm-2">
@@ -2207,8 +2196,8 @@ $(function () {
 									<div class="col-sm-2">
 										<input type="text"
 											th:value="${#dates.format(view?.manualoverride_expiry_date, 'dd-MM-yyyy')}"
-											name="manualoverride_expiry_date"
-											id="manualoverride_expiry_date" readonly />
+											name="manualoverride_expiry_date" id="manualoverride_expiry_date"
+											readonly />
 									</div>
 								</div>
 								<div class="row formline  ml-2 mt-1">
@@ -2234,8 +2223,7 @@ $(function () {
 										<label>Total Product Price</label>
 									</div>
 									<div class="col-sm-2">
-										<input type="text" name="total_product_price"
-											id="total_product_price"
+										<input type="text" name="total_product_price" id="total_product_price"
 											th:value="${view?.total_product_price == 0 ? '0.00' :#numbers.formatDecimal(view?.total_product_price, 0, 'COMMA', 2, 'POINT')}"
 											readonly />
 									</div>
@@ -2246,15 +2234,15 @@ $(function () {
 										<label>Retailer Name</label>
 									</div>
 									<div class="col-sm-2">
-										<input type="text" th:value="${view?.retailer_name}"
-											name="retailer_name" id="retailer_name" readonly />
+										<input type="text" th:value="${view?.retailer_name}" name="retailer_name"
+											id="retailer_name" readonly />
 									</div>
 									<div class="col-sm-2">
 										<label>Retailer Branch</label>
 									</div>
 									<div class="col-sm-2">
-										<input type="text" th:value="${view?.retailer_branch}"
-											name="retailer_branch" id="retailer_branch" readonly />
+										<input type="text" th:value="${view?.retailer_branch}" name="retailer_branch"
+											id="retailer_branch" readonly />
 									</div>
 
 									<div class="col-sm-2">
@@ -2271,8 +2259,8 @@ $(function () {
 										<label>Contract Signed</label>
 									</div>
 									<div class="col-sm-2">
-										<input type="text" th:value="${view?.contract_signed}"
-											name="contract_signed" id="contract_signed" readonly />
+										<input type="text" th:value="${view?.contract_signed}" name="contract_signed"
+											id="contract_signed" readonly />
 									</div>
 									<div class="col-sm-2">
 										<label>Date of First Call</label>
@@ -2296,8 +2284,7 @@ $(function () {
 										<label>As On Date</label>
 									</div>
 									<div class="col-sm-2">
-										<input type="text"
-											th:value="${#dates.format(view?.asondate, 'dd-MM-yyyy')}"
+										<input type="text" th:value="${#dates.format(view?.asondate, 'dd-MM-yyyy')}"
 											name="asondate" id="asondate" readonly />
 									</div>
 									<div class="col-sm-2">
@@ -2315,58 +2302,61 @@ $(function () {
 								</div>
 								<div class="card-footer text-center mt-4">
 									<button class="btn-primary big-btn" onclick="home();">Home</button>
-									<button type="button" class="btn-primary big-btn"
-										data-dismiss="modal" onclick="submitformverify(this);">Submit</button>
+									<button type="button" class="btn-primary big-btn" data-dismiss="modal"
+										onclick="submitformverify(this);">Submit</button>
 									<button class="btn-primary big-btn" onclick="back();">Back</button>
 								</div>
 								<!-------------------------------------------------------------------------- footer ------------------------------------------------------------>
 								<table
 									Style="border: 1px solid #ccc; width: 100%; max-width: 100%; margin: 0 auto; box-sizing: border-box;">
 									<tr>
-										<td class="col-sm-2" style="text-align: center;"><font
-											size="2"><B>Entry User :</B></font></td>
+										<td class="col-sm-2" style="text-align: center;">
+											<font size="2"><B>Entry User :</B></font>
+										</td>
 										<td class="col-sm-2" style="width: 112px; margin-right: 20px;"><input
-											type="text" id="entryuser" name="ub.entryuser" value="System"
-											style="border: none; outline: none; background-color: transparent; font-size: 12px;"
-											readonly></td>
-										<td class="col-sm-2" style="text-align: center;"><font
-											size="2"><B>Modify User :</B></font></td>
-										<td class="col-sm-2" style="width: 112px;"><input
-											type="text" id="modifyuser" name="ub.modifyuser"
-											value="System"
-											style="border: none; outline: none; background-color: transparent; font-size: 12px;"
-											readonly></td>
-										<td class="col-sm-2" style="text-align: center;"><font
-											size="2"><B>Verify User :</B></font></td>
-										<td class="col-sm-2" style="width: 112px;"><input
-											type="text" id="verifyuser" name="ub.verifyuser"
-											value="System"
-											style="border: none; outline: none; background-color: transparent; font-size: 12px;"
-											readonly></td>
+												type="text" id="entryuser" name="ub.entryuser" value="System"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px;"
+												readonly></td>
+										<td class="col-sm-2" style="text-align: center;">
+											<font size="2"><B>Modify User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px;"><input type="text" id="modifyuser"
+												name="ub.modifyuser" value="System"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px;"
+												readonly></td>
+										<td class="col-sm-2" style="text-align: center;">
+											<font size="2"><B>Verify User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px;"><input type="text" id="verifyuser"
+												name="ub.verifyuser" value="System"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px;"
+												readonly></td>
 									</tr>
 									<tr>
-										<td style="text-align: center;"><font size="2"><B>Entry
-													Time :</B></font></td>
-										<td style="width: 112px"><input type="text"
-											id="entrytime" name="ub.entrytime"
-											th:value="${#dates.format(view?.creation_date, 'dd-MM-yyyy HH:mm:ss')}"
-											readonly
-											style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;">
+										<td style="text-align: center;">
+											<font size="2"><B>Entry
+													Time :</B></font>
 										</td>
-										<td style="text-align: center;"><font size="2"><B>Modify
-													Time :</B></font></td>
-										<td style="width: 112px"><input type="text"
-											id="modifytime" name="ub.modifytime"
-											th:value="${#dates.format(view?.last_modified_date, 'dd-MM-yyyy HH:mm:ss')}"
-											style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
-											readonly></td>
-										<td style="text-align: center; font-size: 15px;"><font
-											size="2"><B>Verify Time :</B></font></td>
-										<td style="width: 112px"><input type="text"
-											id="verifytime" name="ub.verifytime"
-											th:value="${#dates.format(#dates.createNow(), 'dd-MM-yyyy HH:mm:ss')}"
-											style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
-											readonly></td>
+										<td style="width: 112px"><input type="text" id="entrytime" name="ub.entrytime"
+												th:value="${#dates.format(view?.creation_date, 'dd-MM-yyyy HH:mm:ss')}"
+												readonly
+												style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;">
+										</td>
+										<td style="text-align: center;">
+											<font size="2"><B>Modify
+													Time :</B></font>
+										</td>
+										<td style="width: 112px"><input type="text" id="modifytime" name="ub.modifytime"
+												th:value="${#dates.format(view?.last_modified_date, 'dd-MM-yyyy HH:mm:ss')}"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
+												readonly></td>
+										<td style="text-align: center; font-size: 15px;">
+											<font size="2"><B>Verify Time :</B></font>
+										</td>
+										<td style="width: 112px"><input type="text" id="verifytime" name="ub.verifytime"
+												th:value="${#dates.format(#dates.createNow(), 'dd-MM-yyyy HH:mm:ss')}"
+												style="border: none; outline: none; background-color: transparent; font-size: 12px; margin-left: 14px;"
+												readonly></td>
 									</tr>
 								</table>
 							</form>
@@ -2378,10 +2368,9 @@ $(function () {
 		</div>
 	</div>
 	<!----------------------------------------------------------------------- Modal ------------------------------------------------------------>
-	<div class="modal fade" data-backdrop="false" data-keyboard="false"
-		tabindex="-1" role="dialog" aria-hidden="true" id="mypopup22">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+	<div class="modal fade" data-backdrop="false" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true"
+		id="mypopup22">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content">
 				<div class="modal-body" style="text-align: center">
 					<p id="popupmsg_body"></p>
@@ -2393,4 +2382,5 @@ $(function () {
 	</div>
 	<!--------------------------------------------------------------------------end------------------------------------------------------------>
 </body>
+
 </html>
