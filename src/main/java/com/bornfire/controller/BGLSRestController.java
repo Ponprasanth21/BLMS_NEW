@@ -9389,6 +9389,7 @@ public class BGLSRestController {
 			map.put("id", row[1]); // l.ID
 			map.put("account_holderkey", row[3]); // adjust index to match your query
 			map.put("loan_name", row[12]);
+			map.put("assigned_branchkey", row[14]);
 			map.put("retailer_name", row[64]);
 			map.put("retailer_branch", row[65]);
 			map.put("account_state", row[9]);
@@ -9434,6 +9435,7 @@ public class BGLSRestController {
 			map.put("id", row[1]); // l.ID
 			map.put("account_holderkey", row[3]); // adjust index to match your query
 			map.put("loan_name", row[12]);
+			map.put("assigned_branchkey", row[14]);
 			map.put("retailer_name", row[64]);
 			map.put("retailer_branch", row[65]);
 			map.put("account_state", row[9]);
