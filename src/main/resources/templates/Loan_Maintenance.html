@@ -956,13 +956,13 @@
 											<label>Customer Name</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.employer_name}" name="employer_name"
+											<input type="text" th:value="${cutomer_data[0][0]}" name="employer_name"
 												id="employer_name" th:if="${formmode}=='view'" readonly /> <input
-												type="text" th:value="${view?.employer_name}" name="employer_name"
+												type="text" th:value="${cutomer_data}" name="employer_name"
 												id="employer_name" th:if="${formmode}=='modify'" />
 										</div>
 										<div class="col-sm-2">
-											<label>Customer Status</label>
+											<label>Loan Account Status</label>
 										</div>
 										<div class="col-sm-2">
 											<input type="text" name="account_state" id="account_state"
@@ -1762,26 +1762,25 @@
 								<!-------------------------------------------------------------------------- LOAN DETAILS ------------------------------------------------------------>
 								<div>
 									<div class="ml-4">
-										<h6 style="font-size: 1.0rem; font-weight: bold;">LOAN
-											DETAILS</h6>
+										<h6 style="font-size: 1.0rem; font-weight: bold;">LOAN DETAILS</h6>
 									</div>
 									<div class="row formline mt-2  ml-2">
 										<div class="col-sm-2">
 											<label>Customer Id</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${loan[0][0]}" name="customer_id"
+											<input type="text" th:value="${cutomer_data[0][1]}" name="customer_id"
 												id="customer_id" readonly />
 										</div>
 										<div class="col-sm-2">
 											<label>Customer Name</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${loan[0][1]}" name="employer_name"
+											<input type="text" th:value="${cutomer_data[0][0]}" name="employer_name"
 												id="employer_name" readonly />
 										</div>
 										<div class="col-sm-2">
-											<label>Customer Status</label>
+											<label>Loan Account Status</label>
 										</div>
 										<div class="col-sm-2">
 											<input type="text" name="account_state" id="account_state"
@@ -2289,11 +2288,18 @@
 									</div>
 								</div>
 								<div class="row formline  ml-2  mt-1">
-									<div class="col-sm-2">
+									<!-- <div class="col-sm-2">
 										<label>As On Date</label>
 									</div>
 									<div class="col-sm-2">
 										<input type="text" th:value="${#dates.format(view?.asondate, 'dd-MM-yyyy')}"
+											name="asondate" id="asondate" readonly />
+									</div> -->
+									<div class="col-sm-2">
+										<label>Days In Arrears</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="text" th:value="${view?.days_inarrears}"
 											name="asondate" id="asondate" readonly />
 									</div>
 									<div class="col-sm-2">

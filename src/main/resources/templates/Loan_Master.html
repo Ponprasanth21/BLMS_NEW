@@ -1628,7 +1628,7 @@
 									</div>
 									<div class="col-sm-2">
 										<input type="text"
-											th:value="${#dates.format(view?.manualoverride_expiry_date, 'dd/MM/yyyy')}"
+											th:value="${#dates.format(view?.manualoverride_expiry_date, 'dd-MM-yyyy')}"
 											name="manualoverride_expiry_date" id="manualoverride_expiry_date"
 											readonly />
 									</div>
@@ -1700,7 +1700,7 @@
 									</div>
 									<div class="col-sm-2">
 										<input type="text" name="date_of_first_call"
-											th:value="${#dates.format(view?.date_of_first_call, 'dd/MM/yyyy')}"
+											th:value="${#dates.format(view?.date_of_first_call, 'dd-MM-yyyy')}"
 											id="date_of_first_call" readonly />
 									</div>
 

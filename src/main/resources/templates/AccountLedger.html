@@ -322,9 +322,9 @@ function funcall() {
     var fromdate = $('#fromdate').val();
     var todate = $('#todate').val();
 
-    // Validate account number and date fields
+    // Validate ACCT ID and date fields
     if (!acctnum) {
-        alert("Account number is required");
+        alert("ACCT ID is required");
         return;
     }
     if (!fromdate || !todate) {
@@ -943,7 +943,7 @@ function handleSelect() {
 													placeholder="HEAD" disabled></th>
 												<th><input type="text"
 													class="form-control font-weight-bold"
-													placeholder="ACCT NUM" disabled></th>
+													placeholder="ACCT ID" disabled></th>
 
 												<th style="width: 30%"><input type="text"
 													class="form-control font-weight-bold"
@@ -1044,7 +1044,7 @@ function handleSelect() {
 								<div class="row formline" style="padding: 15px 0px 5px 30px;">
 									<div class="col-sm-1"></div>
 
-									<div class="col-sm-1">Acct Num</div>
+									<div class="col-sm-1">ACCT ID</div>
 									<div class="col-sm-2">
 										<input type="text" name="acct_num" id="acct_num"
 											class="form-control form-control-sm bg-white border border-dark"

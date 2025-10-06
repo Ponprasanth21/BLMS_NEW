@@ -2913,7 +2913,7 @@
 											</div>
 											<div class="col-sm-2">
 												<input type="date" name="birth_date"
-													th:value="${#dates.format(customer?.birth_date, 'yyyy-MM-dd')}"
+													 th:value="${customer?.birth_date != null ? #dates.format(customer.birth_date, 'yyyy-MM-dd') : ''}" 
 													id="dob" />
 											</div>
 

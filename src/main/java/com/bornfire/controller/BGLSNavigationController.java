@@ -3645,6 +3645,7 @@ public class BGLSNavigationController {
 
 			// Fetch loan details for view
 			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+			md.addAttribute("cutomer_data", LOAN_ACT_MST_REPO.getLoanViewCustomerData(id));
 			md.addAttribute("acct_bal", chart_Acc_Rep.getacctbal(id));
 			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
 
@@ -3664,6 +3665,7 @@ public class BGLSNavigationController {
 
 		} else if (formmode.equals("verify")) {
 			md.addAttribute("formmode", "verify");
+			md.addAttribute("cutomer_data", LOAN_ACT_MST_REPO.getLoanViewCustomerData(id));
 			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
 			md.addAttribute("acct_bal", chart_Acc_Rep.getacctbal(id));
 			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
@@ -4214,7 +4216,7 @@ public class BGLSNavigationController {
 	        Model model, Model md,
 	        HttpServletRequest request,
 	        @RequestParam(required = false) String id,
-	        @RequestParam(required = false) String holder_key, String branch_key ) {
+	        @RequestParam(required = false) String holder_key) {
 
 	    String user = (String) request.getSession().getAttribute("USERID");
 
@@ -4230,7 +4232,7 @@ public class BGLSNavigationController {
 //	        LOAN_ACT_MST_REPO.getLoanValueList(holder_key);
 	        md.addAttribute("customer_id", LOAN_ACT_MST_REPO.getLoanValueCUSTOMER_ID(holder_key));
 	        md.addAttribute("customer_name", LOAN_ACT_MST_REPO.getLoanValueCUSTOMER_NAME(holder_key));
-	        md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
+	        
 //	        List<CLIENT_MASTER_ENTITY> clients = LOAN_ACT_MST_REPO.getLoanValueList(holder_key);
 
 //	        String customerId ="";

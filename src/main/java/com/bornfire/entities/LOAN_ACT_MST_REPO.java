@@ -208,6 +208,9 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
 
 	@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL WHERE ID =?1", nativeQuery = true)
 	LOAN_ACT_MST_ENTITY getLoanView(String id);
+	
+	@Query(value = "SELECT a.FIRST_NAME || ' ' || a.LAST_NAME AS FULL_NAME,a.CUSTOMER_ID FROM CLIENT_MASTER_TBL a WHERE a.ENCODED_KEY = (SELECT ACCOUNT_HOLDERKEY FROM LOAN_ACCOUNT_MASTER_TBL WHERE ID =?1 )", nativeQuery = true)
+	List<Object[]> getLoanViewCustomerData(String id);
 
 	@Query(value = "SELECT a.CUSTOMER_ID FROM CLIENT_MASTER_TBL a "
 			+ "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.ENCODED_KEY = b.ACCOUNT_HOLDERKEY "
@@ -219,7 +222,7 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
 			+ "WHERE b.ACCOUNT_HOLDERKEY = ?1", nativeQuery = true)
 	List<String> getLoanValueCUSTOMER_ID(String holderKey);
 	
-	@Query(value = "SELECT a.FIRST_NAME FROM CLIENT_MASTER_TBL a "
+	@Query(value = "SELECT a.FIRST_NAME || ' ' || a.LAST_NAME FROM CLIENT_MASTER_TBL a "
 			+ "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.ENCODED_KEY = b.ACCOUNT_HOLDERKEY "
 			+ "WHERE b.ACCOUNT_HOLDERKEY = ?1", nativeQuery = true)
 	List<String> getLoanValueCUSTOMER_NAME(String holderKey);
@@ -279,7 +282,8 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
             "          AND (c.INTEREST_EXP = c.INTEREST_PAID) " +
             "          AND (c.FEE_EXP = c.FEE_PAID) " +
             "        THEN (c.PRINCIPAL_PAID + c.INTEREST_PAID + c.FEE_PAID) ELSE 0 END) " +
-            "    ) AS ARREARS_APPLY " +
+            "    ) AS ARREARS_APPLY, " +
+            " a.FIRST_NAME || ' ' || a.LAST_NAME AS FIRST_NAME "+
             "FROM CLIENT_MASTER_TBL a " +
             "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.ENCODED_KEY = b.ACCOUNT_HOLDERKEY " +
             "LEFT JOIN LOAN_REPAYMENT_TBL c ON b.ENCODED_KEY = c.PARENT_ACCOUNT_KEY " +
@@ -303,7 +307,8 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
             "    b.CURRENCY_CODE, " +
             "    d.ACCT_BAL, " +
             "    zbd.LAST_ZERO_BAL_DATE, " +
-            "    nd.NEXT_DUE_DATE",
+            "    nd.NEXT_DUE_DATE,"+
+            "  a.FIRST_NAME || ' ' || a.LAST_NAME ",
        nativeQuery = true)
 Object[] getCustomer(@Param("tran_date") Date tran_date,
                      @Param("holderKey") String holderKey,

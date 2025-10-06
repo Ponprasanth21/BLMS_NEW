@@ -689,7 +689,7 @@
 				}
 
 				// Now rowCounter points to the first empty row
-				console.log("Account Number: " + acct_num);
+				console.log("ACCOUNT ID: " + acct_num);
 				console.log("Row Counter: " + rowCounter);  // Track the incrementing rowCounter
 
 				// Use the current rowCounter as the row identifier
@@ -1767,7 +1767,7 @@
 			var acctNum = radio.getAttribute('data-acctnum');
 
 			console.log("Transaction ID: " + tranId + ", Part ID: " + partId
-				+ ", Account Number: " + acctNum);
+				+ ", ACCOUNT ID: " + acctNum);
 
 			// Construct the URL with query parameters
 			var url = 'journalEntries?formmode=modify1&tran_id='
@@ -2455,7 +2455,7 @@
 										        placeholder="AMOUNT" disabled></th>
 										    <th><input type="text"
 										        class="form-control font-weight-bold"
-										        placeholder="ACCT NUM" disabled></th>
+										        placeholder="ACCT ID" disabled></th>
 										    <th><input type="text"
 										        class="form-control font-weight-bold"
 										        placeholder="ACCT NAME" disabled></th>
@@ -2556,7 +2556,7 @@
 											<th style="text-align: center">PA TRAN TY</th>
 											<th style="text-align: center">CURRENCY</th>
 											<th style="text-align: center">AMOUNT</th>
-											<th style="text-align: center">ACCT NUM</th>
+											<th style="text-align: center">ACCT ID</th>
 											<th style="text-align: center; width: 20%;">ACCT NAME</th>
 											<th style="text-align: center; width: 20%;">TRAN
 												PARTICULAR</th>
@@ -2706,7 +2706,7 @@
 
 								<div class="row formline" style="padding: 0px 0px 2px 50px;">
 									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Acct NO</div>
+									<div class="col-sm-2">Acct ID</div>
 
 									<div class="col-sm-2">
 										<div class="input-group">
@@ -3142,7 +3142,7 @@
 										<th style="text-align: center">PA TRAN TY</th>
 										<th style="text-align: center">CURRENCY</th>
 										<th style="text-align: center">AMOUNT</th>
-										<th style="text-align: center">ACCT NUM</th>
+										<th style="text-align: center">ACCT ID</th>
 										<th style="text-align: center; width: 20%;">ACCT NAME</th>
 										<th style="text-align: center; width: 20%;">TRAN
 											PARTICULAR</th>
@@ -3307,7 +3307,7 @@
 
 								<div class="row formline" style="padding: 0px 0px 2px 50px;">
 									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Acct NO</div>
+									<div class="col-sm-2">Acct ID</div>
 
 									<div class="col-sm-2">
 										<div class="input-group">
@@ -3744,7 +3744,7 @@
 												<th style="text-align: center">PA TRAN TY</th>
 												<th style="text-align: center">CURRENCY</th>
 												<th style="text-align: center">AMOUNT</th>
-												<th style="text-align: center">ACCT NUM</th>
+												<th style="text-align: center">ACCT ID</th>
 												<th style="text-align: center; width: 20%;">ACCT NAME</th>
 												<th style="text-align: center; width: 20%;">TRAN
 													PARTICULAR</th>
@@ -3775,7 +3775,7 @@
 											<th style="text-align: left">PA TRAN TY</th>
 											<th style="text-align: left">CURRENCY</th>
 											<th style="text-align: right">AMOUNT</th>
-											<th style="text-align: left">ACCT NUM</th>
+											<th style="text-align: left">ACCT ID</th>
 											<th style="text-align: left; width: 20%;">ACCT NAME</th>
 											<th style="text-align: left">STATUS</th>
 											<th style="text-align: center">SELECT</th>
@@ -3965,7 +3965,7 @@
 
 									<div class="row formline" style="padding: 0px 0px 2px 50px;">
 										<div class="col-sm-1"></div>
-										<div class="col-sm-2">Acct NO</div>
+										<div class="col-sm-2">Acct ID</div>
 
 										<div class="col-sm-2">
 											<div class="input-group">
@@ -4395,7 +4395,7 @@
 													<th style="text-align: center">PA TRAN TY</th>
 													<th style="text-align: center">CURRENCY</th>
 													<th style="text-align: center">AMOUNT</th>
-													<th style="text-align: center">ACCT NUM</th>
+													<th style="text-align: center">ACCT ID</th>
 													<th style="text-align: center; width: 20%;">ACCT NAME</th>
 													<th style="text-align: center; width: 20%;">TRAN
 														PARTICULAR</th>
@@ -4426,7 +4426,7 @@
 											<th style="text-align: left">PA TRAN TY</th>
 											<th style="text-align: left">CURRENCY</th>
 											<th style="text-align: right">AMOUNT</th>
-											<th style="text-align: left">ACCT NUM</th>
+											<th style="text-align: left">ACCT ID</th>
 											<th style="text-align: left; width: 20%;">ACCT NAME</th>
 											<th style="text-align: left">STATUS</th>
 											<th style="text-align: center">SELECT</th>
@@ -4903,7 +4903,7 @@
 
 	<!-- ------------------------------------Modal Boxes---------------------------------- -->
 
-	<!-- ------------------------------------Account Number Mdal---------------------------------- -->
+	<!-- ------------------------------------ACCOUNT ID Mdal---------------------------------- -->
 
 	<div id="myModal" class="modal" style="font-size:120%;">
 		<div class="modal-content1">
@@ -4921,7 +4921,7 @@
 											class="form-control font-weight-bold" placeholder="Classification" disabled>
 									</th>
 									<th><input type="text" id="filteraccountname" oninput="filtermodal()"
-											class="form-control font-weight-bold" placeholder="Account Number" disabled>
+											class="form-control font-weight-bold" placeholder="ACCOUNT ID" disabled>
 									</th>
 									<th><input type="text" id="filteraccountname" oninput="filtermodal()"
 											class="form-control font-weight-bold" placeholder="Account Name" disabled>
@@ -5044,7 +5044,7 @@
 											class="form-control font-weight-bold" placeholder="Classification" disabled>
 									</th>
 									<th><input type="text" id="filteraccountname" oninput="filtermodalmass"
-											class="form-control font-weight-bold" placeholder="Account Number" disabled>
+											class="form-control font-weight-bold" placeholder="ACCOUNT ID" disabled>
 									</th>
 									<th><input type="text" id="filteraccountname" oninput="filtermodalmass"
 											class="form-control font-weight-bold" placeholder="Account Name" disabled>

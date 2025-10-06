@@ -2639,7 +2639,7 @@ function setAccountDetails(a) {
 						<!-- Section Heading: Date Range -->
 						<div class="row formline mt-3 " id="fromtovalues" style="padding-left: 20px;">
 							<!-- From Date -->
-							<div class="col-sm-1">Account No</div>
+							<div class="col-sm-1">Account ID</div>
 							<div class="col-sm-2">
 								<select name="acct_num" id="acct_num1234"
 									onchange="updateAccountName(this); fetchacctnum();">
@@ -2669,7 +2669,7 @@ function setAccountDetails(a) {
 
 							<div class="col-sm-1">Date of Closure</div>
 							<div class="col-sm-2">
-								<input type="date" name="date_closure" id="date_closure" />
+								<input type="date" name="date_closure" placeholder="dd-mm-yyyy" id="date_closure" />
 							</div>
 
 							<div class="col-sm-1">Loan Balance</div>
@@ -2702,7 +2702,7 @@ function setAccountDetails(a) {
 									<th>Flow ID</th>
 									<th>Flow Code</th>
 									<th>Flow Amt</th>
-									<th>Acct No</th>
+									<th>Acct ID</th>
 									<th>Acct Name</th>
 									<th>Select</th>
 								</tr>
@@ -2724,7 +2724,7 @@ function setAccountDetails(a) {
 									<th>Flow ID</th>
 									<th>Flow Code</th>
 									<th style="text-align: center;">Flow Amt</th>
-									<th>Acct No</th>
+									<th>Acct ID</th>
 									<th>Acct Name</th>
 									<th>Select</th>
 								</tr>
@@ -2784,7 +2784,7 @@ function setAccountDetails(a) {
 									<th>Flow ID</th>
 									<th>Flow Code</th>
 									<th>Flow Amt</th>
-									<th>Acct No</th>
+									<th>Acct ID</th>
 									<th>Acct Name</th>
 									<th>Select</th>
 								</tr>
@@ -2814,7 +2814,7 @@ function setAccountDetails(a) {
 									<th>Flow ID</th>
 									<th>Flow Code</th>
 									<th>Flow Amt</th>
-									<th>Acct No</th>
+									<th>Acct ID</th>
 									<th>Acct Name</th>
 									<th>Select</th>
 								</tr>
@@ -2911,7 +2911,7 @@ function setAccountDetails(a) {
 	                    <thead>
 	                        <tr class="filters">
 								<th style="width: 25%;">
-								    <input type="text" class="form-control font-weight-bold" placeholder="Account Number" disabled>
+								    <input type="text" class="form-control font-weight-bold" placeholder="Account ID" disabled>
 								</th>
 								<th style="width: 35%;">
 								    <input type="text" class="form-control font-weight-bold" placeholder="Account Name" disabled>
