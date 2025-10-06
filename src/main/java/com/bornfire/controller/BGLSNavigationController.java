@@ -3549,7 +3549,7 @@ public class BGLSNavigationController {
 
 	@RequestMapping(value = "customerMaster", method = { RequestMethod.GET, RequestMethod.POST })
 	public String customerMaster(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String module, @RequestParam(required = false) String id, Model md,
+			@RequestParam(required = false) String module, @RequestParam(required = false) String id, Model md,String branch_key,
 			HttpServletRequest req) {
 
 		String user = (String) req.getSession().getAttribute("USERID");
@@ -3571,15 +3571,18 @@ public class BGLSNavigationController {
 			md.addAttribute("formmode", "view");
 			CLIENT_MASTER_ENTITY client = clientMasterRepo.getClientView(id);
 			md.addAttribute("customer", client);
+			md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
 		} else if (formmode.equals("modify") && "module2".equals(module)) {
 			md.addAttribute("formmode", "modify");
 			CLIENT_MASTER_ENTITY client = clientMasterRepo.getClientView(id);
 			md.addAttribute("customer", client);
+			md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
 		} else if (formmode.equals("verify") && "module2".equals(module)) {
 			// Allow verify only for module2
 			md.addAttribute("formmode", "verify");
 			CLIENT_MASTER_ENTITY client = clientMasterRepo.getClientView(id);
 			md.addAttribute("customer", client);
+			md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
 		}
 		md.addAttribute("currentDate", TRANDATE);
 		md.addAttribute("ConDate", formattedDate);
@@ -3644,10 +3647,6 @@ public class BGLSNavigationController {
 			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
 			md.addAttribute("acct_bal", chart_Acc_Rep.getacctbal(id));
 			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
-			
-			
-			System.out.println("Branch Key Passed: " + branch_key);
-			System.out.println("Branch Name: " + BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
 
 			// Check unverified status
 			Integer unverifiedStatus = LOAN_ACT_MST_REPO.getUnverifiedStatus(id);
@@ -3660,7 +3659,7 @@ public class BGLSNavigationController {
 			md.addAttribute("acct_bal", chart_Acc_Rep.getacctbal(id));
 			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
 			
-			md.addAttribute("branchName", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
+			md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
 
 
 		} else if (formmode.equals("verify")) {
@@ -3668,7 +3667,7 @@ public class BGLSNavigationController {
 			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
 			md.addAttribute("acct_bal", chart_Acc_Rep.getacctbal(id));
 			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
-			md.addAttribute("branchName", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
+			md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
 		}
 
 		return "Loan_Maintenance";

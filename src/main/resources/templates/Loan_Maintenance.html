@@ -312,7 +312,8 @@
 			event.preventDefault();
 			var id = a.getAttribute("data-id");
 			var holder_key = a.getAttribute("data-account_holderkey");
-			location.href = 'Loan_Maintenance?formmode=verify&id=' + id + '&holder_key=' + holder_key;
+			var branch_key = a.getAttribute("data-branch_key");
+			location.href = 'Loan_Maintenance?formmode=verify&id=' + id + '&holder_key=' + holder_key+ '&branch_key=' + branch_key;
 		}
 	</script>
 	<script>
@@ -320,7 +321,8 @@
 			event.preventDefault();
 			var id = a.getAttribute("data-id");
 			var holder_key = a.getAttribute("data-account_holderkey");
-			location.href = 'Loan_Maintenance?formmode=modify&id=' + id + '&holder_key=' + holder_key;
+			var branch_key = a.getAttribute("data-branch_key");
+			location.href = 'Loan_Maintenance?formmode=modify&id=' + id + '&holder_key=' + holder_key+ '&branch_key=' + branch_key;
 		}
 		function submitformverify() {
 			event.preventDefault();
@@ -1011,10 +1013,10 @@
 											<label>Assigned Branch</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${branchName1?.branch_name}"
+											<input type="text" th:value="${branchName1}"
 												name="assigned_branchkey" id="assigned_branchkey"
 												th:if="${formmode}=='view'" readonly />
-											<input type="text" th:value="${branchName1?.branch_name}"
+											<input type="text" th:value="${branchName1}"
 												name="assigned_branchkey" id="assigned_branchkey"
 												th:if="${formmode}=='modify'" />
 										</div>
@@ -1667,14 +1669,14 @@
 								<div class="card-footer text-center mt-4">
 									<button class="btn-primary big-btn">Home</button>
 									<button class="btn-primary big-btn" th:if="${Boolean} and ${formmode}=='view'"
-										th:attr="data-id=${view?.id},data-account_holderkey=${view?.account_holderkey}"
+										th:attr="data-id=${view?.id},data-account_holderkey=${view?.account_holderkey},data-branch_key=${view?.assigned_branchkey}" 
 										onclick="verifyscreen(this);">
 										Verify</button>
 
 									<!-- Submit Button (Shown when Boolean is false) -->
 									<button type="button" class="btn-primary big-btn"
 										th:if="!${Boolean} and ${formmode}=='view'" data-dismiss="modal"
-										th:attr="data-id=${view?.id}, data-account_holderkey=${view?.account_holderkey}"
+										th:attr="data-id=${view?.id}, data-account_holderkey=${view?.account_holderkey}, data-branch_key=${view?.assigned_branchkey}"
 										onclick="modifyscreen(this);">Modify</button>
 									<button type="button" class="btn-primary big-btn" th:if="${formmode}=='modify'"
 										data-dismiss="modal" onclick="submitformmodify(this);">Submit</button>
@@ -1819,7 +1821,7 @@
 											<label>Assigned Branch</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${branchName1?.branch_name}"
+											<input type="text" th:value="${branchName1}"
 												name="assigned_branchkey" id="assigned_branchkey" readonly />
 										</div>
 										<div class="col-sm-2">
