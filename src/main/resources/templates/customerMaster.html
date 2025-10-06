@@ -2249,6 +2249,14 @@
 				$(tableSelector).append(row);
 			});
 		}
+		
+		function viewLoan(holderKey, id) {
+		    // You can add any custom logic here before redirecting
+		    console.log('Redirecting to loan view:', holderKey, id);
+
+		    const url = `loanMaster?formmode=viewloan&id=${id}&holder_key=${holderKey}`;
+		    window.location.href = url; // Redirects to the URL
+		  }
 
 		function getAcctDetails() {
 			var id = document.getElementById('customer_id').value;
@@ -2268,15 +2276,18 @@
 					if (data.length > 0) {
 						data.forEach(function (item) {
 							var row = `
- <tr>
-                <td   ><a href="http://localhost:9091/ASPIRA/
-									loanMaster?formmode=viewloan&id=${item[1]}&
-									holder_key=${item[0]}">${item[1]}</a></td>
+                <tr>
+					<td>
+					  <a href="javascript:void(0);" 
+					     onclick="viewLoan('${item[0]}', '${item[1]}')">
+					     ${item[1]}
+					  </a>
+					</td>
                 <td>${item[2]}</td>
                 <td>${(item[3])}</td>
                 <td style="text-align:right;">${formatNumber(item[4])}</td>
                 <td style="text-align:right;">${formatNumber(item[5])}</td>
-            </tr>
+              </tr>
                     `;
 							$('#loanTable').append(row);
 						});
