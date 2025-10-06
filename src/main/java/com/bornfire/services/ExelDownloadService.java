@@ -28,15 +28,15 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bornfire.entities.ASPIRA_LOAN_REPAYMENT_ENTITY;
-import com.bornfire.entities.ASPIRA_LOAN_REPAYMENT_REPO;
+
 import com.bornfire.entities.BGLSAuditTable;
 import com.bornfire.entities.BGLSAuditTable_Rep;
 import com.bornfire.entities.CLIENT_MASTER_ENTITY;
 import com.bornfire.entities.CLIENT_MASTER_REPO;
 import com.bornfire.entities.LOAN_ACT_MST_ENTITY;
 import com.bornfire.entities.LOAN_ACT_MST_REPO;
-
+import com.bornfire.entities.LOAN_REPAYMENT_ENTITY;
+import com.bornfire.entities.LOAN_REPAYMENT_REPO;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -54,7 +54,7 @@ public class ExelDownloadService {
 	SessionFactory sessionFactory;
 	
 	@Autowired
-	ASPIRA_LOAN_REPAYMENT_REPO lOAN_REPAYMENT_REPO;
+	LOAN_REPAYMENT_REPO lrtRepo;
 	
 	@Autowired
 	LOAN_ACT_MST_REPO loanMasterRepo;
@@ -377,7 +377,7 @@ public class ExelDownloadService {
 	        int rowIdx = 0;
 
 	        if ("REPAYMENT".equalsIgnoreCase(type)) {
-	            List<ASPIRA_LOAN_REPAYMENT_ENTITY> dataList = lOAN_REPAYMENT_REPO.findAll();
+	            List<LOAN_REPAYMENT_ENTITY> dataList = lrtRepo.getRepaymentDetails();
 
 	            // Header
 	            Row header = sheet.createRow(rowIdx++);
@@ -389,41 +389,49 @@ public class ExelDownloadService {
 	            	    "DUEDATE",
 	            	    "LASTPAIDDATE",
 	            	    "REPAIDDATE",
-	            	    "STATE",
+	            	    "PAYMENTSTATE",
+	            	    "ISPAYMENTHOLIDAY",
+	            	    "PRINCIPALEXP",
 	            	    "PRINCIPALPAID",
 	            	    "PRINCIPALDUE",
 	            	    "INTERESTEXP",
 	            	    "INTERESTPAID",
 	            	    "INTERESTDUE",
+	            	    "FEEEXP",
+	            	    "FEEPAID",
+	            	    "FEEDUE",
+	            	    "PENALTYEXP",
 	            	    "PENALTYPAYED",
 	            	    "PENALTYDUE"
 	            	};
 
+
 	            for (int i = 0; i < headers.length; i++) header.createCell(i).setCellValue(headers[i]);
 
-	            for (ASPIRA_LOAN_REPAYMENT_ENTITY entity : dataList) {
+	            for (LOAN_REPAYMENT_ENTITY entity : dataList) {
 	                Row excelRow = sheet.createRow(rowIdx++);
-	                excelRow.createCell(0).setCellValue(entity.getEncodedkey());
-	                excelRow.createCell(1).setCellValue(entity.getParentaccountkey());
-	                excelRow.createCell(2).setCellValue(entity.getAssignedbranchkey());
-	                excelRow.createCell(3).setCellValue(entity.getAssigneduserkey());
-	                excelRow.createCell(4).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDuedate()));
-	                excelRow.createCell(5).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getLastpaiddate()));
-	                excelRow.createCell(6).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getRepaiddate()));
-	                excelRow.createCell(7).setCellValue(entity.getState()); // payment_state
-//	                excelRow.createCell(8).setCellValue(entity.getIs_payment_holiday() ? "Yes" : "No"); 
-//	                excelRow.createCell(9).setCellValue(entity.getPrincipal_exp() == null ? "" : entity.getPrincipal_exp().toPlainString());
-	                excelRow.createCell(10).setCellValue(entity.getPrincipalpaid() == null ? "" : entity.getPrincipalpaid().toPlainString());
-	                excelRow.createCell(11).setCellValue(entity.getPrincipaldue() == null ? "" : entity.getPrincipaldue().toPlainString());
-//	                excelRow.createCell(12).setCellValue(entity.getInterest_exp() == null ? "" : entity.getInterest_exp().toPlainString());
-	                excelRow.createCell(13).setCellValue(entity.getInterestpaid() == null ? "" : entity.getInterestpaid().toPlainString());
-	                excelRow.createCell(14).setCellValue(entity.getInterestdue() == null ? "" : entity.getInterestdue().toPlainString());
-//	                excelRow.createCell(15).setCellValue(entity.getFee_exp() == null ? "" : entity.getFee_exp().toPlainString());
-//	                excelRow.createCell(16).setCellValue(entity.getFeespaid() == null ? "" : entity.getFee_paid().toPlainString());
-//	                excelRow.createCell(17).setCellValue(entity.getFeesdue() == null ? "" : entity.getFee_due().toPlainString());
-//	                excelRow.createCell(18).setCellValue(entity.getPenalty_exp() == null ? "" : entity.getPenalty_exp().toPlainString());
-	                excelRow.createCell(19).setCellValue(entity.getPenaltypaid() == null ? "" : entity.getPenaltypaid().toPlainString());
-	                excelRow.createCell(20).setCellValue(entity.getPenaltydue() == null ? "" : entity.getPenaltydue().toPlainString());
+	                excelRow.createCell(0).setCellValue(entity.getEncoded_key());
+	                excelRow.createCell(1).setCellValue(entity.getParent_account_key());
+	                excelRow.createCell(2).setCellValue(entity.getAssigned_branch_key());
+	                excelRow.createCell(3).setCellValue(entity.getAssigned_user_key());
+	                excelRow.createCell(4).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDue_date()));
+	                excelRow.createCell(5).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getLast_paid_date()));
+	                excelRow.createCell(6).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getRepaid_date()));
+	                excelRow.createCell(7).setCellValue(entity.getPayment_state()); // payment_state
+	                excelRow.createCell(8).setCellValue(entity.getIs_payment_holiday() != null ? "Yes" : "No"); 
+	                excelRow.createCell(9).setCellValue(entity.getPrincipal_exp() == null ? "" : entity.getPrincipal_exp().toPlainString());
+	                excelRow.createCell(10).setCellValue(entity.getPrincipal_paid() == null ? "" : entity.getPrincipal_paid().toPlainString());
+	                excelRow.createCell(11).setCellValue(entity.getPrincipal_due() == null ? "" : entity.getPrincipal_due().toPlainString());
+	                excelRow.createCell(12).setCellValue(entity.getInterest_exp() == null ? "" : entity.getInterest_exp().toPlainString());
+	                excelRow.createCell(13).setCellValue(entity.getInterest_paid() == null ? "" : entity.getInterest_paid().toPlainString());
+	                excelRow.createCell(14).setCellValue(entity.getInterest_due() == null ? "" : entity.getInterest_due().toPlainString());
+	                excelRow.createCell(15).setCellValue(entity.getFee_exp() == null ? "" : entity.getFee_exp().toPlainString());
+	                excelRow.createCell(16).setCellValue(entity.getFee_paid() == null ? "" : entity.getFee_paid().toPlainString());
+	                excelRow.createCell(17).setCellValue(entity.getFee_due() == null ? "" : entity.getFee_due().toPlainString());
+	                excelRow.createCell(18).setCellValue(entity.getPenalty_exp() == null ? "" : entity.getPenalty_exp().toPlainString());
+	                excelRow.createCell(19).setCellValue(entity.getPenalty_paid() == null ? "" : entity.getPenalty_paid().toPlainString());
+	                excelRow.createCell(20).setCellValue(entity.getPenalty_due() == null ? "" : entity.getPenalty_due().toPlainString());
+	                
 
 	            }
 
@@ -431,7 +439,9 @@ public class ExelDownloadService {
 	            response.setHeader("Content-Disposition", "inline; filename=Repayment_Data.xlsx");
 
 	        } else if ("CUSTOMER".equalsIgnoreCase(type)) {
-	            List<CLIENT_MASTER_ENTITY> dataList = clientMasterRepo.findAll();
+	        	System.out.println("this first");
+	            List<CLIENT_MASTER_ENTITY> dataList = clientMasterRepo.getClientDetails();
+	            System.out.println("data fetched");
 
 	            Row header = sheet.createRow(rowIdx++);
 	            String[] headers = {
@@ -461,6 +471,8 @@ public class ExelDownloadService {
 	            	};
 
 	            for (int i = 0; i < headers.length; i++) header.createCell(i).setCellValue(headers[i]);
+	            
+	            System.out.println("mapping start");
 
 	            for (CLIENT_MASTER_ENTITY entity : dataList) {
 	                Row excelRow = sheet.createRow(rowIdx++);
@@ -494,7 +506,9 @@ public class ExelDownloadService {
 	            response.setHeader("Content-Disposition", "inline; filename=Customer_Data.xlsx");
 
 	        } else if ("LOAN".equalsIgnoreCase(type)) {
-	            List<LOAN_ACT_MST_ENTITY> dataList = loanMasterRepo.findAll();
+	        	System.out.println("start");
+	            List<LOAN_ACT_MST_ENTITY> dataList = loanMasterRepo.getloanDetails();
+	            System.out.println("fetched");
 
 	            Row header = sheet.createRow(rowIdx++);
 	            String[] headers = {
@@ -536,6 +550,7 @@ public class ExelDownloadService {
 	            	};
 
 	            for (int i = 0; i < headers.length; i++) header.createCell(i).setCellValue(headers[i]);
+	            System.out.println("started loop");
 
 	            for (LOAN_ACT_MST_ENTITY entity : dataList) {
 	                Row excelRow = sheet.createRow(rowIdx++);
@@ -577,7 +592,7 @@ public class ExelDownloadService {
 	                excelRow.createCell(34).setCellValue(entity.getDays_late() == null ? "" : entity.getDays_late().toPlainString());
 
 	            }
-
+	            System.out.println("download ready");
 
 	            saveAudit(userID, userName, "Loan File Download!", "LOAN_ACT_MST_ENTITY", auditRefNo);
 	            response.setHeader("Content-Disposition", "inline; filename=Loan_Data.xlsx");

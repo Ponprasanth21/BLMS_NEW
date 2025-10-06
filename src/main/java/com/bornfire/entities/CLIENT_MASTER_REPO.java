@@ -185,11 +185,51 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 		List<Object[]> getLoanFlowsByCustomer(Date toDate, String customerId);
 		
 		
-		@Query(value = "SELECT *, " +
+//		@Query(value = "SELECT * " +
+//	               "FROM CLIENT_MASTER_TBL " +
+//	               "ORDER BY CLIENT_STATE, CUSTOMER_ID " +
+//	               "FETCH FIRST 10000 ROWS ONLY",
+//	       nativeQuery = true)
+//	List<CLIENT_MASTER_ENTITY> getClientDetails();
+		
+		@Query(value = "SELECT * " +
 	               "FROM CLIENT_MASTER_TBL " +
-	               "ORDER BY CLIENT_STATE, CUSTOMER_ID", 
+	               "ORDER BY CLIENT_STATE, CUSTOMER_ID",
 	       nativeQuery = true)
 	List<CLIENT_MASTER_ENTITY> getClientDetails();
+
+		
+//		@Query(value = "SELECT " +
+//		        "encoded_key, " +
+//		        "client_state, " +
+//		        "creation_date, " +
+//		        "approved_date, " +
+//		        "activation_date, " +
+//		        "last_modified_date, " +
+//		        "customer_id, " +
+//		        "first_name, " +
+//		        "last_name, " +
+//		        "gender, " +
+//		        "mobile_phone, " +
+//		        "email_address, " +
+//		        "suburb, " +
+//		        "city, " +
+//		        "address_line1, " +
+//		        "address_line2, " +
+//		        "address_line3, " +
+//		        "preferred_language, " +
+//		        "assigned_branch_key, " +
+//		        "assigned_user_key, " +
+//		        "client_role_key, " +
+//		        "loan_cycle, " +
+//		        "group_loan_cycle, " +
+//		        "asondate " +
+//		        "FROM CLIENT_MASTER_TBL " +
+//		        "ORDER BY client_state, customer_id " +
+//	            "FETCH FIRST 2000 ROWS ONLY",
+//		       nativeQuery = true)
+//		List<CLIENT_MASTER_ENTITY> getClientDetails();
+
 
 	
 

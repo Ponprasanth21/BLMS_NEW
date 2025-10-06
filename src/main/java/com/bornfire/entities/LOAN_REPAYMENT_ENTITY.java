@@ -50,7 +50,21 @@ public class LOAN_REPAYMENT_ENTITY {
 	private Date	modify_time;
 	@DateTimeFormat(pattern="dd-MM-yyyy HH:mm")
 	private Date	auth_time;
+	private String assigned_branch_key;
+	private String assigned_user_key;
 	
+	public String getAssigned_branch_key() {
+		return assigned_branch_key;
+	}
+	public void setAssigned_branch_key(String assigned_branch_key) {
+		this.assigned_branch_key = assigned_branch_key;
+	}
+	public String getAssigned_user_key() {
+		return assigned_user_key;
+	}
+	public void setAssigned_user_key(String assigned_user_key) {
+		this.assigned_user_key = assigned_user_key;
+	}
 	public String getEntity_flg() {
 		return entity_flg;
 	}

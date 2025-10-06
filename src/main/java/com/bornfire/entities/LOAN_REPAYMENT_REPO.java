@@ -399,5 +399,13 @@ public interface LOAN_REPAYMENT_REPO extends JpaRepository<LOAN_REPAYMENT_ENTITY
 				    "ORDER BY due_date, flow_id", 
 				    nativeQuery = true)
 				List<Object[]> getLoanFlowsByCustomer(Date toDate, String customerId);
+				
+				
+
+@Query(value = "SELECT * " +
+"FROM LOAN_REPAYMENT_TBL " +
+"ORDER BY encoded_key",
+nativeQuery = true)
+List<LOAN_REPAYMENT_ENTITY> getRepaymentDetails();
 
 }
