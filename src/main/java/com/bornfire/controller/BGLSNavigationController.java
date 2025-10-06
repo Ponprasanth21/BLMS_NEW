@@ -72,6 +72,7 @@ import com.bornfire.entities.BGLS_CONTROL_TABLE_REP;
 import com.bornfire.entities.BGLS_Control_Table;
 import com.bornfire.entities.BGLS_Journal_History;
 import com.bornfire.entities.BGLS_Journal_History_Rep;
+import com.bornfire.entities.BGLS_ORG_BRANCH_REPO;
 import com.bornfire.entities.Baj_Work_Repo;
 import com.bornfire.entities.BamDocumentMasRep;
 import com.bornfire.entities.Bamdocumentmanager;
@@ -149,6 +150,9 @@ public class BGLSNavigationController {
 
 	@Autowired
 	LoginServices loginServices;
+	
+	@Autowired
+	BGLS_ORG_BRANCH_REPO BGLS_ORG_BRANCH_REPO;
 
 	@Autowired
 	Collateral_management_Repo collateral_management_Repo;
@@ -3613,7 +3617,7 @@ public class BGLSNavigationController {
 	/* Aishu */
 	@RequestMapping(value = "Loan_Maintenance", method = { RequestMethod.GET, RequestMethod.POST })
 	public String Loan_Maintanance(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req,
-			@RequestParam(required = false) String id, @RequestParam(required = false) String holder_key,
+			@RequestParam(required = false) String id, @RequestParam(required = false) String holder_key,@RequestParam(required = false) String branch_key,
 			@RequestParam(defaultValue = "1") int page // page number for pagination
 	) {
 
@@ -3640,23 +3644,31 @@ public class BGLSNavigationController {
 			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
 			md.addAttribute("acct_bal", chart_Acc_Rep.getacctbal(id));
 			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
+			
+			
+			System.out.println("Branch Key Passed: " + branch_key);
+			System.out.println("Branch Name: " + BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
 
 			// Check unverified status
 			Integer unverifiedStatus = LOAN_ACT_MST_REPO.getUnverifiedStatus(id);
 			Boolean isUnverified = unverifiedStatus != null && unverifiedStatus == 1;
 			md.addAttribute("Boolean", isUnverified);
-
+			md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
 		} else if (formmode.equals("modify")) {
 			md.addAttribute("formmode", "modify");
 			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
 			md.addAttribute("acct_bal", chart_Acc_Rep.getacctbal(id));
 			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
+			
+			md.addAttribute("branchName", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
+
 
 		} else if (formmode.equals("verify")) {
 			md.addAttribute("formmode", "verify");
 			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
 			md.addAttribute("acct_bal", chart_Acc_Rep.getacctbal(id));
 			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
+			md.addAttribute("branchName", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
 		}
 
 		return "Loan_Maintenance";
