@@ -1872,10 +1872,11 @@
 
 			var id = a.getAttribute("data-id");
 			var holder_key = a.getAttribute("data-account_holderkey");
+			 var branch_key = a.getAttribute("data-branch_key");
 
 			// Construct base URL
 			let url = id && id.trim() !== ""
-				? `customerMaster?formmode=view&id=${id}`
+				? `customerMaster?formmode=view&id=${id}&branch_key=${branch_key}`
 				: `customerMaster?formmode=list`;
 
 			// Append modify=true if modify is true
@@ -1894,7 +1895,7 @@
 		function ClickId(a, mode = 'view') {
 			event.preventDefault();
 			let id = null;
-
+			const assigned_branch_key = document.getElementById('assigned_branch_key').value;
 			if (a) {
 				console.log("Customer ID Text Content:", a.textContent.trim());
 				console.log("Customer ID Data Attribute:", a.getAttribute("data-id"));
@@ -1918,11 +1919,11 @@
 			}
 			// Construct the URL based on whether ID exists
 			let url = id && id !== ""
-				? `customerMaster?formmode=${mode}&id=${id}&module=${dues}`
+				? `customerMaster?formmode=${mode}&id=${id}&module=${dues}&branch_key=${assigned_branch_key}`
 				: `customerMaster?formmode=list&module=${dues}`;
 			//alert(url)
 			location.href = url; // Redirect to the appropriate page
-		}
+		} 
 		function submitForm() {
 			event.preventDefault();
 			var formData = $("#drawDownDetailsAdd").serializeArray();
@@ -2031,12 +2032,16 @@
 			}
 		});
 
-
 		function viewscreen(a) {
-			var id = a.getAttribute("data-id");
-			var holder_key = a.getAttribute("data-account_holderkey");
-			location.href = `./customerMaster?formmode=view&module=${dues}&id=` + id;
+		    var id = a.getAttribute("data-id");
+		    var holder_key = a.getAttribute("data-account_holderkey");
+		    var branch_key = a.getAttribute("data-branch_key");
+
+		    // Make sure `dues` is defined somewhere above this function
+
+		    location.href = `customerMaster?formmode=view&module=${dues}&id=${id}&holder_key=${holder_key}&branch_key=${branch_key}`;
 		}
+
 
 	</script>
 	<script th:inline="javascript">
@@ -2234,6 +2239,7 @@
                 <td class="text-primary"
                     data-id="${item?.customer_id || ''}"
                     data-account_holderkey="${item?.customer_id || ''}"
+                    	data-branch_key="${item?.assigned_branch_key || ''}"
                     onclick="viewscreen(this);">
                     ${item?.customer_id || ''}
                 </td>
@@ -2917,7 +2923,7 @@
 											</div>
 											<div class="col-sm-2">
 												<input type="text" name="assigned_branch_key"
-													th:value="${customer?.assigned_branch_key}" id="branch" />
+													th:value="${branchName1}" id="branch" />
 											</div>
 											<div class="col-sm-2">
 												<label>Client Role Key</label>
@@ -2946,6 +2952,8 @@
 												<input type="text" name="approved_date"
 													th:value="${customer?.approved_date != null ? #dates.format(customer.approved_date, 'dd-MM-yyyy') : ''}"
 													id="approval_date" />
+													<input   type="text" name="assigned_branch_key" id="assigned_branch_key"
+                                                           th:value="${customer?.assigned_branch_key}"  hidden />
 											</div>
 										</div>
 
