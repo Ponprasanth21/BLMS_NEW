@@ -1186,7 +1186,7 @@
 												id="repayment_schedule_method" th:if="${formmode}=='modify'" />
 										</div>
 										<div class="col-sm-2 ">
-											<label>Repayment Instalments</label>
+											<label>Repayment Instalments(Months)</label>
 										</div>
 										<div class="col-sm-2">
 											<input type="text" id="repayment_installments"
@@ -1640,13 +1640,14 @@
 								</div>
 								<div class="row formline  ml-2  mt-1">
 									<div class="col-sm-2">
-										<label>As On Date</label>
+										<label>Days In Arrear</label>
 									</div>
 									<div class="col-sm-2">
-										<input type="text" th:value="${#dates.format(view?.asondate, 'dd-MM-yyyy')}"
-											name="asondate" id="asondate" th:if="${formmode}=='view'" readonly /> <input
-											type="text" th:value="${#dates.format(view?.asondate, 'dd-MM-yyyy')}"
-											name="asondate" id="asondate" th:if="${formmode}=='modify'" />
+										<input type="text" th:value="${view?.days_inarrears}"
+											name="days_inarrears" id="days_inarrears" th:if="${formmode}=='view'"
+											readonly /> <input type="text" th:value="${view?.days_inarrears}"
+											name="days_inarrears" id="days_inarrears"
+											th:if="${formmode}=='modify'" />
 									</div>
 									<div class="col-sm-2">
 										<label>Remarks 1</label>
@@ -1949,7 +1950,7 @@
 												id="repayment_schedule_method" readonly />
 										</div>
 										<div class="col-sm-2 ">
-											<label>Repayment Instalments</label>
+											<label>Repayment Instalments(Months)</label>
 										</div>
 										<div class="col-sm-2">
 											<input type="text" id="repayment_installments"

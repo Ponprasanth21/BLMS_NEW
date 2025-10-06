@@ -1697,7 +1697,7 @@ public class BGLSRestController {
 			    String flowCode = entity.getFlow_code();
 
 			    // Fetch Loan Account Master record
-			    LOAN_ACT_MST_ENTITY loanActRecord = lOAN_ACT_MST_REPO.findByAcctNum(accountNumber);
+			    LOAN_ACT_MST_ENTITY loanActRecord = lOAN_ACT_MST_REPO.getLoanView(accountNumber);
 			    if (loanActRecord == null) continue;
 
 			    switch (flowCode) {

@@ -589,12 +589,12 @@ document.addEventListener('DOMContentLoaded', function() {
 			event.preventDefault();
 			/*var button = document.getElementById('verifyButton');
 			button.disabled = true;*/
-			var accountNo = a.getAttribute('data-loan_accountno');
+			var accountNo = a.getAttribute('data-acct');
 			var customer_id = a.getAttribute('data-customer_id');
 			
 			console.log(customer_id+" "+accountNo);
 			
-			location.href='CustomerMaintenanceFromLease?formmode=viewCust&customer_id='+customer_id+'&loanAcctNo='+accountNo;
+			location.href='customerMaster?formmode=view&module=module2&id='+customer_id;
 			
 		}
 	</script>
