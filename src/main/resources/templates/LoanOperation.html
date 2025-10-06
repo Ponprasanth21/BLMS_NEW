@@ -1545,7 +1545,6 @@
 		    const payload = [];
 
 		    rows.forEach(row => {
-		        const tranId = row.querySelector('input[name="tran_id"]')?.value || "";
 		        const acctNum = row.querySelector('input[name="acct_num"]')?.value || "";
 		        const acctName = row.querySelector('input[name="acct_namedata"]')?.value || "";
 		        const tranAmt = parseFloat(row.querySelector('input[name="tran_amt"]')?.value || 0);
@@ -1555,7 +1554,7 @@
 		        const rate = row.querySelector('input[name="rate"]')?.value || "UNALLOCATED";
 
 		        payload.push({
-		            tran_id: tranId,
+		            tran_id: "",
 		            acct_num: acctNum,
 		            acct_namedata: acctName,
 		            tran_amt: tranAmt,
@@ -1568,7 +1567,7 @@
 
 		    console.log("Payload to send:", payload);
 
-		    fetch("/saveMultipleTransactions", {
+		    fetch("/ASPIRA/saveMultipleTransactions", {
 		        method: "POST",
 		        headers: {
 		            "Content-Type": "application/json",
@@ -1577,14 +1576,31 @@
 		        body: JSON.stringify(payload)
 		    })
 		    .then(res => {
-		        if (!res.ok) {
-		            throw new Error("Server returned " + res.status);
-		        }
+		        if (!res.ok) throw new Error("Server returned " + res.status);
 		        return res.json();
 		    })
 		    .then(data => {
 		        console.log("✅ Server response:", data);
-		        alert(data.message);
+
+		        let msg = "";
+		        if (data.status === "success") {
+		            msg = `${data.message}\n\n`;
+		            data.transactions.forEach(t => {
+		                msg += `${t.reference} → ${t.transaction_id}\n`;
+		            });
+
+		            // Update tran_id in table
+		            data.transactions.forEach((rowData, index) => {
+		                const tranIdInput = rows[index].querySelector('input[name="tran_id"]');
+		                if (tranIdInput) tranIdInput.value = rowData.transaction_id;
+		            });
+
+		        } else {
+		            msg = `Error: ${data.message}`;
+		        }
+
+		        // Show alert with server message
+		        alert(msg);
 		    })
 		    .catch(err => {
 		        console.error("❌ AJAX error:", err);
@@ -1592,8 +1608,12 @@
 		    });
 		}
 
-		
-				
+		// Optional: close modal function if needed
+		function closeModal11() {
+		    const modal = bootstrap.Modal.getInstance(document.getElementById('alert121'));
+		    if (modal) modal.hide();
+		}
+
 		function handleCheckboxClickCollectiondata101() {
 			var selectedData = [];
 			var fromdate = $('#fromdate').val();
@@ -2929,8 +2949,7 @@
 
 						<div class="card-footer text-center" style="background-color: #e9ecef">
 							<button class="btn-primary big-btn" onclick="Home();">Home</button>
-							<button class="btn-primary big-btn"
-								onclick="submitAllRows(this);">Submit</button>
+							<button class="btn-primary big-btn" onclick="submitAllRows(this);">Submit</button>
 							<button class="btn-primary big-btn" onclick="back();">Back</button>
 						</div>
 					</div>
@@ -3075,6 +3094,7 @@
 			</div>
 		</div>
 	</div>
+
 </body>
 
 </html>

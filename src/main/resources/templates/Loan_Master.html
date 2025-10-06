@@ -1394,106 +1394,106 @@
 
 									<div class="row formline ml-2  mt-1">
 										<div class="col-sm-2">
-											<label>Principal Due</label>
+											<label style="color:red;">Principal Due</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="principal_due" style="background-color:yellow;"
+											<input type="text" id="principal_due" style="background-color:orange;"
 												th:value="${view?.principal_due == 0 ? '0.00' :#numbers.formatDecimal(view?.principal_due, 0, 'COMMA', 2, 'POINT')}"
 												readonly name="principal_due" />
 										</div>
 										<div class="col-sm-2">
-											<label>Principal Paid</label>
+											<label style="color:red;">Principal Paid</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" style="background-color:yellow;"
+											<input type="text" style="background-color:orange;"
 												th:value="${view?.principal_paid == 0 ? '0.00' :#numbers.formatDecimal(view?.principal_paid, 0, 'COMMA', 2, 'POINT')}"
 												name="principal_paid" id="principal_paid" readonly />
 										</div>
 										<div class="col-sm-2">
-											<label>Principal Balance</label>
+											<label style="color:red;">Principal Balance</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="principal_balance" style="background-color:yellow;"
+											<input type="text" id="principal_balance" style="background-color:orange;"
 												th:value="${view?.principal_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.principal_balance, 0, 'COMMA', 2, 'POINT')}"
 												readonly name="principal_balance" />
 										</div>
 									</div>
 									<div class="row formline ml-2  mt-1">
 										<div class="col-sm-2 ">
-											<label>Interest Due</label>
+											<label style="color:red;">Interest Due</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="interest_due" style="background-color:yellow;"
+											<input type="text" id="interest_due" style="background-color:orange;"
 												th:value="${view?.interest_due == 0 ? '0.00' :#numbers.formatDecimal(view?.interest_due, 0, 'COMMA', 2, 'POINT')}"
 												name="interest_due" readonly />
 										</div>
 										<div class="col-sm-2">
-											<label>Interest Paid</label>
+											<label style="color:red;">Interest Paid</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="interest_paid" style="background-color:yellow;"
+											<input type="text" id="interest_paid" style="background-color:orange;"
 												th:value="${view?.interest_paid == 0 ? '0.00' :#numbers.formatDecimal(view?.interest_paid, 0, 'COMMA', 2, 'POINT')}"
 												name="interest_paid" readonly />
 										</div>
 										<div class="col-sm-2">
-											<label>Interest Balance</label>
+											<label style="color:red;">Interest Balance</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="interest_balance" style="background-color:yellow;"
+											<input type="text" id="interest_balance" style="background-color:orange;"
 												th:value="${view?.interest_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.interest_balance, 0, 'COMMA', 2, 'POINT')}"
 												name="interest_balance" readonly />
 										</div>
 									</div>
 									<div class="row formline ml-2  mt-1">
 										<div class="col-sm-2">
-											<label>Fee Due</label>
+											<label style="color:red;">Fee Due</label>
 										</div>
 										<div class="col-sm-2">
 											<input type="text" name="fees_due" id="fees_due"
-												style="background-color:yellow;"
+												style="background-color:orange;"
 												th:value="${view?.fees_due == 0 ? '0.00' :#numbers.formatDecimal(view?.fees_due, 0, 'COMMA', 2, 'POINT')}"
 												readonly />
 										</div>
 										<div class="col-sm-2 ">
-											<label>Fee Paid</label>
+											<label style="color:red;">Fee Paid</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="fees_paid" style="background-color:yellow;"
+											<input type="text" id="fees_paid" style="background-color:orange;"
 												th:value="${view?.fees_paid == 0 ? '0.00' :#numbers.formatDecimal(view?.fees_paid, 0, 'COMMA', 2, 'POINT')}"
 												name="fees_paid" readonly />
 										</div>
 										<div class="col-sm-2">
-											<label>Fee Balance</label>
+											<label style="color:red;">Fee Balance</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="fees_balance" style="background-color:yellow;"
+											<input type="text" id="fees_balance" style="background-color:orange;"
 												th:value="${view?.fees_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.fees_balance, 0, 'COMMA', 2, 'POINT')}"
 												name="fees_balance" readonly />
 										</div>
 									</div>
 									<div class="row formline ml-2  mt-1">
 										<div class="col-sm-2">
-											<label>Penalty Due</label>
+											<label style="color:red;">Penalty Due</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="penalty_due" style="background-color:yellow;"
+											<input type="text" id="penalty_due" style="background-color:orange;"
 												th:value="${view?.penalty_due == 0 ? '0.00' :#numbers.formatDecimal(view?.penalty_due, 0, 'COMMA', 2, 'POINT')}"
 												name="penalty_due" readonly />
 										</div>
 										<div class="col-sm-2">
-											<label>Penalty Paid</label>
+											<label style="color:red;">Penalty Paid</label>
 										</div>
 										<div class="col-sm-2">
 											<input type="text" name="penalty_paid" id="penalty_paid"
-												style="background-color:yellow;"
+												style="background-color:orange;"
 												th:value="${view?.penalty_paid == 0 ? '0.00' :#numbers.formatDecimal(view?.penalty_paid, 0, 'COMMA', 2, 'POINT')}"
 												readonly />
 										</div>
 										<div class="col-sm-2">
-											<label>Penalty Balance</label>
+											<label style="color:red;">Penalty Balance</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="penalty_balance" style="background-color:yellow;"
+											<input type="text" id="penalty_balance" style="background-color:orange;"
 												th:value="${view?.penalty_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.penalty_balance, 0, 'COMMA', 2, 'POINT')}"
 												name="penalty_balance" readonly />
 										</div>
@@ -1627,7 +1627,7 @@
 									</div>
 									<div class="col-sm-2">
 										<input type="text"
-											th:value="${#dates.format(view?.manualoverride_expiry_date, 'dd-MM-yyyy')}"
+											th:value="${#dates.format(view?.manualoverride_expiry_date, 'dd/MM/yyyy')}"
 											name="manualoverride_expiry_date" id="manualoverride_expiry_date"
 											readonly />
 									</div>
@@ -1699,7 +1699,7 @@
 									</div>
 									<div class="col-sm-2">
 										<input type="text" name="date_of_first_call"
-											th:value="${#dates.format(view?.date_of_first_call, 'dd-MM-yyyy')}"
+											th:value="${#dates.format(view?.date_of_first_call, 'dd/MM/yyyy')}"
 											id="date_of_first_call" readonly />
 									</div>
 
@@ -1716,7 +1716,7 @@
 										<label>As On Date</label>
 									</div>
 									<div class="col-sm-2">
-										<input type="text" th:value="${#dates.format(view?.asondate, 'dd-MM-yyyy')}"
+										<input type="text" th:value="${#dates.format(view?.asondate, 'dd/MM/yyyy')}"
 											name="asondate" id="asondate" readonly />
 									</div>
 									<div class="col-sm-2">

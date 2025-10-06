@@ -145,60 +145,59 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 			+ "AND (:status IS NULL OR CLIENT_STATE = :status) FETCH FIRST 2000 ROWS ONLY", nativeQuery = true)
 	List<CLIENT_MASTER_ENTITY> searchByEmailAndStatus(@Param("email") String email, @Param("status") String status);
 
-	@Query(value = 
-		    "SELECT B.due_date, '1' AS flow_id, 'PENDEM' AS flow_code, (B.PENALTY_EXP - B.PENALTY_PAID) AS flow_amt, " +
-		    "A.ID AS loan_acct_no, A.LOAN_NAME AS acct_name, A.ENCODED_KEY " +
-		    "FROM CLIENT_MASTER_TBL C " +
-		    "JOIN LOAN_ACCOUNT_MASTER_TBL A ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY " +
-		    "JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY " +
-		    "WHERE B.DUE_DATE <= :toDate AND C.CUSTOMER_ID = :customerId AND (B.PENALTY_EXP - B.PENALTY_PAID) > 0 " +
+	@Query(value = "WITH LoanFlows AS (\r\n" + "    SELECT \r\n" + "        B.due_date,\r\n"
+			+ "        '1' AS flow_id,\r\n" + "        'PENDEM' AS flow_code,\r\n"
+			+ "        (B.PENALTY_EXP - B.PENALTY_PAID) AS flow_amt,\r\n" + "        A.ID AS loan_acct_no,\r\n"
+			+ "        A.LOAN_NAME AS acct_name,\r\n" + "        A.ENCODED_KEY,\r\n" + "        C.CUSTOMER_ID,\r\n"
+			+ "        ROW_NUMBER() OVER (PARTITION BY C.CUSTOMER_ID, '1' ORDER BY B.due_date ASC) AS rn\r\n"
+			+ "    FROM CLIENT_MASTER_TBL C\r\n"
+			+ "    JOIN LOAN_ACCOUNT_MASTER_TBL A ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY\r\n"
+			+ "    JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY\r\n"
+			+ "    WHERE B.DUE_DATE <= :toDate\r\n" + "      AND C.CUSTOMER_ID = :customerId\r\n"
+			+ "      AND (B.PENALTY_EXP - B.PENALTY_PAID) > 0\r\n" + "\r\n" + "    UNION ALL\r\n" + "\r\n"
+			+ "    SELECT \r\n" + "        B.due_date,\r\n" + "        '2' AS flow_id,\r\n"
+			+ "        'FEEDEM' AS flow_code,\r\n" + "        (B.FEE_EXP - B.FEE_PAID) AS flow_amt,\r\n"
+			+ "        A.ID AS loan_acct_no,\r\n" + "        A.LOAN_NAME AS acct_name,\r\n"
+			+ "        A.ENCODED_KEY,\r\n" + "        C.CUSTOMER_ID,\r\n"
+			+ "        ROW_NUMBER() OVER (PARTITION BY C.CUSTOMER_ID, '2' ORDER BY B.due_date ASC) AS rn\r\n"
+			+ "    FROM CLIENT_MASTER_TBL C\r\n"
+			+ "    JOIN LOAN_ACCOUNT_MASTER_TBL A ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY\r\n"
+			+ "    JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY\r\n"
+			+ "    WHERE B.DUE_DATE <= :toDate\r\n" + "      AND C.CUSTOMER_ID = :customerId\r\n"
+			+ "      AND (B.FEE_EXP - B.FEE_PAID) > 0\r\n" + "\r\n" + "    UNION ALL\r\n" + "\r\n" + "    SELECT \r\n"
+			+ "        B.due_date,\r\n" + "        '3' AS flow_id,\r\n" + "        'INDEM' AS flow_code,\r\n"
+			+ "        (B.INTEREST_EXP - B.INTEREST_PAID) AS flow_amt,\r\n" + "        A.ID AS loan_acct_no,\r\n"
+			+ "        A.LOAN_NAME AS acct_name,\r\n" + "        A.ENCODED_KEY,\r\n" + "        C.CUSTOMER_ID,\r\n"
+			+ "        ROW_NUMBER() OVER (PARTITION BY C.CUSTOMER_ID, '3' ORDER BY B.due_date ASC) AS rn\r\n"
+			+ "    FROM CLIENT_MASTER_TBL C\r\n"
+			+ "    JOIN LOAN_ACCOUNT_MASTER_TBL A ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY\r\n"
+			+ "    JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY\r\n"
+			+ "    WHERE B.DUE_DATE <= :toDate\r\n" + "      AND C.CUSTOMER_ID = :customerId\r\n"
+			+ "      AND (B.INTEREST_EXP - B.INTEREST_PAID) > 0\r\n" + "\r\n" + "    UNION ALL\r\n" + "\r\n"
+			+ "    SELECT \r\n" + "        B.due_date,\r\n" + "        '4' AS flow_id,\r\n"
+			+ "        'PRDEM' AS flow_code,\r\n" + "        (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) AS flow_amt,\r\n"
+			+ "        A.ID AS loan_acct_no,\r\n" + "        A.LOAN_NAME AS acct_name,\r\n"
+			+ "        A.ENCODED_KEY,\r\n" + "        C.CUSTOMER_ID,\r\n"
+			+ "        ROW_NUMBER() OVER (PARTITION BY C.CUSTOMER_ID, '4' ORDER BY B.due_date ASC) AS rn\r\n"
+			+ "    FROM CLIENT_MASTER_TBL C\r\n"
+			+ "    JOIN LOAN_ACCOUNT_MASTER_TBL A ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY\r\n"
+			+ "    JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY\r\n"
+			+ "    WHERE B.DUE_DATE <= :toDate\r\n" + "      AND C.CUSTOMER_ID = :customerId\r\n"
+			+ "      AND (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) > 0\r\n" + ")\r\n"
+			+ "SELECT due_date, flow_id, flow_code, flow_amt, loan_acct_no, acct_name, encoded_key, customer_id\r\n"
+			+ "FROM LoanFlows\r\n" + "WHERE rn = 1\r\n" + "ORDER BY due_date\r\n" + "", nativeQuery = true)
+	List<Object[]> getLoanFlowsByCustomer(Date toDate, String customerId);
 
-		    "UNION ALL " +
-
-		    "SELECT B.due_date, '2' AS flow_id, 'FEEDEM' AS flow_code, (B.FEE_EXP - B.FEE_PAID) AS flow_amt, " +
-		    "A.ID AS loan_acct_no, A.LOAN_NAME AS acct_name, A.ENCODED_KEY " +
-		    "FROM CLIENT_MASTER_TBL C " +
-		    "JOIN LOAN_ACCOUNT_MASTER_TBL A ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY " +
-		    "JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY " +
-		    "WHERE B.DUE_DATE <= :toDate AND C.CUSTOMER_ID = :customerId AND (B.FEE_EXP - B.FEE_PAID) > 0 " +
-
-		    "UNION ALL " +
-
-		    "SELECT B.due_date, '3' AS flow_id, 'INDEM' AS flow_code, (B.INTEREST_EXP - B.INTEREST_PAID) AS flow_amt, " +
-		    "A.ID AS loan_acct_no, A.LOAN_NAME AS acct_name, A.ENCODED_KEY " +
-		    "FROM CLIENT_MASTER_TBL C " +
-		    "JOIN LOAN_ACCOUNT_MASTER_TBL A ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY " +
-		    "JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY " +
-		    "WHERE B.DUE_DATE <= :toDate AND C.CUSTOMER_ID = :customerId AND (B.INTEREST_EXP - B.INTEREST_PAID) > 0 " +
-
-		    "UNION ALL " +
-
-		    "SELECT B.due_date, '4' AS flow_id, 'PRDEM' AS flow_code, (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) AS flow_amt, " +
-		    "A.ID AS loan_acct_no, A.LOAN_NAME AS acct_name, A.ENCODED_KEY " +
-		    "FROM CLIENT_MASTER_TBL C " +
-		    "JOIN LOAN_ACCOUNT_MASTER_TBL A ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY " +
-		    "JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY " +
-		    "WHERE B.DUE_DATE <= :toDate AND C.CUSTOMER_ID = :customerId AND (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) > 0 " +
-
-		    "ORDER BY due_date", 
-		    nativeQuery = true)
-		List<Object[]> getLoanFlowsByCustomer(Date toDate, String customerId);
-		
-		
 //		@Query(value = "SELECT * " +
 //	               "FROM CLIENT_MASTER_TBL " +
 //	               "ORDER BY CLIENT_STATE, CUSTOMER_ID " +
 //	               "FETCH FIRST 10000 ROWS ONLY",
 //	       nativeQuery = true)
 //	List<CLIENT_MASTER_ENTITY> getClientDetails();
-		
-		@Query(value = "SELECT * " +
-	               "FROM CLIENT_MASTER_TBL " +
-	               "ORDER BY CLIENT_STATE, CUSTOMER_ID",
-	       nativeQuery = true)
+
+	@Query(value = "SELECT * " + "FROM CLIENT_MASTER_TBL " + "ORDER BY CLIENT_STATE, CUSTOMER_ID", nativeQuery = true)
 	List<CLIENT_MASTER_ENTITY> getClientDetails();
 
-		
 //		@Query(value = "SELECT " +
 //		        "encoded_key, " +
 //		        "client_state, " +
@@ -229,9 +228,5 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 //	            "FETCH FIRST 2000 ROWS ONLY",
 //		       nativeQuery = true)
 //		List<CLIENT_MASTER_ENTITY> getClientDetails();
-
-
-	
-
 
 }

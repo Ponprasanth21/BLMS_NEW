@@ -869,7 +869,7 @@
 							ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 							var dataURL = canvas.toDataURL('image/jpeg');
 
-							resolve({ file: value.file, dataURL: dataURL });
+							resolve({file: value.file, dataURL: dataURL});
 						};
 
 						img.onerror = function (error) {
@@ -878,7 +878,7 @@
 						};
 					} else {
 						// For non-image files, bypass canvas and directly resolve
-						resolve({ file: value.file, dataURL: null });
+						resolve({file: value.file, dataURL: null});
 					}
 				});
 			}
@@ -1725,7 +1725,7 @@
 	</script>
 	<script th:inline="javascript">
 		/*<![CDATA[*/
-		var dues = [[${ module }]]; // Thymeleaf data injected into JavaScript
+		var dues = [[${module}]]; // Thymeleaf data injected into JavaScript
 		// Thymeleaf data injected into JavaScript
 
 		/*]]>*/
@@ -1772,7 +1772,7 @@
 							var overdue_amt = (adj_amt - flow_amt) < 0 ? (flow_amt - adj_amt).toFixed(2) : "0.00";
 
 							// Store data in an array for potential combination logic
-							tempData.push({ flow_date, flow_code, flow_amt, adj_amt, adj_dt, overdue_amt });
+							tempData.push({flow_date, flow_code, flow_amt, adj_amt, adj_dt, overdue_amt});
 
 							totalFlowAmt += flow_amt;
 							totalAdjAmt += adj_amt;
@@ -1982,7 +1982,7 @@
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
-				body: new URLSearchParams({ UserId: userId })
+				body: new URLSearchParams({UserId: userId})
 			})
 				.then(response => response.text())
 				.then(data => {
@@ -2095,10 +2095,10 @@
 
 		function showResponse(response) {
 			let message = "Upload Completed"
-				// "Upload Completed<br>" +
-				// "Total No of Rows Succeeded: " + response.TotalSucceeded + "<br>" +
-				// "Total No of Rows Failed: " + response.TotalFailed + "<br>" +
-				// "Total Rows Processed: " + response.TotalProcessed + "<br>";
+			// "Upload Completed<br>" +
+			// "Total No of Rows Succeeded: " + response.TotalSucceeded + "<br>" +
+			// "Total No of Rows Failed: " + response.TotalFailed + "<br>" +
+			// "Total Rows Processed: " + response.TotalProcessed + "<br>";
 
 			// ✅ Write to the same modal-body container
 			$('#Successmsgpopup').html("<h6 class='text-center'>" + message + "</h6>");
@@ -2173,7 +2173,7 @@
 				$.ajax({
 					url: url,
 					type: 'GET',
-					data: { page, limit },
+					data: {page, limit},
 					success: function (response) {
 						updateTable(response.data);
 						console.log(response.data);
@@ -2256,7 +2256,7 @@
 
 			$.ajax({
 				url: './getAccDet',
-				data: { id: id },
+				data: {id: id},
 				type: 'GET',
 				success: function (data) {
 					console.log("Data received:", data);
@@ -2436,41 +2436,41 @@
 		}
 
 		$(document).ready(function () {
-		$("#emailFilter").on("keypress", function (e) {
-			if (e.which === 13) { 
-				let email = $(this).val().trim();
-				console.log(email);
-				let status = $("#filterselect2").val(); 
-				console.log(status); // <-- get selected status
+			$("#emailFilter").on("keypress", function (e) {
+				if (e.which === 13) {
+					let email = $(this).val().trim();
+					console.log(email);
+					let status = $("#filterselect2").val();
+					console.log(status); // <-- get selected status
 
-				if (email === "") {
-					handleFilterChange(1);
-					return;
-				}
-
-				document.getElementById('loadingModal').style.display = 'flex';
-				$.ajax({
-					url: "customers/emailsearch",
-					type: "GET",
-					data: { email: email, status: status }, // send both email + status
-					success: function (response) {
-						if (response.length > 0) {
-							updateTable(response);
-						}else {
-							$("#usertable").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
-							$("#usertable1").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
-						}
-					},
-					error: function () {
-						$("#usertable").html(`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`);
-					},
-					complete: function () {
-						document.getElementById('loadingModal').style.display = 'none';
+					if (email === "") {
+						handleFilterChange(1);
+						return;
 					}
-				});
-			}
+
+					document.getElementById('loadingModal').style.display = 'flex';
+					$.ajax({
+						url: "customers/emailsearch",
+						type: "GET",
+						data: {email: email, status: status}, // send both email + status
+						success: function (response) {
+							if (response.length > 0) {
+								updateTable(response);
+							} else {
+								$("#usertable").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
+								$("#usertable1").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
+							}
+						},
+						error: function () {
+							$("#usertable").html(`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`);
+						},
+						complete: function () {
+							document.getElementById('loadingModal').style.display = 'none';
+						}
+					});
+				}
+			});
 		});
-	});
 
 
 		$(document).ready(function () {
@@ -2487,16 +2487,16 @@
 					$.ajax({
 						url: "customers/mobilesearch",
 						type: "GET",
-						data: { mobile: mobile , status: status },
+						data: {mobile: mobile, status: status},
 						success: function (response) {
 							let rows = "";
 							if (response.length > 0) {
 								updateTable(response);
 							}
 							else {
-							$("#usertable").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
-							$("#usertable1").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
-						}
+								$("#usertable").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
+								$("#usertable1").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
+							}
 						},
 						error: function () {
 							$("#usertable").html(`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`);
@@ -2525,16 +2525,16 @@
 					$.ajax({
 						url: "customers/search",
 						type: "GET",
-						data: { customerId: customerId , status: status },
+						data: {customerId: customerId, status: status},
 						success: function (response) {
 							let rows = "";
 							if (response.length > 0) {
 								updateTable(response);
 							}
 							else {
-							$("#usertable").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
-							$("#usertable1").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
-						}
+								$("#usertable").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
+								$("#usertable1").html(`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`);
+							}
 						},
 						error: function () {
 							$("#usertable").html(`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`);
@@ -2549,7 +2549,7 @@
 		});
 
 
-		function handleStatus(){
+		function handleStatus() {
 
 			let status = $("#filterselect2").val();
 
@@ -2559,31 +2559,31 @@
 				return;
 			}
 
-    		document.getElementById('loadingModal').style.display = 'flex';
+			document.getElementById('loadingModal').style.display = 'flex';
 
-					$.ajax({
-        url: "customers/statusSearch",
-        type: "GET",
-        data: { status: status },
-        success: function (response) {
-            if (response && response.length > 0) {
-                updateTable(response);  // same table update function you already have
-            } else {
-                $("#usertable").html(
-                    `<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
-                );
-            }
-        },
-        error: function () {
-            $("#usertable").html(
-                `<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
-            );
-        },
-        complete: function () {
-            document.getElementById('loadingModal').style.display = 'none';
-        }
-    });
-}
+			$.ajax({
+				url: "customers/statusSearch",
+				type: "GET",
+				data: {status: status},
+				success: function (response) {
+					if (response && response.length > 0) {
+						updateTable(response);  // same table update function you already have
+					} else {
+						$("#usertable").html(
+							`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
+						);
+					}
+				},
+				error: function () {
+					$("#usertable").html(
+						`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
+					);
+				},
+				complete: function () {
+					document.getElementById('loadingModal').style.display = 'none';
+				}
+			});
+		}
 
 
 
@@ -2647,6 +2647,12 @@
 			});
 		}
 
+		$(function () {
+			$(".datepicker").datepicker({
+				dateFormat: "dd-mm-yy"
+			});
+		});
+
 	</script>
 
 </head>
@@ -2680,7 +2686,7 @@
 
 							<!-- <button class="btn-primary big-btn btn-filter float-right"style="margin-right: 5px;">Filter</button> -->
 							<div class="float-right d-flex justify-content-end mr-4">
-								
+
 								<div class="mr-4"
 									th:style="${module == 'module1' || module =='module2'} ? 'display:block;' : 'display:none;'">
 
@@ -2691,11 +2697,11 @@
 										<option value="INACTIVE">INACTIVE</option>
 										<option value="BLACKLISTED">BLACKLISTED</option>
 										<option value="EXITED">EXITED</option>
-										<option value="PENDING_APPROVAL">PENDING_APPROVAL</option>	
-										<option value="REJECTED">REJECTED</option>	
+										<option value="PENDING_APPROVAL">PENDING_APPROVAL</option>
+										<option value="REJECTED">REJECTED</option>
 									</select>
 								</div>
-								
+
 								<div class="mr-4"
 									th:style="${module == 'module1' || module =='module2'} ? 'display:block;' : 'display:none;'">
 
@@ -2917,16 +2923,17 @@
 												<label>Creation Date</label>
 											</div>
 											<div class="col-sm-2">
-												<input type="date" name="creation_date"
-													th:value="${customer?.creation_date != null ? #dates.format(customer.creation_date, 'yyyy-MM-dd') : ''}"
-													id="creation_date" />
+												<input type="text" name="creation_date"
+													th:value="${customer?.creation_date != null ? #dates.format(customer.creation_date, 'dd-MM-yyyy') : ''}"
+													id="creation_date" class="datepicker"
+													placeholder="dd-MM-yyyy" />
 											</div>
 											<div class="col-sm-2">
 												<label>Approval Date</label>
 											</div>
 											<div class="col-sm-2">
-												<input type="date" name="approved_date"
-													th:value="${customer?.approved_date != null ? #dates.format(customer.approved_date, 'yyyy-MM-dd') : ''}"
+												<input type="text" name="approved_date"
+													th:value="${customer?.approved_date != null ? #dates.format(customer.approved_date, 'dd-MM-yyyy') : ''}"
 													id="approval_date" />
 											</div>
 										</div>
@@ -2937,16 +2944,16 @@
 												<label>Last Modification Date</label>
 											</div>
 											<div class="col-sm-2">
-												<input type="date" name="last_modified_date"
-													th:value="${customer?.last_modified_date != null ? #dates.format(customer.last_modified_date, 'yyyy-MM-dd') : ''}"
+												<input type="text" name="last_modified_date"
+													th:value="${customer?.last_modified_date != null ? #dates.format(customer.last_modified_date, 'dd-MM-yyyy') : ''}"
 													id="modification_date" />
 											</div>
 											<div class="col-sm-2">
 												<label>Activation Date</label>
 											</div>
 											<div class="col-sm-2">
-												<input type="date" name="activation_date"
-													th:value="${customer?.activation_date != null ? #dates.format(customer.activation_date, 'yyyy-MM-dd') : ''}"
+												<input type="text" name="activation_date"
+													th:value="${customer?.activation_date != null ? #dates.format(customer.activation_date, 'dd-MM-yyyy') : ''}"
 													id="activation_date" />
 											</div>
 										</div>
