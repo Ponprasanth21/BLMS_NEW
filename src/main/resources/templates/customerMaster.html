@@ -1956,6 +1956,9 @@
 
 			window.location.href = "./customerMaster?formmode=list&module=module2";
 		}
+		function list() {
+			window.location.href = "./customerMaster?formmode=list&module=module1";
+		}
 		// Function to check if a field is a date field
 		function isDateField(fieldName) {
 			return [
@@ -3190,7 +3193,7 @@
 								<h6 style="font-size: 1.2rem;" class="ml-3">CUSTOMER MASTER</h6>
 							</div>
 							<div class="btn-group nav-buttons float-right ml-1">
-								<button class="btn-primary big-btn" onclick="ClickId();">List</button>
+								<button class="btn-primary big-btn" onclick="list();">List</button>
 							</div>
 							<div class="btn-group nav-buttons float-right">
 								<button type="button" class="btn-primary big-btn" id="submitBtn">Upload</button>
