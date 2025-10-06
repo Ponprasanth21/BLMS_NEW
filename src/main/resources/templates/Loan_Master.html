@@ -392,8 +392,9 @@
 		function ClickId(a) {
 			var id = a.getAttribute("data-id");
 			var holder_key = a.getAttribute("data-account_holderkey");
+			var branch_key = a.getAttribute("data-branch_key");
 			location.href = 'loanMaster?formmode=viewloan&id=' + id
-				+ '&holder_key=' + holder_key;
+				+ '&holder_key=' + holder_key+ '&branch_key=' + branch_key;
 		}
 
 		function ListLoan() {
@@ -888,7 +889,7 @@
 				tbody.append(`
             <tr class="userlist" style="font-size:14px">
                 <td>${index + 1}</td>
-                <td class="text-primary" data-id="${item?.id}" data-account_holderkey="${item?.account_holderkey}" onclick="ClickId(this);">
+                <td class="text-primary" data-id="${item?.id}" data-account_holderkey="${item?.account_holderkey}" data-branch_key="${item?.assigned_branchkey}" onclick="ClickId(this);">
                     ${item?.id || ''}
                 </td>
                 <td>${item?.loan_name || ''}</td>
@@ -1129,7 +1130,7 @@
 												<tr th:each="item, iterator : ${list}" class="userlist">
 													<td style="font-size: 14px" th:text="${iterator.index + 1}"></td>
 													<td style="font-size: 14px" class="text-primary"
-														th:attr="data-id=${item?.id}, data-account_holderkey=${item?.account_holderkey}"
+														th:attr="data-id=${item?.id}, data-account_holderkey=${item?.account_holderkey},data-branch_key=${item?.assigned_branchkey}"
 														th:text="${item?.id}" onclick="ClickId(this);"></td>
 													<td style="font-size: 14px" th:text="${item?.loan_name}"></td>
 													<td style="font-size: 14px" th:text="${item?.retailer_name}">TEST
@@ -1244,7 +1245,7 @@
 											<label>Assigned Branch</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" th:value="${view?.assigned_branchkey}"
+											<input type="text" th:value="${branchName1}"
 												name="assigned_branchkey" id="assigned_branchkey" readonly />
 										</div>
 										<div class="col-sm-2">
