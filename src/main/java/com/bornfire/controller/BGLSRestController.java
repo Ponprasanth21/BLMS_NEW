@@ -1690,6 +1690,69 @@ public class BGLSRestController {
 					lOAN_REPAYMENT_REPO.save(demandRecord);
 				}
 			}
+			
+			for (TRAN_MAIN_TRM_WRK_ENTITY entity : creditTransactions) {
+			    String accountNumber = entity.getAcct_num();
+			    BigDecimal tranAmt = Optional.ofNullable(entity.getTran_amt()).orElse(BigDecimal.ZERO);
+			    String flowCode = entity.getFlow_code();
+
+			    // Fetch Loan Account Master record
+			    LOAN_ACT_MST_ENTITY loanActRecord = lOAN_ACT_MST_REPO.findByAcctNum(accountNumber);
+			    if (loanActRecord == null) continue;
+
+			    switch (flowCode) {
+			        case "PRDEM":
+			            loanActRecord.setPrincipal_paid(
+			                    loanActRecord.getPrincipal_paid().add(tranAmt)
+			            );
+			            loanActRecord.setPrincipal_due(
+			                    loanActRecord.getPrincipal_due().subtract(tranAmt).max(BigDecimal.ZERO)
+			            );
+			            loanActRecord.setPrincipal_balance(
+			                    loanActRecord.getPrincipal_balance().subtract(tranAmt).max(BigDecimal.ZERO)
+			            );
+			            break;
+
+			        case "INDEM":
+			            loanActRecord.setInterest_paid(
+			                    loanActRecord.getInterest_paid().add(tranAmt)
+			            );
+			            loanActRecord.setInterest_due(
+			                    loanActRecord.getInterest_due().subtract(tranAmt).max(BigDecimal.ZERO)
+			            );
+			            loanActRecord.setInterest_balance(
+			                    loanActRecord.getInterest_balance().subtract(tranAmt).max(BigDecimal.ZERO)
+			            );
+			            break;
+
+			        case "FEEDEM":
+			            loanActRecord.setFees_paid(
+			                    loanActRecord.getFees_paid().add(tranAmt)
+			            );
+			            loanActRecord.setFees_due(
+			                    loanActRecord.getFees_due().subtract(tranAmt).max(BigDecimal.ZERO)
+			            );
+			            loanActRecord.setFees_balance(
+			                    loanActRecord.getFees_balance().subtract(tranAmt).max(BigDecimal.ZERO)
+			            );
+			            break;
+
+			        case "PENDEM":
+			            loanActRecord.setPenalty_paid(
+			                    loanActRecord.getPenalty_paid().add(tranAmt)
+			            );
+			            loanActRecord.setPenalty_due(
+			                    loanActRecord.getPenalty_due().subtract(tranAmt).max(BigDecimal.ZERO)
+			            );
+			            loanActRecord.setPenalty_balance(
+			                    loanActRecord.getPenalty_balance().subtract(tranAmt).max(BigDecimal.ZERO)
+			            );
+			            break;
+			    }
+
+			    // Save updated loan account record
+			    lOAN_ACT_MST_REPO.save(loanActRecord);
+			}
 
 			// --- Step 4: Save audit and posted transactions ---
 			BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
@@ -9434,7 +9497,7 @@ public class BGLSRestController {
 	    Date transactionDate = cal.getTime();
 
 	    // Fetch schedule flows for the customer
-	    List<Object[]> results = cLIENT_MASTER_REPO.getLoanFlowsByCustomer(transactionDate, customerId);
+	    List<Object[]> results = cLIENT_MASTER_REPO.getLoanFlowsByCustomer(customerId);
 	    if (results == null || results.isEmpty()) return Collections.emptyList();
 
 	    // Flow priority map (current DB order)
@@ -9547,7 +9610,7 @@ public class BGLSRestController {
 				Date transactionDate = Date.from(tranDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
 				String customerId = t.get("acct_namedata").toString();
-				List<Object[]> flows = cLIENT_MASTER_REPO.getLoanFlowsByCustomer(transactionDate, customerId);
+				List<Object[]> flows = cLIENT_MASTER_REPO.getLoanFlowsByCustomer(customerId);
 
 				// Sort by due date ASC, account ASC, then priority order
 				flows.sort((o1, o2) -> {
