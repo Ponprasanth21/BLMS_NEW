@@ -1872,7 +1872,7 @@
 
 			var id = a.getAttribute("data-id");
 			var holder_key = a.getAttribute("data-account_holderkey");
-			 var branch_key = a.getAttribute("data-branch_key");
+			var branch_key = a.getAttribute("data-branch_key");
 
 			// Construct base URL
 			let url = id && id.trim() !== ""
@@ -1923,7 +1923,7 @@
 				: `customerMaster?formmode=list&module=${dues}`;
 			//alert(url)
 			location.href = url; // Redirect to the appropriate page
-		} 
+		}
 		function submitForm() {
 			event.preventDefault();
 			var formData = $("#drawDownDetailsAdd").serializeArray();
@@ -2036,13 +2036,13 @@
 		});
 
 		function viewscreen(a) {
-		    var id = a.getAttribute("data-id");
-		    var holder_key = a.getAttribute("data-account_holderkey");
-		    var branch_key = a.getAttribute("data-branch_key");
+			var id = a.getAttribute("data-id");
+			var holder_key = a.getAttribute("data-account_holderkey");
+			var branch_key = a.getAttribute("data-branch_key");
 
-		    // Make sure `dues` is defined somewhere above this function
+			// Make sure `dues` is defined somewhere above this function
 
-		    location.href = `customerMaster?formmode=view&module=${dues}&id=${id}&holder_key=${holder_key}&branch_key=${branch_key}`;
+			location.href = `customerMaster?formmode=view&module=${dues}&id=${id}&holder_key=${holder_key}&branch_key=${branch_key}`;
 		}
 
 
@@ -2258,14 +2258,14 @@
 				$(tableSelector).append(row);
 			});
 		}
-		
-		function viewLoan(holderKey, id) {
-		    // You can add any custom logic here before redirecting
-		    console.log('Redirecting to loan view:', holderKey, id);
 
-		    const url = `loanMaster?formmode=viewloan&id=${id}&holder_key=${holderKey}`;
-		    window.location.href = url; // Redirects to the URL
-		  }
+		function viewLoan(holderKey, id) {
+			// You can add any custom logic here before redirecting
+			console.log('Redirecting to loan view:', holderKey, id);
+
+			const url = `loanMaster?formmode=viewloan&id=${id}&holder_key=${holderKey}`;
+			window.location.href = url; // Redirects to the URL
+		}
 
 		function getAcctDetails() {
 			var id = document.getElementById('customer_id').value;
@@ -2912,8 +2912,8 @@
 												<label>Date of Birth</label>
 											</div>
 											<div class="col-sm-2">
-												<input type="date" name="birth_date"
-													 th:value="${customer?.birth_date != null ? #dates.format(customer.birth_date, 'yyyy-MM-dd') : ''}" 
+												<input type="text" name="birth_date"
+													th:value="${customer?.birth_date != null ? #dates.format(customer.birth_date, 'dd-MM-yyyy') : ''}"
 													id="dob" />
 											</div>
 
@@ -2925,8 +2925,8 @@
 												<label>Branch</label>
 											</div>
 											<div class="col-sm-2">
-												<input type="text" name="assigned_branch_key"
-													th:value="${branchName1}" id="branch" />
+												<input type="text" name="assigned_branch_key" th:value="${branchName1}"
+													id="branch" />
 											</div>
 											<div class="col-sm-2">
 												<label>Client Role Key</label>
@@ -2945,8 +2945,7 @@
 											<div class="col-sm-2">
 												<input type="text" name="creation_date"
 													th:value="${customer?.creation_date != null ? #dates.format(customer.creation_date, 'dd-MM-yyyy') : ''}"
-													id="creation_date" class="datepicker"
-													placeholder="dd-MM-yyyy" />
+													id="creation_date" class="datepicker" placeholder="dd-MM-yyyy" />
 											</div>
 											<div class="col-sm-2">
 												<label>Approval Date</label>
@@ -2955,8 +2954,8 @@
 												<input type="text" name="approved_date"
 													th:value="${customer?.approved_date != null ? #dates.format(customer.approved_date, 'dd-MM-yyyy') : ''}"
 													id="approval_date" />
-													<input   type="text" name="assigned_branch_key" id="assigned_branch_key"
-                                                           th:value="${customer?.assigned_branch_key}"  hidden />
+												<input type="text" name="assigned_branch_key" id="assigned_branch_key"
+													th:value="${customer?.assigned_branch_key}" hidden />
 											</div>
 										</div>
 

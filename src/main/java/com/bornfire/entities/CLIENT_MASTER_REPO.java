@@ -152,7 +152,7 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 	        "        'PENDEM' AS flow_code, " +
 	        "        (B.PENALTY_EXP - B.PENALTY_PAID) AS flow_amt, " +
 	        "        A.ID AS loan_acct_no, " +
-	        "        A.LOAN_NAME AS acct_name, " +
+	        "        C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name," +
 	        "        A.ENCODED_KEY, " +
 	        "        C.CUSTOMER_ID " +
 	        "    FROM CLIENT_MASTER_TBL C " +
@@ -162,14 +162,13 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 	        "      AND (B.PENALTY_EXP - B.PENALTY_PAID) > 0 " +
 
 	        "    UNION ALL " +
-
 	        "    SELECT " +
 	        "        B.due_date, " +
 	        "        '2' AS flow_id, " +
 	        "        'FEEDEM' AS flow_code, " +
 	        "        (B.FEE_EXP - B.FEE_PAID) AS flow_amt, " +
 	        "        A.ID AS loan_acct_no, " +
-	        "        A.LOAN_NAME AS acct_name, " +
+	        "        C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name, " +
 	        "        A.ENCODED_KEY, " +
 	        "        C.CUSTOMER_ID " +
 	        "    FROM CLIENT_MASTER_TBL C " +
@@ -186,7 +185,7 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 	        "        'INDEM' AS flow_code, " +
 	        "        (B.INTEREST_EXP - B.INTEREST_PAID) AS flow_amt, " +
 	        "        A.ID AS loan_acct_no, " +
-	        "        A.LOAN_NAME AS acct_name, " +
+	        "        C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name, " +
 	        "        A.ENCODED_KEY, " +
 	        "        C.CUSTOMER_ID " +
 	        "    FROM CLIENT_MASTER_TBL C " +
@@ -203,7 +202,7 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 	        "        'PRDEM' AS flow_code, " +
 	        "        (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) AS flow_amt, " +
 	        "        A.ID AS loan_acct_no, " +
-	        "        A.LOAN_NAME AS acct_name, " +
+	        "        C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name, " +
 	        "        A.ENCODED_KEY, " +
 	        "        C.CUSTOMER_ID " +
 	        "    FROM CLIENT_MASTER_TBL C " +

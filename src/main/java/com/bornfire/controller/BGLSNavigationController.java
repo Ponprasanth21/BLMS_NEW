@@ -3806,6 +3806,12 @@ public class BGLSNavigationController {
 		} else if (formmode.equals("view2")) {
 			md.addAttribute("formmode", "view2");
 
+			List<MULTIPLE_TRANSACTION_ENTITY> tranData = MULTIPLE_TRANSACTION_REPO.getDataValue();
+			if (tranData == null) {
+				tranData = new ArrayList<>();
+			}
+			md.addAttribute("tranData", tranData);
+
 			int refNo = Integer.parseInt(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1()); // convert String → int
 			String tranId = "TR" + String.format("%05d", refNo);
 

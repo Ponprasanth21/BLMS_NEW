@@ -1541,77 +1541,147 @@
 
 		// ✅ Collect all rows & send AJAX
 		function submitAllRows() {
-		    const rows = document.querySelectorAll("#usertablemulti tr");
-		    const payload = [];
+			const rows = document.querySelectorAll("#usertablemulti1 tr");
+			const payload = [];
 
-		    rows.forEach(row => {
-		        const acctNum = row.querySelector('input[name="acct_num"]')?.value || "";
-		        const acctName = row.querySelector('input[name="acct_namedata"]')?.value || "";
-		        const tranAmt = parseFloat(row.querySelector('input[name="tran_amt"]')?.value || 0);
-		        const tranParticular = row.querySelector('input[name="tran_particulardata"]')?.value || "";
-		        const tranRemarks = row.querySelector('input[name="tran_remarks"]')?.value || "0";
-		        const tranDate = row.querySelector('input[name="transaction_date"]')?.value || "";
-		        const rate = row.querySelector('input[name="rate"]')?.value || "UNALLOCATED";
+			rows.forEach(row => {
+				const acctNum = row.querySelector('input[name="acct_num"]')?.value || "";
+				const acctName = row.querySelector('input[name="acct_namedata"]')?.value || "";
+				const tranAmt = parseFloat(row.querySelector('input[name="tran_amt"]')?.value || 0);
+				const tranParticular = row.querySelector('input[name="tran_particulardata"]')?.value || "";
+				const tranRemarks = row.querySelector('input[name="tran_remarks"]')?.value || "0";
+				const tranDate = row.querySelector('input[name="transaction_date"]')?.value || "";
+				const rate = row.querySelector('input[name="rate"]')?.value || "UNALLOCATED";
 
-		        payload.push({
-		            tran_id: "",
-		            acct_num: acctNum,
-		            acct_namedata: acctName,
-		            tran_amt: tranAmt,
-		            tran_particulardata: tranParticular,
-		            tran_remarks: tranRemarks,
-		            transaction_date: tranDate,
-		            rate: rate
-		        });
-		    });
+				payload.push({
+					tran_id: "",
+					acct_num: acctNum,
+					acct_namedata: acctName,
+					tran_amt: tranAmt,
+					tran_particulardata: tranParticular,
+					tran_remarks: tranRemarks,
+					transaction_date: tranDate,
+					rate: rate
+				});
+			});
 
-		    console.log("Payload to send:", payload);
+			console.log("Payload to send:", payload);
 
-		    fetch("/ASPIRA/saveMultipleTransactions", {
-		        method: "POST",
-		        headers: {
-		            "Content-Type": "application/json",
-		            "Accept": "application/json"
-		        },
-		        body: JSON.stringify(payload)
-		    })
-		    .then(res => {
-		        if (!res.ok) throw new Error("Server returned " + res.status);
-		        return res.json();
-		    })
-		    .then(data => {
-		        console.log("✅ Server response:", data);
+			fetch("/ASPIRA/saveMultipleTransactions", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Accept": "application/json"
+				},
+				body: JSON.stringify(payload)
+			})
+				.then(res => {
+					if (!res.ok) throw new Error("Server returned " + res.status);
+					return res.json();
+				})
+				.then(data => {
+					console.log("✅ Server response:", data);
 
-		        let msg = "";
-		        if (data.status === "success") {
-		            msg = `${data.message}\n\n`;
-		            data.transactions.forEach(t => {
-		                msg += `${t.reference} → ${t.transaction_id}\n`;
-		            });
+					let msg = "";
+					if (data.status === "success") {
+						msg = `${data.message}\n\n`;
+						data.transactions.forEach(t => {
+							msg += `${t.reference} → ${t.transaction_id}\n`;
+						});
 
-		            // Update tran_id in table
-		            data.transactions.forEach((rowData, index) => {
-		                const tranIdInput = rows[index].querySelector('input[name="tran_id"]');
-		                if (tranIdInput) tranIdInput.value = rowData.transaction_id;
-		            });
+						// Update tran_id in table
+						data.transactions.forEach((rowData, index) => {
+							const tranIdInput = rows[index].querySelector('input[name="tran_id"]');
+							if (tranIdInput) tranIdInput.value = rowData.transaction_id;
+						});
 
-		        } else {
-		            msg = `Error: ${data.message}`;
-		        }
+					} else {
+						msg = `Error: ${data.message}`;
+					}
 
-		        // Show alert with server message
-		        alert(msg);
-		    })
-		    .catch(err => {
-		        console.error("❌ AJAX error:", err);
-		        alert("Error saving data. " + err.message);
-		    });
+					// Show alert with server message
+					alert(msg);
+				})
+				.catch(err => {
+					console.error("❌ AJAX error:", err);
+					alert("Error saving data. " + err.message);
+				});
+		}
+
+
+		// ✅ Collect all rows & send AJAX
+		function submitAllRows1() {
+			const rows = document.querySelectorAll("#usertablemulti tr");
+			const payload = [];
+
+			rows.forEach(row => {
+				const acctNum = row.querySelector('input[name="acct_num"]')?.value || "";
+				const acctName = row.querySelector('input[name="acct_namedata"]')?.value || "";
+				const tranAmt = parseFloat(row.querySelector('input[name="tran_amt"]')?.value || 0);
+				const tranParticular = row.querySelector('input[name="tran_particulardata"]')?.value || "";
+				const tranRemarks = row.querySelector('input[name="tran_remarks"]')?.value || "0";
+				const tranDate = row.querySelector('input[name="transaction_date"]')?.value || "";
+				const rate = row.querySelector('input[name="rate"]')?.value || "UNALLOCATED";
+
+				payload.push({
+					tran_id: "",
+					acct_num: acctNum,
+					acct_namedata: acctName,
+					tran_amt: tranAmt,
+					tran_particulardata: tranParticular,
+					tran_remarks: tranRemarks,
+					transaction_date: tranDate,
+					rate: rate
+				});
+			});
+
+			console.log("Payload to send:", payload);
+
+			fetch("/ASPIRA/saveMultipleTransactions1", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Accept": "application/json"
+				},
+				body: JSON.stringify(payload)
+			})
+				.then(res => {
+					if (!res.ok) throw new Error("Server returned " + res.status);
+					return res.json();
+				})
+				.then(data => {
+					console.log("✅ Server response:", data);
+
+					let msg = "";
+					if (data.status === "success") {
+						msg = `${data.message}\n\n`;
+						data.transactions.forEach(t => {
+							msg += `${t.reference} → ${t.transaction_id}\n`;
+						});
+
+						// Update tran_id in table
+						data.transactions.forEach((rowData, index) => {
+							const tranIdInput = rows[index].querySelector('input[name="tran_id"]');
+							if (tranIdInput) tranIdInput.value = rowData.transaction_id;
+						});
+
+					} else {
+						msg = `Error: ${data.message}`;
+					}
+
+					// Show alert with server message
+					alert(msg);
+				})
+				.catch(err => {
+					console.error("❌ AJAX error:", err);
+					alert("Error saving data. " + err.message);
+				});
 		}
 
 		// Optional: close modal function if needed
 		function closeModal11() {
-		    const modal = bootstrap.Modal.getInstance(document.getElementById('alert121'));
-		    if (modal) modal.hide();
+			const modal = bootstrap.Modal.getInstance(document.getElementById('alert121'));
+			if (modal) modal.hide();
 		}
 
 		function handleCheckboxClickCollectiondata101() {
@@ -2178,7 +2248,7 @@
 		// To keep track of the maximum value used for cell2
 
 		function addNewRow() {
-			var table = document.getElementById("usertablemulti");
+			var table = document.getElementById("usertablemulti1");
 			var row = table.insertRow();
 
 			// 1. Transaction ID
@@ -2218,7 +2288,7 @@
 
 		function removeRow() {
 			var tableBody = document
-				.getElementById('usertablemulti'); // Get tbody element
+				.getElementById('usertablemulti1'); // Get tbody element
 			var rows = tableBody.getElementsByTagName('tr'); // Get all rows within tbody
 
 			if (rows.length <= 2) { // Ensure at least the two initial rows remain
@@ -2253,7 +2323,7 @@
 </head>
 <script>
 	function addNewRows() {
-		const table = document.getElementById("usertablemulti");
+		const table = document.getElementById("usertablemulti1");
 		const rowCount = table.rows.length;
 		const newRow = table.insertRow();
 
@@ -2421,41 +2491,47 @@
 </script>
 <script>
 	function openModalMassEntries(element) {
-		// Find the row of the clicked element
-		const row = element.closest("tr");
+	    // Find the row of the clicked element
+	    const row = element.closest("tr");
 
-		// Get the value from acct_namedata in that row
-		const customerInput = row.querySelector('input[name="acct_namedata"]');
-		const customerId = customerInput ? customerInput.value.trim() : "";
+	    // Get the value from acct_namedata in that row
+	    const customerInput = row.querySelector('input[name="acct_namedata"]');
+	    const customerId = customerInput ? customerInput.value.trim() : "";
 
-		// Get the value from tran_particulardata in that row
-		const transactionInput = row.querySelector('input[name="tran_particulardata"]');
-		const transactionAmt = transactionInput ? transactionInput.value.trim() : "";
+	    // Get the value from tran_particulardata in that row
+	    const transactionInput = row.querySelector('input[name="tran_particulardata"]');
+	    const transactionAmt = transactionInput ? transactionInput.value.trim() : "";
 
-		if (!customerId) {
-			return;
-		}
+	    if (!customerId) {
+	        return;
+	    }
 
-		// Show modal
-		const modal = document.getElementById("myModaldatas");
-		modal.style.display = "block";
+	    // Show modal
+	    const modal = document.getElementById("myModaldatas");
+	    modal.style.display = "block";
 
-		// Clear old rows
-		const tbody = document.getElementById("modalTableBody");
-		tbody.innerHTML = "";
+	    // Clear old rows
+	    const tbody = document.getElementById("modalTableBody");
+	    tbody.innerHTML = "";
 
-		// AJAX call - pass both customerId and transactionAmt
-		fetch(`/ASPIRA/getAccountDetails?customerId=${encodeURIComponent(customerId)}&transactionAmt=${encodeURIComponent(transactionAmt)}`)
-			.then(response => {
-				if (!response.ok) throw new Error("Network response was not ok");
-				return response.json();
-			})
-			.then(data => {
-				if (!Array.isArray(data)) data = [];
+	    // AJAX call - pass both customerId and transactionAmt
+	    fetch(`/ASPIRA/getAccountDetails?customerId=${encodeURIComponent(customerId)}&transactionAmt=${encodeURIComponent(transactionAmt)}`)
+	        .then(response => {
+	            if (!response.ok) throw new Error("Network response was not ok");
+	            return response.json();
+	        })
+	        .then(data => {
+	            if (!Array.isArray(data) || data.length === 0) {
+	                // Show "NO DATA FOUND"
+	                const tr = document.createElement("tr");
+	                tr.innerHTML = `<td colspan="7" style="text-align:center; color:red;">NO DATA FOUND</td>`;
+	                tbody.appendChild(tr);
+	                return;
+	            }
 
-				data.forEach(rowData => {
-					const tr = document.createElement("tr");
-					tr.innerHTML = `
+	            data.forEach(rowData => {
+	                const tr = document.createElement("tr");
+	                tr.innerHTML = `
 	                    <td>${rowData.dueDate || ''}</td>
 	                    <td>${rowData.flowId || ''}</td>
 	                    <td>${rowData.flowCode || ''}</td>
@@ -2467,13 +2543,13 @@
 	                               onclick="selectRow('${rowData.loanAcctNo || ''}', '${rowData.flowAmt || ''}')">
 	                    </td>
 	                `;
-					tbody.appendChild(tr);
-				});
-			})
-			.catch(err => {
-				console.error("Error fetching account details:", err);
-				alert("Failed to fetch account details.");
-			});
+	                tbody.appendChild(tr);
+	            });
+	        })
+	        .catch(err => {
+	            console.error("Error fetching account details:", err);
+	            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Error fetching data</td></tr>`;
+	        });
 	}
 
 	function closeModal(btn) {
@@ -2498,6 +2574,24 @@
 
 		// Fill all inputs in all rows
 		document.querySelectorAll('#usertablemulti input[name="transaction_date"]').forEach(function (input) {
+			input.value = formatted;
+		});
+	}
+
+	// Run on page load
+	document.addEventListener("DOMContentLoaded", setTransactionDateTime);
+
+	function setTransactionDateTime() {
+		const now = new Date();
+		const formatted =
+			String(now.getDate()).padStart(2, '0') + "-" +
+			String(now.getMonth() + 1).padStart(2, '0') + "-" +
+			now.getFullYear() + " " +
+			String(now.getHours()).padStart(2, '0') + ":" +
+			String(now.getMinutes()).padStart(2, '0');
+
+		// Fill all inputs in all rows
+		document.querySelectorAll('#usertablemulti1 input[name="transaction_date"]').forEach(function (input) {
 			input.value = formatted;
 		});
 	}
@@ -2867,16 +2961,39 @@
 										<th style="text-align:center">Allocated</th>
 									</tr>
 								</thead>
-								<tbody id="usertablemulti">
+								<tbody id="usertablemulti" th:if="${tranData != null and !tranData.isEmpty()}">
+									<tr th:each="txn : ${tranData}">
+										<td><input type="text" class="form-control" name="tran_id"
+												th:value="${txn.transaction_id}" readonly /></td>
+										<td><input type="text" class="form-control" name="acct_num"
+												th:value="${txn.names}" readonly /></td>
+										<td><input type="text" class="form-control" name="acct_namedata"
+												th:value="${txn.reference}" readonly /></td>
+										<td><input type="text" class="form-control" name="tran_amt"
+												th:value="${txn.mobile_number}" readonly /></td>
+										<td><input type="text" class="form-control" name="tran_particulardata"
+												th:value="${txn.amount}" readonly /></td>
+										<td>
+											<input type="text" class="form-control" name="tran_remarks"
+												th:value="${txn.allocated_amount != null ? #numbers.formatDecimal(txn.allocated_amount, 1, 'COMMA', 2, 'POINT') : 0}"
+												readonly />
+										</td>
+										<td><input type="text" class="form-control" name="transaction_date"
+												th:value="${txn.trans_time}" readonly /></td>
+										<td><input type="text" class="form-control" name="rate" th:value="${txn.status}"
+												readonly /></td>
+										<td style="text-align:center"><input type="radio" name="add_details"
+												onclick="openModalMassEntries(this)" /></td>
+									</tr>
+								</tbody>
+
+								<!-- Only show manual entry tbody if backend data is empty -->
+								<tbody id="usertablemulti1" th:if="${tranData == null or tranData.isEmpty()}">
 									<tr>
-										<td>
-											<input type="text" class="form-control" id="tran_id" name="tran_id"
-												onkeyup="this.value = this.value.toUpperCase();" />
-										</td>
-										<td>
-											<input type="text" class="form-control" id="acct_num_mass0" name="acct_num"
-												onkeyup="this.value = this.value.toUpperCase();" />
-										</td>
+										<td><input type="text" class="form-control" id="tran_id" name="tran_id"
+												onkeyup="this.value = this.value.toUpperCase();" /></td>
+										<td><input type="text" class="form-control" id="acct_num_mass0" name="acct_num"
+												onkeyup="this.value = this.value.toUpperCase();" /></td>
 										<td><input type="text" class="form-control" id="acct_name_mass0"
 												name="acct_namedata" onkeyup="this.value = this.value.toUpperCase();" />
 										</td>
@@ -2887,8 +3004,7 @@
 												onkeyup="this.value = this.value.toUpperCase();" /></td>
 										<td><input type="text" class="form-control" id="tran_remarks"
 												name="tran_remarks" value="0"
-												onkeyup="this.value = this.value.toUpperCase();" />
-										</td>
+												onkeyup="this.value = this.value.toUpperCase();" /></td>
 										<td><input type="text" class="form-control" id="rate_code"
 												name="transaction_date"
 												onkeyup="this.value = this.value.toUpperCase();" /></td>
@@ -2896,49 +3012,11 @@
 												value="UNALLOCATED" onkeyup="this.value = this.value.toUpperCase();" />
 										</td>
 										<td><input type="radio" id="add_details" name="add_details"
-												onkeyup="this.value = this.value.toUpperCase();"
 												onclick="openModalMassEntries(this)" /></td>
 									</tr>
-									<tr>
-										<td><input type="text" class="form-control" id="tran_id" name="tran_id"
-												onkeyup="this.value = this.value.toUpperCase();" />
-										</td>
-										<td><input type="text" class="form-control" id="acct_num_mass1"
-												onclick="openModalmassentries(this)" name="acct_num"
-												onkeyup="this.value = this.value.toUpperCase();" /></td>
-										<td><input type="text" class="form-control" id="acct_name_mass1"
-												name="acct_namedata" onkeyup="this.value = this.value.toUpperCase();" />
-										</td>
-										<td><input type="text" class="form-control" id="tran_amt" name="tran_amt"
-												oninput="calculate()" /></td>
-										<td><input type="text" class="form-control" id="tran_particular"
-												name="tran_particulardata"
-												onkeyup="this.value = this.value.toUpperCase();" /></td>
-										<td><input type="text" class="form-control" id="tran_remarks"
-												name="tran_remarks" value="0"
-												onkeyup="this.value = this.value.toUpperCase();" />
-										</td>
-										<td><input type="text" class="form-control" id="rate_code"
-												name="transaction_date"
-												onkeyup="this.value = this.value.toUpperCase();" /></td>
-										<td><input type="text" class="form-control" id="rate" name="rate"
-												value="UNALLOCATED" onkeyup="this.value = this.value.toUpperCase();" />
-										</td>
-										<td><input type="radio" id="add_details" name="add_details"
-												onkeyup="this.value = this.value.toUpperCase();"
-												onclick="openModalMassEntries(this)" /></td>
-
-									</tr>
+									<!-- Add more manual entry rows as needed -->
 								</tbody>
 							</table>
-							<div style="text-align: right;">
-								<p style="display: inline-flex; align-items: center;">
-									<span style="margin-right: 10px;">Total Credit: <span
-											id="totalCredit">0.00</span></span> |
-									<span style="margin-left: 10px;">Total Debit: <span
-											id="totalDebit">0.00</span></span>
-								</p>
-							</div>
 
 						</div>
 						<div class="row-formline"
@@ -2949,7 +3027,15 @@
 
 						<div class="card-footer text-center" style="background-color: #e9ecef">
 							<button class="btn-primary big-btn" onclick="Home();">Home</button>
-							<button class="btn-primary big-btn" onclick="submitAllRows(this);">Submit</button>
+
+							<!-- Submit button for backend data -->
+							<button class="btn-primary big-btn" onclick="submitAllRows1(this);"
+								th:if="${tranData != null and !tranData.isEmpty()}">Submit</button>
+
+							<!-- Submit button for manual entry -->
+							<button class="btn-primary big-btn" onclick="submitAllRows(this);"
+								th:if="${tranData == null or tranData.isEmpty()}">Submit</button>
+
 							<button class="btn-primary big-btn" onclick="back();">Back</button>
 						</div>
 					</div>
