@@ -2206,14 +2206,7 @@
     `);
 		}
 
-		function viewLoan(holderKey, id) {
-		    // Custom logic before redirect
-		    console.log('Redirecting to loan view:', holderKey, id);
 
-		    // Build relative URL (no localhost needed if same app)
-		    const url = loanMaster?formmode=viewloan&id=${id}&holder_key=${holderKey};
-		    window.location.href = url; // Redirect to the page
-		  }
 
 		function updateTable(data, currentPage = 1, limit = 200) {
 			// Determine which table to update based on module
@@ -2299,16 +2292,6 @@
 					     ${item[1]}
 					  </a>
 					</td>
-
- <tr>
-								<td>
-								  <a href="javascript:void(0);" 
-								     onclick="viewLoan('${item[0]}', '${item[1]}')">
-								     ${item[1]}
-								  </a>
-								</td>
-
-
                 <td>${item[2]}</td>
                 <td>${(item[3])}</td>
                 <td style="text-align:right;">${formatNumber(item[4])}</td>
