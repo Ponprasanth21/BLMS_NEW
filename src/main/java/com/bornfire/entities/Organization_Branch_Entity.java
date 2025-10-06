@@ -40,8 +40,7 @@ public class Organization_Branch_Entity {
 	private String	modify_flg;
 	private String	entity_flg;
 	private String	remarks;
-	@Lob
-	private byte[]	photo;
+	
 	public String getBranch_code() {
 		return branch_code;
 	}
@@ -210,12 +209,7 @@ public class Organization_Branch_Entity {
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
-	public byte[] getPhoto() {
-		return photo;
-	}
-	public void setPhoto(byte[] photo) {
-		this.photo = photo;
-	}
+	
 	public Organization_Branch_Entity() {
 		super();
 		// TODO Auto-generated constructor stub
