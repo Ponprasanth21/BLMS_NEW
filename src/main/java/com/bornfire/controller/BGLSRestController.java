@@ -144,6 +144,7 @@ import com.bornfire.services.LoginServices;
 import com.bornfire.services.RepaymentScheduleServices;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @Transactional
@@ -5524,6 +5525,7 @@ public class BGLSRestController {
 	@PostMapping("/modifySubmit")
 	public ResponseEntity<String> modifySubmit(@ModelAttribute CLIENT_MASTER_ENTITY customer) {
 		try {
+			System.out.println(customer.getCustomer_id());
 			// Fetch existing customer from the database
 			Optional<CLIENT_MASTER_ENTITY> existingCustomerOpt = clientMasterRepo.findById(customer.getCustomer_id());
 
@@ -5550,7 +5552,7 @@ public class BGLSRestController {
 //            customer.setAsondate(customer.getAsondate() != null ? customer.getAsondate() : existingCustomer.getAsondate());
 //
 //            
-			customer.setLast_modified_date(new Date());
+			customer.setLast_modified_date(customer.getLast_modified_date() != null ? customer.getLast_modified_date() : existingCustomer.getLast_modified_date());
 			customer.setEncoded_key(
 					customer.getEncoded_key() != null ? customer.getEncoded_key() : existingCustomer.getEncoded_key());
 			customer.setCustomer_id(
@@ -5576,9 +5578,43 @@ public class BGLSRestController {
 			customer.setBirth_date(
 					customer.getBirth_date() != null ? customer.getBirth_date() : existingCustomer.getBirth_date());
 			customer.setGender(customer.getGender() != null ? customer.getGender() : existingCustomer.getGender());
+			
+			
+//			System.out.println(existingCustomer.toString());
+//
+//			if(customer.getAssigned_branch_key() != null) {
+//				System.out.println("++++++++=");
+//				String value = customer.getAssigned_branch_key();
+//				System.out.println("Value: '" + value + "'");
+//				System.out.println("Chars: " + value.length());
+//				System.out.println("Bytes UTF-8: " + value.getBytes(StandardCharsets.UTF_8).length);
+//
+//				// Also print hex codes to detect hidden characters
+//				System.out.print("Hex: ");
+//				for (byte b : value.getBytes(StandardCharsets.UTF_8)) {
+//				    System.out.print(String.format("%02X ", b));
+//				}
+//				System.out.println();
+//				customer.setAssigned_branch_key(customer.getAssigned_branch_key());
+//			}else {
+//				System.out.println("7777777777777777");
+//				String value = existingCustomer.getAssigned_branch_key();
+//				System.out.println("Value: '" + value + "'");
+//				System.out.println("Chars: " + value.length());
+//				System.out.println("Bytes UTF-8: " + value.getBytes(StandardCharsets.UTF_8).length);
+//
+//				// Also print hex codes to detect hidden characters
+//				System.out.print("Hex: ");
+//				for (byte b : value.getBytes(StandardCharsets.UTF_8)) {
+//				    System.out.print(String.format("%02X ", b));
+//				}
+//				System.out.println();
+//				customer.setAssigned_branch_key(existingCustomer.getAssigned_branch_key());
+//			}
 			customer.setAssigned_branch_key(
 					customer.getAssigned_branch_key() != null ? customer.getAssigned_branch_key()
-							: existingCustomer.getAssigned_branch_key());
+							: existingCustomer.getAssigned_branch_key().trim());
+			
 			customer.setClient_role_key(customer.getClient_role_key() != null ? customer.getClient_role_key()
 					: existingCustomer.getClient_role_key());
 			customer.setLoan_cycle(
@@ -5598,6 +5634,9 @@ public class BGLSRestController {
 			customer.setAsondate(
 					customer.getAsondate() != null ? customer.getAsondate() : existingCustomer.getAsondate());
 
+			customer.setAssigned_user_key(
+					customer.getAsondate() != null ? customer.getAssigned_user_key() : existingCustomer.getAssigned_user_key());
+			
 //            System.out.println(existingCustomer.toString());
 //            
 //            System.out.println("\n\n\n\n\n\n\n");

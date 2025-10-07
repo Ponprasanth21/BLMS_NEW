@@ -368,7 +368,9 @@
 			// Format date fields correctly
 			formData.forEach(function (field) {
 				if (isDateField(field.name) && field.value.trim() !== "") {
-					let date = new Date(field.value);
+					 let parts = field.value.split("-");
+					let formattedValue = `${parts[2]}-${parts[1]}-${parts[0]}`; 
+					let date = new Date(formattedValue);
 					field.value = formatDateWithMidnight(date);
 				}
 			});
@@ -391,7 +393,7 @@
 		// Function to check if a field is a date field
 		function isDateField(fieldName) {
 			return ["creation_date", "last_modified_date", "closed_date", "approved_date", "first_repaymentdate",
-				"date_of_first_call", "disbursement_date", "asondate", "manualoverride_expiry_date"
+				"date_of_first_call", "expected_disbursementdate", "asondate", "manualoverride_expiry_date"
 			].includes(fieldName);
 		}
 
@@ -807,7 +809,7 @@
 	</script>
 	<script>
 		$(function () {
-			$("#creation_date, #last_modified_date, #closed_date, #approved_date, #first_repaymentdate, #date_of_first_call, #disbursement_date, #asondate, #manualoverride_expiry_date").datepicker({
+			$("#creation_date, #last_modified_date, #closed_date, #approved_date, #first_repaymentdate, #date_of_first_call, #expected_disbursementdate, #asondate, #manualoverride_expiry_date").datepicker({
 				dateFormat: "dd-mm-yy"
 			});
 		});
@@ -1149,21 +1151,21 @@
 											<label>Disbursement Date</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="disbursement_date"
+											<input type="text" id="expected_disbursementdate"
 												th:value="${#dates.format(view?.expected_disbursementdate, 'dd-MM-yyyy')}"
-												name="disbursement_date" th:if="${formmode}=='view'" readonly /> <input
-												type="text" id="disbursement_date"
+												name="expected_disbursementdate" th:if="${formmode}=='view'" readonly /> <input
+												type="text" id="expected_disbursementdate"
 												th:value="${#dates.format(view?.expected_disbursementdate, 'dd-MM-yyyy')}"
-												name="disbursement_date" th:if="${formmode}=='modify'" />
+												name="expected_disbursementdate" th:if="${formmode}=='modify'" />
 										</div>
 										<div class="col-sm-2">
-											<label>First Payment Date</label>
+											<label>First Payment Date </label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="first_repaymentdate"
+											<input type="text" id="first_repaymentdate" 
 												th:value="${#dates.format(view?.first_repaymentdate, 'dd-MM-yyyy')}"
 												name="first_repaymentdate" th:if="${formmode}=='view'" readonly />
-											<input type="text" id="first_repaymentdate"
+											<input type="text" id="first_repaymentdate" 
 												th:value="${#dates.format(view?.first_repaymentdate, 'dd-MM-yyyy')}"
 												name="first_repaymentdate" th:if="${formmode}=='modify'" />
 										</div>
@@ -1668,14 +1670,14 @@
 								</div>
 								<div class="card-footer text-center mt-4">
 									<button class="btn-primary big-btn">Home</button>
-									<button class="btn-primary big-btn" th:if="${Boolean} and ${formmode}=='view'"
+									<button class="btn-primary big-btn" th:if="${view?.last_modified_date > view?.approved_date} and ${formmode}=='view'"
 										th:attr="data-id=${view?.id},data-account_holderkey=${view?.account_holderkey},data-branch_key=${view?.assigned_branchkey}" 
 										onclick="verifyscreen(this);">
 										Verify</button>
 
 									<!-- Submit Button (Shown when Boolean is false) -->
 									<button type="button" class="btn-primary big-btn"
-										th:if="!${Boolean} and ${formmode}=='view'" data-dismiss="modal"
+										th:if="${view?.last_modified_date < view?.approved_date} and ${formmode}=='view'" data-dismiss="modal"
 										th:attr="data-id=${view?.id}, data-account_holderkey=${view?.account_holderkey}, data-branch_key=${view?.assigned_branchkey}"
 										onclick="modifyscreen(this);">Modify</button>
 									<button type="button" class="btn-primary big-btn" th:if="${formmode}=='modify'"
@@ -1921,12 +1923,12 @@
 											<label>Disbursement Date</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" id="disbursement_date"
+											<input type="text" id="expected_disbursementdate"
 												th:value="${#dates.format(view?.expected_disbursementdate, 'dd-MM-yyyy')}"
-												name="disbursement_date" readonly />
+												name="expected_disbursementdate" readonly />
 										</div>
 										<div class="col-sm-2">
-											<label>First Payment Date</label>
+											<label>First Payment Date 1</label>
 										</div>
 										<div class="col-sm-2">
 											<input type="text" id="first_repaymentdate"

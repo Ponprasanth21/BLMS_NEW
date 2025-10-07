@@ -3,6 +3,7 @@ package com.bornfire.entities;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -32,7 +33,10 @@ public class CLIENT_MASTER_ENTITY {
 	@DateTimeFormat(pattern = "dd-MM-yyyy HH:mm:ss")
 	private Date	birth_date;
 	private String	gender;
+	
+	@Column(name="ASSIGNED_BRANCH_KEY", length=50)
 	private String	assigned_branch_key;
+	
 	private String	client_role_key;
 	private	BigDecimal loan_cycle;
 	private	BigDecimal group_loan_cycle;
@@ -48,7 +52,7 @@ public class CLIENT_MASTER_ENTITY {
 	private String	auth_flg;
 	private String	modify_flg;
 	private String	del_flg;
-	private String	entry_user;
+	private String	entry_user; 
 	private String	modify_user;
 	private String	auth_user;
 	@DateTimeFormat(pattern="dd-MM-yyyy HH:mm")

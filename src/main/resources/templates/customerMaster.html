@@ -314,6 +314,12 @@
 		}
 	</style>
 	<script>
+		$(function () {
+			$("#creation_date, #last_modified_date, #dob, #approval_date, #as_on_date").datepicker({
+				dateFormat: "dd-mm-yy"
+			});
+		});
+
 		$(document).ready(function () {
 			$('.dropdown-toggle').dropdown();
 		});
@@ -1895,7 +1901,7 @@
 		function ClickId(a, mode = 'view') {
 			event.preventDefault();
 			let id = null;
-			const assigned_branch_key = document.getElementById('assigned_branch_key').value;
+			const assigned_branch_key = document.getElementById('assigned_branch_key_valu').value;
 			if (a) {
 				console.log("Customer ID Text Content:", a.textContent.trim());
 				console.log("Customer ID Data Attribute:", a.getAttribute("data-id"));
@@ -1929,10 +1935,11 @@
 			var formData = $("#drawDownDetailsAdd").serializeArray();
 
 			formData.forEach(function (field) {
-				if (isDateField(field.name) && field.value) {
-
-					let date = new Date(field.value);
-					field.value = formatDateWithMidnight(date); // Ensure correct format
+				if (isDateField(field.name) && field.value.trim() !== "") {
+					 let parts = field.value.split("-");
+					let formattedValue = `${parts[2]}-${parts[1]}-${parts[0]}`; 
+					let date = new Date(formattedValue);
+					field.value = formatDateWithMidnight(date);
 				}
 			});
 
@@ -1962,8 +1969,7 @@
 		// Function to check if a field is a date field
 		function isDateField(fieldName) {
 			return [
-				"creation_date", "last_modified_date", "activation_date", "approved_date",
-				"birth_date", "asondate"
+				'creation_date', 'last_modified_date','birth_date','approved_date','asondate','activation_date'
 			].includes(fieldName);
 		}
 
@@ -2102,7 +2108,7 @@
 		});
 
 		function showResponse(response) {
-			let message = "Upload Completed"
+			let message = response;
 			// "Upload Completed<br>" +
 			// "Total No of Rows Succeeded: " + response.TotalSucceeded + "<br>" +
 			// "Total No of Rows Failed: " + response.TotalFailed + "<br>" +
@@ -2912,7 +2918,7 @@
 												<label>Date of Birth</label>
 											</div>
 											<div class="col-sm-2">
-												<input type="text" name="birth_date"
+												<input type="text" name="birth_date" class="datepicker"
 													th:value="${customer?.birth_date != null ? #dates.format(customer.birth_date, 'dd-MM-yyyy') : ''}"
 													id="dob" />
 											</div>
@@ -2951,10 +2957,10 @@
 												<label>Approval Date</label>
 											</div>
 											<div class="col-sm-2">
-												<input type="text" name="approved_date"
+												<input type="text" name="approved_date" class="datepicker"
 													th:value="${customer?.approved_date != null ? #dates.format(customer.approved_date, 'dd-MM-yyyy') : ''}"
 													id="approval_date" />
-												<input type="text" name="assigned_branch_key" id="assigned_branch_key"
+												<input type="text" name="assigned_branch_key_valu" id="assigned_branch_key_valu"
 													th:value="${customer?.assigned_branch_key}" hidden />
 											</div>
 										</div>
@@ -2965,15 +2971,15 @@
 												<label>Last Modification Date</label>
 											</div>
 											<div class="col-sm-2">
-												<input type="text" name="last_modified_date"
+												<input type="text" name="last_modified_date" class="datepicker"
 													th:value="${customer?.last_modified_date != null ? #dates.format(customer.last_modified_date, 'dd-MM-yyyy') : ''}"
-													id="modification_date" />
+													id="last_modified_date" />
 											</div>
 											<div class="col-sm-2">
 												<label>Activation Date</label>
 											</div>
 											<div class="col-sm-2">
-												<input type="text" name="activation_date"
+												<input type="text" name="activation_date" class="datepicker"
 													th:value="${customer?.activation_date != null ? #dates.format(customer.activation_date, 'dd-MM-yyyy') : ''}"
 													id="activation_date" />
 											</div>
@@ -3057,16 +3063,15 @@
 												<label>Assigned User</label>
 											</div>
 											<div class="col-sm-2">
-												<input type="text" name="assigned_user_key"
+												<input type="text" name="assigned_user_key" class="datepicker"
 													th:value="${customer?.assigned_user_key}" id="assigned_user" />
 											</div>
 											<div class="col-sm-2">
 												<label>As On Date</label>
 											</div>
 											<div class="col-sm-2">
-												<input type="date" name="asondate"
-													th:value="${customer?.asondate != null ? #dates.format(customer.asondate, 'yyyy-MM-dd') : ''}"
-													id="as_on_date" />
+												<input type="text" name="asondate" class="datepicker"
+													th:value="${customer?.asondate != null ? #dates.format(customer.asondate, 'dd-MM-yyyy') : ''}" id="as_on_date" />
 											</div>
 
 										</div>
@@ -3077,7 +3082,7 @@
 									<table class="table table-bordered" style="width: 100%; white-space: nowrap;">
 										<thead class="thead-light">
 											<tr>
-												<th style="text-align: left;">Account Number</th>
+												<th style="text-align: left;">Account ID</th>
 												<th style="text-align: left;">Account Name</th>
 												<th style="text-align: left;">Date of Loan</th>
 												<th style="text-align: center;">Loan Amount</th>
@@ -3288,7 +3293,7 @@
 											<label>Last Modification Date</label>
 										</div>
 										<div class="col-sm-2">
-											<input type="text" name="modification_date" id="modification_date" />
+											<input type="text" name="last_modified_date" id="last_modified_date" />
 										</div>
 										<div class="col-sm-2">
 											<label>Activation Date</label>

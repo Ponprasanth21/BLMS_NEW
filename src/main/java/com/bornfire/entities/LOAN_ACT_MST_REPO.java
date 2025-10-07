@@ -441,7 +441,7 @@ List<Object[]> getActNo();
 			          "c.LAST_NAME AS last_name " +
 			          "FROM LOAN_ACCOUNT_MASTER_TBL l " +
 			          "INNER JOIN CLIENT_MASTER_TBL c ON c.ENCODED_KEY = l.ACCOUNT_HOLDERKEY " +
-			          "WHERE l.last_modified_date > l.approved_date " +
+			          "WHERE l.last_modified_date < l.approved_date " +
 			          "ORDER BY l.ID " +
 			          "OFFSET ?1 ROWS FETCH NEXT ?2 ROWS ONLY",
 			  nativeQuery = true
