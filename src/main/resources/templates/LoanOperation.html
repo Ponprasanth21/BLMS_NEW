@@ -1615,6 +1615,7 @@
 			const payload = [];
 
 			rows.forEach(row => {
+				const tranid = row.querySelector('input[name="tran_id"]')?.value || "";
 				const acctNum = row.querySelector('input[name="acct_num"]')?.value || "";
 				const acctName = row.querySelector('input[name="acct_namedata"]')?.value || "";
 				const tranAmt = parseFloat(row.querySelector('input[name="tran_amt"]')?.value || 0);
@@ -1624,7 +1625,7 @@
 				const rate = row.querySelector('input[name="rate"]')?.value || "UNALLOCATED";
 
 				payload.push({
-					tran_id: "",
+					tran_id: tranid,
 					acct_num: acctNum,
 					acct_namedata: acctName,
 					tran_amt: tranAmt,

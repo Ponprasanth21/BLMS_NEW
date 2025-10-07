@@ -1,5 +1,4 @@
 package com.bornfire.entities;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -8,8 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "MULTIPLE_TRANSACTION_TBL")
-public class MULTIPLE_TRANSACTION_ENTITY {
+@Table(name = "MULTIPLE_TRANSACTION_HISTORY_TBL")
+public class MULTIPLE_TRANSACTION_HISTORY_ENTITY {
 	private String	transaction_id;
 	private String	names;
 	private String	reference;
@@ -151,10 +150,11 @@ public class MULTIPLE_TRANSACTION_ENTITY {
 	public void setRef_transaction_id(String ref_transaction_id) {
 		this.ref_transaction_id = ref_transaction_id;
 	}
-	public MULTIPLE_TRANSACTION_ENTITY(String transaction_id, String names, String reference, String mobile_number,
-			BigDecimal amount, BigDecimal allocated_amount, Date trans_time, String status, String auth_flg,
-			Date auth_time, String auth_user, String del_flg, String entity_flg, Date entry_time, String entry_user,
-			String modify_flg, Date modify_time, String modify_user, String srl_no, String ref_transaction_id) {
+	public MULTIPLE_TRANSACTION_HISTORY_ENTITY(String transaction_id, String names, String reference,
+			String mobile_number, BigDecimal amount, BigDecimal allocated_amount, Date trans_time, String status,
+			String auth_flg, Date auth_time, String auth_user, String del_flg, String entity_flg, Date entry_time,
+			String entry_user, String modify_flg, Date modify_time, String modify_user, String srl_no,
+			String ref_transaction_id) {
 		super();
 		this.transaction_id = transaction_id;
 		this.names = names;
@@ -177,7 +177,7 @@ public class MULTIPLE_TRANSACTION_ENTITY {
 		this.srl_no = srl_no;
 		this.ref_transaction_id = ref_transaction_id;
 	}
-	public MULTIPLE_TRANSACTION_ENTITY() {
+	public MULTIPLE_TRANSACTION_HISTORY_ENTITY() {
 		super();
 		// TODO Auto-generated constructor stub
 	}

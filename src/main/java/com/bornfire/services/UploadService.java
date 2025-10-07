@@ -673,6 +673,7 @@ public class UploadService {
 					entity.setDel_flg("N");
 					entity.setEntry_user(userID);
 			    	entity.setEntry_time(new Date());
+			    	entity.setRef_transaction_id(null);
 
 					logger.info("Start 7");
 					multiple_TRANSACTION_REPO.save(entity);
