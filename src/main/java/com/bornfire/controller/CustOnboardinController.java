@@ -68,6 +68,7 @@ import com.bornfire.entities.BACP_DOC_MAN_REP;
 import com.bornfire.entities.BACP_NEGATIVE_LIST_Repo;
 import com.bornfire.entities.BGLSBusinessTable_Entity;
 import com.bornfire.entities.BGLSBusinessTable_Rep;
+import com.bornfire.entities.BGLS_LMS_SCHEMES_TABLE_REPO;
 import com.bornfire.entities.Bacp_Signature_master;
 import com.bornfire.entities.Bacp_Signature_masterRepo;
 import com.bornfire.entities.Bacp_WorkFLow_Entity;
@@ -697,6 +698,9 @@ public class CustOnboardinController {
 
 	}
 
+	@Autowired
+	BGLS_LMS_SCHEMES_TABLE_REPO lmsschemerepo;
+	
 	@RequestMapping(value = "Parameter", method = { RequestMethod.GET, RequestMethod.POST })
 	public String Parameters(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String refnumber,
@@ -717,7 +721,7 @@ public class CustOnboardinController {
 		if (formmode == null || formmode.equals("list")) {
 			System.out.println("Value=======================>>> " + refnumber);
 			md.addAttribute("OtherServices", parameterrep.listofvalue());
-			md.addAttribute("lms_schemes", bgls_scheme_lms_repo.listofvalue());
+			md.addAttribute("lms_schemes", lmsschemerepo.findAll());
 			md.addAttribute("menu", "AMLCustomerKYC");
 			md.addAttribute("menuname", "CustomerKYC");
 			md.addAttribute("formmode", "list"); // to set which form - valid values are "edit" , "add" & "list"

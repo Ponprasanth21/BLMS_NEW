@@ -169,141 +169,159 @@
 
 
 
-function SubmitLmsScheme() {
-    // Collect form data into an object
-    const formData = {};
-    $("#refForm").serializeArray().forEach(function(field) {
-        formData[field.name] = field.value;
-    });
-
-    // Optional: simple validation for required fields
-    const requiredFields = ['id', 'activated'];
-
-    for (const field of requiredFields) {
-        if (!formData[field] || formData[field].trim() === "") {
-            alert(`Please fill in the ${field} field.`);
-            return;
-        }
-    }
-
-    $.ajax({
-        url: './lms_scheme_Add',            // Backend endpoint
-        type: 'POST',
-        contentType: 'application/json',    // Important: send JSON
-        data: JSON.stringify(formData),     // Send form data in request body
-        success: function(data) {
-            // Show server response in modal
-            $("#alertmsg").text(data);
-            $('#alert').modal('show');
-
-            // Redirect when user clicks OK
-            $("#alertOkBtn").off("click").on("click", function() {
-                $('#alert').modal('hide'); 
-                window.location.href = './parameter'; 
+        function SubmitLmsScheme() {
+            // Collect form data into an object
+            const formData = {};
+            $("#refForm").serializeArray().forEach(function (field) {
+                formData[field.name] = field.value;
             });
-        },
-        error: function(xhr, status, error) {
-            // Show error in modal
-            $("#alertmsg").text("Error while saving: " + error);
-            $('#alert').modal('show');
-        }
-    });
-}
 
-// function UpdateParameter() {
-//     const formData = {};
-//     $('#refForm').find('input, select, textarea').each(function() {
-//         const name = $(this).attr('name');
-//         if (name) {
-//             let value = $(this).val();
+            // Optional: simple validation for required fields
+            const requiredFields = ['id', 'activated'];
 
-//             // Convert specific date fields to dd-MM-yyyy
-//             if (["creationDate", "lastModifiedDate", "defaultFirstRepaymentDueDateOffset",
-//                  "minFirstRepaymentDueDateOffset", "maxFirstRepaymentDueDateOffset"].includes(name) && value) {
-                
-//                 const date = new Date(value);
-//                 const dd = ('0' + date.getDate()).slice(-2);
-//                 const mm = ('0' + (date.getMonth() + 1)).slice(-2);
-//                 const yyyy = date.getFullYear();
-//                 value = `${dd}-${mm}-${yyyy}`; // format dd-MM-yyyy
-//             }
-
-//             formData[name] = value;
-//         }
-//     });
-
-//     console.log(formData);
-
-//     if (!formData.id) {
-//         alert("Parameter ID not found!");
-//         return;
-//     }
-
-//     $.ajax({
-//         url: './parametersupdate',  
-//         type: 'POST',
-//         data: formData,
-//         success: function(response) {
-//             $("#alertmsg").text(response || "Record updated successfully");
-//             $('#alert').modal('show');
-
-//             $("#alertOkBtn").off("click").on("click", function() {
-//                 $('#alert').modal('hide'); 
-//                 window.location.href = './parameter';
-//             });
-//         },
-//         error: function(xhr, status, error) {
-//             $("#alertmsg").text("Error while updating: " + error);
-//             $('#alert').modal('show');
-//         }
-//     });
-// }
-
-function UpdateParameter() {
-    const formData = {};
-    $('#refForm').find('input, select, textarea').each(function() {
-        const name = $(this).attr('name');
-        if (name) {
-            let value = $(this).val();
-
-            // Convert date fields to yyyy-MM-dd for backend
-            if (["creationDate", "lastModifiedDate", "defaultFirstRepaymentDueDateOffset",
-                 "minFirstRepaymentDueDateOffset", "maxFirstRepaymentDueDateOffset"].includes(name) && value) {
-                const date = new Date(value);
-                const yyyy = date.getFullYear();
-                const mm = ('0' + (date.getMonth() + 1)).slice(-2);
-                const dd = ('0' + date.getDate()).slice(-2);
-                value = `${yyyy}-${mm}-${dd}`;
+            for (const field of requiredFields) {
+                if (!formData[field] || formData[field].trim() === "") {
+                    alert(`Please fill in the ${field} field.`);
+                    return;
+                }
             }
 
-            formData[name] = value;
-        }
-    });
+            $.ajax({
+                url: './lms_scheme_Add',            // Backend endpoint
+                type: 'POST',
+                contentType: 'application/json',    // Important: send JSON
+                data: JSON.stringify(formData),     // Send form data in request body
+                success: function (data) {
+                    // Show server response in modal
+                    $("#alertmsg").text(data);
+                    $('#alert').modal('show');
 
-    if (!formData.id) {
-        alert("Parameter ID not found!");
-        return;
-    }
-
-    $.ajax({
-        url: './parametersupdate',
-        type: 'POST',
-        data: formData,
-        success: function(response) {
-            $("#alertmsg").text(response || "Record updated successfully");
-            $('#alert').modal('show');
-            $("#alertOkBtn").off("click").on("click", function() {
-                $('#alert').modal('hide'); 
-                window.location.href = './Parameter';
+                    // Redirect when user clicks OK
+                    $("#alertOkBtn").off("click").on("click", function () {
+                        $('#alert').modal('hide');
+                        window.location.href = './parameter';
+                    });
+                },
+                error: function (xhr, status, error) {
+                    // Show error in modal
+                    $("#alertmsg").text("Error while saving: " + error);
+                    $('#alert').modal('show');
+                }
             });
-        },
-        error: function(xhr, status, error) {
-            $("#alertmsg").text("Error while updating: " + error);
-            $('#alert').modal('show');
         }
-    });
-}
 
+        // function UpdateParameter() {
+        //     const formData = {};
+        //     $('#refForm').find('input, select, textarea').each(function() {
+        //         const name = $(this).attr('name');
+        //         if (name) {
+        //             let value = $(this).val();
+
+        //             // Convert specific date fields to dd-MM-yyyy
+        //             if (["creationDate", "lastModifiedDate", "defaultFirstRepaymentDueDateOffset",
+        //                  "minFirstRepaymentDueDateOffset", "maxFirstRepaymentDueDateOffset"].includes(name) && value) {
+
+        //                 const date = new Date(value);
+        //                 const dd = ('0' + date.getDate()).slice(-2);
+        //                 const mm = ('0' + (date.getMonth() + 1)).slice(-2);
+        //                 const yyyy = date.getFullYear();
+        //                 value = `${dd}-${mm}-${yyyy}`; // format dd-MM-yyyy
+        //             }
+
+        //             formData[name] = value;
+        //         }
+        //     });
+
+        //     console.log(formData);
+
+        //     if (!formData.id) {
+        //         alert("Parameter ID not found!");
+        //         return;
+        //     }
+
+        //     $.ajax({
+        //         url: './parametersupdate',  
+        //         type: 'POST',
+        //         data: formData,
+        //         success: function(response) {
+        //             $("#alertmsg").text(response || "Record updated successfully");
+        //             $('#alert').modal('show');
+
+        //             $("#alertOkBtn").off("click").on("click", function() {
+        //                 $('#alert').modal('hide'); 
+        //                 window.location.href = './parameter';
+        //             });
+        //         },
+        //         error: function(xhr, status, error) {
+        //             $("#alertmsg").text("Error while updating: " + error);
+        //             $('#alert').modal('show');
+        //         }
+        //     });
+        // }
+
+        function UpdateParameter() {
+            const formData = {};
+            $('#refForm').find('input, select, textarea').each(function () {
+                const name = $(this).attr('name');
+                if (name) {
+                    let value = $(this).val();
+
+                    // Convert date fields to yyyy-MM-dd for backend
+                    if (["creationDate", "lastModifiedDate", "defaultFirstRepaymentDueDateOffset",
+                        "minFirstRepaymentDueDateOffset", "maxFirstRepaymentDueDateOffset"].includes(name) && value) {
+                        const date = new Date(value);
+                        const yyyy = date.getFullYear();
+                        const mm = ('0' + (date.getMonth() + 1)).slice(-2);
+                        const dd = ('0' + date.getDate()).slice(-2);
+                        value = `${yyyy}-${mm}-${dd}`;
+                    }
+
+                    formData[name] = value;
+                }
+            });
+
+            if (!formData.id) {
+                alert("Parameter ID not found!");
+                return;
+            }
+
+            $.ajax({
+                url: './parametersupdate',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    $("#alertmsg").text(response || "Record updated successfully");
+                    $('#alert').modal('show');
+                    $("#alertOkBtn").off("click").on("click", function () {
+                        $('#alert').modal('hide');
+                        window.location.href = './Parameter';
+                    });
+                },
+                error: function (xhr, status, error) {
+                    $("#alertmsg").text("Error while updating: " + error);
+                    $('#alert').modal('show');
+                }
+            });
+        }
+
+
+        //  $(document).ready(function () {
+        //     $.ajax({
+        //         url: "api/branches",
+        //         type: "GET",
+        //         success: function (data) {
+        //             console.log(data);
+        //             let dropdown = $("#branches");
+        //             dropdown.empty().append('<option value="">Select Branch</option>');
+        //             $.each(data, function (index, code) {
+        //                 dropdown.append('<option value="' + code + '">' + code + '</option>');
+        //             });
+        //         },
+        //         error: function (xhr, status, error) {
+        //             console.error("Error fetching branches: " + error);
+        //         }
+        //     });
+        // });
 
     </script>
 
@@ -332,324 +350,654 @@ function UpdateParameter() {
 
                             <div class="card-body">
 
-                                <form class="border border-secondary" id="refForm"
-                                    autocomplete="off">
+                                <form class="border border-secondary" id="refForm" autocomplete="off">
 
 
                                     <div class="container-fluid mt-3">
                                         <div class="row g-3">
-                                            <!-- Field 1 -->
-                                            <!-- <div class="col-md-4 d-flex align-items-center">
-                                                <label for="encodedKey" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Encoded Key</label>
-                                                <input type="text" id="encodedKey" name="encodedKey"
+
+                                            <!-- Four Eyes Principle Loan Approval -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fourEyesPrincipleLoanApproval"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">PRODUCT</label>
+                                                <input type="text" id="product" name="product"
+                                                    th:value="${parameters.product}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].id}" >
-                                            </div> -->
+                                                    style="width: 55%;">
+                                            </div>
 
                                             <!-- Field 2 -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="id" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ID</label>
-                                                <input type="text" id="id" name="id"
+                                                <input type="text" id="id" name="id" th:value="${parameters.id}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].id}" readonly>
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="id" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">PRODUCT_CATEGORY</label>
+                                                <input type="text" id="productCategory" name="productCategory"
+                                                    th:value="${parameters.productCategory}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
                                             </div>
 
                                             <!-- Field 3 -->
-                                            <div class="col-md-4 d-flex align-items-center">
+                                            <!-- <div class="col-md-4 d-flex align-items-center">
                                                 <label for="activated" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">Activated</label>
-                                                <select id="activated" name="activated" class="form-control form-control-sm border border-dark" style="width: 55%;" >
-                                                    <option value="" th:selected="${parameters[0].activated == null}">Select</option>
-                                                    <option value="N" th:selected="${parameters[0].activated == 'N'}">No</option>
-                                                    <option value="Y" th:selected="${parameters[0].activated == 'Y'}">Yes</option>
-                                                </select>
-                                            </div>
+                                                <select id="activated" name="activated" class="form-control form-control-sm border border-dark" style="width: 55%;">
+                                                <option value="">select</option>
+                                                <option value="N">No</option>
+                                                <option value="Y">Yes</option>
+                                            </select>
+                                            </div> -->
 
-                                            <!-- Four Eyes Principle Loan Approval -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="fourEyesPrincipleLoanApproval"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Four Eyes
-                                                    Principle Loan Approval</label>
-                                                <input type="text" id="fourEyesPrincipleLoanApproval"
-                                                    name="fourEyesPrincipleLoanApproval"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].fourEyesPrincipleLoanApproval}" >
-                                            </div>
+
                                         </div>
 
                                         <div class="row g-3 mt-2">
                                             <!-- Field 4 -->
-                                            <div class="col-md-4 d-flex align-items-center">
+                                            <!-- <div class="col-md-4 d-flex align-items-center">
                                                 <label for="creationDate" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">Creation Date</label>
                                                 <input type="date" id="creationDate" name="creationDate"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${#dates.format(parameters[0].creationDate, 'yyyy-MM-dd')}" readonly >
+                                                    style="width: 55%;">
+                                            </div> -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="defaultGracePeriod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">PRODUCT_TYPE</label>
+                                                <input type="text" id="productType" name="productType"
+                                                    th:value="${parameters.productType}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
                                             </div>
 
                                             <!-- Field 5 -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="defaultGracePeriod" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Default Grace Period</label>
-                                                <input type="text" id="defaultGracePeriod" name="defaultGracePeriod"
+                                                    style="width: 45%;">STATE</label>
+                                                <select id="state" name="state"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].defaultGracePeriod}" >
+                                                    style="width: 55%;">
+                                                    <option value="">select</option>
+                                                    <option value="Y" th:selected="${parameters.state == 'Y'}">Active
+                                                    </option>
+                                                    <option value="N" th:selected="${parameters.state == 'N'}">Inactive
+                                                    </option>
+                                                </select>
                                             </div>
+
 
                                             <!-- Field 6 -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="defaultLoanAmount" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Default Loan Amount</label>
-                                                <input type="number" id="defaultLoanAmount" name="defaultLoanAmount"
+                                                    style="width: 45%;">PRODUCT_DESCRIPTION</label>
+                                                <input type="text" id="productDescription" name="productDescription"
+                                                    th:value="${parameters.productDescription}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].defaultLoanAmount}" >
+                                                    style="width: 55%;">
                                             </div>
                                         </div>
 
+                                        <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Product
+                                                Availability</label>
+                                        </div>
 
                                         <div class="row g-3 mt-2">
                                             <!-- Default Num Installments -->
-                                            <div class="col-md-4 d-flex align-items-center">
+                                            <!-- <div class="col-md-4 d-flex align-items-center">
                                                 <label for="defaultNumInstallments"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Default
-                                                    Num Installments</label>
-                                                <input type="number" id="defaultNumInstallments"
-                                                    name="defaultNumInstallments"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">PRODUCT_AVAILABILITY</label>
+                                                <input type="text" id="productAvailability" name="productAvailability"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].defaultNumInstallments}" >
-                                            </div>
+                                                    style="width: 55%;">
+                                            </div> -->
 
                                             <!-- Default Repayment Period Count -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="defaultRepaymentPeriodCount"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Default
-                                                    Repayment Period Count</label>
-                                                <input type="number" id="defaultRepaymentPeriodCount"
-                                                    name="defaultRepaymentPeriodCount"
+                                                <label for="availableTo" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AVAILABLE_TO</label>
+                                                <select id="availableTo" name="availableTo"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].defaultRepaymentPeriodCount}" >
+                                                    style="width: 55%;">
+                                                    <option value="">select</option>
+                                                    <option value="Clients"
+                                                        th:selected="${parameters.availableTo == 'Clients'}">Clients
+                                                    </option>
+                                                    <option value="Groups"
+                                                        th:selected="${parameters.availableTo == 'Groups'}">Groups
+                                                    </option>
+                                                    <option value="Groups(Solidarity)"
+                                                        th:selected="${parameters.availableTo == 'Groups(Solidarity)'}">
+                                                        Groups(Solidarity)</option>
+                                                    <option value="All Branches"
+                                                        th:selected="${parameters.availableTo == 'All Branches'}">All
+                                                        Branches</option>
+                                                </select>
                                             </div>
 
                                             <!-- Grace Period Type -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="gracePeriodType" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Grace Period Type</label>
-                                                <input type="text" id="gracePeriodType" name="gracePeriodType"
+                                                <label for="BRANCHES" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">BRANCHES</label>
+
+                                                <select id="branches" name="branches"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].gracePeriodType}" >
+                                                    style="width: 55%;">
+                                                    <option value="">Select Branch</option>
+                                                </select>
+
+                                                <!-- Hidden input stores the preselected branch from Thymeleaf -->
+                                                <input type="hidden" id="selectedBranch"
+                                                    th:value="${parameters.branches}" />
                                             </div>
+
+                                            <script>
+                                                $(document).ready(function () {
+
+                                                    $.ajax({
+                                                        url: "api/branches",
+                                                        type: "GET",
+                                                        success: function (data) {
+                                                            let dropdown = $("#branches");
+                                                            dropdown.empty().append('<option value="">Select Branch</option>');
+
+                                                            // Get the selected value from hidden input AFTER AJAX data is ready
+                                                            let selectedBranch = $("#selectedBranch").val();
+
+                                                            $.each(data, function (index, branch) {
+                                                                let branchValue = branch.code || branch;
+                                                                let branchText = branch.name || branchValue;
+
+                                                                let option = $('<option></option>')
+                                                                    .attr('value', branchValue)
+                                                                    .text(branchText);
+
+                                                                // Set selected if matches hidden input
+                                                                if (branchValue === selectedBranch) {
+                                                                    option.prop('selected', true);
+                                                                }
+
+                                                                dropdown.append(option);
+                                                            });
+                                                        },
+                                                        error: function (xhr, status, error) {
+                                                            console.error("Error fetching branches: " + error);
+                                                        }
+                                                    });
+
+                                                });
+                                            </script>
+
+
+
                                         </div>
 
                                         <div class="row g-3 mt-2">
-                                            <!-- Interest Calculation Method -->
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">New Account
+                                                Settings</label>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="interestCalculationMethod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Interest
-                                                    Calculation Method</label>
-                                                <input type="text" id="interestCalculationMethod"
-                                                    name="interestCalculationMethod"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">ID_TYPE</label>
+                                                <input type="text" id="idType" name="idType"
+                                                    th:value="${parameters.idType}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].interestCalculationMethod}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Interest Type -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="minFirstRepaymentDueDateOffset"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">USING_TEMPLATE</label>
+                                                <input type="text" id="usingTemplate" name="usingTemplate"
+                                                    th:value="${parameters.usingTemplate}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="interestType" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Interest Type</label>
-                                                <input type="text" id="interestType" name="interestType"
+                                                    style="width: 45%;">INITIAL_ACCOUNT_STATE</label>
+                                                <input type="text" id="initialAccountState"
+                                                    th:value="${parameters.initialAccountState}"
+                                                    name="initialAccountState"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].interestType}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Repayment Schedule Method -->
+                                        </div>
+
+
+                                        <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Loan
+                                                Amount</label>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="repaymentScheduleMethod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Repayment
-                                                    Schedule Method</label>
-                                                <input type="text" id="repaymentScheduleMethod"
-                                                    name="repaymentScheduleMethod"
+                                                <label for="interestCalculationMethod"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">LOAN_AMOUNT_CONSTRAINTS</label>
+                                                <input type="text" id="loanAmountConstraints"
+                                                    th:value="${parameters.loanAmountConstraints}"
+                                                    name="loanAmountConstraints"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].repaymentScheduleMethod}" >
+                                                    style="width: 55%;">
                                             </div>
+
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="interestType" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">ACCOUNTS_MANAGED_UNDER_CREDIT_ARRANGEMENTS</label>
+                                                <input type="text" id="accountsManagedUnderCredit"
+                                                    th:value="${parameters.accountsManagedUnderCredit}"
+                                                    name="accountsManagedUnderCredit"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Interest
+                                                Rate</label>
                                         </div>
 
                                         <div class="row g-3 mt-2">
                                             <!-- Last Modified Date -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="lastModifiedDate" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Last Modified Date</label>
-                                                <input type="date" id="lastModifiedDate" name="lastModifiedDate"
+                                                    style="width: 45%;">INTEREST_CALC_METHOD</label>
+                                                <input type="text" id="interestCalcMethod" name="interestCalcMethod"
+                                                    th:value="${parameters.interestCalcMethod}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${#dates.format(parameters[0].lastModifiedDate, 'yyyy-MM-dd')}" readonly>
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="maxFirstRepaymentDueDateOffset"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">ACCRUED_INT_POST_FREQ</label>
+                                                <input type="text" id="accruedIntPostFreq"
+                                                    th:value="${parameters.accruedIntPostFreq}"
+                                                    name="accruedIntPostFreq"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
                                             </div>
 
                                             <!-- Max Grace Period -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="maxGracePeriod" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Max Grace Period</label>
-                                                <input type="number" id="maxGracePeriod" name="maxGracePeriod"
+                                                    style="width: 45%;">INTEREST_TYPE</label>
+                                                <input type="text" id="interestType" name="interestType"
+                                                    th:value="${parameters.interestType}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].maxGracePeriod}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Max Loan Amount -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="maxLoanAmount" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Max Loan Amount</label>
-                                                <input type="number" id="maxLoanAmount" name="maxLoanAmount"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].maxLoanAmount}" >
-                                            </div>
+
                                         </div>
 
 
 
                                         <div class="row g-3 mt-2">
-                                            <!-- Max Number of Installments -->
+
+
+
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="maxNumInstallments" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Max Num Installments</label>
-                                                <input type="number" id="maxNumInstallments" name="maxNumInstallments"
+                                                    style="width: 45%;">INTEREST_RATE_CHARGED</label>
+                                                <input type="text" id="interestRateCharged"
+                                                    th:value="${parameters.interestRateCharged}"
+                                                    name="interestRateCharged"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].maxNumInstallments}" >
+                                                    style="width: 55%;">
                                             </div>
 
                                             <!-- Max Penalty Rate -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="maxPenaltyRate" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Max Penalty Rate</label>
-                                                <input type="number" id="maxPenaltyRate" name="maxPenaltyRate"
+                                                    style="width: 45%;">INTEREST_RATE_CONSTRAINTS</label>
+                                                <input type="number" id="interestRateConstraints"
+                                                    th:value="${parameters.interestRateConstraints}"
+                                                    name="interestRateConstraints"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].maxPenaltyRate}" >
+                                                    style="width: 55%;">
                                             </div>
 
                                             <!-- Min Grace Period -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="minGracePeriod" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Min Grace Period</label>
-                                                <input type="number" id="minGracePeriod" name="minGracePeriod"
+                                                    style="width: 45%;">DAYS_IN_YEAR</label>
+                                                <input type="number" id="daysInYear" name="daysInYear"
+                                                    th:value="${parameters.daysInYear}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].minGracePeriod}" >
+                                                    style="width: 55%;">
                                             </div>
+
                                         </div>
 
+                                        <div class="row g-3 mt-2">
+
+
+
+                                            <!-- Interest Accrued Accounting Method -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="interestAccruedAccountingMethod"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">REPAYMENT_INT_CALC</label>
+                                                <input type="text" id="repaymentIntCalc" name="repaymentIntCalc"
+                                                    th:value="${parameters.repaymentIntCalc}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex justify-content-between align-items-center">
+
+
+                                                <input type="checkbox" id="accruedIntAfterMaturity"
+                                                    name="accruedIntAfterMaturity"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    th:checked="${parameters.accruedIntAfterMaturity == 'Y'}"
+                                                    th:value="${parameters.accruedIntAfterMaturity}"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'">
+
+
+                                                <label for="accruedIntAfterMaturity"
+                                                    class="form-label mb-0 text-start ml-5">
+                                                    ACCRUED_INT_AFTER_MATURITY
+                                                </label>
+                                            </div>
+
+
+                                        </div>
 
                                         <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Repayment
+                                                Scheduling</label>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
                                             <!-- Min Loan Amount -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="minLoanAmount" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Min Loan Amount</label>
-                                                <input type="number" id="minLoanAmount" name="minLoanAmount"
+                                                    style="width: 45%;">PAYMENT_INTERVAL_METHOD</label>
+                                                <input type="text" id="paymentIntervalMethod"
+                                                    th:value="${parameters.paymentIntervalMethod}"
+                                                    name="paymentIntervalMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].minLoanAmount}" >
+                                                    style="width: 55%;">
                                             </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="loanProductType" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">REPAYMENT_MADE_EVERY</label>
+                                                <input type="number" id="repaymentMadeEvery"
+                                                    th:value="${parameters.repaymentMadeEvery}"
+                                                    name="repaymentMadeEvery"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+
 
                                             <!-- Min Number of Installments -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="minNumInstallments" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Min Num Installments</label>
-                                                <input type="number" id="minNumInstallments" name="minNumInstallments"
+                                                    style="width: 45%;">INSTALLMENT_CONSTRAINTS</label>
+                                                <input type="number" id="installmentConstraints"
+                                                    th:value="${parameters.installmentConstraints}"
+                                                    name="installmentConstraints"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].minNumInstallments}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Min Penalty Rate -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="minPenaltyRate" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Min Penalty Rate</label>
-                                                <input type="number" id="minPenaltyRate" name="minPenaltyRate"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].minPenaltyRate}" >
-                                            </div>
                                         </div>
 
                                         <div class="row g-3 mt-2">
                                             <!-- Default Penalty Rate -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="defaultPenaltyRate" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Default Penalty Rate</label>
-                                                <input type="number" id="defaultPenaltyRate" name="defaultPenaltyRate"
+                                                <label for="minPenaltyRate" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FIRST_DUE_DATE_OFFSET</label>
+                                                <input type="number" id="firstDueDateOffset"
+                                                    th:value="${parameters.firstDueDateOffset}"
+                                                    name="firstDueDateOffset"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].defaultPenaltyRate}" >
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="defaultPenaltyRate" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">COLLECT_PRINCIPAL_EVERY</label>
+                                                <input type="number" id="collectPrincipalEvery"
+                                                    th:value="${parameters.collectPrincipalEvery}"
+                                                    name="collectPrincipalEvery"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
                                             </div>
 
                                             <!-- Product Description -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="productDescription" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Product Description</label>
-                                                <input type="text" id="productDescription" name="productDescription"
+                                                    style="width: 45%;">GRACE_PERIOD</label>
+                                                <input type="number" id="gracePeriod" name="gracePeriod"
+                                                    th:value="${parameters.gracePeriod}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].productDescription}" >
+                                                    style="width: 55%;">
                                             </div>
 
                                             <!-- Product Name -->
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">REPAYMENT_SCHEDULE_EDIT</label>
+                                                <div style="width: 55%; position: relative;">
+                                                    <!-- Dropdown button -->
+                                                    <button type="button" class="btn btn-sm w-100 text-start"
+                                                        style="border: 1px solid #ccc; background-color: #fff; color: #000; text-align: left;"
+                                                        onmouseover="this.style.backgroundColor='#f0f0f0'; this.style.borderColor='#007bff';"
+                                                        onmouseout="this.style.backgroundColor='#fff'; this.style.borderColor='#ccc';"
+                                                        onclick="document.getElementById('repaymentCheckboxDropdown').classList.toggle('d-block');">
+                                                        Select Options
+                                                    </button>
+
+                                                    <!-- Checkbox dropdown -->
+                                                    <div id="repaymentCheckboxDropdown"
+                                                        style="position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ccc; display: none; z-index: 1000; padding: 5px;">
+
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="adjustPaymentDates" name="adjustPaymentDates"
+                                                                value="Y"
+                                                                th:checked="${parameters.adjustPaymentDates == 'Y'}"
+                                                                th:value="${parameters.adjustPaymentDates}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'">
+                                                            <label class="form-check-label"
+                                                                for="adjustPaymentDates">Adjust Payment Dates</label>
+                                                        </div>
+
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="adjustPrincipalSchedule"
+                                                                name="adjustPrincipalSchedule" value="Y"
+                                                                th:checked="${parameters.adjustPrincipalSchedule == 'Y'}"
+                                                                th:value="${parameters.adjustPrincipalSchedule}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'">
+                                                            <label class="form-check-label"
+                                                                for="adjustPrincipalSchedule">Adjust Principal Payment
+                                                                Schedule</label>
+                                                        </div>
+
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="adjustInterestSchedule"
+                                                                name="adjustInterestSchedule" value="Y"
+                                                                th:checked="${parameters.adjustInterestSchedule == 'Y'}"
+                                                                th:value="${parameters.adjustInterestSchedule}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'">
+                                                            <label class="form-check-label"
+                                                                for="adjustInterestSchedule">Adjust Interest Payment
+                                                                Schedule</label>
+                                                        </div>
+
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="adjustFeeSchedule" name="adjustFeeSchedule"
+                                                                value="Y"
+                                                                th:checked="${parameters.adjustFeeSchedule == 'Y'}"
+                                                                th:value="${parameters.adjustFeeSchedule}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'">
+                                                            <label class="form-check-label"
+                                                                for="adjustFeeSchedule">Adjust Fee Payment
+                                                                Schedule</label>
+                                                        </div>
+
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="adjustPenaltySchedule" name="adjustPenaltySchedule"
+                                                                value="Y"
+                                                                th:checked="${parameters.adjustPenaltySchedule == 'Y'}"
+                                                                th:value="${parameters.adjustPenaltySchedule}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'">
+                                                            <label class="form-check-label"
+                                                                for="adjustPenaltySchedule">Adjust Penalty Payment
+                                                                Schedule</label>
+                                                        </div>
+
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="configurePaymentHolidays"
+                                                                name="configurePaymentHolidays" value="Y"
+                                                                th:checked="${parameters.configurePaymentHolidays == 'Y'}"
+                                                                th:value="${parameters.configurePaymentHolidays}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'">
+                                                            <label class="form-check-label"
+                                                                for="configurePaymentHolidays">Configure Payment
+                                                                Holidays</label>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="productName" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Product Name</label>
-                                                <input type="text" id="productName" name="productName"
+                                                    style="width: 45%;">ROUND_OFF_REPAY_SCHEDULE</label>
+                                                <input type="text" id="roundOffRepaySchedule"
+                                                    th:value="${parameters.roundOffRepaySchedule}"
+                                                    name="roundOffRepaySchedule"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].productName}" >
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="forIndividuals" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">ROUND_OFF_REPAY_CURRENCY</label>
+                                                <input type="text" id="roundOffRepayCurrency"
+                                                    th:value="${parameters.roundOffRepayCurrency}"
+                                                    name="roundOffRepayCurrency"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+
+
+                                            <!-- For Pure Groups -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="forPureGroups" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">NON_WORKING_DAYS_RESCHED</label>
+                                                <input type="text" id="nonWorkingDaysResched"
+                                                    th:value="${parameters.nonWorkingDaysResched}"
+                                                    name="nonWorkingDaysResched"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
                                             </div>
                                         </div>
 
 
                                         <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Repayment
+                                                Collection</label>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
                                             <!-- Repayment Period Unit -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="repaymentPeriodUnit" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Repayment Period Unit</label>
-                                                <input type="text" id="repaymentPeriodUnit" name="repaymentPeriodUnit"
+                                                    style="width: 45%;">PREPAYMENT_ACCEPTANCE</label>
+                                                <input type="text" id="prepaymentAcceptance"
+                                                    th:value="${parameters.prepaymentAcceptance}"
+                                                    name="prepaymentAcceptance"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].repaymentPeriodUnit}" >
+                                                    style="width: 55%;">
                                             </div>
 
                                             <!-- Prepayment Acceptance -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="prepaymentAcceptance" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Prepayment Acceptance</label>
-                                                <input type="text" id="prepaymentAcceptance" name="prepaymentAcceptance"
+                                                    style="width: 45%;">ACCEPT_PREPAY_FUTURE_INT</label>
+                                                <input type="text" id="acceptPrepayFutureInt"
+                                                    th:value="${parameters.acceptPrepayFutureInt}"
+                                                    name="acceptPrepayFutureInt"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].prepaymentAcceptance}" >
+                                                    style="width: 55%;">
                                             </div>
 
                                             <!-- Interest Application Method -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="interestApplicationMethod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Interest
-                                                    Application Method</label>
-                                                <input type="text" id="interestApplicationMethod"
-                                                    name="interestApplicationMethod"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">REPAYMENT_ALLOCATION_ORDER</label>
+                                                <select id="repaymentAllocationOrder" name="repaymentAllocationOrder"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].interestApplicationMethod}" >
+                                                    style="width: 55%;">
+                                                    <option value="">select</option>
+                                                    <option value="Fee"
+                                                        th:selected="${parameters.repaymentAllocationOrder == 'Fee'}">
+                                                        Fee</option>
+                                                    <option value="Penalty"
+                                                        th:selected="${parameters.repaymentAllocationOrder == 'Penalty'}">
+                                                        Penalty</option>
+                                                    <option value="Interest"
+                                                        th:selected="${parameters.repaymentAllocationOrder == 'Interest'}">
+                                                        Interest</option>
+                                                    <option value="Principal"
+                                                        th:selected="${parameters.repaymentAllocationOrder == 'Principal'}">
+                                                        Principal</option>
+                                                </select>
+
                                             </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Arrears
+                                                Setting</label>
                                         </div>
 
 
@@ -657,35 +1005,36 @@ function UpdateParameter() {
                                             <!-- Allow Arbitrary Fees -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="allowArbitraryFees" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Allow Arbitrary Fees</label>
-                                                <input type="text" id="allowArbitraryFees" name="allowArbitraryFees"
+                                                    style="width: 45%;">ARREARS_TOLERANCE_PERIOD</label>
+                                                <input type="number" id="arrearsTolerancePeriod"
+                                                    th:value="${parameters.arrearsTolerancePeriod}"
+                                                    name="arrearsTolerancePeriod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].allowArbitraryFees}" >
+                                                    style="width: 55%;">
                                             </div>
 
                                             <!-- Default Principal Repayment Interval -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="defaultPrincipalRepaymentInterval"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Default
-                                                    Principal Repayment Interval</label>
-                                                <input type="number" id="defaultPrincipalRepaymentInterval"
-                                                    name="defaultPrincipalRepaymentInterval"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">ARREARS_DAY_CALC_FROM</label>
+                                                <input type="text" id="arrearsDayCalcFrom"
+                                                    th:value="${parameters.arrearsDayCalcFrom}"
+                                                    name="arrearsDayCalcFrom"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].defaultPrincipalRepaymentInterval}" >
+                                                    style="width: 55%;">
                                             </div>
 
                                             <!-- Loan Penalty Calculation Method -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="loanPenaltyCalculationMethod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Loan
-                                                    Penalty Calculation Method</label>
-                                                <input type="text" id="loanPenaltyCalculationMethod"
-                                                    name="loanPenaltyCalculationMethod"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">ARREARS_TOLERANCE_AMT</label>
+                                                <input type="number" id="arrearsToleranceAmt"
+                                                    th:value="${parameters.arrearsToleranceAmt}"
+                                                    name="arrearsToleranceAmt"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].loanPenaltyCalculationMethod}" >
+                                                    style="width: 55%;">
                                             </div>
                                         </div>
 
@@ -693,38 +1042,29 @@ function UpdateParameter() {
                                             <!-- Loan Penalty Grace Period -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="loanPenaltyGracePeriod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Loan
-                                                    Penalty Grace Period</label>
-                                                <input type="number" id="loanPenaltyGracePeriod"
-                                                    name="loanPenaltyGracePeriod"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">WITH_A_FLOOR</label>
+                                                <input type="number" id="withAFloor" th:value="${parameters.withAFloor}"
+                                                    name="withAFloor"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].loanPenaltyGracePeriod}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Repayment Currency Rounding -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="repaymentCurrencyRounding"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Repayment
-                                                    Currency Rounding</label>
-                                                <input type="text" id="repaymentCurrencyRounding"
-                                                    name="repaymentCurrencyRounding"
+                                                <label for="loanPenaltyGracePeriod"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">NON_WORKING_DAYS_ARREARS</label>
+                                                <input type="text" id="nonWorkingDaysArrears"
+                                                    th:value="${parameters.nonWorkingDaysArrears}"
+                                                    name="nonWorkingDaysArrears"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].repaymentCurrencyRounding}" >
+                                                    style="width: 55%;">
                                             </div>
+                                        </div>
 
-                                            <!-- Rounding Repayment Schedule Method -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="roundingRepaymentScheduleMethod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Rounding
-                                                    Repayment Schedule Method</label>
-                                                <input type="text" id="roundingRepaymentScheduleMethod"
-                                                    name="roundingRepaymentScheduleMethod"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].roundingRepaymentScheduleMethod}" >
-                                            </div>
+                                        <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Penalties
+                                                Setting</label>
                                         </div>
 
 
@@ -732,680 +1072,755 @@ function UpdateParameter() {
                                             <!-- Prepayment Recalculation Method -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="prepaymentRecalculationMethod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Prepayment
-                                                    Recalculation Method</label>
-                                                <input type="text" id="prepaymentRecalculationMethod"
-                                                    name="prepaymentRecalculationMethod"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">PENALTY_CALC_METHOD</label>
+                                                <input type="text" id="penaltyCalcMethod" name="penaltyCalcMethod"
+                                                    th:value="${parameters.penaltyCalcMethod}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].prepaymentRecalculationMethod}" >
+                                                    style="width: 55%;">
                                             </div>
 
                                             <!-- Principal Paid Installment Status -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="principalPaidInstallmentStatus"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Principal
-                                                    Paid Installment Status</label>
-                                                <input type="text" id="principalPaidInstallmentStatus"
-                                                    name="principalPaidInstallmentStatus"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">PENALTY_TOLERANCE_PERIOD</label>
+                                                <input type="number" id="penaltyTolerancePeriod"
+                                                    th:value="${parameters.penaltyTolerancePeriod}"
+                                                    name="penaltyTolerancePeriod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].principalPaidInstallmentStatus}" >
+                                                    style="width: 55%;">
                                             </div>
 
                                             <!-- Days In Year -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="daysInYear" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Days In Year</label>
-                                                <input type="number" id="daysInYear" name="daysInYear"
+                                                    style="width: 45%;">PENALTY_RATE_CONSTRAINTS</label>
+                                                <input type="number" id="penaltyRateConstraints"
+                                                    th:value="${parameters.penaltyRateConstraints}"
+                                                    name="penaltyRateConstraints"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].daysInYear}" >
+                                                    style="width: 55%;">
                                             </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="forAllBranches" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">PENALTY_RATE_CHANGE</label>
+                                                <input type="text" id="penaltyRateChange" name="penaltyRateChange"
+                                                    th:value="${parameters.penaltyRateChange}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                        </div>
+                                        <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Internal
+                                                Controls</label>
                                         </div>
 
 
                                         <div class="row g-3 mt-2">
                                             <!-- Schedule Interest Days Count Method -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="scheduleInterestDaysCountMethod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Schedule
-                                                    Interest Days Count Method</label>
-                                                <input type="text" id="scheduleInterestDaysCountMethod"
-                                                    name="scheduleInterestDaysCountMethod"
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <!-- <label for="scheduleInterestDaysCountMethod"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">CLOSE_DORMANT_ACCOUNTS</label>
+                                                <input type="text" id="closeDormantAccounts"
+                                                    name="closeDormantAccounts"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].scheduleInterestDaysCountMethod}" >
+                                                    style="width: 55%;"> -->
+
+                                                <input type="checkbox" id="closeDormantAccounts"
+                                                    name="closeDormantAccounts"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    th:checked="${parameters.closeDormantAccounts == 'Y'}"
+                                                    th:value="${parameters.closeDormantAccounts}"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'">
+
+
+                                                <label for="closeDormantAccounts"
+                                                    class="form-label mb-0 text-start ml-5">
+                                                    CLOSE_DORMANT_ACCOUNTS
+                                                </label>
+
                                             </div>
 
                                             <!-- Repayment Allocation Order -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="repaymentAllocationOrder"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Repayment
-                                                    Allocation Order</label>
-                                                <input type="text" id="repaymentAllocationOrder"
-                                                    name="repaymentAllocationOrder"
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <!-- <label for="repaymentAllocationOrder"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">LOCK_ARREARS_ACCOUNT</label>
+                                                <input type="text" id="lockArrearsAccount" name="lockArrearsAccount"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].repaymentAllocationOrder}" >
+                                                    style="width: 55%;"> -->
+
+                                                <input type="checkbox" id="lockArrearsAccount" name="lockArrearsAccount"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    th:checked="${parameters.lockArrearsAccount == 'Y'}"
+                                                    th:value="${parameters.lockArrearsAccount}"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'">
+
+
+                                                <label for="lockArrearsAccount" class="form-label mb-0 text-start ml-5">
+                                                    LOCK_ARREARS_ACCOUNT
+                                                </label>
                                             </div>
 
                                             <!-- ID Generator Type -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="idGeneratorType" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">ID Generator Type</label>
-                                                <input type="text" id="idGeneratorType" name="idGeneratorType"
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <!-- <label for="idGeneratorType" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">CAP_CHARGES</label>
+                                                <input type="text" id="capCharges" name="capCharges"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].idGeneratorType}" >
+                                                    style="width: 55%;"> -->
+
+                                                <input type="checkbox" id="capCharges" name="capCharges"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    th:checked="${parameters.capCharges == 'Y'}"
+                                                    th:value="${parameters.capCharges}"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'">
+
+
+                                                <label for="capCharges" class="form-label mb-0 text-start ml-5">
+                                                    CAP_CHARGES
+                                                </label>
                                             </div>
                                         </div>
 
 
                                         <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Product
+                                                Fees</label>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
                                             <!-- ID Pattern -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="idPattern" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">ID Pattern</label>
-                                                <input type="text" id="idPattern" name="idPattern"
+                                                <!-- <label for="idPattern" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">ALLOW_ARBITARY_FEES</label>
+                                                <input type="text" id="allowArbitraryFees" name="allowArbitraryFees"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].idPattern}" >
+                                                    style="width: 55%;"> -->
+
+                                                <input type="checkbox" id="allowArbitraryFees" name="allowArbitraryFees"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    th:checked="${parameters.allowArbitraryFees == 'Y'}"
+                                                    th:value="${parameters.allowArbitraryFees}"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'">
+
+
+                                                <label for="allowArbitraryFees" class="form-label mb-0 text-start ml-5">
+                                                    ALLOW_ARBITARY_FEES
+                                                </label>
                                             </div>
 
-                                            <!-- Accounting Method -->
+                                        </div>
+
+
+                                        <div class="row g-3 mt-2 ">
+
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Accounting Method</label>
-                                                <input type="text" id="accountingMethod" name="accountingMethod"
+                                                    style="width: 45%;">FEE1_NAME</label>
+                                                <input type="text" id="fee1Name" name="fee1Name"
+                                                    th:value="${parameters.fee1Name}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].accountingMethod}" >
+                                                    style="width: 55%;">
                                             </div>
 
                                             <!-- Account Linking Enabled -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Account Linking Enabled</label>
-                                                <input type="text" id="accountLinkingEnabled"
-                                                    name="accountLinkingEnabled"
+                                                    style="width: 45%;">FEE1_ID_TYPE</label>
+                                                <input type="text" id="fee1IdType" name="fee1IdType"
+                                                    th:value="${parameters.fee1IdType}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].accountLinkingEnabled}" >
-                                            </div>
-                                        </div>
-
-
-
-                                        <div class="row g-3 mt-2">
-                                            <!-- Linkable Savings Product Key -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="linkableSavingsProductKey"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Linkable
-                                                    Savings Product Key</label>
-                                                <input type="text" id="linkableSavingsProductKey"
-                                                    name="linkableSavingsProductKey"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].linkableSavingsProductKey}" >
+                                                    style="width: 55%;">
                                             </div>
 
                                             <!-- Auto Link Accounts -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Auto Link Accounts</label>
-                                                <input type="text" id="autoLinkAccounts" name="autoLinkAccounts"
+                                                    style="width: 45%;">FEE1_PAYMENT</label>
+                                                <input type="text" id="fee1Payment" name="fee1Payment"
+                                                    th:value="${parameters.fee1Payment}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].autoLinkAccounts}" >
+                                                    style="width: 55%;">
                                             </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
 
                                             <!-- Auto Create Linked Accounts -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="autoCreateLinkedAccounts"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Auto
-                                                    Create Linked Accounts</label>
-                                                <input type="text" id="autoCreateLinkedAccounts"
-                                                    name="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE1_AMORT_PROFILE</label>
+                                                <input type="text" id="fee1AmortProfile" name="fee1AmortProfile"
+                                                    th:value="${parameters.fee1AmortProfile}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].autoCreateLinkedAccounts}" >
-                                                    
+                                                    style="width: 55%;">
                                             </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee1Type" name="fee1Type"
+                                                    th:value="${parameters.fee1Type}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee1Amount" name="fee1Amount"
+                                                    th:value="${parameters.fee1Amount}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+
                                         </div>
 
+                                        <div class="row g-3 mt-2 ">
 
-                                        <div class="row g-3 mt-2">
-                                            <!-- Repayment Schedule Edit Options -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="repaymentScheduleEditOptions"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Repayment
-                                                    Schedule Edit Options</label>
-                                                <input type="text" id="repaymentScheduleEditOptions"
-                                                    name="repaymentScheduleEditOptions"
+                                                <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE2_NAME</label>
+                                                <input type="text" id="fee2Name" name="fee2Name"
+                                                    th:value="${parameters.fee2Name}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].repaymentScheduleEditOptions}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Schedule Due Dates Method -->
+                                            <!-- Account Linking Enabled -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="scheduleDueDatesMethod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Schedule
-                                                    Due Dates Method</label>
-                                                <input type="text" id="scheduleDueDatesMethod"
-                                                    name="scheduleDueDatesMethod"
+                                                <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE2_ID_TYPE</label>
+                                                <input type="text" id="fee2IdType" name="fee2IdType"
+                                                    th:value="${parameters.fee2IdType}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].scheduleDueDatesMethod}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Payment Method -->
+                                            <!-- Auto Link Accounts -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="paymentMethod" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Payment Method</label>
-                                                <input type="text" id="paymentMethod" name="paymentMethod"
+                                                <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE2_PAYMENT</label>
+                                                <input type="text" id="fee2Payment" name="fee2Payment"
+                                                    th:value="${parameters.fee2Payment}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].paymentMethod}" >
-                                            </div>
-                                        </div>
-
-                                        <div class="row g-3 mt-2">
-                                            <!-- Fixed Days Of Month -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="fixedDaysOfMonth" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Fixed Days Of Month</label>
-                                                <input type="number" id="fixedDaysOfMonth" name="fixedDaysOfMonth"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].fixedDaysOfMonth}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Short Month Handling Method -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="shortMonthHandlingMethod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Short
-                                                    Month Handling Method</label>
-                                                <input type="text" id="shortMonthHandlingMethod"
-                                                    name="shortMonthHandlingMethod"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"
-                                                    th:value="${parameters[0].shortMonthHandlingMethod}" >
-                                            </div>
-
-                                            <!-- Taxes On Interest Enabled -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="taxesOnInterestEnabled"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Taxes On
-                                                    Interest Enabled</label>
-                                                <input type="text" id="taxesOnInterestEnabled"
-                                                    name="taxesOnInterestEnabled"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].taxesOnInterestEnabled}" >
-                                            </div>
                                         </div>
 
                                         <div class="row g-3 mt-2">
-                                            <!-- Tax Source Key -->
+
+                                            <!-- Auto Create Linked Accounts -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="taxSourceKey" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Tax Source Key</label>
-                                                <input type="text" id="taxSourceKey" name="taxSourceKey"
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE2_AMORT_PROFILE</label>
+                                                <input type="text" id="fee2AmortProfile" name="fee2AmortProfile"
+                                                    th:value="${parameters.fee2AmortProfile}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].taxSourceKey}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Tax Calculation Method -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="taxCalculationMethod" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Tax Calculation Method</label>
-                                                <input type="text" id="taxCalculationMethod" name="taxCalculationMethod"
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee2Type" name="fee2Type"
+                                                    th:value="${parameters.fee2Type}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].taxCalculationMethod}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Future Payments Acceptance -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="futurePaymentsAcceptance"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Future
-                                                    Payments Acceptance</label>
-                                                <input type="text" id="futurePaymentsAcceptance"
-                                                    name="futurePaymentsAcceptance"
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee2Amount" name="fee2Amount"
+                                                    th:value="${parameters.fee2Amount}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].futurePaymentsAcceptance}" >
+                                                    style="width: 55%;">
                                             </div>
+
+
                                         </div>
 
 
-                                        <div class="row g-3 mt-2">
-                                            <!-- Taxes On Fees Enabled -->
+
+                                        <div class="row g-3 mt-2 ">
+
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="taxesOnFeesEnabled" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Taxes On Fees Enabled</label>
-                                                <input type="text" id="taxesOnFeesEnabled" name="taxesOnFeesEnabled"
+                                                <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE3_NAME</label>
+                                                <input type="text" id="fee3Name" name="fee3Name"
+                                                    th:value="${parameters.fee3Name}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].taxesOnFeesEnabled}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Taxes On Penalty Enabled -->
+                                            <!-- Account Linking Enabled -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="taxesOnPenaltyEnabled" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Taxes On Penalty Enabled</label>
-                                                <input type="text" id="taxesOnPenaltyEnabled"
-                                                    name="taxesOnPenaltyEnabled"
+                                                <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE3_ID_TYPE</label>
+                                                <input type="text" id="fee3IdType" name="fee3IdType"
+                                                    th:value="${parameters.fee3IdType}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].taxesOnPenaltyEnabled}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Apply Interest On Prepayment Method -->
+                                            <!-- Auto Link Accounts -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="applyInterestOnPrepaymentMethod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Apply
-                                                    Interest On Prepayment Method</label>
-                                                <input type="text" id="applyInterestOnPrepaymentMethod"
-                                                    name="applyInterestOnPrepaymentMethod"
+                                                <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE3_PAYMENT</label>
+                                                <input type="text" id="fee3Payment" name="fee3Payment"
+                                                    th:value="${parameters.fee3Payment}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].applyInterestOnPrepaymentMethod}" >
-                                            </div>
-                                        </div>
-
-
-                                        <div class="row g-3 mt-2">
-                                            <!-- Repayment Elements Rounding Method -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="repaymentElementsRoundingMethod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Repayment
-                                                    Elements Rounding Method</label>
-                                                <input type="text" id="repaymentElementsRoundingMethod"
-                                                    name="repaymentElementsRoundingMethod"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].repaymentElementsRoundingMethod}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Elements Recalculation Method -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="elementsRecalculationMethod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Elements
-                                                    Recalculation Method</label>
-                                                <input type="text" id="elementsRecalculationMethod"
-                                                    name="elementsRecalculationMethod"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].elementsRecalculationMethod}" >
-                                            </div>
-
-                                            <!-- Dormancy Period Days -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="dormancyPeriodDays" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Dormancy Period Days</label>
-                                                <input type="number" id="dormancyPeriodDays" name="dormancyPeriodDays"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].dormancyPeriodDays}" >
-                                            </div>
                                         </div>
 
                                         <div class="row g-3 mt-2">
-                                            <!-- Lock Period Days -->
+
+                                            <!-- Auto Create Linked Accounts -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="lockPeriodDays" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Lock Period Days</label>
-                                                <input type="number" id="lockPeriodDays" name="lockPeriodDays"
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE3_AMORT_PROFILE</label>
+                                                <input type="text" id="fee3AmortProfile" name="fee3AmortProfile"
+                                                    th:value="${parameters.fee3AmortProfile}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].lockPeriodDays}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Capping Method -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="cappingMethod" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Capping Method</label>
-                                                <input type="text" id="cappingMethod" name="cappingMethod"
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee3Type" name="fee3Type"
+                                                    th:value="${parameters.fee3Type}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].cappingMethod}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Capping Constraint Type -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="cappingConstraintType" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Capping Constraint Type</label>
-                                                <input type="text" id="cappingConstraintType"
-                                                    name="cappingConstraintType"
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee3Amount" name="fee3Amount"
+                                                    th:value="${parameters.fee3Amount}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].cappingConstraintType}" >
+                                                    style="width: 55%;">
                                             </div>
+
+
                                         </div>
 
 
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE3_APPLICATION</label>
+                                                <input type="text" id="fee3Application" name="fee3Application"
+                                                    th:value="${parameters.fee3Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+
+                                        </div>
+                                        <div class="row g-3 mt-2 ">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE4_NAME</label>
+                                                <input type="text" id="fee4Name" name="fee4Name"
+                                                    th:value="${parameters.fee4Name}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <!-- Account Linking Enabled -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE4_ID_TYPE</label>
+                                                <input type="text" id="fee4IdType" name="fee4IdType"
+                                                    th:value="${parameters.fee4IdType}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <!-- Auto Link Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE4_PAYMENT</label>
+                                                <input type="text" id="fee4Payment" name="fee4Payment"
+                                                    th:value="${parameters.fee4Payment}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                        </div>
+
                                         <div class="row g-3 mt-2">
-                                            <!-- Capping Percentage -->
+
+                                            <!-- Auto Create Linked Accounts -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="cappingPercentage" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Capping Percentage</label>
-                                                <input type="number" id="cappingPercentage" name="cappingPercentage"
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE4_AMORT_PROFILE</label>
+                                                <input type="text" id="fee4AmortProfile" name="fee4AmortProfile"
+                                                    th:value="${parameters.fee4AmortProfile}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].cappingPercentage}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Capping Apply Accrued Charges Before Locking -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="cappingApplyAccruedChargesBeforeLocking"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Capping
-                                                    Apply Accrued Charges Before Locking</label>
-                                                <input type="text" id="cappingApplyAccruedChargesBeforeLocking"
-                                                    name="cappingApplyAccruedChargesBeforeLocking"
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee4Type" name="fee4Type"
+                                                    th:value="${parameters.fee4Type}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].cappingApplyAccruedChargesBeforeLocking}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Settlement Options -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="settlementOptions" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Settlement Options</label>
-                                                <input type="text" id="settlementOptions" name="settlementOptions"
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee4Amount" name="fee4Amount"
+                                                    th:value="${parameters.fee4Amount}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].settlementOptions}" >
+                                                    style="width: 55%;">
                                             </div>
+
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE5_NAME</label>
+                                                <input type="text" id="fee5Name" name="fee5Name"
+                                                    th:value="${parameters.fee5Name}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <!-- Account Linking Enabled -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE5_ID_TYPE</label>
+                                                <input type="text" id="fee5IdType" name="fee5IdType"
+                                                    th:value="${parameters.fee5IdType}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <!-- Auto Link Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE5_PAYMENT</label>
+                                                <input type="text" id="fee5Payment" name="fee5Payment"
+                                                    th:value="${parameters.fee5Payment}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <!-- Auto Create Linked Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE5_AMORT_PROFILE</label>
+                                                <input type="text" id="fee5AmortProfile" name="fee5AmortProfile"
+                                                    th:value="${parameters.fee5AmortProfile}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee5Type" name="fee5Type"
+                                                    th:value="${parameters.fee5Type}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee5Amount" name="fee5Amount"
+                                                    th:value="${parameters.fee5Amount}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE5_APPLICATION</label>
+                                                <input type="text" id="fee5Application" name="fee5Application"
+                                                    th:value="${parameters.fee5Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+
+                                        </div>
+
+
+                                        <div class="row g-3 mt-2 ">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE6_NAME</label>
+                                                <input type="text" id="fee6Name" name="fee6Name"
+                                                    th:value="${parameters.fee6Name}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <!-- Account Linking Enabled -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE6_ID_TYPE</label>
+                                                <input type="text" id="fee6IdType" name="fee6IdType"
+                                                    th:value="${parameters.fee6IdType}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <!-- Auto Link Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE6_PAYMENT</label>
+                                                <input type="text" id="fee6Payment" name="fee6Payment"
+                                                    th:value="${parameters.fee6Payment}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <!-- Auto Create Linked Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE6_AMORT_PROFILE</label>
+                                                <input type="text" id="fee6AmortProfile" name="fee6AmortProfile"
+                                                    th:value="${parameters.fee6AmortProfile}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee6Type" name="fee6Type"
+                                                    th:value="${parameters.fee6Type}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee6Amount" name="fee6Amount"
+                                                    th:value="${parameters.fee6Amount}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+
+                                        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                        <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Product
+                                                Links</label>
                                         </div>
 
                                         <div class="row g-3 mt-2">
                                             <!-- Offset Percentage -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="offsetPercentage" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Offset Percentage</label>
-                                                <input type="number" id="offsetPercentage" name="offsetPercentage"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].offsetPercentage}" >
-                                            </div>
+
 
                                             <!-- Account Initial State -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="accountInitialState" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Account Initial State</label>
-                                                <input type="text" id="accountInitialState" name="accountInitialState"
+                                                    style="width: 45%;">LINKED_DEPOSIT_PRODUCT</label>
+                                                <input type="text" id="linkedDepositProduct"
+                                                    th:value="${parameters.linkedDepositProduct}"
+                                                    name="linkedDepositProduct"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].accountInitialState}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Max Number Of Disbursement Tranches -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="maxNumberOfDisbursementTranches"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Max Number
-                                                    Of Disbursement Tranches</label>
-                                                <input type="number" id="maxNumberOfDisbursementTranches"
-                                                    name="maxNumberOfDisbursementTranches"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].maxNumberOfDisbursementTranches}" >
-                                            </div>
-                                        </div>
-
-                                        <div class="row g-3 mt-2">
-                                            <!-- Late Payments Recalculation Method -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="latePaymentsRecalculationMethod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Late
-                                                    Payments Recalculation Method</label>
-                                                <input type="text" id="latePaymentsRecalculationMethod"
-                                                    name="latePaymentsRecalculationMethod"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">SETTLEMENT_OPTIONS</label>
+                                                <input type="text" id="settlementOptions" name="settlementOptions"
+                                                    th:value="${parameters.settlementOptions}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].latePaymentsRecalculationMethod}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- Amortization Method -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="amortizationMethod" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Amortization Method</label>
-                                                <input type="text" id="amortizationMethod" name="amortizationMethod"
+                                                <!-- <label for="offsetPercentage" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">ENABLE_LINKING</label>
+                                                <input type="text" id="enableLinking" name="enableLinking"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].amortizationMethod}" >
-                                            </div>
+                                                    style="width: 55%;"> -->
 
-                                            <!-- Interest Rate Settings Key -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="interestRateSettingsKey"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Interest
-                                                    Rate Settings Key</label>
-                                                <input type="text" id="interestRateSettingsKey"
-                                                    name="interestRateSettingsKey"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].interestRateSettingsKey}" >
+                                                <input type="checkbox" id="enableLinking" name="enableLinking"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    th:checked="${parameters.enableLinking == 'Y'}"
+                                                    th:value="${parameters.enableLinking}"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'">
+
+
+                                                <label for="enableLinking" class="form-label mb-0 text-start ml-5">
+                                                    ENABLE_LINKING
+                                                </label>
                                             </div>
                                         </div>
 
 
 
+
+
+
+                                        <div class="row g-3 mt-2">
+                                            <label
+                                                style="font-size: 1rem; font-weight: bold; padding: 8px;">Securities</label>
+                                        </div>
 
 
 
                                         <!-- ---------- -->
                                         <div class="row g-3 mt-2">
                                             <!-- Line Of Credit Requirement -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="lineOfCreditRequirement"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Line Of
-                                                    Credit Requirement</label>
-                                                <input type="text" id="lineOfCreditRequirement"
-                                                    name="lineOfCreditRequirement"
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <!-- <label for="lineOfCreditRequirement"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">ENABLE_GUARANTORS</label>
+                                                <input type="text" id="enableGuarantors" name="enableGuarantors"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].lineOfCreditRequirement}" >
+                                                    style="width: 55%;"> -->
+
+                                                <input type="checkbox" id="enableGuarantors" name="enableGuarantors"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    th:checked="${parameters.enableGuarantors == 'Y'}"
+                                                    th:value="${parameters.enableGuarantors}"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'">
+
+
+                                                <label for="enableGuarantors" class="form-label mb-0 text-start ml-5">
+                                                    ENABLE_GUARANTORS
+                                                </label>
                                             </div>
 
                                             <!-- Product Security Settings Key -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="productSecuritySettingsKey"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Product
-                                                    Security Settings Key</label>
-                                                <input type="text" id="productSecuritySettingsKey"
-                                                    name="productSecuritySettingsKey"
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <!-- <label for="productSecuritySettingsKey"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">ENABLE_COLLATERALS</label>
+                                                <input type="text" id="enableCollaterals" name="enableCollaterals"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].productSecuritySettingsKey}" >
+                                                    style="width: 55%;"> -->
+
+                                                <input type="checkbox" id="enableCollaterals" name="enableCollaterals"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    th:checked="${parameters.enableCollaterals == 'Y'}"
+                                                    th:value="${parameters.enableCollaterals}"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'">
+
+
+                                                <label for="enableCollaterals" class="form-label mb-0 text-start ml-5">
+                                                    ENABLE_COLLATERALS
+                                                </label>
                                             </div>
 
                                             <!-- Default First Repayment Due Date Offset -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="defaultFirstRepaymentDueDateOffset"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Default
-                                                    First Repayment Due Date Offset</label>
-                                                <input type="date" id="defaultFirstRepaymentDueDateOffset"
-                                                name="defaultFirstRepaymentDueDateOffset"
-                                                class="form-control form-control-sm border border-dark"
-                                                style="width: 55%;"
-                                                th:value="${#dates.format(parameters[0].defaultFirstRepaymentDueDateOffset, 'yyyy-MM-dd')}"
-                                                >
-                                            </div>
-                                        </div>
-
-                                        <div class="row g-3 mt-2">
-
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="minFirstRepaymentDueDateOffset"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Min First Repayment Due Date</label>
-                                                <input type="date" id="minFirstRepaymentDueDateOffset"
-                                                name="minFirstRepaymentDueDateOffset"
-                                                class="form-control form-control-sm border border-dark"
-                                                style="width: 55%;"
-                                                th:value="${#dates.format(parameters[0].minFirstRepaymentDueDateOffset, 'yyyy-MM-dd')}"
-                                                >
-                                            </div>
-
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="maxFirstRepaymentDueDateOffset"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Max First Repayment Due Date</label>
-                                                <input type="date" id="maxFirstRepaymentDueDateOffset"
-                                                name="maxFirstRepaymentDueDateOffset"
-                                                class="form-control form-control-sm border border-dark"
-                                                style="width: 55%;"
-                                                th:value="${#dates.format(parameters[0].maxFirstRepaymentDueDateOffset, 'yyyy-MM-dd')}"
-                                                >
-                                            </div>
-
-                                            <!-- Interest Accrued Accounting Method -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="interestAccruedAccountingMethod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Interest
-                                                    Accrued Accounting Method</label>
-                                                <input type="text" id="interestAccruedAccountingMethod"
-                                                    name="interestAccruedAccountingMethod"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">REQUIRED_SECURITIES</label>
+                                                <input type="text" id="requiredSecurities" name="requiredSecurities"
+                                                    th:value="${parameters.requiredSecurities}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].interestAccruedAccountingMethod}" >
-                                            </div>
-                                        </div>
-
-                                        <div class="row g-3 mt-2">
-                                            <!-- Loan Product Type -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="loanProductType" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Loan Product Type</label>
-                                                <input type="text" id="loanProductType" name="loanProductType"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].loanProductType}" >
+                                                    style="width: 55%;">
                                             </div>
 
-                                            <!-- For Individuals -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="forIndividuals" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">For Individuals</label>
-                                                <input type="text" id="forIndividuals" name="forIndividuals"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].forIndividuals}" >
-                                            </div>
-
-                                            <!-- For Pure Groups -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="forPureGroups" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">For Pure Groups</label>
-                                                <input type="text" id="forPureGroups" name="forPureGroups"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].forPureGroups}" >
-                                            </div>
-                                        </div>
-
-                                        <div class="row g-3 mt-2">
-                                            <!-- For Hybrid Groups -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="forHybridGroups" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">For Hybrid Groups</label>
-                                                <input type="text" id="forHybridGroups" name="forHybridGroups"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].forHybridGroups}" >
-                                            </div>
-
-                                            <!-- For All Branches -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="forAllBranches" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">For All Branches</label>
-                                                <input type="text" id="forAllBranches" name="forAllBranches"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].forAllBranches}" >
-                                            </div>
-
-                                            <!-- Principal Payment Settings Key -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="principalPaymentSettingsKey"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Principal
-                                                    Payment Settings Key</label>
-                                                <input type="text" id="principalPaymentSettingsKey"
-                                                    name="principalPaymentSettingsKey"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">DEPOSIT_ACCOUNT_OPTION</label>
+                                                <input type="text" id="depositAccountOption"
+                                                    th:value="${parameters.depositAccountOption}"
+                                                    name="depositAccountOption"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].principalPaymentSettingsKey}" >
+                                                    style="width: 55%;">
                                             </div>
                                         </div>
 
-                                        <div class="row g-3 mt-2">
-                                            <!-- Repayment Rescheduling Method -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="repaymentReschedulingMethod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Repayment
-                                                    Rescheduling Method</label>
-                                                <input type="text" id="repaymentReschedulingMethod"
-                                                    name="repaymentReschedulingMethod"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].repaymentReschedulingMethod}" >
-                                            </div>
-
-                                            <!-- Interest Balance Calculation Method -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="interestBalanceCalculationMethod"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Interest
-                                                    Balance Calculation Method</label>
-                                                <input type="text" id="interestBalanceCalculationMethod"
-                                                    name="interestBalanceCalculationMethod"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].interestBalanceCalculationMethod}" >
-                                            </div>
-
-                                            <!-- Arrears Settings Key -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="arrearsSettingsKey" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Arrears Settings Key</label>
-                                                <input type="text" id="arrearsSettingsKey" name="arrearsSettingsKey"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].arrearsSettingsKey}" >
-                                            </div>
-                                        </div>
-
-                                        <div class="row g-3 mt-2">
-                                            <!-- Redraw Settings Key -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="redrawSettingsKey" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Redraw Settings Key</label>
-                                                <input type="text" id="redrawSettingsKey" name="redrawSettingsKey"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].redrawSettingsKey}" >
-                                            </div>
-
-                                            <!-- Allow Custom Repayment Allocation -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="allowCustomRepaymentAllocation"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Allow
-                                                    Custom Repayment Allocation</label>
-                                                <input type="text" id="allowCustomRepaymentAllocation"
-                                                    name="allowCustomRepaymentAllocation"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].allowCustomRepaymentAllocation}" >
-                                            </div>
-
-                                            <!-- Accrue Late Interest -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="accrueLateInterest" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Accrue Late Interest</label>
-                                                <input type="text" id="accrueLateInterest" name="accrueLateInterest"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].accrueLateInterest}" >
-                                            </div>
-                                        </div>
-
-                                        <div class="row g-3 mt-2">
-                                            <!-- Interest Accrual Calculation -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="interestAccrualCalculation"
-                                                    class="form-label me-2 mb-0 text-end" style="width: 45%;">Interest
-                                                    Accrual Calculation</label>
-                                                <input type="text" id="interestAccrualCalculation"
-                                                    name="interestAccrualCalculation"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].interestAccrualCalculation}" >
-                                            </div>
-
-                                            <!-- Category -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="category" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Category</label>
-                                                <input type="text" id="category" name="category"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].category}" >
-                                            </div>
-
-                                            <!-- Currency Code -->
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label for="currencyCode" class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">Currency Code</label>
-                                                <input type="text" id="currencyCode" name="currencyCode"
-                                                    class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;" th:value="${parameters[0].currencyCode}" >
-                                            </div>
-                                        </div>
+                                        <!-- <div class="row g-3 mt-2">
+                                            
+                                           
+                                        </div> -->
 
                                         <div class="row g-3 mt-2 mb-3">
-                                            
+
                                         </div>
 
                                     </div>
@@ -1413,8 +1828,10 @@ function UpdateParameter() {
                                     <div class="card-footer text-center" style="background-color: #e9ecef;">
 
                                         <button class="btn-primary big-btn" onclick="Home();">Home</button>
-                                        <input type="hidden" name="params_id" id="params_id" th:value="${parameters[0].id}">
-                                        <button class="btn-primary big-btn" type="button" onclick="UpdateParameter();">Submit</button>
+                                        <input type="hidden" name="params_id" id="params_id"
+                                            th:value="${parameters.id}">
+                                        <button class="btn-primary big-btn" type="button"
+                                            onclick="UpdateParameter();">Submit</button>
                                         <button class="btn-primary big-btn" onclick="Back();">Back</button>
 
                                     </div>
@@ -1448,7 +1865,8 @@ function UpdateParameter() {
 
                 <div class="modal-body" style="text-align: center;">
                     <h6 id="alertmsg"></h6>
-                    <button type="button" class="btn-primary big-btn" id="alertOkBtn" onclick="$('#alert').modal('hide')">Close</button>
+                    <button type="button" class="btn-primary big-btn" id="alertOkBtn"
+                        onclick="$('#alert').modal('hide')">Close</button>
                 </div>
             </div>
         </div>

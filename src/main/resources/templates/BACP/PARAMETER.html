@@ -1069,13 +1069,12 @@ function modifyTab(evt, tabName) {
 										style="table-layout: fixed; width: 100%;" id="usertable">
 										<thead class="thead-light ">
 											<tr class=" filters " style="font-size: 15px">
+												<th>PRODUCT</th>
 												<th>ID</th>
+												<th>CATAGORY</th>
+												<th>PRODUCT TYPE</th>
 												<th>STATUS</th>
-												<th>INTEREST TYPE</th>
 												<th>PRODUCT DESCRIPTON</th>
-												<th>PRODUCT NAME</th>
-												<th>LOAN PRODUCT TYPE</th>
-												<th>CURRENCY CODE</th>
 												<th>SELECT</th>
 											</tr>
 										</thead>
@@ -1085,24 +1084,22 @@ function modifyTab(evt, tabName) {
 											<tr th:each="tabledata, iterator : ${lms_schemes}"
 												class="userlist">
 
-
+												<td style="width: 200px; font-size: 15px;"
+													th:text="${tabledata.product}"></td>
 												 <td style="width: 80px; font-size: 15px; color: #007bff; cursor: pointer;" 
 													th:attr="onclick=|rowClick('${tabledata.id}')|"  
 													th:text="${tabledata.id}">
 												</td>
 												<td style="width: 200px; font-size: 15px;"
-													th:text="${tabledata.activated}"></td>
+													th:text="${tabledata.productCategory}"></td>
 												<td style="width: 200px; font-size: 15px;"
-													th:text="${tabledata.interestType}"></td>
+													th:text="${tabledata.productType}"></td>
+												<td style="width: 200px; font-size: 15px;"
+													th:text="${tabledata.state == 'Y' ? 'Active' : 'Inactive'}">
+												</td>
 												<td style="width: 200px; font-size: 15px;"
 													th:text="${tabledata.productDescription}"></td>
-												<td style="width: 200px; font-size: 15px;"
-													th:text="${tabledata.productName}"></td>
-												<td style="width: 230px; font-size: 15px;"
-													th:text="${tabledata.loanProductType}"></td>
-												<td style="width: 230px; font-size: 15px;"
-													th:text="${tabledata.currencyCode}"></td>
-
+												
 												<td class="text-center" style="width: 100px;">
 											<div class="dropdown action-dropdown">
 												<button class="btn btn-action dropdown-toggle" style="padding:0px"

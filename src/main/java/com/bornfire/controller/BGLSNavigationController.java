@@ -72,6 +72,9 @@ import com.bornfire.entities.BGLS_CONTROL_TABLE_REP;
 import com.bornfire.entities.BGLS_Control_Table;
 import com.bornfire.entities.BGLS_Journal_History;
 import com.bornfire.entities.BGLS_Journal_History_Rep;
+import com.bornfire.entities.BGLS_LMS_SCHEMES_TABLE_ENTITY;
+import com.bornfire.entities.BGLS_LMS_SCHEMES_TABLE_REPO;
+import com.bornfire.entities.BGLS_ORG_BRANCH_ENTITY;
 import com.bornfire.entities.BGLS_ORG_BRANCH_REPO;
 import com.bornfire.entities.Baj_Work_Repo;
 import com.bornfire.entities.BamDocumentMasRep;
@@ -332,6 +335,9 @@ public class BGLSNavigationController {
 
 	@Autowired
 	DateChangeService DateChangeService;
+	
+	@Autowired
+	BGLS_LMS_SCHEMES_TABLE_REPO lmsschemerepo;
 
 	public String getPagesize() {
 		return pagesize;
@@ -4144,29 +4150,46 @@ public class BGLSNavigationController {
 		return "BACP/PARAMETERADD";
 	}
 
+	
+	@Autowired
+	BGLS_ORG_BRANCH_REPO branchrepo;
+	
 	@RequestMapping(value = "parameterview", method = { RequestMethod.GET, RequestMethod.POST })
 	public String parameterEdit(@RequestParam(required = false) String id,
 			@RequestParam(required = false, defaultValue = "view") String formmode, // <--- add this
 			Model md) {
-
+			System.out.println(id);
 		// Fetch the entity/entities
-		md.addAttribute("parameters", bglsLmsSchemesRepo.findByUniqueId(id));
+		BGLS_LMS_SCHEMES_TABLE_ENTITY entity = lmsschemerepo.findById(id).orElse(null);
+		md.addAttribute("parameters", entity);
+		System.out.println("branch : "+entity.getBranches());
+		List<BGLS_ORG_BRANCH_ENTITY> branch = branchrepo.findAll();
+		md.addAttribute("branches",branch );
+		System.out.println(entity.getProduct());
 
 		// Pass the mode to Thymeleaf
 		md.addAttribute("formMode", formmode);
 
 		return "BACP/parameterview.html";
 	}
+	
+
 
 	@RequestMapping(value = "parameterdelete", method = { RequestMethod.GET, RequestMethod.POST })
 	public String parameterDELETE(@RequestParam(required = false) String id, Model md) {
-		md.addAttribute("parameters", bglsLmsSchemesRepo.findByUniqueId(id));
+		BGLS_LMS_SCHEMES_TABLE_ENTITY entity = lmsschemerepo.findById(id).orElse(null);
+		md.addAttribute("parameters", entity);
+		List<BGLS_ORG_BRANCH_ENTITY> branch = branchrepo.findAll();
+		md.addAttribute("branches",branch );
 		return "BACP/parameterdelete.html";
 	}
 
 	@RequestMapping(value = "parameterupdate", method = { RequestMethod.GET, RequestMethod.POST })
 	public String parameterUpdate(@RequestParam(required = false) String id, Model md) {
-		md.addAttribute("parameters", bglsLmsSchemesRepo.findByUniqueId(id));
+		BGLS_LMS_SCHEMES_TABLE_ENTITY entity = lmsschemerepo.findById(id).orElse(null);
+		md.addAttribute("parameters", entity);
+		List<BGLS_ORG_BRANCH_ENTITY> branch = branchrepo.findAll();
+		md.addAttribute("branches",branch );
 		return "BACP/PARAMETERUPDATE.html";
 	}
 
