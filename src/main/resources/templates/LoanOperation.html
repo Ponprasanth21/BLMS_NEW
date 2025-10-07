@@ -1611,72 +1611,48 @@
 
 		// ✅ Collect all rows & send AJAX
 		function submitAllRows1() {
-			const rows = document.querySelectorAll("#usertablemulti tr");
-			const payload = [];
+		    const rows = document.querySelectorAll("#usertablemulti tr");
+		    const payload = [];
 
-			rows.forEach(row => {
-				const tranid = row.querySelector('input[name="tran_id"]')?.value || "";
-				const acctNum = row.querySelector('input[name="acct_num"]')?.value || "";
-				const acctName = row.querySelector('input[name="acct_namedata"]')?.value || "";
-				const tranAmt = parseFloat(row.querySelector('input[name="tran_amt"]')?.value || 0);
-				const tranParticular = row.querySelector('input[name="tran_particulardata"]')?.value || "";
-				const tranRemarks = row.querySelector('input[name="tran_remarks"]')?.value || "0";
-				const tranDate = row.querySelector('input[name="transaction_date"]')?.value || "";
-				const rate = row.querySelector('input[name="rate"]')?.value || "UNALLOCATED";
+		    rows.forEach(row => {
+		        payload.push({
+		            tran_id: row.querySelector('input[name="tran_id"]')?.value || "",
+		            acct_num: row.querySelector('input[name="acct_num"]')?.value || "",
+		            acct_namedata: row.querySelector('input[name="acct_namedata"]')?.value || "",
+		            tran_amt: parseFloat(row.querySelector('input[name="tran_amt"]')?.value || 0),
+		            tran_particulardata: row.querySelector('input[name="tran_particulardata"]')?.value || "",
+		            tran_remarks: row.querySelector('input[name="tran_remarks"]')?.value || "0",
+		            transaction_date: row.querySelector('input[name="transaction_date"]')?.value || "",
+		            rate: row.querySelector('input[name="rate"]')?.value || "UNALLOCATED"
+		        });
+		    });
 
-				payload.push({
-					tran_id: tranid,
-					acct_num: acctNum,
-					acct_namedata: acctName,
-					tran_amt: tranAmt,
-					tran_particulardata: tranParticular,
-					tran_remarks: tranRemarks,
-					transaction_date: tranDate,
-					rate: rate
-				});
-			});
+		    fetch("/ASPIRA/saveMultipleTransactions1", {
+		        method: "POST",
+		        headers: {"Content-Type": "application/json"},
+		        body: JSON.stringify(payload)
+		    })
+		    .then(res => res.json())
+		    .then(data => {
+		        console.log("Server response:", data);
 
-			console.log("Payload to send:", payload);
+		        // --- Build modal message with only overall totals ---
+		        let message = `<div class="text-center">
+		            <h6>${data.message}</h6>
+		            <hr>
+		            <p><strong>Total Customers:</strong> ${data.number_of_customers}</p>
+		            <p><strong>Total Accounts:</strong> ${data.number_of_accounts}</p>
+		            <p><strong>Total Transaction Amount:</strong> ${Number(data.total_transaction_amount).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}</p>
+		        </div>`;
 
-			fetch("/ASPIRA/saveMultipleTransactions1", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"Accept": "application/json"
-				},
-				body: JSON.stringify(payload)
-			})
-				.then(res => {
-					if (!res.ok) throw new Error("Server returned " + res.status);
-					return res.json();
-				})
-				.then(data => {
-					console.log("✅ Server response:", data);
-
-					let msg = "";
-					if (data.status === "success") {
-						msg = `${data.message}\n\n`;
-						data.transactions.forEach(t => {
-							msg += `${t.reference} → ${t.transaction_id}\n`;
-						});
-
-						// Update tran_id in table
-						data.transactions.forEach((rowData, index) => {
-							const tranIdInput = rows[index].querySelector('input[name="tran_id"]');
-							if (tranIdInput) tranIdInput.value = rowData.transaction_id;
-						});
-
-					} else {
-						msg = `Error: ${data.message}`;
-					}
-
-					// Show alert with server message
-					alert(msg);
-				})
-				.catch(err => {
-					console.error("❌ AJAX error:", err);
-					alert("Error saving data. " + err.message);
-				});
+		        // --- Show modal ---
+		        $('#Successmsgpopup').html(message);
+		        $('#SuccesPopUp').modal('show');
+		    })
+		    .catch(err => {
+		        console.error("AJAX error:", err);
+		        alert("Error saving transactions: " + err.message);
+		    });
 		}
 
 		// Optional: close modal function if needed
@@ -2411,6 +2387,7 @@
 			data.append("overwrite", false);
 			data.append("fileInput", "TRANSACTION");
 			data.append("file", file);
+
 			$.ajax({
 				type: "POST",
 				url: "UploadFileData",
@@ -2418,23 +2395,35 @@
 				processData: false,
 				contentType: false,
 				success: function (response) {
+					// Hide loading modal
 					document.getElementById('loadingModal').style.display = 'none';
-					console.log(response);
-					if (response.status === "duplicate") {
-						$('#alertmsgpopup')
-							.text(`Duplicate Customer Id(s) found: ${response.id.join(", ")}. Do you want to overwrite them?`)
-							.css("white-space", "nowrap");
-						window.lastData = data;
-						window.lastType = "CUSTOMER";
 
-						$('#datacancel').modal("show");
-						return;
-					}
-					showResponse(response);
+					// Use response values
+					let totalSucceeded = response.TotalSucceeded || 0;
+					let totalFailed = response.TotalFailed || 0;
+					let totalProcessed = response.TotalProcessed || 0;
+
+					// Optional: format numbers
+					let formattedSucceeded = totalSucceeded.toLocaleString('en-US');
+					let formattedFailed = totalFailed.toLocaleString('en-US');
+					let formattedProcessed = totalProcessed.toLocaleString('en-US');
+
+					let message = `
+		                <div class="text-center">
+		                    <h6>Files Upload Completed</h6>
+		                    <p>Total Records Processed: ${formattedProcessed}</p>
+		                    <p>Total Records Succeeded: ${formattedSucceeded}</p>
+		                    <p>Total Records Failed: ${formattedFailed}</p>
+		                </div>
+		            `;
+
+					// Update modal content and show
+					$('#Successmsgpopup').html(message);
+					$('#SuccesPopUp').modal('show');
 				},
 				error: function (error) {
 					document.getElementById('loadingModal').style.display = 'none';
-					showResponse("Error: " + error.responseText);
+					alert("Error: " + (error.responseText || "Something went wrong"));
 				}
 			});
 		}
@@ -2492,47 +2481,47 @@
 </script>
 <script>
 	function openModalMassEntries(element) {
-	    // Find the row of the clicked element
-	    const row = element.closest("tr");
+		// Find the row of the clicked element
+		const row = element.closest("tr");
 
-	    // Get the value from acct_namedata in that row
-	    const customerInput = row.querySelector('input[name="acct_namedata"]');
-	    const customerId = customerInput ? customerInput.value.trim() : "";
+		// Get the value from acct_namedata in that row
+		const customerInput = row.querySelector('input[name="acct_namedata"]');
+		const customerId = customerInput ? customerInput.value.trim() : "";
 
-	    // Get the value from tran_particulardata in that row
-	    const transactionInput = row.querySelector('input[name="tran_particulardata"]');
-	    const transactionAmt = transactionInput ? transactionInput.value.trim() : "";
+		// Get the value from tran_particulardata in that row
+		const transactionInput = row.querySelector('input[name="tran_particulardata"]');
+		const transactionAmt = transactionInput ? transactionInput.value.trim() : "";
 
-	    if (!customerId) {
-	        return;
-	    }
+		if (!customerId) {
+			return;
+		}
 
-	    // Show modal
-	    const modal = document.getElementById("myModaldatas");
-	    modal.style.display = "block";
+		// Show modal
+		const modal = document.getElementById("myModaldatas");
+		modal.style.display = "block";
 
-	    // Clear old rows
-	    const tbody = document.getElementById("modalTableBody");
-	    tbody.innerHTML = "";
+		// Clear old rows
+		const tbody = document.getElementById("modalTableBody");
+		tbody.innerHTML = "";
 
-	    // AJAX call - pass both customerId and transactionAmt
-	    fetch(`/ASPIRA/getAccountDetails?customerId=${encodeURIComponent(customerId)}&transactionAmt=${encodeURIComponent(transactionAmt)}`)
-	        .then(response => {
-	            if (!response.ok) throw new Error("Network response was not ok");
-	            return response.json();
-	        })
-	        .then(data => {
-	            if (!Array.isArray(data) || data.length === 0) {
-	                // Show "NO DATA FOUND"
-	                const tr = document.createElement("tr");
-	                tr.innerHTML = `<td colspan="7" style="text-align:center; color:red;">NO DATA FOUND</td>`;
-	                tbody.appendChild(tr);
-	                return;
-	            }
+		// AJAX call - pass both customerId and transactionAmt
+		fetch(`/ASPIRA/getAccountDetails?customerId=${encodeURIComponent(customerId)}&transactionAmt=${encodeURIComponent(transactionAmt)}`)
+			.then(response => {
+				if (!response.ok) throw new Error("Network response was not ok");
+				return response.json();
+			})
+			.then(data => {
+				if (!Array.isArray(data) || data.length === 0) {
+					// Show "NO DATA FOUND"
+					const tr = document.createElement("tr");
+					tr.innerHTML = `<td colspan="7" style="text-align:center; color:red;">NO DATA FOUND</td>`;
+					tbody.appendChild(tr);
+					return;
+				}
 
-	            data.forEach(rowData => {
-	                const tr = document.createElement("tr");
-	                tr.innerHTML = `
+				data.forEach(rowData => {
+					const tr = document.createElement("tr");
+					tr.innerHTML = `
 	                    <td>${rowData.dueDate || ''}</td>
 	                    <td>${rowData.flowId || ''}</td>
 	                    <td>${rowData.flowCode || ''}</td>
@@ -2544,13 +2533,13 @@
 	                               onclick="selectRow('${rowData.loanAcctNo || ''}', '${rowData.flowAmt || ''}')">
 	                    </td>
 	                `;
-	                tbody.appendChild(tr);
-	            });
-	        })
-	        .catch(err => {
-	            console.error("Error fetching account details:", err);
-	            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Error fetching data</td></tr>`;
-	        });
+					tbody.appendChild(tr);
+				});
+			})
+			.catch(err => {
+				console.error("Error fetching account details:", err);
+				tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:red;">Error fetching data</td></tr>`;
+			});
 	}
 
 	function closeModal(btn) {
@@ -2917,29 +2906,6 @@
 								<button type="button" class="btn-primary big-btn" id="submitBtn">Upload</button>
 							</div>
 						</div>
-						<div class="row formline" style="padding: 10px 10px 2px 50px; text-align: bottom;">
-							<div class="col-sm-1">TRAN ID</div>
-							<div class="col-sm-2">
-								<input type="text" name="tran_id" id="tran_id"
-									class="form-control form-control-sm bg-white border border-dark"
-									th:value="${tranId}" readonly />
-							</div>
-
-							<div class="col-sm-1">TRAN TYPE</div>
-							<div class="col-sm-2">
-								<input type="text" name="tran_type" id="tran_type" value="Transfer"
-									class="form-control form-control-sm bg-white border border-dark" readonly />
-							</div>
-
-							<div class="col-sm-3"></div>
-
-							<div class="col-sm-1">TRAN DATE</div>
-							<div class="col-sm-2">
-								<input type="text" name="tran_date" id="tran_date"
-									th:value="${#dates.format(TRANDATE, 'dd-MM-yyyy')}"
-									class="form-control form-control-sm bg-white border border-dark" readonly />
-							</div>
-						</div>
 						<div class="row formline mr-2" style="padding: 10px 10px 2px 50px; justify-content: right;">
 							<div style="background: transparent; color: black;">
 								<button type="button" class="big-btn btn-success" onclick="addNewRows()">Add</button>
@@ -3131,7 +3097,7 @@
 				<!-- Modal Footer -->
 				<div style="padding: 10px; text-align: center;">
 					<button type="button" class="btn btn-outline-dark me-3" style="font-size: 16px;"
-						onclick="$('#SuccesPopUp').modal('hide')">Cancel</button>
+						onclick="$('#SuccesPopUp').modal('hide'); location.reload();">Close</button>
 				</div>
 
 			</div>

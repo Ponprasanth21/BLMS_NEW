@@ -9835,152 +9835,149 @@ public class BGLSRestController {
 	@PostMapping(value = "/saveMultipleTransactions1", consumes = "application/json", produces = "application/json")
 	public Map<String, Object> saveMultipleTransactions1(@RequestBody List<Map<String, Object>> transactions,
 	        HttpServletRequest rq) {
+
 	    Map<String, Object> response = new HashMap<>();
-	    List<Map<String, Object>> savedRows = new ArrayList<>();
+	    List<Map<String, Object>> summaryPerCustomer = new ArrayList<>();
 	    String userid = (String) rq.getSession().getAttribute("USERID");
+
+	    int totalCustomerCount = 0;
+	    int totalAccountsCount = 0;
+	    double totalTransactionAmountAll = 0;
 
 	    try {
 	        System.out.println("✅ Received " + transactions.size() + " rows from frontend:");
 
-	        // Define strict priority order
 	        List<String> flowOrder = Arrays.asList("PENDEM", "FEEDEM", "INDEM", "PRDEM");
 
-	        for (int i = 0; i < transactions.size(); i++) {
-	            Map<String, Object> t = transactions.get(i);
-	            System.out.println("\n--- Processing Row " + (i + 1) + " ---");
-	            System.out.println("Input Map: " + t);
+	        // Group transactions by customer
+	        Map<String, List<Map<String, Object>>> custMap = transactions.stream()
+	                .collect(Collectors.groupingBy(t -> t.get("acct_namedata").toString()));
 
-	            // --- Generate a unique transaction ID per customer ---
-	            String seqStr = tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1();
-	            int seqNum = Integer.parseInt(seqStr);
-	            String tranId = String.format("TR%05d", seqNum);
-	            t.put("transaction_id", tranId);
+	        for (Map.Entry<String, List<Map<String, Object>>> entry : custMap.entrySet()) {
+	            String customerId = entry.getKey();
+	            List<Map<String, Object>> custTransactions = entry.getValue();
 
-	            Map<String, Object> rowResp = new HashMap<>();
-	            rowResp.put("transaction_id", tranId);
-	            rowResp.put("reference", "Customer Id: " + t.get("acct_namedata"));
+	            double totalTranAmt = 0;
+	            int accountCount = 0;
+	            List<String> tranIds = new ArrayList<>();
 
-	            // Amount to allocate
-	            double remainingAmt = t.get("tran_particulardata") != null
-	                    ? Double.parseDouble(t.get("tran_particulardata").toString())
-	                    : 0;
+	            for (Map<String, Object> t : custTransactions) {
+	                // Generate unique transaction ID
+	                String seqStr = tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1();
+	                int seqNum = Integer.parseInt(seqStr);
+	                String tranId = String.format("TR%05d", seqNum);
+	                t.put("transaction_id", tranId);
+	                tranIds.add(tranId);
 
-	            // Get latest transaction date
-	            Date tranDateObj = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
-	            if (tranDateObj == null) {
-	                response.put("status", "error");
-	                response.put("message", "No transaction date found in control table.");
-	                return response;
-	            }
-	            LocalDate tranDate = (tranDateObj instanceof java.sql.Date)
-	                    ? ((java.sql.Date) tranDateObj).toLocalDate()
-	                    : tranDateObj.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-	            Date transactionDate = Date.from(tranDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+	                // Amount to allocate
+	                double remainingAmt = t.get("tran_particulardata") != null
+	                        ? Double.parseDouble(t.get("tran_particulardata").toString())
+	                        : 0;
 
-	            String customerId = t.get("acct_namedata").toString();
-	            List<Object[]> flows = cLIENT_MASTER_REPO.getLoanFlowsByCustomer(customerId);
-
-	            // Sort flows by due date, account, and flow priority
-	            flows.sort((o1, o2) -> {
-	                Date d1 = (Date) o1[0];
-	                Date d2 = (Date) o2[0];
-	                String acc1 = o1[4] != null ? o1[4].toString() : "";
-	                String acc2 = o2[4] != null ? o2[4].toString() : "";
-	                String code1 = o1[2] != null ? o1[2].toString() : "";
-	                String code2 = o2[2] != null ? o2[2].toString() : "";
-
-	                int cmp = d1.compareTo(d2);
-	                if (cmp == 0) {
-	                    cmp = acc1.compareTo(acc2);
-	                    if (cmp == 0) {
-	                        int idx1 = flowOrder.indexOf(code1) >= 0 ? flowOrder.indexOf(code1) : flowOrder.size();
-	                        int idx2 = flowOrder.indexOf(code2) >= 0 ? flowOrder.indexOf(code2) : flowOrder.size();
-	                        return Integer.compare(idx1, idx2);
-	                    }
+	                // Get latest transaction date
+	                Date tranDateObj = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
+	                if (tranDateObj == null) {
+	                    response.put("status", "error");
+	                    response.put("message", "No transaction date found in control table.");
+	                    return response;
 	                }
-	                return cmp;
-	            });
+	                LocalDate tranDate = (tranDateObj instanceof java.sql.Date)
+	                        ? ((java.sql.Date) tranDateObj).toLocalDate()
+	                        : tranDateObj.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	                Date transactionDate = Date.from(tranDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-	            List<Map<String, Object>> flowData = new ArrayList<>();
-	            DecimalFormat decimalFormatter = new DecimalFormat("#,##0.00");
+	                // Fetch flows for this customer
+	                List<Object[]> flows = cLIENT_MASTER_REPO.getLoanFlowsByCustomer(customerId);
 
-	            // --- PART_TRAN_ID starts at 1 and alternates DEBIT first ---
-	            BigDecimal partTranId = BigDecimal.ONE;
+	                List<Map<String, Object>> flowData = new ArrayList<>();
+	                DecimalFormat decimalFormatter = new DecimalFormat("#,##0.00");
+	                BigDecimal partTranId = BigDecimal.ONE;
 
-	            // --- Stage 1: allocate all flows dueDate <= transactionDate ---
-	            for (Object[] row : flows) {
-	                if (remainingAmt <= 0)
-	                    break;
+	                // Stage 1: allocate all flows dueDate <= transactionDate
+	                for (Object[] row : flows) {
+	                    if (remainingAmt <= 0) break;
+	                    Date dueDateObj = (Date) row[0];
+	                    if (dueDateObj == null || dueDateObj.after(transactionDate)) continue;
 
-	                Date dueDateObj = (Date) row[0];
-	                if (dueDateObj == null || dueDateObj.after(transactionDate))
-	                    continue;
+	                    partTranId = allocateAndSaveDebitFirst(row, remainingAmt, transactionDate, tranId, userid,
+	                            decimalFormatter, partTranId, flowData);
 
-	                partTranId = allocateAndSaveDebitFirst(row, remainingAmt, transactionDate, tranId, userid,
-	                        decimalFormatter, partTranId, flowData);
+	                    remainingAmt -= Math.min(row[3] != null ? Double.parseDouble(row[3].toString()) : 0, remainingAmt);
+	                }
 
-	                remainingAmt -= Math.min(row[3] != null ? Double.parseDouble(row[3].toString()) : 0, remainingAmt);
+	                // Stage 2: allocate only PRDEM dueDate > transactionDate
+	                for (Object[] row : flows) {
+	                    if (remainingAmt <= 0) break;
+	                    Date dueDateObj = (Date) row[0];
+	                    String flowCode = row[2] != null ? row[2].toString() : "";
+	                    if (!"PRDEM".equals(flowCode)) continue;
+	                    if (dueDateObj == null || !dueDateObj.after(transactionDate)) continue;
+
+	                    partTranId = allocateAndSaveDebitFirst1(row, remainingAmt, transactionDate, tranId, userid,
+	                            decimalFormatter, partTranId, flowData, transactions);
+
+	                    remainingAmt -= Math.min(row[3] != null ? Double.parseDouble(row[3].toString()) : 0, remainingAmt);
+	                }
+
+	                totalTranAmt += t.get("tran_particulardata") != null
+	                        ? Double.parseDouble(t.get("tran_particulardata").toString())
+	                        : 0;
+	                accountCount++;
+
+	                // Move MULTIPLE_TRANSACTION_ENTITY to history
+	                List<MULTIPLE_TRANSACTION_ENTITY> records = mULTIPLE_TRANSACTION_REPO
+	                        .getDataValue1(t.get("tran_id").toString());
+	                for (MULTIPLE_TRANSACTION_ENTITY firstValue : records) {
+	                    MULTIPLE_TRANSACTION_HISTORY_ENTITY secondValue = new MULTIPLE_TRANSACTION_HISTORY_ENTITY();
+	                    secondValue.setTransaction_id(firstValue.getTransaction_id());
+	                    secondValue.setNames(firstValue.getNames());
+	                    secondValue.setReference(customerId);
+	                    secondValue.setMobile_number(firstValue.getMobile_number());
+	                    secondValue.setAmount(firstValue.getAmount());
+	                    secondValue.setAllocated_amount(firstValue.getAmount());
+	                    secondValue.setTrans_time(firstValue.getTrans_time());
+	                    String updatedStatus = "UNALLOCATED".equalsIgnoreCase(firstValue.getStatus()) ? "ALLOCATED"
+	                            : firstValue.getStatus();
+	                    secondValue.setStatus(updatedStatus);
+	                    secondValue.setAuth_flg(firstValue.getAuth_flg());
+	                    secondValue.setAuth_time(firstValue.getAuth_time());
+	                    secondValue.setAuth_user(firstValue.getAuth_user());
+	                    secondValue.setDel_flg(firstValue.getDel_flg());
+	                    secondValue.setEntity_flg(firstValue.getEntity_flg());
+	                    secondValue.setEntry_time(firstValue.getEntry_time());
+	                    secondValue.setEntry_user(firstValue.getEntry_user());
+	                    secondValue.setModify_flg(firstValue.getModify_flg());
+	                    secondValue.setModify_time(firstValue.getModify_time());
+	                    secondValue.setModify_user(firstValue.getModify_user());
+	                    secondValue.setSrl_no(mULTIPLE_TRANSACTION_HISTORY_REPO.getNextSrlNo());
+	                    secondValue.setRef_transaction_id(tranId);
+
+	                    mULTIPLE_TRANSACTION_HISTORY_REPO.save(secondValue);
+	                    mULTIPLE_TRANSACTION_REPO.deleteById(firstValue.getSrl_no());
+	                }
 	            }
 
-	            // --- Stage 2: allocate only PRDEM dueDate > transactionDate ---
-	            for (Object[] row : flows) {
-	                if (remainingAmt <= 0)
-	                    break;
+	            // Add per-customer summary
+	            Map<String, Object> custSummary = new HashMap<>();
+	            custSummary.put("customerId", customerId);
+	            custSummary.put("totalAccounts", accountCount);
+	            custSummary.put("totalTransactionAmount", totalTranAmt);
+	            custSummary.put("transactionIds", tranIds);
+	            summaryPerCustomer.add(custSummary);
 
-	                Date dueDateObj = (Date) row[0];
-	                String flowCode = row[2] != null ? row[2].toString() : "";
-
-	                if (!"PRDEM".equals(flowCode))
-	                    continue;
-	                if (dueDateObj == null || !dueDateObj.after(transactionDate))
-	                    continue;
-
-	                partTranId = allocateAndSaveDebitFirst1(row, remainingAmt, transactionDate, tranId, userid,
-	                        decimalFormatter, partTranId, flowData, transactions);
-
-	                remainingAmt -= Math.min(row[3] != null ? Double.parseDouble(row[3].toString()) : 0, remainingAmt);
-	            }
-
-	            rowResp.put("loanFlows", flowData);
-	            savedRows.add(rowResp);
-
-	            // --- Move MULTIPLE_TRANSACTION_ENTITY to history for this customer using its own tranId ---
-	            List<MULTIPLE_TRANSACTION_ENTITY> records = mULTIPLE_TRANSACTION_REPO.getDataValue1(t.get("tran_id").toString());
-	            for (MULTIPLE_TRANSACTION_ENTITY firstValue : records) {
-	                MULTIPLE_TRANSACTION_HISTORY_ENTITY secondValue = new MULTIPLE_TRANSACTION_HISTORY_ENTITY();
-	                secondValue.setTransaction_id(firstValue.getTransaction_id());
-	                secondValue.setNames(firstValue.getNames());
-	                secondValue.setReference(customerId); // customer-specific
-	                secondValue.setMobile_number(firstValue.getMobile_number());
-	                secondValue.setAmount(firstValue.getAmount());
-	                secondValue.setAllocated_amount(firstValue.getAmount());
-	                secondValue.setTrans_time(firstValue.getTrans_time());
-	                String updatedStatus = "UNALLOCATED".equalsIgnoreCase(firstValue.getStatus()) ? "ALLOCATED"
-	                        : firstValue.getStatus();
-	                secondValue.setStatus(updatedStatus);
-	                secondValue.setAuth_flg(firstValue.getAuth_flg());
-	                secondValue.setAuth_time(firstValue.getAuth_time());
-	                secondValue.setAuth_user(firstValue.getAuth_user());
-	                secondValue.setDel_flg(firstValue.getDel_flg());
-	                secondValue.setEntity_flg(firstValue.getEntity_flg());
-	                secondValue.setEntry_time(firstValue.getEntry_time());
-	                secondValue.setEntry_user(firstValue.getEntry_user());
-	                secondValue.setModify_flg(firstValue.getModify_flg());
-	                secondValue.setModify_time(firstValue.getModify_time());
-	                secondValue.setModify_user(firstValue.getModify_user());
-	                secondValue.setSrl_no(mULTIPLE_TRANSACTION_HISTORY_REPO.getNextSrlNo());
-
-	                // ✅ Assign unique tranId for this customer
-	                secondValue.setRef_transaction_id(tranId);
-
-	                mULTIPLE_TRANSACTION_HISTORY_REPO.save(secondValue);
-	                mULTIPLE_TRANSACTION_REPO.deleteById(firstValue.getSrl_no());
-	            }
+	            // Update global totals
+	            totalCustomerCount++;
+	            totalAccountsCount += accountCount;
+	            totalTransactionAmountAll += totalTranAmt;
 	        }
 
+	        // Response logic added
 	        response.put("status", "success");
 	        response.put("message", "Transactions saved successfully!");
-	        response.put("transactions", savedRows);
+	        response.put("number_of_customers", totalCustomerCount);
+	        response.put("number_of_accounts", totalAccountsCount);
+	        response.put("total_transaction_amount", totalTransactionAmountAll);
+	        response.put("summaryPerCustomer", summaryPerCustomer);
 
 	    } catch (Exception e) {
 	        e.printStackTrace();
