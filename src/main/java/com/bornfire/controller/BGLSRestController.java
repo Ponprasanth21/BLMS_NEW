@@ -10139,8 +10139,6 @@ public class BGLSRestController {
 		return partTranId;
 	}
 	
-	
-	
 	@Autowired
 	BGLS_ORG_BRANCH_REPO bglsorgbranch;
 
@@ -10149,8 +10147,10 @@ public class BGLSRestController {
 	    return bglsorgbranch.getAllBranchCodes(); 
 	}
 
-	
-	
-	
+	@ResponseBody
+	@RequestMapping(value = "/getBranchNameByKey", method = RequestMethod.POST)
+	public String getBranchNameByKey(@RequestParam String branch_key) {
+	    return bglsorgbranch.getBranchName(branch_key);
+	}
 
 }

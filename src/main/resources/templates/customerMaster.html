@@ -2213,32 +2213,50 @@
 		}
 
 		function updateTable(data, currentPage = 1, limit = 200) {
-		    const tableSelector = dues === 'module1' ? '#usertable1' : '#usertable';
-		    $(tableSelector).empty();
-
 		    if (!data || data.length === 0) {
-		        const noDataRow = `
+		        const tableSelector = dues === 'module1' ? '#usertable1' : '#usertable';
+		        $(tableSelector).empty().append(`
 		            <tr style="font-size:14px">
 		                <td colspan="8" style="text-align:center; color: red;">No data available</td>
 		            </tr>
-		        `;
-		        $(tableSelector).append(noDataRow);
+		        `);
 		        return;
 		    }
 
-		    data.forEach((item, index) => {
-		        let rowNumber = (currentPage - 1) * limit + (index + 1);
+		    // ✅ Step 1: Collect all unique branch keys
+		    const branchKeys = [...new Set(data.map(item => item.assigned_branch_key).filter(Boolean))];
+		    const branchNameMap = {};
 
-		        let birthDate = item?.birth_date
+		    // ✅ Step 2: Fetch branch names one by one (backend only supports single key)
+		    let completed = 0;
+
+		    branchKeys.forEach(branchKey => {
+		        $.post("./getBranchNameByKey", { branch_key: branchKey }, function (branchName) {
+		            branchNameMap[branchKey] = branchName || 'UNKNOWN';
+		        }).always(() => {
+		            completed++;
+		            if (completed === branchKeys.length) {
+		                // ✅ All names fetched — render table
+		                renderTableWithBranchNames(data, branchNameMap, currentPage, limit);
+		            }
+		        });
+		    });
+		}
+
+		function renderTableWithBranchNames(data, branchNameMap, currentPage, limit) {
+		    const tableSelector = dues === 'module1' ? '#usertable1' : '#usertable';
+		    $(tableSelector).empty();
+
+		    data.forEach((item, index) => {
+		        const rowNumber = (currentPage - 1) * limit + (index + 1);
+		        const birthDate = item?.birth_date
 		            ? new Date(item.birth_date).toLocaleDateString('en-GB', {
-		                day: '2-digit',
-		                month: '2-digit',
-		                year: 'numeric'
+		                day: '2-digit', month: '2-digit', year: 'numeric'
 		            }).replace(/\//g, '-')
 		            : '05-12-1920';
 
-		        // ✅ Use your JS function here
-		        let branchName = getBranchName(item?.assigned_branch_key);
+		        const branchKey = item?.assigned_branch_key || '';
+		        const branchName = branchNameMap[branchKey] || 'UNKNOWN';
 
 		        const row = `
 		            <tr style="font-size:14px" class="userlist">
@@ -2246,7 +2264,7 @@
 		                <td class="text-primary"
 		                    data-id="${item?.customer_id || ''}"
 		                    data-account_holderkey="${item?.customer_id || ''}"
-		                    data-branch_key="${item?.assigned_branch_key || ''}"
+		                    data-branch_key="${branchKey}"
 		                    onclick="viewscreen(this);">
 		                    ${item?.customer_id || ''}
 		                </td>
@@ -2261,19 +2279,6 @@
 
 		        $(tableSelector).append(row);
 		    });
-		}
-		
-		function getBranchName(key) {
-		    switch (key) {
-		        case "8a858eaa6d00215f016d005b083916a9":
-		            return "MOMBASA";
-		        case "8a858f3e8851f7a30188528a071a5228":
-		            return "B2B";
-		        case "8a858f6d62bdb6fc0162be4f775e5792":
-		            return "NAIROBI HEAD OFFICE";
-		        default:
-		            return "";
-		    }
 		}
 
 		function viewLoan(holderKey, id) {
