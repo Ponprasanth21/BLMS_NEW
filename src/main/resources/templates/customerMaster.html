@@ -2212,57 +2212,68 @@
     `);
 		}
 
-
-
 		function updateTable(data, currentPage = 1, limit = 200) {
-			// Determine which table to update based on module
-			const tableSelector = dues === 'module1' ? '#usertable1' : '#usertable';
+		    const tableSelector = dues === 'module1' ? '#usertable1' : '#usertable';
+		    $(tableSelector).empty();
 
-			// Clear the table body before appending new rows
-			$(tableSelector).empty();
+		    if (!data || data.length === 0) {
+		        const noDataRow = `
+		            <tr style="font-size:14px">
+		                <td colspan="8" style="text-align:center; color: red;">No data available</td>
+		            </tr>
+		        `;
+		        $(tableSelector).append(noDataRow);
+		        return;
+		    }
 
-			if (!data || data.length === 0) {
-				const noDataRow = `
-            <tr style="font-size:14px">
-                <td colspan="8" style="text-align:center; color: red;">No data available</td>
-            </tr>
-        `;
-				$(tableSelector).append(noDataRow);
-				return;
-			}
+		    data.forEach((item, index) => {
+		        let rowNumber = (currentPage - 1) * limit + (index + 1);
 
-			data.forEach((item, index) => {
-				let rowNumber = (currentPage - 1) * limit + (index + 1);
+		        let birthDate = item?.birth_date
+		            ? new Date(item.birth_date).toLocaleDateString('en-GB', {
+		                day: '2-digit',
+		                month: '2-digit',
+		                year: 'numeric'
+		            }).replace(/\//g, '-')
+		            : '05-12-1920';
 
-				let birthDate = item?.birth_date
-					? new Date(item.birth_date).toLocaleDateString('en-GB', {
-						day: '2-digit',
-						month: '2-digit',
-						year: 'numeric'
-					}).replace(/\//g, '-')
-					: '05-12-1920';
+		        // ✅ Use your JS function here
+		        let branchName = getBranchName(item?.assigned_branch_key);
 
-				const row = `
-            <tr style="font-size:14px" class="userlist">
-                <td>${rowNumber}</td>
-                <td class="text-primary"
-                    data-id="${item?.customer_id || ''}"
-                    data-account_holderkey="${item?.customer_id || ''}"
-                    	data-branch_key="${item?.assigned_branch_key || ''}"
-                    onclick="viewscreen(this);">
-                    ${item?.customer_id || ''}
-                </td>
-                <td>${(item?.first_name || '') + ' ' + (item?.last_name || '')}</td>
-                <td>${birthDate}</td>
-                <td>${item?.assigned_branch_key || ''}</td>
-                <td>${item?.mobile_phone || ''}</td>
-                <td>${item?.email_address || ''}</td>
-                <td>${item?.client_state || ''}</td>
-            </tr>
-        `;
+		        const row = `
+		            <tr style="font-size:14px" class="userlist">
+		                <td>${rowNumber}</td>
+		                <td class="text-primary"
+		                    data-id="${item?.customer_id || ''}"
+		                    data-account_holderkey="${item?.customer_id || ''}"
+		                    data-branch_key="${item?.assigned_branch_key || ''}"
+		                    onclick="viewscreen(this);">
+		                    ${item?.customer_id || ''}
+		                </td>
+		                <td>${(item?.first_name || '') + ' ' + (item?.last_name || '')}</td>
+		                <td>${birthDate}</td>
+		                <td>${branchName}</td>
+		                <td>${item?.mobile_phone || ''}</td>
+		                <td>${item?.email_address || ''}</td>
+		                <td>${item?.client_state || ''}</td>
+		            </tr>
+		        `;
 
-				$(tableSelector).append(row);
-			});
+		        $(tableSelector).append(row);
+		    });
+		}
+		
+		function getBranchName(key) {
+		    switch (key) {
+		        case "8a858eaa6d00215f016d005b083916a9":
+		            return "MOMBASA";
+		        case "8a858f3e8851f7a30188528a071a5228":
+		            return "B2B";
+		        case "8a858f6d62bdb6fc0162be4f775e5792":
+		            return "NAIROBI HEAD OFFICE";
+		        default:
+		            return "";
+		    }
 		}
 
 		function viewLoan(holderKey, id) {
@@ -2770,7 +2781,7 @@
 											</th>
 											<th style="width: 6%">CUSTOMER NAME</th>
 											<th style="width: 5%">DOB</th>
-											<th style="width: 5%">BRANCH ID</th>
+											<th style="width: 5%">BRANCH NAME</th>
 											<th style="width: 5%"><input type="text" id="mobileFilter"
 													class="form-control" placeholder="Mobile No" disabled></th>
 											<th style="width: 5%"><input type="text" id="emailFilter"
