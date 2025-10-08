@@ -4245,7 +4245,7 @@ public class BGLSNavigationController {
 	        Model model, Model md,
 	        HttpServletRequest request,
 	        @RequestParam(required = false) String id,
-	        @RequestParam(required = false) String holder_key) {
+	        @RequestParam(required = false) String holder_key, String branch_key ) {
 
 	    String user = (String) request.getSession().getAttribute("USERID");
 
@@ -4261,6 +4261,7 @@ public class BGLSNavigationController {
 //	        LOAN_ACT_MST_REPO.getLoanValueList(holder_key);
 	        md.addAttribute("customer_id", LOAN_ACT_MST_REPO.getLoanValueCUSTOMER_ID(holder_key));
 	        md.addAttribute("customer_name", LOAN_ACT_MST_REPO.getLoanValueCUSTOMER_NAME(holder_key));
+	        md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
 	        
 //	        List<CLIENT_MASTER_ENTITY> clients = LOAN_ACT_MST_REPO.getLoanValueList(holder_key);
 
