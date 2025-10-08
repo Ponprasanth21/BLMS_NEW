@@ -701,207 +701,207 @@ public class CustOnboardinController {
 	@Autowired
 	BGLS_LMS_SCHEMES_TABLE_REPO lmsschemerepo;
 	
-	@RequestMapping(value = "Parameter", method = { RequestMethod.GET, RequestMethod.POST })
-	public String Parameters(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String refnumber,
-			@RequestParam(value = "page", required = false) Optional<Integer> page,
-			@RequestParam(value = "size", required = false) Optional<Integer> size, Model md, HttpServletRequest req,
-			String Sort, String acct_open_form, String acc_temp, String cus_temp) {
-
-		String userId = (String) req.getSession().getAttribute("USERID");
-		md.addAttribute("Role", userProfileRep.getRole(userId));
-		Date TRANDATE = (Date) req.getSession().getAttribute("TRANDATE");
-
-// String loginuserid = (String) req.getSession().getAttribute("USERID");
-// Logging Navigation
-// loginServices.SessionLogging("USERPROFILE", "M2", req.getSession().getId(),
-// loginuserid, req.getRemoteAddr(),
-// "ACTIVE");
-
-		if (formmode == null || formmode.equals("list")) {
-			System.out.println("Value=======================>>> " + refnumber);
-			md.addAttribute("OtherServices", parameterrep.listofvalue());
-			md.addAttribute("lms_schemes", lmsschemerepo.findAll());
-			md.addAttribute("menu", "AMLCustomerKYC");
-			md.addAttribute("menuname", "CustomerKYC");
-			md.addAttribute("formmode", "list"); // to set which form - valid values are "edit" , "add" & "list"
-			// md.addAttribute("CustomerKYC",CMGrepository.findAll(PageRequest.of(currentPage,
-			// pageSize)));
-
-		} else if (formmode.equals("add")) {
-			md.addAttribute("formmode", "add");
-			md.addAttribute("branch_id", reference_code_Rep.getBranch_Id());
-			md.addAttribute("schme_type", reference_code_Rep.getSchme_Type());
-			md.addAttribute("schme_code", reference_code_Rep.getSchme_Code());
-			md.addAttribute("gl_code", reference_code_Rep.getGL_CODE());
-			md.addAttribute("glsh", reference_code_Rep.getGLSH());
-			md.addAttribute("curr", reference_code_Rep.getCurr());
-			md.addAttribute("multi_curr", reference_code_Rep.getMulti_Curr());
-			md.addAttribute("userId", userProfileRep.getUserId());
-
-			String paramRef = parameterrep.getParamRef();
-			String ParamReference;
-			if (paramRef != null) {
-				ParamReference = "REF" + (Integer.valueOf(paramRef) + 1);
-			} else {
-				ParamReference = "REF1";
-			}
-			md.addAttribute("ParamRef", ParamReference);
-			System.out.println("PARAM " + ParamReference);
-
-		} else if (formmode.equals("workflow")) {
-			md.addAttribute("formmode", "workflow");
-			md.addAttribute("acc_temp", acc_temp);
-			md.addAttribute("userId", userId);
-		} else if (formmode.equals("view")) {
-			md.addAttribute("formmode", formmode);
-
-			md.addAttribute("formmode", "view");
-			System.out.println("Value========>>>" + refnumber);
-			md.addAttribute("OtherServicess", parameterrep.findbyId(refnumber));
-			md.addAttribute("parameterslist", parameterrep.findAll());
-			ParametersDetails check = parameterrep.findbyId(refnumber);
-
-			String checklist = check.getCheck_list();
-			List<String> valuesList = checklist != null ? Arrays.asList(checklist.split(",")) : new ArrayList<>();
-			md.addAttribute("valuesList", valuesList);
-
-			// Check and split the approval values
-			String appr1 = check.getApproval1();
-			List<String> valappr1 = appr1 != null ? Arrays.asList(appr1.split(",")) : new ArrayList<>();
-			md.addAttribute("appr1", valappr1);
-
-			String appr2 = check.getApproval2();
-			List<String> valappr2 = appr2 != null ? Arrays.asList(appr2.split(",")) : new ArrayList<>();
-			md.addAttribute("appr2", valappr2);
-
-			String appr3 = check.getApproval3();
-			List<String> valappr3 = appr3 != null ? Arrays.asList(appr3.split(",")) : new ArrayList<>();
-			md.addAttribute("appr3", valappr3);
-
-			// Check and split the alert values
-			String alr1 = check.getAlert1();
-			List<String> valalr1 = alr1 != null ? Arrays.asList(alr1.split(",")) : new ArrayList<>();
-			md.addAttribute("alr1", valalr1);
-
-			String alr2 = check.getAlert2();
-			List<String> valalr2 = alr2 != null ? Arrays.asList(alr2.split(",")) : new ArrayList<>();
-			md.addAttribute("alr2", valalr2);
-
-			String alr3 = check.getAlert3();
-			List<String> valalr3 = alr3 != null ? Arrays.asList(alr3.split(",")) : new ArrayList<>();
-			md.addAttribute("alr3", valalr3);
-
-		} else if (formmode.equals("verify")) {
-			md.addAttribute("formmode", formmode);
-
-			md.addAttribute("formmode", "verify");
-			System.out.println("Value========>>>" + refnumber);
-			md.addAttribute("OtherServicess", parameterrep.findbyId(refnumber));
-			md.addAttribute("parameterslist", parameterrep.findAll());
-			// for check list
-			ParametersDetails check = parameterrep.findbyId(refnumber);
-
-			String checklist = check.getCheck_list();
-			List<String> valuesList = checklist != null ? Arrays.asList(checklist.split(",")) : new ArrayList<>();
-			md.addAttribute("valuesList", valuesList);
-
-			// Check and split the approval values
-			String appr1 = check.getApproval1();
-			List<String> valappr1 = appr1 != null ? Arrays.asList(appr1.split(",")) : new ArrayList<>();
-			md.addAttribute("appr1", valappr1);
-
-			String appr2 = check.getApproval2();
-			List<String> valappr2 = appr2 != null ? Arrays.asList(appr2.split(",")) : new ArrayList<>();
-			md.addAttribute("appr2", valappr2);
-
-			String appr3 = check.getApproval3();
-			List<String> valappr3 = appr3 != null ? Arrays.asList(appr3.split(",")) : new ArrayList<>();
-			md.addAttribute("appr3", valappr3);
-
-			// Check and split the alert values
-			String alr1 = check.getAlert1();
-			List<String> valalr1 = alr1 != null ? Arrays.asList(alr1.split(",")) : new ArrayList<>();
-			md.addAttribute("alr1", valalr1);
-
-			String alr2 = check.getAlert2();
-			List<String> valalr2 = alr2 != null ? Arrays.asList(alr2.split(",")) : new ArrayList<>();
-			md.addAttribute("alr2", valalr2);
-
-			String alr3 = check.getAlert3();
-			List<String> valalr3 = alr3 != null ? Arrays.asList(alr3.split(",")) : new ArrayList<>();
-			md.addAttribute("alr3", valalr3);
-
-			md.addAttribute("userId", userId);
-
-		} else if (formmode.equals("new")) {
-			md.addAttribute("formmode", "new");
-			md.addAttribute("acc_temp", acc_temp);
-			md.addAttribute("tran_date", TRANDATE);
-			md.addAttribute("userId", userId);
-		} else if (formmode.equals("move")) {
-			md.addAttribute("formmode", "move");
-			md.addAttribute("cus_temp", cus_temp);
-			md.addAttribute("tran_date", TRANDATE);
-			md.addAttribute("userId", userId);
-		} else if (formmode.equals("with")) {
-			md.addAttribute("formmode", "with");
-			md.addAttribute("acct_open_form", acct_open_form);
-			md.addAttribute("userId", userId);
-		} else if (formmode.equals("modify")) {
-			md.addAttribute("formmode", "modify");
-			md.addAttribute("OtherServicess", parameterrep.findbyId(refnumber));
-			md.addAttribute("parameterslist", parameterrep.findAll());
-			md.addAttribute("branch_id", reference_code_Rep.getBranch_Id());
-			md.addAttribute("schme_type", reference_code_Rep.getSchme_Type());
-			md.addAttribute("schme_code", reference_code_Rep.getSchme_Code());
-			md.addAttribute("gl_code", reference_code_Rep.getGL_CODE());
-			md.addAttribute("glsh", reference_code_Rep.getGLSH());
-			md.addAttribute("curr", reference_code_Rep.getCurr());
-			md.addAttribute("multi_curr", reference_code_Rep.getMulti_Curr());
-			// for check list
-			// for check list
-			ParametersDetails check = parameterrep.findbyId(refnumber);
-			String checklist = check.getCheck_list();
-			List<String> valuesList = checklist != null ? Arrays.asList(checklist.split(",")) : new ArrayList<>();
-			md.addAttribute("valuesList", valuesList);
-
-			// Check and split the approval values
-			String appr1 = check.getApproval1();
-			List<String> valappr1 = appr1 != null ? Arrays.asList(appr1.split(",")) : new ArrayList<>();
-			md.addAttribute("appr1", valappr1);
-
-			String appr2 = check.getApproval2();
-			List<String> valappr2 = appr2 != null ? Arrays.asList(appr2.split(",")) : new ArrayList<>();
-			md.addAttribute("appr2", valappr2);
-
-			String appr3 = check.getApproval3();
-			List<String> valappr3 = appr3 != null ? Arrays.asList(appr3.split(",")) : new ArrayList<>();
-			md.addAttribute("appr3", valappr3);
-
-			// Check and split the alert values
-			String alr1 = check.getAlert1();
-			List<String> valalr1 = alr1 != null ? Arrays.asList(alr1.split(",")) : new ArrayList<>();
-			md.addAttribute("alr1", valalr1);
-
-			String alr2 = check.getAlert2();
-			List<String> valalr2 = alr2 != null ? Arrays.asList(alr2.split(",")) : new ArrayList<>();
-			md.addAttribute("alr2", valalr2);
-
-			String alr3 = check.getAlert3();
-			List<String> valalr3 = alr3 != null ? Arrays.asList(alr3.split(",")) : new ArrayList<>();
-			md.addAttribute("alr3", valalr3);
-		}
-
-// to set which form - valid values are "edit" , "add" & "list"
-// md.addAttribute("CustomerKYC",
-// CMGrepository.findAll(PageRequest.of(currentPage, pageSize)));
-
-		md.addAttribute("riskmgntflag", "riskmgntflag");
-		md.addAttribute("riskcatflag", "riskcatflag");
-
-		return "BACP/PARAMETER";
-	}
+//	@RequestMapping(value = "Parameter", method = { RequestMethod.GET, RequestMethod.POST })
+//	public String Parameters(@RequestParam(required = false) String formmode,
+//			@RequestParam(required = false) String refnumber,
+//			@RequestParam(value = "page", required = false) Optional<Integer> page,
+//			@RequestParam(value = "size", required = false) Optional<Integer> size, Model md, HttpServletRequest req,
+//			String Sort, String acct_open_form, String acc_temp, String cus_temp) {
+//
+//		String userId = (String) req.getSession().getAttribute("USERID");
+//		md.addAttribute("Role", userProfileRep.getRole(userId));
+//		Date TRANDATE = (Date) req.getSession().getAttribute("TRANDATE");
+//
+//// String loginuserid = (String) req.getSession().getAttribute("USERID");
+//// Logging Navigation
+//// loginServices.SessionLogging("USERPROFILE", "M2", req.getSession().getId(),
+//// loginuserid, req.getRemoteAddr(),
+//// "ACTIVE");
+//
+//		if (formmode == null || formmode.equals("list")) {
+//			System.out.println("Value=======================>>> " + refnumber);
+//			md.addAttribute("OtherServices", parameterrep.listofvalue());
+//			md.addAttribute("lms_schemes", lmsschemerepo.findAll());
+//			md.addAttribute("menu", "AMLCustomerKYC");
+//			md.addAttribute("menuname", "CustomerKYC");
+//			md.addAttribute("formmode", "list"); // to set which form - valid values are "edit" , "add" & "list"
+//			// md.addAttribute("CustomerKYC",CMGrepository.findAll(PageRequest.of(currentPage,
+//			// pageSize)));
+//
+//		} else if (formmode.equals("add")) {
+//			md.addAttribute("formmode", "add");
+//			md.addAttribute("branch_id", reference_code_Rep.getBranch_Id());
+//			md.addAttribute("schme_type", reference_code_Rep.getSchme_Type());
+//			md.addAttribute("schme_code", reference_code_Rep.getSchme_Code());
+//			md.addAttribute("gl_code", reference_code_Rep.getGL_CODE());
+//			md.addAttribute("glsh", reference_code_Rep.getGLSH());
+//			md.addAttribute("curr", reference_code_Rep.getCurr());
+//			md.addAttribute("multi_curr", reference_code_Rep.getMulti_Curr());
+//			md.addAttribute("userId", userProfileRep.getUserId());
+//
+//			String paramRef = parameterrep.getParamRef();
+//			String ParamReference;
+//			if (paramRef != null) {
+//				ParamReference = "REF" + (Integer.valueOf(paramRef) + 1);
+//			} else {
+//				ParamReference = "REF1";
+//			}
+//			md.addAttribute("ParamRef", ParamReference);
+//			System.out.println("PARAM " + ParamReference);
+//
+//		} else if (formmode.equals("workflow")) {
+//			md.addAttribute("formmode", "workflow");
+//			md.addAttribute("acc_temp", acc_temp);
+//			md.addAttribute("userId", userId);
+//		} else if (formmode.equals("view")) {
+//			md.addAttribute("formmode", formmode);
+//
+//			md.addAttribute("formmode", "view");
+//			System.out.println("Value========>>>" + refnumber);
+//			md.addAttribute("OtherServicess", parameterrep.findbyId(refnumber));
+//			md.addAttribute("parameterslist", parameterrep.findAll());
+//			ParametersDetails check = parameterrep.findbyId(refnumber);
+//
+//			String checklist = check.getCheck_list();
+//			List<String> valuesList = checklist != null ? Arrays.asList(checklist.split(",")) : new ArrayList<>();
+//			md.addAttribute("valuesList", valuesList);
+//
+//			// Check and split the approval values
+//			String appr1 = check.getApproval1();
+//			List<String> valappr1 = appr1 != null ? Arrays.asList(appr1.split(",")) : new ArrayList<>();
+//			md.addAttribute("appr1", valappr1);
+//
+//			String appr2 = check.getApproval2();
+//			List<String> valappr2 = appr2 != null ? Arrays.asList(appr2.split(",")) : new ArrayList<>();
+//			md.addAttribute("appr2", valappr2);
+//
+//			String appr3 = check.getApproval3();
+//			List<String> valappr3 = appr3 != null ? Arrays.asList(appr3.split(",")) : new ArrayList<>();
+//			md.addAttribute("appr3", valappr3);
+//
+//			// Check and split the alert values
+//			String alr1 = check.getAlert1();
+//			List<String> valalr1 = alr1 != null ? Arrays.asList(alr1.split(",")) : new ArrayList<>();
+//			md.addAttribute("alr1", valalr1);
+//
+//			String alr2 = check.getAlert2();
+//			List<String> valalr2 = alr2 != null ? Arrays.asList(alr2.split(",")) : new ArrayList<>();
+//			md.addAttribute("alr2", valalr2);
+//
+//			String alr3 = check.getAlert3();
+//			List<String> valalr3 = alr3 != null ? Arrays.asList(alr3.split(",")) : new ArrayList<>();
+//			md.addAttribute("alr3", valalr3);
+//
+//		} else if (formmode.equals("verify")) {
+//			md.addAttribute("formmode", formmode);
+//
+//			md.addAttribute("formmode", "verify");
+//			System.out.println("Value========>>>" + refnumber);
+//			md.addAttribute("OtherServicess", parameterrep.findbyId(refnumber));
+//			md.addAttribute("parameterslist", parameterrep.findAll());
+//			// for check list
+//			ParametersDetails check = parameterrep.findbyId(refnumber);
+//
+//			String checklist = check.getCheck_list();
+//			List<String> valuesList = checklist != null ? Arrays.asList(checklist.split(",")) : new ArrayList<>();
+//			md.addAttribute("valuesList", valuesList);
+//
+//			// Check and split the approval values
+//			String appr1 = check.getApproval1();
+//			List<String> valappr1 = appr1 != null ? Arrays.asList(appr1.split(",")) : new ArrayList<>();
+//			md.addAttribute("appr1", valappr1);
+//
+//			String appr2 = check.getApproval2();
+//			List<String> valappr2 = appr2 != null ? Arrays.asList(appr2.split(",")) : new ArrayList<>();
+//			md.addAttribute("appr2", valappr2);
+//
+//			String appr3 = check.getApproval3();
+//			List<String> valappr3 = appr3 != null ? Arrays.asList(appr3.split(",")) : new ArrayList<>();
+//			md.addAttribute("appr3", valappr3);
+//
+//			// Check and split the alert values
+//			String alr1 = check.getAlert1();
+//			List<String> valalr1 = alr1 != null ? Arrays.asList(alr1.split(",")) : new ArrayList<>();
+//			md.addAttribute("alr1", valalr1);
+//
+//			String alr2 = check.getAlert2();
+//			List<String> valalr2 = alr2 != null ? Arrays.asList(alr2.split(",")) : new ArrayList<>();
+//			md.addAttribute("alr2", valalr2);
+//
+//			String alr3 = check.getAlert3();
+//			List<String> valalr3 = alr3 != null ? Arrays.asList(alr3.split(",")) : new ArrayList<>();
+//			md.addAttribute("alr3", valalr3);
+//
+//			md.addAttribute("userId", userId);
+//
+//		} else if (formmode.equals("new")) {
+//			md.addAttribute("formmode", "new");
+//			md.addAttribute("acc_temp", acc_temp);
+//			md.addAttribute("tran_date", TRANDATE);
+//			md.addAttribute("userId", userId);
+//		} else if (formmode.equals("move")) {
+//			md.addAttribute("formmode", "move");
+//			md.addAttribute("cus_temp", cus_temp);
+//			md.addAttribute("tran_date", TRANDATE);
+//			md.addAttribute("userId", userId);
+//		} else if (formmode.equals("with")) {
+//			md.addAttribute("formmode", "with");
+//			md.addAttribute("acct_open_form", acct_open_form);
+//			md.addAttribute("userId", userId);
+//		} else if (formmode.equals("modify")) {
+//			md.addAttribute("formmode", "modify");
+//			md.addAttribute("OtherServicess", parameterrep.findbyId(refnumber));
+//			md.addAttribute("parameterslist", parameterrep.findAll());
+//			md.addAttribute("branch_id", reference_code_Rep.getBranch_Id());
+//			md.addAttribute("schme_type", reference_code_Rep.getSchme_Type());
+//			md.addAttribute("schme_code", reference_code_Rep.getSchme_Code());
+//			md.addAttribute("gl_code", reference_code_Rep.getGL_CODE());
+//			md.addAttribute("glsh", reference_code_Rep.getGLSH());
+//			md.addAttribute("curr", reference_code_Rep.getCurr());
+//			md.addAttribute("multi_curr", reference_code_Rep.getMulti_Curr());
+//			// for check list
+//			// for check list
+//			ParametersDetails check = parameterrep.findbyId(refnumber);
+//			String checklist = check.getCheck_list();
+//			List<String> valuesList = checklist != null ? Arrays.asList(checklist.split(",")) : new ArrayList<>();
+//			md.addAttribute("valuesList", valuesList);
+//
+//			// Check and split the approval values
+//			String appr1 = check.getApproval1();
+//			List<String> valappr1 = appr1 != null ? Arrays.asList(appr1.split(",")) : new ArrayList<>();
+//			md.addAttribute("appr1", valappr1);
+//
+//			String appr2 = check.getApproval2();
+//			List<String> valappr2 = appr2 != null ? Arrays.asList(appr2.split(",")) : new ArrayList<>();
+//			md.addAttribute("appr2", valappr2);
+//
+//			String appr3 = check.getApproval3();
+//			List<String> valappr3 = appr3 != null ? Arrays.asList(appr3.split(",")) : new ArrayList<>();
+//			md.addAttribute("appr3", valappr3);
+//
+//			// Check and split the alert values
+//			String alr1 = check.getAlert1();
+//			List<String> valalr1 = alr1 != null ? Arrays.asList(alr1.split(",")) : new ArrayList<>();
+//			md.addAttribute("alr1", valalr1);
+//
+//			String alr2 = check.getAlert2();
+//			List<String> valalr2 = alr2 != null ? Arrays.asList(alr2.split(",")) : new ArrayList<>();
+//			md.addAttribute("alr2", valalr2);
+//
+//			String alr3 = check.getAlert3();
+//			List<String> valalr3 = alr3 != null ? Arrays.asList(alr3.split(",")) : new ArrayList<>();
+//			md.addAttribute("alr3", valalr3);
+//		}
+//
+//// to set which form - valid values are "edit" , "add" & "list"
+//// md.addAttribute("CustomerKYC",
+//// CMGrepository.findAll(PageRequest.of(currentPage, pageSize)));
+//
+//		md.addAttribute("riskmgntflag", "riskmgntflag");
+//		md.addAttribute("riskcatflag", "riskcatflag");
+//
+//		return "BACP/PARAMETER";
+//	}
 
 	@RequestMapping(value = "getBranchDetails", method = RequestMethod.GET)
 	@ResponseBody

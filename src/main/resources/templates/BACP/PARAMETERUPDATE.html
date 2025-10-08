@@ -259,6 +259,43 @@
         //     });
         // }
 
+        function VerifyScheme() {
+    var paramsId = $('#params_id').val();
+    console.log(paramsId);
+
+    if (!paramsId) {
+        alert("Scheme ID not found!");
+        return;
+    }
+
+    $.ajax({
+        url: '/ASPIRA/verifyScheme',   // <-- include context path
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ id: paramsId }),
+        success: function(response) {
+            if (response.success) {
+                $("#alertmsg").text(response.message || "Scheme verified successfully!");
+                $('#alert').modal('show');
+
+                // Redirect when user clicks OK
+                $("#alertOkBtn").off("click").on("click", function() {
+                    $('#alert').modal('hide'); // hide modal
+              
+                    window.history.back(); 
+                });
+            } else {
+                alert("Verification failed: " + response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Error: " + error);
+            alert("An error occurred during verification!");
+        }
+    });
+}
+
+
         function UpdateParameter() {
             const formData = {};
             $('#refForm').find('input, select, textarea').each(function () {
@@ -364,7 +401,7 @@
                                                 <input type="text" id="product" name="product"
                                                     th:value="${parameters.product}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Field 2 -->
@@ -373,7 +410,7 @@
                                                     style="width: 45%;">ID</label>
                                                 <input type="text" id="id" name="id" th:value="${parameters.id}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" disabled>
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -382,14 +419,14 @@
                                                 <input type="text" id="productCategory" name="productCategory"
                                                     th:value="${parameters.productCategory}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Field 3 -->
                                             <!-- <div class="col-md-4 d-flex align-items-center">
                                                 <label for="activated" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">Activated</label>
-                                                <select id="activated" name="activated" class="form-control form-control-sm border border-dark" style="width: 55%;">
+                                                <select id="activated" name="activated" class="form-control form-control-sm border border-dark" style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                                 <option value="">select</option>
                                                 <option value="N">No</option>
                                                 <option value="Y">Yes</option>
@@ -406,7 +443,7 @@
                                                     style="width: 45%;">Creation Date</label>
                                                 <input type="date" id="creationDate" name="creationDate"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div> -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="defaultGracePeriod" class="form-label me-2 mb-0 text-end"
@@ -414,7 +451,7 @@
                                                 <input type="text" id="productType" name="productType"
                                                     th:value="${parameters.productType}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Field 5 -->
@@ -423,7 +460,7 @@
                                                     style="width: 45%;">STATE</label>
                                                 <select id="state" name="state"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                                     <option value="">select</option>
                                                     <option value="Y" th:selected="${parameters.state == 'Y'}">Active
                                                     </option>
@@ -440,7 +477,7 @@
                                                 <input type="text" id="productDescription" name="productDescription"
                                                     th:value="${parameters.productDescription}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
                                         </div>
 
@@ -457,7 +494,7 @@
                                                     style="width: 45%;">PRODUCT_AVAILABILITY</label>
                                                 <input type="text" id="productAvailability" name="productAvailability"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div> -->
 
                                             <!-- Default Repayment Period Count -->
@@ -466,7 +503,7 @@
                                                     style="width: 45%;">AVAILABLE_TO</label>
                                                 <select id="availableTo" name="availableTo"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                                     <option value="">select</option>
                                                     <option value="Clients"
                                                         th:selected="${parameters.availableTo == 'Clients'}">Clients
@@ -490,7 +527,7 @@
 
                                                 <select id="branches" name="branches"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                                     <option value="">Select Branch</option>
                                                 </select>
 
@@ -554,7 +591,7 @@
                                                 <input type="text" id="idType" name="idType"
                                                     th:value="${parameters.idType}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -564,7 +601,7 @@
                                                 <input type="text" id="usingTemplate" name="usingTemplate"
                                                     th:value="${parameters.usingTemplate}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
 
@@ -575,7 +612,7 @@
                                                     th:value="${parameters.initialAccountState}"
                                                     name="initialAccountState"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                         </div>
@@ -596,7 +633,7 @@
                                                     th:value="${parameters.loanAmountConstraints}"
                                                     name="loanAmountConstraints"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
 
@@ -607,7 +644,7 @@
                                                     th:value="${parameters.accountsManagedUnderCredit}"
                                                     name="accountsManagedUnderCredit"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                         </div>
@@ -625,7 +662,7 @@
                                                 <input type="text" id="interestCalcMethod" name="interestCalcMethod"
                                                     th:value="${parameters.interestCalcMethod}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -636,7 +673,7 @@
                                                     th:value="${parameters.accruedIntPostFreq}"
                                                     name="accruedIntPostFreq"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Max Grace Period -->
@@ -646,7 +683,7 @@
                                                 <input type="text" id="interestType" name="interestType"
                                                     th:value="${parameters.interestType}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
 
@@ -665,7 +702,7 @@
                                                     th:value="${parameters.interestRateCharged}"
                                                     name="interestRateCharged"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Max Penalty Rate -->
@@ -676,7 +713,7 @@
                                                     th:value="${parameters.interestRateConstraints}"
                                                     name="interestRateConstraints"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Min Grace Period -->
@@ -686,7 +723,7 @@
                                                 <input type="number" id="daysInYear" name="daysInYear"
                                                     th:value="${parameters.daysInYear}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                         </div>
@@ -703,13 +740,13 @@
                                                 <input type="text" id="repaymentIntCalc" name="repaymentIntCalc"
                                                     th:value="${parameters.repaymentIntCalc}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex justify-content-between align-items-center">
 
 
-                                                <input type="checkbox" id="accruedIntAfterMaturity"
+                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}" id="accruedIntAfterMaturity"
                                                     name="accruedIntAfterMaturity"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
@@ -742,7 +779,7 @@
                                                     th:value="${parameters.paymentIntervalMethod}"
                                                     name="paymentIntervalMethod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -752,7 +789,7 @@
                                                     th:value="${parameters.repaymentMadeEvery}"
                                                     name="repaymentMadeEvery"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
 
@@ -765,7 +802,7 @@
                                                     th:value="${parameters.installmentConstraints}"
                                                     name="installmentConstraints"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                         </div>
@@ -779,7 +816,7 @@
                                                     th:value="${parameters.firstDueDateOffset}"
                                                     name="firstDueDateOffset"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -789,7 +826,7 @@
                                                     th:value="${parameters.collectPrincipalEvery}"
                                                     name="collectPrincipalEvery"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Product Description -->
@@ -799,7 +836,7 @@
                                                 <input type="number" id="gracePeriod" name="gracePeriod"
                                                     th:value="${parameters.gracePeriod}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Product Name -->
@@ -807,101 +844,7 @@
                                         </div>
 
                                         <div class="row g-3 mt-2">
-                                            <div class="col-md-4 d-flex align-items-center">
-                                                <label class="form-label me-2 mb-0 text-end"
-                                                    style="width: 45%;">REPAYMENT_SCHEDULE_EDIT</label>
-                                                <div style="width: 55%; position: relative;">
-                                                    <!-- Dropdown button -->
-                                                    <button type="button" class="btn btn-sm w-100 text-start"
-                                                        style="border: 1px solid #ccc; background-color: #fff; color: #000; text-align: left;"
-                                                        onmouseover="this.style.backgroundColor='#f0f0f0'; this.style.borderColor='#007bff';"
-                                                        onmouseout="this.style.backgroundColor='#fff'; this.style.borderColor='#ccc';"
-                                                        onclick="document.getElementById('repaymentCheckboxDropdown').classList.toggle('d-block');">
-                                                        Select Options
-                                                    </button>
-
-                                                    <!-- Checkbox dropdown -->
-                                                    <div id="repaymentCheckboxDropdown"
-                                                        style="position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ccc; display: none; z-index: 1000; padding: 5px;">
-
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="adjustPaymentDates" name="adjustPaymentDates"
-                                                                value="Y"
-                                                                th:checked="${parameters.adjustPaymentDates == 'Y'}"
-                                                                th:value="${parameters.adjustPaymentDates}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'">
-                                                            <label class="form-check-label"
-                                                                for="adjustPaymentDates">Adjust Payment Dates</label>
-                                                        </div>
-
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="adjustPrincipalSchedule"
-                                                                name="adjustPrincipalSchedule" value="Y"
-                                                                th:checked="${parameters.adjustPrincipalSchedule == 'Y'}"
-                                                                th:value="${parameters.adjustPrincipalSchedule}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'">
-                                                            <label class="form-check-label"
-                                                                for="adjustPrincipalSchedule">Adjust Principal Payment
-                                                                Schedule</label>
-                                                        </div>
-
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="adjustInterestSchedule"
-                                                                name="adjustInterestSchedule" value="Y"
-                                                                th:checked="${parameters.adjustInterestSchedule == 'Y'}"
-                                                                th:value="${parameters.adjustInterestSchedule}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'">
-                                                            <label class="form-check-label"
-                                                                for="adjustInterestSchedule">Adjust Interest Payment
-                                                                Schedule</label>
-                                                        </div>
-
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="adjustFeeSchedule" name="adjustFeeSchedule"
-                                                                value="Y"
-                                                                th:checked="${parameters.adjustFeeSchedule == 'Y'}"
-                                                                th:value="${parameters.adjustFeeSchedule}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'">
-                                                            <label class="form-check-label"
-                                                                for="adjustFeeSchedule">Adjust Fee Payment
-                                                                Schedule</label>
-                                                        </div>
-
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="adjustPenaltySchedule" name="adjustPenaltySchedule"
-                                                                value="Y"
-                                                                th:checked="${parameters.adjustPenaltySchedule == 'Y'}"
-                                                                th:value="${parameters.adjustPenaltySchedule}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'">
-                                                            <label class="form-check-label"
-                                                                for="adjustPenaltySchedule">Adjust Penalty Payment
-                                                                Schedule</label>
-                                                        </div>
-
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="configurePaymentHolidays"
-                                                                name="configurePaymentHolidays" value="Y"
-                                                                th:checked="${parameters.configurePaymentHolidays == 'Y'}"
-                                                                th:value="${parameters.configurePaymentHolidays}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'">
-                                                            <label class="form-check-label"
-                                                                for="configurePaymentHolidays">Configure Payment
-                                                                Holidays</label>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-
-
+                                            
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="productName" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ROUND_OFF_REPAY_SCHEDULE</label>
@@ -909,7 +852,7 @@
                                                     th:value="${parameters.roundOffRepaySchedule}"
                                                     name="roundOffRepaySchedule"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -919,14 +862,8 @@
                                                     th:value="${parameters.roundOffRepayCurrency}"
                                                     name="roundOffRepayCurrency"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
-
-                                        </div>
-
-                                        <div class="row g-3 mt-2">
-
-
 
                                             <!-- For Pure Groups -->
                                             <div class="col-md-4 d-flex align-items-center">
@@ -936,9 +873,121 @@
                                                     th:value="${parameters.nonWorkingDaysResched}"
                                                     name="nonWorkingDaysResched"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
+
                                         </div>
+
+
+
+
+
+
+
+
+
+
+                                        <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Repayment Schedule Edit</label>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
+                                                                id="adjustPaymentDates" name="adjustPaymentDates"
+                                                                value="Y"
+                                                                th:checked="${parameters.adjustPaymentDates == 'Y'}"
+                                                                th:value="${parameters.adjustPaymentDates}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                                style="width: 20px; height: 20px;">
+                                                            <label class="form-check-label mt-1 ml-1"
+                                                                for="adjustPaymentDates">Adjust Payment Dates</label>
+                                                        </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
+                                                                id="adjustPrincipalSchedule"
+                                                                name="adjustPrincipalSchedule" value="Y"
+                                                                th:checked="${parameters.adjustPrincipalSchedule == 'Y'}"
+                                                                th:value="${parameters.adjustPrincipalSchedule}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                                style="width: 20px; height: 20px;">
+                                                            <label class="form-check-label mt-1 ml-1"
+                                                                for="adjustPrincipalSchedule">Adjust Principal Payment
+                                                                Schedule</label>
+                                                        </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
+                                                                id="adjustInterestSchedule"
+                                                                name="adjustInterestSchedule" value="Y"
+                                                                th:checked="${parameters.adjustInterestSchedule == 'Y'}"
+                                                                th:value="${parameters.adjustInterestSchedule}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                                style="width: 20px; height: 20px;">
+                                                            <label class="form-check-label mt-1 ml-1"
+                                                                for="adjustInterestSchedule">Adjust Interest Payment
+                                                                Schedule</label>
+                                                        </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
+                                                                id="adjustFeeSchedule" name="adjustFeeSchedule"
+                                                                value="Y"
+                                                                th:checked="${parameters.adjustFeeSchedule == 'Y'}"
+                                                                th:value="${parameters.adjustFeeSchedule}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                                style="width: 20px; height: 20px;">
+                                                            <label class="form-check-label mt-1 ml-1"
+                                                                for="adjustFeeSchedule">Adjust Fee Payment
+                                                                Schedule</label>
+                                                        </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                 <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
+                                                                id="adjustPenaltySchedule" name="adjustPenaltySchedule"
+                                                                value="Y"
+                                                                th:checked="${parameters.adjustPenaltySchedule == 'Y'}"
+                                                                th:value="${parameters.adjustPenaltySchedule}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                                style="width: 20px; height: 20px;">
+                                                            <label class="form-check-label mt-1 ml-1"
+                                                                for="adjustPenaltySchedule">Adjust Penalty Payment
+                                                                Schedule</label>
+                                                        </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
+                                                                id="configurePaymentHolidays"
+                                                                name="configurePaymentHolidays" value="Y"
+                                                                th:checked="${parameters.configurePaymentHolidays == 'Y'}"
+                                                                th:value="${parameters.configurePaymentHolidays}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                                style="width: 20px; height: 20px;">
+                                                            <label class="form-check-label mt-1 ml-1"
+                                                                for="configurePaymentHolidays">Configure Payment
+                                                                Holidays</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                         
+
+
+
+
+
+
+
+
+
+
 
 
                                         <div class="row g-3 mt-2">
@@ -955,7 +1004,7 @@
                                                     th:value="${parameters.prepaymentAcceptance}"
                                                     name="prepaymentAcceptance"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Prepayment Acceptance -->
@@ -966,7 +1015,7 @@
                                                     th:value="${parameters.acceptPrepayFutureInt}"
                                                     name="acceptPrepayFutureInt"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Interest Application Method -->
@@ -976,7 +1025,7 @@
                                                     style="width: 45%;">REPAYMENT_ALLOCATION_ORDER</label>
                                                 <select id="repaymentAllocationOrder" name="repaymentAllocationOrder"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                                     <option value="">select</option>
                                                     <option value="Fee"
                                                         th:selected="${parameters.repaymentAllocationOrder == 'Fee'}">
@@ -1010,7 +1059,7 @@
                                                     th:value="${parameters.arrearsTolerancePeriod}"
                                                     name="arrearsTolerancePeriod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Default Principal Repayment Interval -->
@@ -1022,7 +1071,7 @@
                                                     th:value="${parameters.arrearsDayCalcFrom}"
                                                     name="arrearsDayCalcFrom"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Loan Penalty Calculation Method -->
@@ -1034,7 +1083,7 @@
                                                     th:value="${parameters.arrearsToleranceAmt}"
                                                     name="arrearsToleranceAmt"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
                                         </div>
 
@@ -1047,7 +1096,7 @@
                                                 <input type="number" id="withAFloor" th:value="${parameters.withAFloor}"
                                                     name="withAFloor"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1058,7 +1107,7 @@
                                                     th:value="${parameters.nonWorkingDaysArrears}"
                                                     name="nonWorkingDaysArrears"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
                                         </div>
 
@@ -1077,7 +1126,7 @@
                                                 <input type="text" id="penaltyCalcMethod" name="penaltyCalcMethod"
                                                     th:value="${parameters.penaltyCalcMethod}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Principal Paid Installment Status -->
@@ -1089,7 +1138,7 @@
                                                     th:value="${parameters.penaltyTolerancePeriod}"
                                                     name="penaltyTolerancePeriod"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Days In Year -->
@@ -1100,7 +1149,7 @@
                                                     th:value="${parameters.penaltyRateConstraints}"
                                                     name="penaltyRateConstraints"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
                                         </div>
 
@@ -1112,7 +1161,7 @@
                                                 <input type="text" id="penaltyRateChange" name="penaltyRateChange"
                                                     th:value="${parameters.penaltyRateChange}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                         </div>
@@ -1131,9 +1180,9 @@
                                                 <input type="text" id="closeDormantAccounts"
                                                     name="closeDormantAccounts"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"> -->
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}"> -->
 
-                                                <input type="checkbox" id="closeDormantAccounts"
+                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}" id="closeDormantAccounts"
                                                     name="closeDormantAccounts"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
@@ -1156,9 +1205,9 @@
                                                     style="width: 45%;">LOCK_ARREARS_ACCOUNT</label>
                                                 <input type="text" id="lockArrearsAccount" name="lockArrearsAccount"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"> -->
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}"> -->
 
-                                                <input type="checkbox" id="lockArrearsAccount" name="lockArrearsAccount"
+                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}" id="lockArrearsAccount" name="lockArrearsAccount"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
                                                     th:checked="${parameters.lockArrearsAccount == 'Y'}"
@@ -1177,9 +1226,9 @@
                                                     style="width: 45%;">CAP_CHARGES</label>
                                                 <input type="text" id="capCharges" name="capCharges"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"> -->
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}"> -->
 
-                                                <input type="checkbox" id="capCharges" name="capCharges"
+                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}" id="capCharges" name="capCharges"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
                                                     th:checked="${parameters.capCharges == 'Y'}"
@@ -1206,9 +1255,9 @@
                                                     style="width: 45%;">ALLOW_ARBITARY_FEES</label>
                                                 <input type="text" id="allowArbitraryFees" name="allowArbitraryFees"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"> -->
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}"> -->
 
-                                                <input type="checkbox" id="allowArbitraryFees" name="allowArbitraryFees"
+                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}" id="allowArbitraryFees" name="allowArbitraryFees"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
                                                     th:checked="${parameters.allowArbitraryFees == 'Y'}"
@@ -1232,7 +1281,7 @@
                                                 <input type="text" id="fee1Name" name="fee1Name"
                                                     th:value="${parameters.fee1Name}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Account Linking Enabled -->
@@ -1242,7 +1291,7 @@
                                                 <input type="text" id="fee1IdType" name="fee1IdType"
                                                     th:value="${parameters.fee1IdType}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Auto Link Accounts -->
@@ -1252,7 +1301,7 @@
                                                 <input type="text" id="fee1Payment" name="fee1Payment"
                                                     th:value="${parameters.fee1Payment}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                         </div>
@@ -1267,7 +1316,7 @@
                                                 <input type="text" id="fee1AmortProfile" name="fee1AmortProfile"
                                                     th:value="${parameters.fee1AmortProfile}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1277,7 +1326,7 @@
                                                 <input type="text" id="fee1Type" name="fee1Type"
                                                     th:value="${parameters.fee1Type}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1287,7 +1336,7 @@
                                                 <input type="number" id="fee1Amount" name="fee1Amount"
                                                     th:value="${parameters.fee1Amount}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
 
@@ -1301,7 +1350,7 @@
                                                 <input type="text" id="fee2Name" name="fee2Name"
                                                     th:value="${parameters.fee2Name}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Account Linking Enabled -->
@@ -1311,7 +1360,7 @@
                                                 <input type="text" id="fee2IdType" name="fee2IdType"
                                                     th:value="${parameters.fee2IdType}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Auto Link Accounts -->
@@ -1321,7 +1370,7 @@
                                                 <input type="text" id="fee2Payment" name="fee2Payment"
                                                     th:value="${parameters.fee2Payment}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                         </div>
@@ -1336,7 +1385,7 @@
                                                 <input type="text" id="fee2AmortProfile" name="fee2AmortProfile"
                                                     th:value="${parameters.fee2AmortProfile}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1346,7 +1395,7 @@
                                                 <input type="text" id="fee2Type" name="fee2Type"
                                                     th:value="${parameters.fee2Type}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1356,7 +1405,7 @@
                                                 <input type="number" id="fee2Amount" name="fee2Amount"
                                                     th:value="${parameters.fee2Amount}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
 
@@ -1372,7 +1421,7 @@
                                                 <input type="text" id="fee3Name" name="fee3Name"
                                                     th:value="${parameters.fee3Name}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Account Linking Enabled -->
@@ -1382,7 +1431,7 @@
                                                 <input type="text" id="fee3IdType" name="fee3IdType"
                                                     th:value="${parameters.fee3IdType}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Auto Link Accounts -->
@@ -1392,7 +1441,7 @@
                                                 <input type="text" id="fee3Payment" name="fee3Payment"
                                                     th:value="${parameters.fee3Payment}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                         </div>
@@ -1407,7 +1456,7 @@
                                                 <input type="text" id="fee3AmortProfile" name="fee3AmortProfile"
                                                     th:value="${parameters.fee3AmortProfile}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1417,7 +1466,7 @@
                                                 <input type="text" id="fee3Type" name="fee3Type"
                                                     th:value="${parameters.fee3Type}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1427,7 +1476,7 @@
                                                 <input type="number" id="fee3Amount" name="fee3Amount"
                                                     th:value="${parameters.fee3Amount}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
 
@@ -1442,7 +1491,7 @@
                                                 <input type="text" id="fee3Application" name="fee3Application"
                                                     th:value="${parameters.fee3Application}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
 
@@ -1455,7 +1504,7 @@
                                                 <input type="text" id="fee4Name" name="fee4Name"
                                                     th:value="${parameters.fee4Name}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Account Linking Enabled -->
@@ -1465,7 +1514,7 @@
                                                 <input type="text" id="fee4IdType" name="fee4IdType"
                                                     th:value="${parameters.fee4IdType}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Auto Link Accounts -->
@@ -1475,7 +1524,7 @@
                                                 <input type="text" id="fee4Payment" name="fee4Payment"
                                                     th:value="${parameters.fee4Payment}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                         </div>
@@ -1490,7 +1539,7 @@
                                                 <input type="text" id="fee4AmortProfile" name="fee4AmortProfile"
                                                     th:value="${parameters.fee4AmortProfile}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1500,7 +1549,7 @@
                                                 <input type="text" id="fee4Type" name="fee4Type"
                                                     th:value="${parameters.fee4Type}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1510,7 +1559,7 @@
                                                 <input type="number" id="fee4Amount" name="fee4Amount"
                                                     th:value="${parameters.fee4Amount}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
 
@@ -1524,7 +1573,7 @@
                                                 <input type="text" id="fee5Name" name="fee5Name"
                                                     th:value="${parameters.fee5Name}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Account Linking Enabled -->
@@ -1534,7 +1583,7 @@
                                                 <input type="text" id="fee5IdType" name="fee5IdType"
                                                     th:value="${parameters.fee5IdType}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Auto Link Accounts -->
@@ -1544,7 +1593,7 @@
                                                 <input type="text" id="fee5Payment" name="fee5Payment"
                                                     th:value="${parameters.fee5Payment}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                         </div>
@@ -1559,7 +1608,7 @@
                                                 <input type="text" id="fee5AmortProfile" name="fee5AmortProfile"
                                                     th:value="${parameters.fee5AmortProfile}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1569,7 +1618,7 @@
                                                 <input type="text" id="fee5Type" name="fee5Type"
                                                     th:value="${parameters.fee5Type}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1579,7 +1628,7 @@
                                                 <input type="number" id="fee5Amount" name="fee5Amount"
                                                     th:value="${parameters.fee5Amount}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
 
@@ -1593,7 +1642,7 @@
                                                 <input type="text" id="fee5Application" name="fee5Application"
                                                     th:value="${parameters.fee5Application}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
 
@@ -1608,7 +1657,7 @@
                                                 <input type="text" id="fee6Name" name="fee6Name"
                                                     th:value="${parameters.fee6Name}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Account Linking Enabled -->
@@ -1618,7 +1667,7 @@
                                                 <input type="text" id="fee6IdType" name="fee6IdType"
                                                     th:value="${parameters.fee6IdType}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <!-- Auto Link Accounts -->
@@ -1628,7 +1677,7 @@
                                                 <input type="text" id="fee6Payment" name="fee6Payment"
                                                     th:value="${parameters.fee6Payment}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                         </div>
@@ -1643,7 +1692,7 @@
                                                 <input type="text" id="fee6AmortProfile" name="fee6AmortProfile"
                                                     th:value="${parameters.fee6AmortProfile}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1653,7 +1702,7 @@
                                                 <input type="text" id="fee6Type" name="fee6Type"
                                                     th:value="${parameters.fee6Type}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1663,7 +1712,7 @@
                                                 <input type="number" id="fee6Amount" name="fee6Amount"
                                                     th:value="${parameters.fee6Amount}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
 
@@ -1699,7 +1748,7 @@
                                                     th:value="${parameters.linkedDepositProduct}"
                                                     name="linkedDepositProduct"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1709,7 +1758,7 @@
                                                 <input type="text" id="settlementOptions" name="settlementOptions"
                                                     th:value="${parameters.settlementOptions}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1717,9 +1766,9 @@
                                                     style="width: 45%;">ENABLE_LINKING</label>
                                                 <input type="text" id="enableLinking" name="enableLinking"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"> -->
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}"> -->
 
-                                                <input type="checkbox" id="enableLinking" name="enableLinking"
+                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}" id="enableLinking" name="enableLinking"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
                                                     th:checked="${parameters.enableLinking == 'Y'}"
@@ -1754,9 +1803,9 @@
                                                     style="width: 45%;">ENABLE_GUARANTORS</label>
                                                 <input type="text" id="enableGuarantors" name="enableGuarantors"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"> -->
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}"> -->
 
-                                                <input type="checkbox" id="enableGuarantors" name="enableGuarantors"
+                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}" id="enableGuarantors" name="enableGuarantors"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
                                                     th:checked="${parameters.enableGuarantors == 'Y'}"
@@ -1776,9 +1825,9 @@
                                                     style="width: 45%;">ENABLE_COLLATERALS</label>
                                                 <input type="text" id="enableCollaterals" name="enableCollaterals"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"> -->
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}"> -->
 
-                                                <input type="checkbox" id="enableCollaterals" name="enableCollaterals"
+                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}" id="enableCollaterals" name="enableCollaterals"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
                                                     th:checked="${parameters.enableCollaterals == 'Y'}"
@@ -1799,7 +1848,7 @@
                                                 <input type="text" id="requiredSecurities" name="requiredSecurities"
                                                     th:value="${parameters.requiredSecurities}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
 
                                             <div class="col-md-4 d-flex align-items-center">
@@ -1810,7 +1859,7 @@
                                                     th:value="${parameters.depositAccountOption}"
                                                     name="depositAccountOption"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;">
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
                                         </div>
 
@@ -1826,11 +1875,12 @@
                                     </div>
 
                                     <div class="card-footer text-center" style="background-color: #e9ecef;">
-
+                                        <input type="hidden" name="params_id" id="params_id" th:value="${parameters.id}">
                                         <button class="btn-primary big-btn" onclick="Home();">Home</button>
                                         <input type="hidden" name="params_id" id="params_id"
                                             th:value="${parameters.id}">
-                                        <button class="btn-primary big-btn" type="button"
+                                        <button class="btn-primary big-btn" type="button" onclick="VerifyScheme();" th:if="${parameters.modifyFlg=='N'}" >Verify</button>
+                                        <button class="btn-primary big-btn" type="button" th:if="${parameters.modifyFlg=='Y'}"
                                             onclick="UpdateParameter();">Submit</button>
                                         <button class="btn-primary big-btn" onclick="Back();">Back</button>
 

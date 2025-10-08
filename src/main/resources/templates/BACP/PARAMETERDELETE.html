@@ -671,69 +671,7 @@ function Delete() {
                                         </div>
 
                                         <div class="row g-3 mt-2">
-                                           <div class="col-md-4 d-flex align-items-center">
-    <label class="form-label me-2 mb-0 text-end" style="width: 45%;">REPAYMENT_SCHEDULE_EDIT</label>
-    <div style="width: 55%; position: relative;">
-        <!-- Dropdown button -->
-        <button type="button"
-                class="btn btn-sm w-100 text-start"
-                style="border: 1px solid #ccc; background-color: #fff; color: #000; text-align: left;"
-                onmouseover="this.style.backgroundColor='#f0f0f0'; this.style.borderColor='#007bff';"
-                onmouseout="this.style.backgroundColor='#fff'; this.style.borderColor='#ccc';"
-                onclick="document.getElementById('repaymentCheckboxDropdown').classList.toggle('d-block');">
-            Select Options
-        </button>
-
-        <!-- Checkbox dropdown -->
-        <div id="repaymentCheckboxDropdown"
-             style="position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ccc; display: none; z-index: 1000; padding: 5px;">
-            
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="adjustPaymentDates" name="adjustPaymentDates" value="Y"
-                       th:checked="${parameters.adjustPaymentDates == 'Y'}"
-                       onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
-                <label class="form-check-label" for="adjustPaymentDates">Adjust Payment Dates</label>
-            </div>
-
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="adjustPrincipalSchedule" name="adjustPrincipalSchedule" value="Y"
-                       th:checked="${parameters.adjustPrincipalSchedule == 'Y'}"
-                       onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
-                <label class="form-check-label" for="adjustPrincipalSchedule">Adjust Principal Payment Schedule</label>
-            </div>
-
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="adjustInterestSchedule" name="adjustInterestSchedule" value="Y"
-                       th:checked="${parameters.adjustInterestSchedule == 'Y'}"
-                       onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
-                <label class="form-check-label" for="adjustInterestSchedule">Adjust Interest Payment Schedule</label>
-            </div>
-
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="adjustFeeSchedule" name="adjustFeeSchedule" value="Y"
-                       th:checked="${parameters.adjustFeeSchedule == 'Y'}"
-                       onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
-                <label class="form-check-label" for="adjustFeeSchedule">Adjust Fee Payment Schedule</label>
-            </div>
-
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="adjustPenaltySchedule" name="adjustPenaltySchedule" value="Y"
-                       th:checked="${parameters.adjustPenaltySchedule == 'Y'}"
-                       onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
-                <label class="form-check-label" for="adjustPenaltySchedule">Adjust Penalty Payment Schedule</label>
-            </div>
-
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="configurePaymentHolidays" name="configurePaymentHolidays" value="Y"
-                       th:checked="${parameters.configurePaymentHolidays == 'Y'}"
-                       onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
-                <label class="form-check-label" for="configurePaymentHolidays">Configure Payment Holidays</label>
-            </div>
-
-        </div>
-    </div>
-</div>
-
+                                   
 
 
 
@@ -757,13 +695,7 @@ function Delete() {
                                                     style="width: 55%;" readonly>
                                             </div>
 
-                                        </div>
-
-                                        <div class="row g-3 mt-2">
-
-
-
-                                            <!-- For Pure Groups -->
+                                             <!-- For Pure Groups -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="forPureGroups" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">NON_WORKING_DAYS_RESCHED</label>
@@ -773,6 +705,98 @@ function Delete() {
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Repayment Schedule Edit</label>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="adjustPaymentDates" name="adjustPaymentDates"
+                                                                value="Y"
+                                                                th:checked="${parameters.adjustPaymentDates == 'Y'}"
+                                                                th:value="${parameters.adjustPaymentDates}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                                style="width: 20px; height: 20px;" disabled>
+                                                            <label class="form-check-label mt-1 ml-1"
+                                                                for="adjustPaymentDates">Adjust Payment Dates</label>
+                                                        </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="adjustPrincipalSchedule"
+                                                                name="adjustPrincipalSchedule" value="Y"
+                                                                th:checked="${parameters.adjustPrincipalSchedule == 'Y'}"
+                                                                th:value="${parameters.adjustPrincipalSchedule}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                                style="width: 20px; height: 20px;" disabled>
+                                                            <label class="form-check-label mt-1 ml-1"
+                                                                for="adjustPrincipalSchedule">Adjust Principal Payment
+                                                                Schedule</label>
+                                                        </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="adjustInterestSchedule"
+                                                                name="adjustInterestSchedule" value="Y"
+                                                                th:checked="${parameters.adjustInterestSchedule == 'Y'}"
+                                                                th:value="${parameters.adjustInterestSchedule}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                                style="width: 20px; height: 20px;" disabled>
+                                                            <label class="form-check-label mt-1 ml-1"
+                                                                for="adjustInterestSchedule">Adjust Interest Payment
+                                                                Schedule</label>
+                                                        </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="adjustFeeSchedule" name="adjustFeeSchedule"
+                                                                value="Y"
+                                                                th:checked="${parameters.adjustFeeSchedule == 'Y'}"
+                                                                th:value="${parameters.adjustFeeSchedule}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                                style="width: 20px; height: 20px;" disabled>
+                                                            <label class="form-check-label mt-1 ml-1"
+                                                                for="adjustFeeSchedule">Adjust Fee Payment
+                                                                Schedule</label>
+                                                        </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                 <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="adjustPenaltySchedule" name="adjustPenaltySchedule"
+                                                                value="Y"
+                                                                th:checked="${parameters.adjustPenaltySchedule == 'Y'}"
+                                                                th:value="${parameters.adjustPenaltySchedule}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                                style="width: 20px; height: 20px;" disabled>
+                                                            <label class="form-check-label mt-1 ml-1"
+                                                                for="adjustPenaltySchedule">Adjust Penalty Payment
+                                                                Schedule</label>
+                                                        </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="configurePaymentHolidays"
+                                                                name="configurePaymentHolidays" value="Y"
+                                                                th:checked="${parameters.configurePaymentHolidays == 'Y'}"
+                                                                th:value="${parameters.configurePaymentHolidays}"
+                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                                style="width: 20px; height: 20px;" disabled>
+                                                            <label class="form-check-label mt-1 ml-1"
+                                                                for="configurePaymentHolidays">Configure Payment
+                                                                Holidays</label>
+                                                        </div>
+                                                    </div>
                                         </div>
 
 

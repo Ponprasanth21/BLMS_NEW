@@ -962,7 +962,7 @@ function modifyTab(evt, tabName) {
 
 	function rowClick(Id) {
 		// Example: navigate to URL with refId
-		window.location.href = './parameterview?id=' + Id +'&formmode=view';
+		location.href = './Parameterview?id=' + Id +'&formmode=view';
 	}
 
 
@@ -970,20 +970,20 @@ function modifyTab(evt, tabName) {
     // Get the ID from the clicked element's data attribute
     const Id = element.getAttribute('data-refid');
     // Navigate to verify mode
-    window.location.href = './parameterview?id=' + Id + '&formmode=verify';
+    location.href = './Parameterview?id=' + Id + '&formmode=verify';
 }
 
 	function redirectToDelete(element) {
 		const refId = element.getAttribute('data-refid');
 		if (refId) {
-            window.location.href = './parameterdelete?id=' + refId;
+            location.href = './Parameterdelete?id=' + refId;
         }
 	}
 
 	function redirectToEdit(element) {
 		const refId = element.getAttribute('data-refid');
 		if (refId) {
-            window.location.href = './parameterupdate?id=' + refId;
+            location.href = './Parameterupdate?id=' + refId;
         }
 	}
 

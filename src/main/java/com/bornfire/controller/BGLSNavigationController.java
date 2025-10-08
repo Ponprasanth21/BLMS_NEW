@@ -119,6 +119,7 @@ import com.bornfire.entities.NoticeDetailsSlabDetails0Rep;
 import com.bornfire.entities.Organization_Branch_Rep;
 import com.bornfire.entities.Organization_Entity;
 import com.bornfire.entities.Organization_Repo;
+import com.bornfire.entities.ParametersDetails;
 import com.bornfire.entities.ParticipatingBanks_Repo;
 import com.bornfire.entities.PerdiemMasterRep;
 import com.bornfire.entities.Principle_and_intrest_shedule_Entity;
@@ -4154,7 +4155,7 @@ public class BGLSNavigationController {
 	@Autowired
 	BGLS_ORG_BRANCH_REPO branchrepo;
 	
-	@RequestMapping(value = "parameterview", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "Parameterview", method = { RequestMethod.GET, RequestMethod.POST })
 	public String parameterEdit(@RequestParam(required = false) String id,
 			@RequestParam(required = false, defaultValue = "view") String formmode, // <--- add this
 			Model md) {
@@ -4170,21 +4171,21 @@ public class BGLSNavigationController {
 		// Pass the mode to Thymeleaf
 		md.addAttribute("formMode", formmode);
 
-		return "BACP/parameterview.html";
+		return "BACP/PARAMETERVIEW.html";
 	}
 	
 
 
-	@RequestMapping(value = "parameterdelete", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "Parameterdelete", method = { RequestMethod.GET, RequestMethod.POST })
 	public String parameterDELETE(@RequestParam(required = false) String id, Model md) {
 		BGLS_LMS_SCHEMES_TABLE_ENTITY entity = lmsschemerepo.findById(id).orElse(null);
 		md.addAttribute("parameters", entity);
 		List<BGLS_ORG_BRANCH_ENTITY> branch = branchrepo.findAll();
 		md.addAttribute("branches",branch );
-		return "BACP/parameterdelete.html";
+		return "BACP/PARAMETERDELETE.html";
 	}
 
-	@RequestMapping(value = "parameterupdate", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "Parameterupdate", method = { RequestMethod.GET, RequestMethod.POST })
 	public String parameterUpdate(@RequestParam(required = false) String id, Model md) {
 		BGLS_LMS_SCHEMES_TABLE_ENTITY entity = lmsschemerepo.findById(id).orElse(null);
 		md.addAttribute("parameters", entity);
@@ -4193,7 +4194,7 @@ public class BGLSNavigationController {
 		return "BACP/PARAMETERUPDATE.html";
 	}
 
-	@RequestMapping(value = "balancing_report", method = RequestMethod.GET)
+	@RequestMapping(value = "Balancing_report", method = RequestMethod.GET)
 	public String balanceReport(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String acct_num, String keyword, Model md, HttpServletRequest req) {
 		if (formmode == null || formmode.equals("list")) {
@@ -4232,7 +4233,7 @@ public class BGLSNavigationController {
 			md.addAttribute("chartaccount", chart_Acc_Rep.getaedit(acct_num));
 
 		}
-		return "Balancingreport.html";
+		return "BalancingReport.html";
 	}
 	
 	
@@ -4325,4 +4326,28 @@ public class BGLSNavigationController {
 		return "CREDIT_FACILITY_REPORT.html";
 	}
 
+	@RequestMapping(value = "Parameter", method = { RequestMethod.GET, RequestMethod.POST })
+	public String Parameters(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String refnumber,
+			@RequestParam(value = "page", required = false) Optional<Integer> page,
+			@RequestParam(value = "size", required = false) Optional<Integer> size, Model md, HttpServletRequest req,
+			String Sort, String acct_open_form, String acc_temp, String cus_temp) {
+
+		String userId = (String) req.getSession().getAttribute("USERID");
+		md.addAttribute("Role", userProfileRep.getRole(userId));
+		Date TRANDATE = (Date) req.getSession().getAttribute("TRANDATE");
+
+		if (formmode == null || formmode.equals("list")) {
+			System.out.println("Value=======================>>> " + refnumber);
+			md.addAttribute("lms_schemes", lmsschemerepo.getSchemeList());
+			md.addAttribute("menu", "AMLCustomerKYC");
+			md.addAttribute("menuname", "CustomerKYC");
+			md.addAttribute("formmode", "list"); 
+
+		}
+
+		return "BACP/PARAMETER";
+	}
+
+	
 }

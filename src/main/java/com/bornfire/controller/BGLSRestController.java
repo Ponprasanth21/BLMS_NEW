@@ -9156,24 +9156,24 @@ public class BGLSRestController {
 
 	@RequestMapping(value = "parametersdelete", method = RequestMethod.POST)
 	@ResponseBody
+	@Transactional
 	public String parameterDelete(@RequestParam("id") String id) {
-		System.out.println("Deleting parameter with ID: " + id);
+	    System.out.println("Deleting parameter with ID: " + id);
 
-		// Check if record exists
-		BGLS_LMS_SCHEMES_TABLE_ENTITY existing = lmsschemerepo.findById(id).orElse(null);
-		if (existing == null) {
-			return "Record not found";
-		}
+	    // Check if record exists
+	    BGLS_LMS_SCHEMES_TABLE_ENTITY existing = lmsschemerepo.findById(id).orElse(null);
+	    if (existing == null) {
+	        return "Record not found";
+	    }
 
-		// Perform delete
-		int rows = lmsschemerepo.deleteByIdCUSTOM(id);
+	    // Soft delete by setting DEL_FLG = 'Y'
+	    existing.setDelFlg("Y");
+	    lmsschemerepo.save(existing);  // persist changes
 
-		if (rows > 0) {
-			return "Successfully Deleted";
-		} else {
-			return "Delete failed";
-		}
+	    return "Successfully marked as deleted";
 	}
+
+
 
 //
 //@RequestMapping(value = "parametersupdate", method = RequestMethod.POST)
@@ -9218,7 +9218,9 @@ public class BGLSRestController {
 
 	@RequestMapping(value = "parametersupdate", method = RequestMethod.POST)
 	@ResponseBody
-	public String updateParameter(@ModelAttribute BGLS_LMS_SCHEMES_TABLE_ENTITY formEntity) {
+	public String updateParameter(@ModelAttribute BGLS_LMS_SCHEMES_TABLE_ENTITY formEntity, HttpServletRequest session) {
+		
+		String SessionUserId = (String) session.getSession().getAttribute("USERID");
 		System.out.println("Updating parameter with ID: " + formEntity.getId());
 
 		// Fetch existing record by ID
@@ -9259,6 +9261,9 @@ public class BGLSRestController {
 //			existing.setLastModifiedDate(new Date());
 
 			// Save updated entity
+			existing.setModifyUser(SessionUserId);
+			existing.setModifyFlg("N");
+			existing.setVerifyFlg("N");
 			lmsschemerepo.save(existing);
 
 		} catch (Exception e) {
@@ -9271,8 +9276,10 @@ public class BGLSRestController {
 
 	@RequestMapping(value = "verifyScheme", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> verifyScheme(@RequestBody Map<String, String> payload) {
+	public Map<String, Object> verifyScheme(@RequestBody Map<String, String> payload, HttpServletRequest session) {
 		Map<String, Object> response = new HashMap<>();
+		
+		String SessionUserId = (String) session.getSession().getAttribute("USERID");
 		try {
 			String id = payload.get("id");
 
@@ -9293,8 +9300,10 @@ public class BGLSRestController {
 			
 
 			// Update flags
-			schemes.setModifyFlg("N");
+			schemes.setModifyFlg("Y");
 			schemes.setVerifyFlg("Y");
+			schemes.setVerifyUser(SessionUserId);
+			schemes.setVerifyTime(new Date());
 
 			// Save entity
 			lmsschemerepo.save(schemes);
