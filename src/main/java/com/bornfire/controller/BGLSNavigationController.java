@@ -4308,4 +4308,21 @@ public class BGLSNavigationController {
 	                .body("Error saving bulk collection: " + e.getMessage());
 	    }
 	}
+	
+	@RequestMapping(value = "credit_facility_report", method = { RequestMethod.GET, RequestMethod.POST })
+	public String credit_facility_report(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String userid, Model md, HttpServletRequest req) {
+		String user = (String) req.getSession().getAttribute("USERID");
+		md.addAttribute("RoleMenu", access_Role_Repo.getRole(user));
+
+		if (formmode == null || formmode.equals("list")) {
+
+			md.addAttribute("formmode", "list");
+			md.addAttribute("loanvalues",LOAN_ACT_MST_REPO.getAllDetails());
+
+		} 
+
+		return "CREDIT_FACILITY_REPORT.html";
+	}
+
 }

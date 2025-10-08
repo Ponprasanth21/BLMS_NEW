@@ -518,7 +518,8 @@ int LoanMasterTempTableDelete();
 nativeQuery = true)
 List<LOAN_ACT_MST_ENTITY> getloanDetails();
 
-
+@Query(value = "SELECT * FROM LOAN_ACCOUNT_MASTER_TBL ORDER BY ID",nativeQuery = true)
+List<LOAN_ACT_MST_ENTITY> getAllDetails();
 
  	
 }

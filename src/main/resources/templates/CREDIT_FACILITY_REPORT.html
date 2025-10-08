@@ -1,0 +1,1495 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<!--
+	CREATED BY : PRAVEEN
+	DATE : 19-09-24
+-->
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> -->
+	<script src="/ASPIRA/js/jquery.min.js"></script>
+	<script src="/ASPIRA/js/jquery-ui.min.js"></script>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="../static/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../static/css/fontawesome.min.css">
+	<style>
+		body {
+			font-size: 0.8rem;
+		}
+
+		.btn {
+			line-height: 0.5rem;
+		}
+
+		.table-bordered td,
+		.table-bordered th {
+			font-size: smaller;
+		}
+
+		.container-manager {
+			width: 83.5%;
+			padding-right: 15px;
+			padding-left: 15px;
+			margin-right: auto;
+			margin-left: 17.3%;
+			margin-top: 80px;
+			margin-top: 80px;
+		}
+
+		.table .thead-light th {
+			color: #495057;
+			background-color: #e9ecef;
+			border-color: #dee2e6;
+			width: 23px;
+		}
+
+
+		.tablinks {
+			background-color: #f2f2f2;
+			color: #000;
+		}
+
+
+		.tablinks.active {
+			background-color: #007bff;
+			color: #fff;
+
+		}
+
+		.tab {
+			overflow: hidden;
+			border: 1px solid #ccc;
+			background-color: #f1f1f1;
+		}
+
+		.scroll {
+			max-height: 60vh;
+			overflow-y: scroll;
+			overflow-x: hidden;
+		}
+
+
+		.tab button {
+			background-color: inherit;
+			float: left;
+			border: none;
+			outline: none;
+			cursor: pointer;
+			padding: 14px 16px;
+			transition: 0.3s;
+			font-size: 17px;
+		}
+
+		.tab button:hover {
+			background-color: #ddd;
+		}
+
+
+		.tabcontent {
+			display: none;
+			padding: 6px 12px;
+			border: 0px solid #ccc;
+			border-top: none;
+		}
+
+		#myPieChart {
+			width: 100px;
+			height: 100px;
+		}
+
+		.input-group-text {
+			cursor: pointer;
+		}
+
+		#eyeIcon {
+			font-size: 1.2rem;
+		}
+	</style>
+	<style>
+		.toggle-btn {
+			border: none;
+			background: transparent;
+			cursor: pointer;
+			padding: 4px;
+		}
+
+		.toggle-btn svg {
+			width: 20px;
+			height: 20px;
+		}
+
+		.eye-open {
+			display: block;
+		}
+
+		.eye-closed {
+			display: none;
+		}
+
+		.toggle-btn.active .eye-open {
+			display: none;
+		}
+
+		.toggle-btn.active .eye-closed {
+			display: block;
+		}
+
+		.info-icon {
+			color: white;
+			font-weight: bold;
+			width: 18px;
+			height: 18px;
+			text-align: center;
+			align-content: center;
+			background: black;
+			border-radius: 50%;
+			position: relative;
+			display: inline-block;
+			cursor: default;
+		}
+
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.4);
+			margin-left: 300px;
+		}
+
+		.modal-content {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 100%;
+			height: 50%;
+			margin-left: 200px;
+		}
+
+		.modal-content1 {
+			background-color: #fefefe;
+			margin: 10% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 70%;
+			height: 45%;
+			margin-left: 200px;
+		}
+
+		.modal-pass {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 40%;
+			height: 25%;
+			margin-left: 400PX;
+			margin-right: auto;
+			border-radius: 10px;
+			box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+			font-family: Arial, sans-serif;
+		}
+
+		.close {
+			color: red;
+			font-size: 28px;
+			font-weight: bold;
+		}
+
+		.close:hover,
+		.close:focus {
+			color: black;
+			text-decoration: none;
+			cursor: pointer;
+		}
+	</style>
+	<style>
+		.password-info {
+			visibility: hidden;
+			width: 320px;
+			background-color: #333;
+			color: #fff;
+			text-align: left;
+			border-radius: 10px;
+			padding: 10px;
+			position: absolute;
+			z-index: 1;
+			top: calc(100% + 10px);
+			left: 50%;
+			transform: translateX(-50%);
+			opacity: 0;
+			transition: opacity 0.3s;
+		}
+
+		input:hover+.password-info {
+			visibility: visible;
+			opacity: 0.8;
+		}
+
+		.big-btn {
+			font-size: 16px;
+		}
+	</style>
+
+	<script>
+
+		function accessechecking(element) {
+			var idName = element.id;
+			console.log(idName);
+			if (idName == "admin") {
+				if ($("#admin").is(":checked")) {
+					$("#orgnaization_details").prop("checked", true);
+					$("#user_controls").prop("checked", true);
+					$("#reference_code_maintenance").prop("checked", true);
+					$("#audit_trail").prop("checked", true);
+				} else {
+					$("#orgnaization_details").prop("checked", false);
+					$("#user_controls").prop("checked", false);
+					$("#reference_code_maintenance").prop("checked", false);
+					$("#audit_trail").prop("checked", false);
+				}
+
+			} else if (idName == "migration") {
+				if ($("#migration").is(":checked")) {
+					$("#customer_master").prop("checked", true);
+					$("#loan_master").prop("checked", true);
+					$("#loan_schedule_migration").prop("checked", true);
+					$("#transaction_migration").prop("checked", true);
+					$("#balance_sheets").prop("checked", true);
+				} else {
+					$("#customer_master").prop("checked", false);
+					$("#loan_master").prop("checked", false);
+					$("#loan_schedule_migration").prop("checked", false);
+					$("#transaction_migration").prop("checked", false);
+					$("#balance_sheets").prop("checked", false);
+				}
+			} else if (idName == "loan_operation") {
+				if ($("#loan_operation").is(":checked")) {
+					$("#loan_operation_ls").prop("checked", true);
+					$("#loan_closure").prop("checked", true);
+				} else {
+					$("#loan_operation_ls").prop("checked", false);
+					$("#loan_closure").prop("checked", false);
+				}
+			} else if (idName == "transaction_maintenance") {
+				if ($("#transaction_maintenance").is(":checked")) {
+					$("#journal_entries").prop("checked", true);
+					$("#account_ledger_posting").prop("checked", true);
+					$("#account_ledger").prop("checked", true);
+					$("#trial_balance_t").prop("checked", true);
+					$("#profit_and_loss_account_t").prop("checked", true);
+				} else {
+					$("#journal_entries").prop("checked", false);
+					$("#account_ledger_posting").prop("checked", false);
+					$("#account_ledger").prop("checked", false);
+					$("#trial_balance_t").prop("checked", false);
+					$("#profit_and_loss_account_t").prop("checked", false);
+				}
+			} else if (idName == "collection_process") {
+				if ($("#collection_process").is(":checked")) {
+					$("#participating_banks").prop("checked", true);
+					$("#loan_collecting").prop("checked", true);
+				} else {
+					$("#participating_banks").prop("checked", false);
+					$("#loan_collecting").prop("checked", false);
+				}
+			} else if (idName == "batch_job_execution") {
+				if ($("#batch_job_execution").is(":checked")) {
+					$("#batch_job").prop("checked", true);
+				} else {
+					$("#batch_job").prop("checked", false);
+				}
+			} else if (idName == "inquiries_and_reports") {
+				if ($("#inquiries_and_reports").is(":checked")) {
+					$("#account_balance_inq").prop("checked", true);
+					$("#interset_summary_inq").prop("checked", true);
+					$("#journal_book").prop("checked", true);
+					$("#account_ledgers_i").prop("checked", true);
+					$("#trial_balance_i").prop("checked", true);
+					$("#general_ledger").prop("checked", true);
+					$("#profit_and_loss_account_i").prop("checked", true);
+					$("#balance_sheet").prop("checked", true);
+				} else {
+					$("#account_balance_inq").prop("checked", false);
+					$("#interset_summary_inq").prop("checked", false);
+					$("#journal_book").prop("checked", false);
+					$("#account_ledgers_i").prop("checked", false);
+					$("#trial_balance_i").prop("checked", false);
+					$("#general_ledger").prop("checked", false);
+					$("#profit_and_loss_account_i").prop("checked", false);
+					$("#balance_sheet").prop("checked", false);
+				}
+			}
+		}
+
+		$(function () {
+
+			$("#disableDate, #disableTilDate, #passExDate, #acctexpiryDate").datepicker({
+				dateFormat: "dd-mm-yy",
+				changeMonth: true,
+				changeYear: true,
+				minDate: 0
+			});
+
+
+			$("#disableDate").on("change", function () {
+				var disableDate = $(this).datepicker("getDate");
+				if (disableDate) {
+					$("#disableTilDate").datepicker("option", "minDate", disableDate);
+
+
+				}
+			});
+
+
+			$("#disableTilDate").on("change", function () {
+				var disableDate = $("#disableDate").datepicker("getDate");
+				var disableTilDate = $(this).datepicker("getDate");
+
+				if (!disableDate) {
+					alert("Please choose Disable Date first.");
+					$(this).val("");
+				} else if (disableTilDate && disableTilDate < disableDate) {
+					alert("Disable Til Date cannot be earlier than Disable Date.");
+					$(this).val("");
+				}
+			});
+		});
+	</script>
+
+
+	<script>
+		function Home() {
+
+			location.href = 'Dashboard';
+		}
+
+		function Back() {
+			window.history.back();
+		}
+
+
+
+	</script>
+	<script>
+		function adduser() {
+			event.preventDefault();
+			location.href = 'userProfile?formmode=add';
+		}
+
+
+		function enquiryuser(a) {
+			event.preventDefault();
+			var userId = a.getAttribute('data-userId');
+			location.href = 'userProfile?formmode=view&userid=' + userId;
+		}
+
+
+		function verifyuser(a) {
+			event.preventDefault();
+			var userId = a.getAttribute('data-userId');
+			location.href = 'userProfile?formmode=verify&userid=' + userId;
+		}
+
+		function modifyuser(a) {
+			event.preventDefault();
+			var userId = a.getAttribute('data-userId');
+			location.href = 'userProfile?formmode=modify&userid=' + userId;
+		}
+
+		function deleteuser(a) {
+			event.preventDefault();
+			var userId = a.getAttribute('data-userId');
+			location.href = 'userProfile?formmode=delete&userid=' + userId;
+		}
+
+
+		function deleteUnverifiedUser(a) {
+			event.preventDefault();
+			var userId = a.getAttribute('data-userId');
+			location.href = 'userProfile?formmode=deleteUnverified&userid=' + userId;
+		}
+
+
+
+
+		function goToList() {
+
+			location.href = './userProfile?formmode=list';
+		}
+
+
+	</script>
+
+	<script>
+		function roledesc() {
+
+			var roleid = $("#roleId").find(':selected').val();
+
+			if (roleid == 'ADM') {
+				$("#roleDesc").val("ADMIN");
+			} else if (roleid == 'GEN') {
+				$("#roleDesc").val("GENERAL_USER");
+			}
+			$(this).find(':selected').text();
+
+		}
+
+		/*Praveen*/
+		function letterOnly(input) {
+
+			var cleanValue = input.value.replace(/[^a-zA-Z\s]/g, '');
+
+			cleanValue = cleanValue.toUpperCase();
+			input.value = cleanValue;
+		}
+
+		/*Praveen*/
+		function letterAndNumbers(input) {
+
+			var cleanValue = input.value.replace(/[^a-zA-Z0-9]/g, '');
+
+			cleanValue = cleanValue.toUpperCase();
+			input.value = cleanValue;
+		}
+
+		/*Praveen*/
+		function phoneNumber(input) {
+
+			var cleanValue = input.value.replace(/\D/g, '');
+
+			cleanValue = cleanValue.substring(0, 8);
+			input.value = cleanValue;
+		}
+
+		$(document).on("click", "#pwd-toggle", function () {
+			console.log("sfdsf");
+			var pwdInput = $("#password");
+			var btn = $(this);
+
+			if (pwdInput.attr("type") === "password") {
+				pwdInput.attr("type", "text");
+				btn.addClass("active").attr("aria-label", "Hide password");
+			} else {
+				pwdInput.attr("type", "password");
+				btn.removeClass("active").attr("aria-label", "Show password");
+			}
+		});
+
+		//   // Function to toggle visibility
+		//   function togglePassword() {
+		// 	console.log("sfdsf");
+		// 	var pwdInput = document.getElementById("password");
+		//   var toggleBtn = document.getElementById("pwd-toggle");
+		//     if (pwdInput.type === "password") {
+		//       pwdInput.type = "text";
+		//     //   toggleBtn.classList.add("active");
+		// 	  $("#password").addClass('active');
+		//       toggleBtn.setAttribute("aria-label", "Hide password");
+		//     } else {
+		//       pwdInput.type = "password";
+		//     //   toggleBtn.classList.remove("active");
+		// 	  $("#password").removeClass('active');
+		//       toggleBtn.setAttribute("aria-label", "Show password");
+		//     }
+		//   }
+
+		// Event listener for click
+		//   toggleBtn.addEventListener("click", togglePassword);
+
+		/*Praveen*/
+		function emailCheck(input) {
+			var email = input.value;
+			var emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!emailFormat.test(email)) {
+				document.getElementById('email-error').textContent = 'Invalid email format.';
+
+			} else {
+				document.getElementById('email-error').textContent = '';
+				input.setCustomValidity('');
+			}
+		}
+
+		/*Praveen*/
+		function valueCheck() {
+
+
+			var userId = $('#userid').val();
+			var acctExpDate = $('#acctexpiryDate').val();
+			var passExDate = $('#passExDate').val();
+			var roleId = $('#roleId').val();
+			var value;
+
+			if (userId === "") {
+				$("#normalalertmsg").text("Fill User Id");
+				$('#normalalert').modal('show');
+				value = false;
+			} else if (acctExpDate === "") {
+				$("#normalalertmsg").text("Fill Account Expiry Date");
+				$('#normalalert').modal('show');
+				value = false;
+			} else if (passExDate === "") {
+				$("#normalalertmsg").text("Fill Password Expiry Date");
+				$('#normalalert').modal('show');
+				value = false;
+			} else if (roleId === "") {
+				$("#normalalertmsg").text("Fill Role ID");
+				$('#normalalert').modal('show');
+				value = false;
+			}
+
+			else {
+				value = true;
+			}
+			return value;
+		}
+
+		function openAccessModal(a) {
+			var roleId = $('#roleId').val();
+			if (roleId === '') {
+				$("#normalalertmsg").text("Fill Role Id");
+				$('#normalalert').modal('show');
+			} else {
+				$('#finusers').modal('show');
+			}
+		}
+
+		function openAccessModalView(a) {
+			$('#finusers').modal('show');
+
+		}
+
+
+
+
+	</script>
+	<script>
+		/*add function*/
+		function submitform() {
+			event.preventDefault();
+
+
+
+			if (valueCheck()) {
+
+				// accessRoleUpdate();
+
+				document.getElementById("btnSubmit").disabled = true;
+
+				var formmode = "add";
+
+				var disableStart = $('#disableDate').val();
+				if (disableStart != "") {
+					var parts = disableStart.split("-");
+					var day = parts[0];
+					var month = parts[1];
+					var year = parts[2];
+					var disableStartDate = year + "-" + month + "-" + day;
+				} else {
+					var disableStartDate = "";
+				}
+
+
+				var disableEnd = $('#disableTilDate').val();
+				if (disableEnd != "") {
+					var parts = disableEnd.split("-");
+					var day = parts[0];
+					var month = parts[1];
+					var year = parts[2];
+					var disableEndDate = year + "-" + month + "-" + day;
+				} else {
+					var disableEndDate = "";
+				}
+
+				var passExpiry = $('#passExDate').val();
+				if (passExpiry != "") {
+					var parts = passExpiry.split("-");
+					var day = parts[0];
+					var month = parts[1];
+					var year = parts[2];
+					var passwordExpiryDate = year + "-" + month + "-" + day;
+				} else {
+					var passwordExpiryDate = "";
+				}
+
+				var acctExpiry = $('#acctexpiryDate').val();
+				if (acctExpiry != "") {
+					var parts = acctExpiry.split("-");
+					var day = parts[0];
+					var month = parts[1];
+					var year = parts[2];
+					var accountExpiryDate = year + "-" + month + "-" + day;
+				} else {
+					var accountExpiryDate = "";
+				}
+				console.log($('#day_end_operation_user').val() + " -----------44444444444;")
+				var userProfile = {
+
+					userid: $('#userid').val(),
+					user_id: $('#userid').val(), // For access 
+					username: $('#username').val(),
+					branch_id: $('#branch_id').val(),
+					branch_des: $('#branch_des').val(),
+					mob_number: $('#mobNo').val(),
+					email_id: $('#emailId').val(),
+					disable_start_date: disableStartDate,
+					disable_end_date: disableEndDate,
+					password: $('#password').val(),
+					pass_exp_date: passwordExpiryDate,
+					user_status: $('#userStatus').val(),
+					login_status: $('#loginStatus').val(),
+					role_id: $('#roleId').val(),
+					acc_exp_date: accountExpiryDate,
+					role_desc: $('#roleDesc').val(),
+					permissions: $('#permission').val(),
+					work_class: $('#work_class').val(),
+					acct_access_code: $('#acct_access_code').val(),
+					doc_access_code: $('#doc_access_code').val(),
+					remarks: $('#remarks').val(),
+					admin: $('#admin').is(':checked') ? 'Y' : 'N',
+					orgnaization_details: $('#orgnaization_details').is(':checked') ? 'Y' : 'N',
+					head_office: $('#head_office').is(':checked') ? 'Y' : 'N',
+					calender_maintance: $('#calender_maintance').is(':checked') ? 'Y' : 'N',
+					branches: $('#branches').is(':checked') ? 'Y' : 'N',
+					exception: $('#exception').is(':checked') ? 'Y' : 'N',
+					user_controls: $('#user_controls').is(':checked') ? 'Y' : 'N',
+					user_profile: $('#user_profile').is(':checked') ? 'Y' : 'N',
+					employee_profile: $('#employee_profile').is(':checked') ? 'Y' : 'N',
+					reference_code_maintenance: $('#reference_code_maintenance').is(':checked') ? 'Y' : 'N',
+					reference_code: $('#reference_code').is(':checked') ? 'Y' : 'N',
+					gl_structure: $('#gl_structure').is(':checked') ? 'Y' : 'N',
+					scheme_codes: $('#scheme_codes').is(':checked') ? 'Y' : 'N',
+					chart_of_accounts: $('#chart_of_accounts').is(':checked') ? 'Y' : 'N',
+					account_ledgers: $('#account_ledgers').is(':checked') ? 'Y' : 'N',
+					audit_trail: $('#audit_trail').is(':checked') ? 'Y' : 'N',
+					user_activities: $('#user_activities').is(':checked') ? 'Y' : 'N',
+					business_activity: $('#business_activity').is(':checked') ? 'Y' : 'N',
+					// budget_controls: $('#budget_controls').is(':checked') ? 'Y' : 'N',
+					migration: $('#migration').is(':checked') ? 'Y' : 'N',
+					customer_master: $('#customer_master').is(':checked') ? 'Y' : 'N',
+					loan_master: $('#loan_master').is(':checked') ? 'Y' : 'N',
+					loan_schedule_migration: $('#loan_schedule_migration').is(':checked') ? 'Y' : 'N',
+					transaction_migration: $('#transaction_migration').is(':checked') ? 'Y' : 'N',
+					loan_operation: $('#loan_operation').is(':checked') ? 'Y' : 'N',
+					loan_operation_ls: $('#loan_operation_ls').is(':checked') ? 'Y' : 'N',
+					loan_closure: $('#loan_closure').is(':checked') ? 'Y' : 'N',
+
+					day_end_operation: $('#day_end_operation_user').is(':checked') ? 'Y' : 'N',
+					customer_maintenance: $('#customer_maintenance').is(':checked') ? 'Y' : 'N',
+					loan_maintanace: $('#loan_maintanace').is(':checked') ? 'Y' : 'N',
+
+					participating_banks: $('#participating_banks').is(':checked') ? 'Y' : 'N',
+					loan_collecting: $('#loan_collecting').is(':checked') ? 'Y' : 'N',
+					collection_process: $('#collection_process').is(':checked') ? 'Y' : 'N',
+					maintenance: $('#maintenance').is(':checked') ? 'Y' : 'N',
+					customer_master_maintenance: $('#customer_master_maintenance').is(':checked') ? 'Y' : 'N',
+					account_master_maintenance: $('#account_master_maintenance').is(':checked') ? 'Y' : 'N',
+					lease_accounts: $('#lease_accounts').is(':checked') ? 'Y' : 'N',
+					deposit_accounts_c: $('#deposit_accounts_c').is(':checked') ? 'Y' : 'N',
+					office_accounts: $('#office_accounts').is(':checked') ? 'Y' : 'N',
+					document_maintenance: $('#document_maintenance').is(':checked') ? 'Y' : 'N',
+					kyc_norms: $('#kyc_norms').is(':checked') ? 'Y' : 'N',
+					transaction_maintenance: $('#transaction_maintenance').is(':checked') ? 'Y' : 'N',
+					journal_entries: $('#journal_entries').is(':checked') ? 'Y' : 'N',
+					account_ledger_posting: $('#account_ledger_posting').is(':checked') ? 'Y' : 'N',
+					account_ledger: $('#account_ledger').is(':checked') ? 'Y' : 'N',
+					trial_balance_t: $('#trial_balance_t').is(':checked') ? 'Y' : 'N',
+					profit_and_loss_account_t: $('#profit_and_loss_account_t').is(':checked') ? 'Y' : 'N',
+					lease_loans: $('#lease_loans').is(':checked') ? 'Y' : 'N',
+					account_maintenance_l: $('#account_maintenance_l').is(':checked') ? 'Y' : 'N',
+					account_statements_l: $('#account_statements_l').is(':checked') ? 'Y' : 'N',
+					flow_details_l: $('#flow_details_l').is(':checked') ? 'Y' : 'N',
+					deposit_accounts: $('#deposit_accounts').is(':checked') ? 'Y' : 'N',
+					account_maintenance_d: $('#account_maintenance_d').is(':checked') ? 'Y' : 'N',
+					account_statements_d: $('#account_statements_d').is(':checked') ? 'Y' : 'N',
+					flow_details_d: $('#flow_details_d').is(':checked') ? 'Y' : 'N',
+
+					inquiries_and_reports: $('#inquiries_and_reports').is(':checked') ? 'Y' : 'N',
+					journal_book: $('#journal_book').is(':checked') ? 'Y' : 'N',
+					account_balance_inq: $('#account_balance_inq').is(':checked') ? 'Y' : 'N',
+					interset_summary_inq: $('#interset_summary_inq').is(':checked') ? 'Y' : 'N',
+					account_ledgers_i: $('#account_ledgers_i').is(':checked') ? 'Y' : 'N',
+					trial_balance_i: $('#trial_balance_i').is(':checked') ? 'Y' : 'N',
+					general_ledger: $('#general_ledger').is(':checked') ? 'Y' : 'N',
+					profit_and_loss_account_i: $('#profit_and_loss_account_i').is(':checked') ? 'Y' : 'N',
+					balance_sheet: $('#balance_sheet').is(':checked') ? 'Y' : 'N',
+					balance_sheets: $('#balance_sheets').is(':checked') ? 'Y' : 'N',
+					batch_job_execution: $('#batch_job_execution').is(':checked') ? 'Y' : 'N',
+					batch_job: $('#batch_job_execution').is(':checked') ? 'Y' : 'N'
+				};
+
+				console.log(userProfile);
+				document.getElementById('loadingModal').style.display = 'flex';
+				$.ajax({
+					type: "POST",
+					contentType: "application/json",
+					url: './createUser?formmode=' + formmode + '&accountExpiryDate=' + accountExpiryDate,
+					data: JSON.stringify(userProfile),
+					success: function (responseText, statusText, xhr, $form) {
+
+						$.ajax({
+							type: "POST",
+							contentType: "application/json",
+							url: './accessRoleSubmit',
+							data: JSON.stringify(userProfile),
+							success: function (responseText1, statusText, xhr, $form) {
+								document.getElementById('loadingModal').style.display = 'none';
+								$('#Successmsgpopup').html("<h6 class='text-center'>" + responseText + "</h6>");
+								$('#SuccesPopUp').modal('show');
+								// $("#alertmsg").text(responseText);
+								// $('#alert').modal("toggle");
+
+							},
+							error: function (error) {
+								console.error(error);
+							}
+						});
+					},
+					error: function (error) {
+						console.error(error);
+					}
+				});
+
+			} else {
+
+				event.preventDefault();
+
+			}
+
+
+
+
+
+		}
+
+		/*verify function*/
+		function verifyData(a) {
+			event.preventDefault();
+			document.getElementById("btnSubmit").disabled = true;
+			var userId = a.getAttribute('data-userId');
+			document.getElementById('loadingModal').style.display = 'flex';
+			$.ajax({
+				type: "POST",
+				url: './verifyUser?userId=' + userId,
+				success: function (responseText, statusText, xhr, $form) {
+
+					document.getElementById('loadingModal').style.display = 'none';
+					$('#Successmsgpopup').html("<h6 class='text-center'>" + responseText + "</h6>");
+					$('#SuccesPopUp').modal('show');
+				},
+				error: function (error) {
+					console.error(error);
+				}
+			});
+
+		}
+
+
+
+		/*modify function*/
+		function modifySubmit() {
+
+			if (valueCheck()) {
+				event.preventDefault();
+
+
+				//document.getElementById("btnSubmit").disabled = true;
+
+				var formmode = "modify";
+
+				var disableStart = $('#disableDate').val();
+				if (disableStart != "") {
+					var parts = disableStart.split("-");
+					var day = parts[0];
+					var month = parts[1];
+					var year = parts[2];
+					var disableStartDate = year + "-" + month + "-" + day;
+				} else {
+					var disableStartDate = "";
+				}
+
+
+				var disableEnd = $('#disableTilDate').val();
+				if (disableEnd != "") {
+					var parts = disableEnd.split("-");
+					var day = parts[0];
+					var month = parts[1];
+					var year = parts[2];
+					var disableEndDate = year + "-" + month + "-" + day;
+				} else {
+					var disableEndDate = "";
+				}
+
+				var passExpiry = $('#passExDate').val();
+				if (passExpiry != "") {
+					var parts = passExpiry.split("-");
+					var day = parts[0];
+					var month = parts[1];
+					var year = parts[2];
+					var passwordExpiryDate = year + "-" + month + "-" + day;
+				} else {
+					var passwordExpiryDate = "";
+				}
+
+				var acctExpiry = $('#acctexpiryDate').val();
+				if (acctExpiry != "") {
+					var parts = acctExpiry.split("-");
+					var day = parts[0];
+					var month = parts[1];
+					var year = parts[2];
+					var accountExpiryDate = year + "-" + month + "-" + day;
+				} else {
+					var accountExpiryDate = "";
+				}
+				console.log($('#day_end_operation_user').val() + " -----------###########;")
+				console.log($('#day_end_operation_user').is(':checked') + " ------@@@@@@@@@@@;")
+				var userProfile = {
+
+					userid: $('#userid').val(),
+					user_id: $('#userid').val(), // For access 
+					username: $('#username').val(),
+					branch_id: $('#branch_id').val(),
+					branch_des: $('#branch_des').val(),
+					mob_number: $('#mobNo').val(),
+					email_id: $('#emailId').val(),
+					disable_start_date: disableStartDate,
+					disable_end_date: disableEndDate,
+					password: $('#password').val(),
+					pass_exp_date: passwordExpiryDate,
+					user_status: $('#userStatus').val(),
+					login_status: $('#loginStatus').val(),
+					role_id: $('#roleId').val(),
+					acc_exp_date: accountExpiryDate,
+					role_desc: $('#roleDesc').val(),
+					permissions: $('#permission').val(),
+					work_class: $('#work_class').val(),
+					acct_access_code: $('#acct_access_code').val(),
+					doc_access_code: $('#doc_access_code').val(),
+					remarks: $('#remarks').val(),
+
+					admin: $('#admin').is(':checked') ? 'Y' : 'N',
+					orgnaization_details: $('#orgnaization_details').is(':checked') ? 'Y' : 'N',
+					head_office: $('#head_office').is(':checked') ? 'Y' : 'N',
+					calender_maintance: $('#calender_maintance').is(':checked') ? 'Y' : 'N',
+					branches: $('#branches').is(':checked') ? 'Y' : 'N',
+					exception: $('#exception').is(':checked') ? 'Y' : 'N',
+					user_controls: $('#user_controls').is(':checked') ? 'Y' : 'N',
+					user_profile: $('#user_profile').is(':checked') ? 'Y' : 'N',
+					employee_profile: $('#employee_profile').is(':checked') ? 'Y' : 'N',
+					reference_code_maintenance: $('#reference_code_maintenance').is(':checked') ? 'Y' : 'N',
+					reference_code: $('#reference_code').is(':checked') ? 'Y' : 'N',
+					gl_structure: $('#gl_structure').is(':checked') ? 'Y' : 'N',
+					scheme_codes: $('#scheme_codes').is(':checked') ? 'Y' : 'N',
+					chart_of_accounts: $('#chart_of_accounts').is(':checked') ? 'Y' : 'N',
+					account_ledgers: $('#account_ledgers').is(':checked') ? 'Y' : 'N',
+					audit_trail: $('#audit_trail').is(':checked') ? 'Y' : 'N',
+					user_activities: $('#user_activities').is(':checked') ? 'Y' : 'N',
+					business_activity: $('#business_activity').is(':checked') ? 'Y' : 'N',
+					// budget_controls: $('#budget_controls').is(':checked') ? 'Y' : 'N',
+					migration: $('#migration').is(':checked') ? 'Y' : 'N',
+					customer_master: $('#customer_master').is(':checked') ? 'Y' : 'N',
+					loan_master: $('#loan_master').is(':checked') ? 'Y' : 'N',
+					loan_schedule_migration: $('#loan_schedule_migration').is(':checked') ? 'Y' : 'N',
+					transaction_migration: $('#transaction_migration').is(':checked') ? 'Y' : 'N',
+					loan_operation: $('#loan_operation').is(':checked') ? 'Y' : 'N',
+					loan_operation_ls: $('#loan_operation_ls').is(':checked') ? 'Y' : 'N',
+					loan_closure: $('#loan_closure').is(':checked') ? 'Y' : 'N',
+
+					day_end_operation: $('#day_end_operation_user').is(':checked') ? 'Y' : 'N',
+					customer_maintenance: $('#customer_maintenance').is(':checked') ? 'Y' : 'N',
+					loan_maintanace: $('#loan_maintanace').is(':checked') ? 'Y' : 'N',
+
+					participating_banks: $('#participating_banks').is(':checked') ? 'Y' : 'N',
+					loan_collecting: $('#loan_collecting').is(':checked') ? 'Y' : 'N',
+					collection_process: $('#collection_process').is(':checked') ? 'Y' : 'N',
+					maintenance: $('#maintenance').is(':checked') ? 'Y' : 'N',
+					customer_master_maintenance: $('#customer_master_maintenance').is(':checked') ? 'Y' : 'N',
+					account_master_maintenance: $('#account_master_maintenance').is(':checked') ? 'Y' : 'N',
+					lease_accounts: $('#lease_accounts').is(':checked') ? 'Y' : 'N',
+					deposit_accounts_c: $('#deposit_accounts_c').is(':checked') ? 'Y' : 'N',
+					office_accounts: $('#office_accounts').is(':checked') ? 'Y' : 'N',
+					document_maintenance: $('#document_maintenance').is(':checked') ? 'Y' : 'N',
+					kyc_norms: $('#kyc_norms').is(':checked') ? 'Y' : 'N',
+					transaction_maintenance: $('#transaction_maintenance').is(':checked') ? 'Y' : 'N',
+					journal_entries: $('#journal_entries').is(':checked') ? 'Y' : 'N',
+					account_ledger_posting: $('#account_ledger_posting').is(':checked') ? 'Y' : 'N',
+					account_ledger: $('#account_ledger').is(':checked') ? 'Y' : 'N',
+					trial_balance_t: $('#trial_balance_t').is(':checked') ? 'Y' : 'N',
+					profit_and_loss_account_t: $('#profit_and_loss_account_t').is(':checked') ? 'Y' : 'N',
+					lease_loans: $('#lease_loans').is(':checked') ? 'Y' : 'N',
+					account_maintenance_l: $('#account_maintenance_l').is(':checked') ? 'Y' : 'N',
+					account_statements_l: $('#account_statements_l').is(':checked') ? 'Y' : 'N',
+					flow_details_l: $('#flow_details_l').is(':checked') ? 'Y' : 'N',
+					deposit_accounts: $('#deposit_accounts').is(':checked') ? 'Y' : 'N',
+					account_maintenance_d: $('#account_maintenance_d').is(':checked') ? 'Y' : 'N',
+					account_statements_d: $('#account_statements_d').is(':checked') ? 'Y' : 'N',
+					flow_details_d: $('#flow_details_d').is(':checked') ? 'Y' : 'N',
+
+					inquiries_and_reports: $('#inquiries_and_reports').is(':checked') ? 'Y' : 'N',
+					journal_book: $('#journal_book').is(':checked') ? 'Y' : 'N',
+					account_balance_inq: $('#account_balance_inq').is(':checked') ? 'Y' : 'N',
+					interset_summary_inq: $('#interset_summary_inq').is(':checked') ? 'Y' : 'N',
+					account_ledgers_i: $('#account_ledgers_i').is(':checked') ? 'Y' : 'N',
+					trial_balance_i: $('#trial_balance_i').is(':checked') ? 'Y' : 'N',
+					general_ledger: $('#general_ledger').is(':checked') ? 'Y' : 'N',
+					profit_and_loss_account_i: $('#profit_and_loss_account_i').is(':checked') ? 'Y' : 'N',
+					balance_sheet: $('#balance_sheet').is(':checked') ? 'Y' : 'N',
+					balance_sheets: $('#balance_sheets').is(':checked') ? 'Y' : 'N',
+					batch_job_execution: $('#batch_job_execution').is(':checked') ? 'Y' : 'N',
+					batch_job: $('#batch_job_execution').is(':checked') ? 'Y' : 'N'
+				};
+
+				console.log(userProfile);
+				document.getElementById('loadingModal').style.display = 'flex';
+				$.ajax({
+					type: "POST",
+					contentType: "application/json",
+					url: './mosifyUser?formmode=' + formmode + '&accountExpiryDate=' + accountExpiryDate,
+					data: JSON.stringify(userProfile),
+					success: function (responseText, statusText, xhr, $form) {
+						$.ajax({
+							type: "POST",
+							contentType: "application/json",
+							url: './accessRoleSubmit',
+							data: JSON.stringify(userProfile),
+							success: function (responseText1, statusText, xhr, $form) {
+								document.getElementById('loadingModal').style.display = 'none';
+								$('#Successmsgpopup').html("<h6 class='text-center'>" + responseText + "</h6>");
+								$('#SuccesPopUp').modal('show');
+
+							},
+							error: function (error) {
+								console.error(error);
+							}
+						});
+					},
+					error: function (error) {
+						console.error(error);
+					}
+				});
+			} else {
+
+				event.preventDefault();
+
+			}
+
+		}
+
+		/*Delete verified User*/
+		function deleteRecord(a) {
+			event.preventDefault();
+			var userId = a.getAttribute('data-userId');
+			var deleteType = a.getAttribute('data-flag');
+			document.getElementById('loadingModal').style.display = 'flex';
+			$.ajax({
+				type: "POST",
+				url: './deleteUser?deleteType=' + deleteType + '&userid=' + userId,
+				success: function (responseText, statusText, xhr, $form) {
+
+					document.getElementById('loadingModal').style.display = 'none';
+					$('#Successmsgpopup').html("<h6 class='text-center'>" + responseText + "</h6>");
+					$('#SuccesPopUp').modal('show');
+				},
+				error: function (error) {
+					console.error(error);
+				}
+			});
+		}
+
+		/*Delete Unverified User*/
+		function deleteUnverifiedRecord(a) {
+			event.preventDefault();
+			var userId = a.getAttribute('data-userId');
+			var deleteType = a.getAttribute('data-flag');
+			document.getElementById('loadingModal').style.display = 'flex';
+			$.ajax({
+				type: "POST",
+				url: './deleteUser?deleteType=' + deleteType + '&userid=' + userId,
+				success: function (responseText, statusText, xhr, $form) {
+
+					document.getElementById('loadingModal').style.display = 'none';
+					$('#Successmsgpopup').html("<h6 class='text-center'>" + responseText + "</h6>");
+					$('#SuccesPopUp').modal('show');
+				},
+				error: function (error) {
+					console.error(error);
+				}
+			});
+		}
+
+		// function accessRoleUpdate() {
+		// 	event.preventDefault();
+
+		// 	var roleId = $('#roleId').val();
+		// 	// if (roleId === 'ADM') {
+		// 	// 	console.log("ADMIN");
+		// 		var accessRole = {
+		// 			user_id: $('#userid').val(),
+		// 			role_id: $('#roleId').val(),
+		// 			role_desc: $('#roleDesc').val(),
+		// 			permissions: $('#permission').val(),
+		// 			work_class: $('#work_class').val(),
+		// 			admin: $('#admin').is(':checked') ? 'Y' : 'N',
+		// 			orgnaization_details: $('#orgnaization_details').is(':checked') ? 'Y' : 'N',
+		// 			head_office: $('#head_office').is(':checked') ? 'Y' : 'N',
+		// 			calender_maintance: $('#calender_maintance').is(':checked') ? 'Y' : 'N',
+		// 			branches: $('#branches').is(':checked') ? 'Y' : 'N',
+		// 			exception: $('#exception').is(':checked') ? 'Y' : 'N',
+		// 			user_controls: $('#user_controls').is(':checked') ? 'Y' : 'N',
+		// 			user_profile: $('#user_profile').is(':checked') ? 'Y' : 'N',
+		// 			employee_profile: $('#employee_profile').is(':checked') ? 'Y' : 'N',
+		// 			reference_code_maintenance: $('#reference_code_maintenance').is(':checked') ? 'Y' : 'N',
+		// 			reference_code: $('#reference_code').is(':checked') ? 'Y' : 'N',
+		// 			gl_structure: $('#gl_structure').is(':checked') ? 'Y' : 'N',
+		// 			scheme_codes: $('#scheme_codes').is(':checked') ? 'Y' : 'N',
+		// 			chart_of_accounts: $('#chart_of_accounts').is(':checked') ? 'Y' : 'N',
+		// 			account_ledgers: $('#account_ledgers').is(':checked') ? 'Y' : 'N',
+		// 			audit_trail: $('#audit_trail').is(':checked') ? 'Y' : 'N',
+		// 			user_activities: $('#user_activities').is(':checked') ? 'Y' : 'N',
+		// 			business_activity: $('#business_activity').is(':checked') ? 'Y' : 'N',
+		// 			// budget_controls: $('#budget_controls').is(':checked') ? 'Y' : 'N',
+		// 			migration: $('#migration').is(':checked') ? 'Y' : 'N',
+		// 			customer_master: $('#customer_master').is(':checked') ? 'Y' : 'N',
+		// 			loan_master: $('#loan_master').is(':checked') ? 'Y' : 'N',
+		// 			loan_schedule_migration: $('#loan_schedule_migration').is(':checked') ? 'Y' : 'N',
+		// 			transaction_migration: $('#transaction_migration').is(':checked') ? 'Y' : 'N',
+		// 			loan_operation: $('#loan_operation').is(':checked') ? 'Y' : 'N',
+		// 			loan_operation_ls: $('#loan_operation_ls').is(':checked') ? 'Y' : 'N',
+		// 			loan_closure: $('#loan_closure').is(':checked') ? 'Y' : 'N',
+
+		// 			day_end_operation: $('#day_end_operation').is(':checked') ? 'Y' : 'N',
+		// 			customer_maintenance: $('#customer_maintenance').is(':checked') ? 'Y' : 'N',
+		// 			loan_maintanace: $('#loan_maintanace').is(':checked') ? 'Y' : 'N',
+
+		// 			participating_banks: $('#participating_banks').is(':checked') ? 'Y' : 'N',
+		// 			loan_collecting: $('#loan_collecting').is(':checked') ? 'Y' : 'N',
+		// 			collection_process: $('#collection_process').is(':checked') ? 'Y' : 'N',
+		// 			maintenance: $('#maintenance').is(':checked') ? 'Y' : 'N',
+		// 			customer_master_maintenance: $('#customer_master_maintenance').is(':checked') ? 'Y' : 'N',
+		// 			account_master_maintenance: $('#account_master_maintenance').is(':checked') ? 'Y' : 'N',
+		// 			lease_accounts: $('#lease_accounts').is(':checked') ? 'Y' : 'N',
+		// 			deposit_accounts_c: $('#deposit_accounts_c').is(':checked') ? 'Y' : 'N',
+		// 			office_accounts: $('#office_accounts').is(':checked') ? 'Y' : 'N',
+		// 			document_maintenance: $('#document_maintenance').is(':checked') ? 'Y' : 'N',
+		// 			kyc_norms: $('#kyc_norms').is(':checked') ? 'Y' : 'N',
+		// 			transaction_maintenance: $('#transaction_maintenance').is(':checked') ? 'Y' : 'N',
+		// 			journal_entries: $('#journal_entries').is(':checked') ? 'Y' : 'N',
+		// 			account_ledger_posting: $('#account_ledger_posting').is(':checked') ? 'Y' : 'N',
+		// 			account_ledger: $('#account_ledger').is(':checked') ? 'Y' : 'N',
+		// 			trial_balance_t: $('#trial_balance_t').is(':checked') ? 'Y' : 'N',
+		// 			profit_and_loss_account_t: $('#profit_and_loss_account_t').is(':checked') ? 'Y' : 'N',
+		// 			lease_loans: $('#lease_loans').is(':checked') ? 'Y' : 'N',
+		// 			account_maintenance_l: $('#account_maintenance_l').is(':checked') ? 'Y' : 'N',
+		// 			account_statements_l: $('#account_statements_l').is(':checked') ? 'Y' : 'N',
+		// 			flow_details_l: $('#flow_details_l').is(':checked') ? 'Y' : 'N',
+		// 			deposit_accounts: $('#deposit_accounts').is(':checked') ? 'Y' : 'N',
+		// 			account_maintenance_d: $('#account_maintenance_d').is(':checked') ? 'Y' : 'N',
+		// 			account_statements_d: $('#account_statements_d').is(':checked') ? 'Y' : 'N',
+		// 			flow_details_d: $('#flow_details_d').is(':checked') ? 'Y' : 'N',
+
+		// 			inquiries_and_reports: $('#inquiries_and_reports').is(':checked') ? 'Y' : 'N',
+		// 			journal_book: $('#journal_book').is(':checked') ? 'Y' : 'N',
+		// 			account_balance_inq: $('#account_balance_inq').is(':checked') ? 'Y' : 'N',
+		// 			interset_summary_inq: $('#interset_summary_inq').is(':checked') ? 'Y' : 'N',
+		// 			account_ledgers_i: $('#account_ledgers_i').is(':checked') ? 'Y' : 'N',
+		// 			trial_balance_i: $('#trial_balance_i').is(':checked') ? 'Y' : 'N',
+		// 			general_ledger: $('#general_ledger').is(':checked') ? 'Y' : 'N',
+		// 			profit_and_loss_account_i: $('#profit_and_loss_account_i').is(':checked') ? 'Y' : 'N',
+		// 			balance_sheet: $('#balance_sheet').is(':checked') ? 'Y' : 'N'
+
+
+
+		// 		}
+
+		// 		console.log(accessRole);
+
+		// $.ajax({
+		// 	type: "POST",
+		// 	contentType: "application/json",
+		// 	url: './accessRoleSubmit',
+		// 	data: JSON.stringify(accessRole),
+		// 	success: function (responseText, statusText, xhr, $form) {
+
+		// 		console.log(responseText);
+
+		// 	},
+		// 	error: function (error) {
+		// 		console.error(error);
+		// 	}
+		// });
+		// 	// } else {
+		// 	// 	console.log("GENERAL");
+		// 	// 	var accessRole = {
+		// 	// 		user_id: $('#userid').val(),
+		// 	// 		role_id: $('#roleId').val(),
+		// 	// 		role_desc: $('#roleDesc').val(),
+		// 	// 		permissions: $('#permission').val(),
+		// 	// 		work_class: $('#work_class').val(),
+		// 	// 		admin: $('#adming').is(':checked') ? 'Y' : 'N',
+		// 	// 		orgnaization_details: $('#orgnaization_detailsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		head_office: $('#head_officeg').is(':checked') ? 'Y' : 'N',
+		// 	// 		calender_maintance: $('#calender_maintanceg').is(':checked') ? 'Y' : 'N',
+		// 	// 		branches: $('#branchesg').is(':checked') ? 'Y' : 'N',
+		// 	// 		exception: $('#exceptiong').is(':checked') ? 'Y' : 'N',
+		// 	// 		user_controls: $('#user_controlsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		user_profile: $('#user_profileg').is(':checked') ? 'Y' : 'N',
+		// 	// 		employee_profile: $('#employee_profileg').is(':checked') ? 'Y' : 'N',
+		// 	// 		reference_code_maintenance: $('#reference_code_maintenanceg').is(':checked') ? 'Y' : 'N',
+		// 	// 		reference_code: $('#reference_codeg').is(':checked') ? 'Y' : 'N',
+		// 	// 		gl_structure: $('#gl_structureg').is(':checked') ? 'Y' : 'N',
+		// 	// 		scheme_codes: $('#scheme_codesg').is(':checked') ? 'Y' : 'N',
+		// 	// 		chart_of_accounts: $('#chart_of_accountsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_ledgers: $('#account_ledgersg').is(':checked') ? 'Y' : 'N',
+		// 	// 		audit_trail: $('#audit_trailg').is(':checked') ? 'Y' : 'N',
+		// 	// 		user_activities: $('#user_activitiesg').is(':checked') ? 'Y' : 'N',
+		// 	// 		business_activity: $('#business_activityg').is(':checked') ? 'Y' : 'N',
+		// 	// 		// budget_controls: $('#budget_controlsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		migration: $('#migrationg').is(':checked') ? 'Y' : 'N',
+		// 	// 		customer_master: $('#customer_masterg').is(':checked') ? 'Y' : 'N',
+		// 	// 		loan_master: $('#loan_masterg').is(':checked') ? 'Y' : 'N',
+		// 	// 		loan_schedule_migration: $('#loan_schedule_migrationg').is(':checked') ? 'Y' : 'N',
+		// 	// 		transaction_migration: $('#transaction_migrationg').is(':checked') ? 'Y' : 'N',
+		// 	// 		loan_operation: $('#loan_operationg').is(':checked') ? 'Y' : 'N',
+		// 	// 		loan_operation_ls: $('#loan_operation_lsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		loan_closure: $('#loan_closureg').is(':checked') ? 'Y' : 'N',
+
+		// 	// 		day_end_operation: $('#day_end_operationg').is(':checked') ? 'Y' : 'N',
+		// 	// 		customer_maintenance: $('#customer_maintenanceg').is(':checked') ? 'Y' : 'N',
+		// 	// 		loan_maintanace: $('#loan_maintanaceg').is(':checked') ? 'Y' : 'N',
+
+		// 	// 		collection_process: $('#collection_processg').is(':checked') ? 'Y' : 'N',
+		// 	// 		loan_collecting: $('#loan_collectingg').is(':checked') ? 'Y' : 'N',
+		// 	// 		participating_banks: $('#participating_banksg').is(':checked') ? 'Y' : 'N',
+		// 	// 		maintenance: $('#maintenanceg').is(':checked') ? 'Y' : 'N',
+		// 	// 		customer_master_maintenance: $('#customer_master_maintenanceg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_master_maintenance: $('#account_master_maintenanceg').is(':checked') ? 'Y' : 'N',
+		// 	// 		lease_accounts: $('#lease_accountsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		deposit_accounts_c: $('#deposit_accounts_cg').is(':checked') ? 'Y' : 'N',
+		// 	// 		office_accounts: $('#office_accountsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		document_maintenance: $('#document_maintenanceg').is(':checked') ? 'Y' : 'N',
+		// 	// 		kyc_norms: $('#kyc_normsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		transaction_maintenance: $('#transaction_maintenanceg').is(':checked') ? 'Y' : 'N',
+		// 	// 		journal_entries: $('#journal_entriesg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_ledger_posting: $('#account_ledger_postingg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_ledger: $('#account_ledgerg').is(':checked') ? 'Y' : 'N',
+		// 	// 		trial_balance_t: $('#trial_balance_tg').is(':checked') ? 'Y' : 'N',
+		// 	// 		profit_and_loss_account_t: $('#profit_and_loss_account_tg').is(':checked') ? 'Y' : 'N',
+		// 	// 		lease_loans: $('#lease_loansg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_maintenance_l: $('#account_maintenance_lg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_statements_l: $('#account_statements_lg').is(':checked') ? 'Y' : 'N',
+		// 	// 		flow_details_l: $('#flow_details_lg').is(':checked') ? 'Y' : 'N',
+		// 	// 		deposit_accounts: $('#deposit_accountsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_maintenance_d: $('#account_maintenance_dg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_statements_d: $('#account_statements_dg').is(':checked') ? 'Y' : 'N',
+		// 	// 		flow_details_d: $('#flow_details_dg').is(':checked') ? 'Y' : 'N',
+
+		// 	// 		inquiries_and_reports: $('#inquiries_and_reportsg').is(':checked') ? 'Y' : 'N',
+		// 	// 		journal_book: $('#journal_bookg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_balance_inq: $('#account_balance_inqg').is(':checked') ? 'Y' : 'N',
+		// 	// 		interset_summary_inq: $('#interset_summary_inqg').is(':checked') ? 'Y' : 'N',
+		// 	// 		account_ledgers_i: $('#account_ledgers_ig').is(':checked') ? 'Y' : 'N',
+		// 	// 		trial_balance_i: $('#trial_balance_ig').is(':checked') ? 'Y' : 'N',
+		// 	// 		general_ledger: $('#general_ledgerg').is(':checked') ? 'Y' : 'N',
+		// 	// 		profit_and_loss_account_i: $('#profit_and_loss_account_ig').is(':checked') ? 'Y' : 'N',
+		// 	// 		balance_sheet: $('#balance_sheetg').is(':checked') ? 'Y' : 'N'
+
+
+
+		// 	// 	}
+
+		// 	// 	console.log(accessRole);
+
+		// 	// 	$.ajax({
+		// 	// 		type: "POST",
+		// 	// 		contentType: "application/json",
+		// 	// 		url: './accessRoleSubmit',
+		// 	// 		data: JSON.stringify(accessRole),
+		// 	// 		success: function (responseText, statusText, xhr, $form) {
+
+		// 	// 			console.log(responseText);
+
+		// 	// 		},
+		// 	// 		error: function (error) {
+		// 	// 			console.error(error);
+		// 	// 		}
+		// 	// 	});
+		// 	// }
+
+		// }
+
+
+	</script>
+
+
+	<script>
+		function openTab(tabName) {
+			const detailBtn = document.getElementById("DetailButton");
+			const scheduleBtn = document.getElementById("ScheduleButton");
+			const scheduleContent = document.getElementById("ScheduleContent");
+
+			// Toggle active class
+			detailBtn.classList.remove("active");
+			scheduleBtn.classList.remove("active");
+			if (tabName === 'Schedule') {
+				scheduleBtn.classList.add("active");
+				scheduleContent.style.display = "block"; // show input + icon
+			} else {
+				detailBtn.classList.add("active");
+				scheduleContent.style.display = "none"; // hide schedule content
+			}
+		}
+
+		// Open Bootstrap modal
+		function openModal() {
+			const myModal = new bootstrap.Modal(document.getElementById('myModal'));
+			myModal.show();
+		}
+		function closeModal(event) {
+		    event.preventDefault(); // stop default behavior if triggered by a button or link
+
+		    var modal = document.getElementById("myModal");
+		    modal.style.display = "none"; // hide modal
+
+		    // ✅ Refresh the page
+		    window.location.reload();
+		}
+
+		$(document)
+			.ready(
+				function () {
+					$('.filterable .btn-filter').click(function (event) {
+						event.preventDefault(); // Prevent the default action of the button
+
+						var $panel = $(this).parents('.filterable');
+						var $filters = $panel.find('.filters input');
+						var $tbody = $panel.find('.table tbody');
+
+						if ($filters.prop('disabled') == true) {
+							$filters.prop('disabled', false);
+							$filters.first().focus();
+						} else {
+							$filters.val('').prop('disabled', true);
+							$tbody.find('.no-result').remove();
+							$tbody.find('tr').show();
+						}
+					});
+
+					$('.filterable .filters input')
+						.keyup(
+							function (e) {
+								/* Ignore tab key */
+								var code = e.keyCode || e.which;
+								if (code == '9')
+									return;
+								/* Useful DOM data and selectors */
+								var $input = $(this), inputContent = $input
+									.val().toLowerCase(), $panel = $input
+										.parents('.filterable'), column = $panel
+											.find('.filters th')
+											.index($input.parents('th')), $table = $panel
+												.find('.table'), $rows = $table
+													.find('tbody tr');
+								/* Dirtiest filter function ever ;)  */
+								var $filteredRows = $rows
+									.filter(function () {
+										var value = $(this)
+											.find('td').eq(
+												column)
+											.text()
+											.toLowerCase();
+										return value
+											.indexOf(inputContent) === -1;
+									});
+								/* Clean previous no-result if exist */
+								$table.find('tbody .no-result')
+									.remove();
+								/* Show all rows, hide filtered ones (never do that outside of a demo ! xD) */
+								$rows.show();
+								$filteredRows.hide();
+								/* Prepend no-result row if all rows are filtered */
+								if ($filteredRows.length === $rows.length) {
+									$table
+										.find('tbody')
+										.prepend(
+											$('<tr class="no-result text-center"><td colspan="'
+												+ $table
+													.find('.filters th').length
+												+ '">No result found</td></tr>'));
+								}
+							});
+				});
+
+		document.getElementById("filterButton").addEventListener("click",
+			function (event) {
+				//alert("hi")
+				event.preventDefault(); // Prevent the default action of the button
+				// Your filtering logic goes here
+			});
+			
+			function setAccountNo(idValue) {
+				    // If you want to set it in the input box
+				    document.getElementById("acctNo").value = idValue;
+
+				    // OR if you want to show it next to the label (instead of inside input)
+				    // document.getElementById("acctNoLabel").textContent = "Account No: " + idValue;
+				}
+				
+
+	</script>
+
+	
+
+</head>
+
+
+<body>
+
+	<div class="col-sm-2">
+		<div th:insert="BGLSHeaderMenu :: header"></div>
+	</div>
+	<!---------------------User List Starts------------------------------------------------------->
+	<!-- Start Content-->
+	<div class="container-manager">
+
+
+
+		<div class="row">
+
+
+			<div class="col-sm-11 ml-5 mt-2" style="font-size: 0.8rem;">
+
+
+				<!-- ------------------------------------User profile List---------------------------------- -->
+				<div th:if="${formmode}=='list'">
+
+
+					<div class="card w-100 border">
+						<div class="card-header" style="background-color: #e9ecef; height: 50px">
+							<div class="float-left">
+								<h6 style="font-size: 1.2rem;">Credit Facility Report</h6>
+							</div>
+						</div>
+
+						<div class="mt-3"
+							style="padding: 4px 4px; position: relative; display: flex; justify-content: space-around; width: 100%;">
+							<!-- Tab buttons -->
+							<button class="tablinks active rounded-pill" id="DetailButton"
+								style="font-size: 16px; padding: 4px 8px; height:40%; width:30%;"
+								onclick="openTab('Details')">Details</button>
+
+							<button class="tablinks rounded-pill" id="ScheduleButton"
+								style="font-size: 16px; padding: 4px 8px; height:40%; width:30%;"
+								onclick="openTab('Schedule')">Schedule</button>
+						</div>
+						<div id="ScheduleContent" style="display:none; margin-top: 40px;">
+							<div class="card mx-auto"
+								style="width: 600px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+
+
+								<div class="d-flex justify-content-center align-items-center mb-3">
+									<label for="acctNo" style="margin-right: 10px;">Account No:</label>
+									<input type="text" id="acctNo" class="form-control"
+										style="width: 150px; display:inline-block;">
+									<button type="button" onclick="openModal()" style="border-radius: 5px;">
+										<img src="images/search.svg" alt="Search"
+											style="width:20px; height:30px; cursor:pointer;margin-left: 3px;border-radius:5px">
+									</button>
+								</div>
+
+								<div class="text-center">
+									<button type="button" class="btn btn-primary"
+										onclick="submitAccount()">Submit</button>
+								</div>
+							</div>
+						</div>
+						<div class="card-footer text-center" style="background-color: #e9ecef;margin-top:10px">
+							<button class="btn-primary big-btn" onclick="Home();">Home</button>
+							<button class="btn-primary big-btn" onclick="Back();">Back</button>
+						</div>
+					</div>
+
+
+				</div>
+
+
+
+
+
+
+
+			</div>
+
+
+
+		</div>
+	</div>
+
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+
+
+	<div id="myModal" class="modal">
+		<div class="modal-content1">
+			<form id="uploadForm1" method="post" autocomplete="off">
+				<div class="panel panel-primary filterable">
+					<button class="btn text-white btn-filter btn-primary float-right">filter</button>
+
+					<div style="max-height: 350px; overflow-y: auto;">
+						<table class="table table-bordered table-sm">
+							<thead>
+								<tr class="filters">
+
+									<th style="width:100px;"><input type="text" class="form-control font-weight-bold" placeholder="SNO"
+																				disabled></th>
+									<th><input type="text" id="filterclassification" oninput="filtermodal()"
+											class="form-control font-weight-bold" placeholder="Account No" disabled>
+									</th>
+									<th><input type="text" id="filteraccountname" oninput="filtermodal()"
+											class="form-control font-weight-bold" placeholder="Account Name" disabled>
+									</th>
+									
+									<th style="width:200px;"><input type="text" class="form-control font-weight-bold" placeholder="Action"
+										style="text-align: center;"
+											disabled></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="details, stat : ${loanvalues}">
+								    <td th:text="${stat.count}"></td> <!-- S.No -->
+								    <td th:text="${details.id}"></td>
+								    <td th:text="${details.loan_name}"></td>
+
+								    <!-- ✅ 4th column: radio button -->
+									<td class="text-center">
+									        <input type="radio" name="selectedLoan"
+									               th:value="${details.id}"
+									               onclick="setAccountNo(this.value)">
+									    </td>
+								</tr>
+
+
+							</tbody>
+						</table>
+					</div>
+					<div class="text-center">
+						<button class="btn-primary big-btn" onclick="closeModal(this);">Close</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	
+
+	
+
+
+</body>
+
+</html>
