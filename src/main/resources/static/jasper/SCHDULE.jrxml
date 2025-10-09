@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.20.5.final using JasperReports Library version 6.20.5-3efcf2e67f959db3888d79f73dde2dbd7acb4f8e  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DETAILS" pageWidth="950" pageHeight="595" columnWidth="910" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9fb068bf-bea9-45fd-8230-fc5329376c77">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="DETAILS" pageWidth="1050" pageHeight="595" columnWidth="1010" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9fb068bf-bea9-45fd-8230-fc5329376c77">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ASPIRA.jrdax"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<parameter name="LOAN_ID" class="java.lang.String"/>
@@ -94,10 +94,11 @@ ORDER BY b.DUE_DATE ASC]]>
 		<property name="com.jaspersoft.studio.field.label" value="PENALTYDUE"/>
 	</field>
 	<variable name="SUM_OF_PAIDS" class="java.math.BigDecimal">
-		<variableExpression><![CDATA[($F{PRINCIPALPAID} != null ? $F{PRINCIPALPAID} : BigDecimal.ZERO)
-.add($F{INTERESTPAID} != null ? $F{INTERESTPAID} : BigDecimal.ZERO)
-.add($F{FEEPAID} != null ? $F{FEEPAID} : BigDecimal.ZERO)
-.add($F{PENALTYPAID} != null ? $F{PENALTYPAID} : BigDecimal.ZERO)]]></variableExpression>
+		<variableExpression><![CDATA[($F{PRINCIPALPAID} != null ? $F{PRINCIPALPAID} : java.math.BigDecimal.ZERO)
+    .add($F{INTERESTPAID} != null ? $F{INTERESTPAID} : java.math.BigDecimal.ZERO)
+    .add($F{FEEPAID} != null ? $F{FEEPAID} : java.math.BigDecimal.ZERO)
+    .add($F{PENALTYPAID} != null ? $F{PENALTYPAID} : java.math.BigDecimal.ZERO)
+]]></variableExpression>
 	</variable>
 	<variable name="SUM_OF_DUES" class="java.math.BigDecimal">
 		<variableExpression><![CDATA[($F{PRINCIPALDUE} != null ? $F{PRINCIPALDUE} : BigDecimal.ZERO)
@@ -208,7 +209,7 @@ Expected]]></text>
 Paid]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="558" y="0" width="38" height="24" uuid="2316bd41-f569-4118-aaca-06102c763373"/>
+				<reportElement x="558" y="0" width="59" height="24" uuid="2316bd41-f569-4118-aaca-06102c763373"/>
 				<box rightPadding="4">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -264,7 +265,7 @@ Paid]]></text>
 Paid]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="596" y="0" width="64" height="24" uuid="66f12b36-164d-454a-bfc9-92bd1b04d5aa"/>
+				<reportElement x="617" y="0" width="64" height="24" uuid="66f12b36-164d-454a-bfc9-92bd1b04d5aa"/>
 				<box rightPadding="1">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -278,7 +279,7 @@ Paid]]></text>
 Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="660" y="0" width="35" height="24" uuid="0b55714d-287e-49f7-ab4b-86c435976673"/>
+				<reportElement x="681" y="0" width="35" height="24" uuid="0b55714d-287e-49f7-ab4b-86c435976673"/>
 				<box rightPadding="4">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -292,7 +293,7 @@ Date]]></text>
 Due]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="695" y="0" width="39" height="24" uuid="86d7ac4c-df63-472d-a18a-6759b78cda7b"/>
+				<reportElement x="716" y="0" width="39" height="24" uuid="86d7ac4c-df63-472d-a18a-6759b78cda7b"/>
 				<box rightPadding="4">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -306,7 +307,7 @@ Due]]></text>
 Due]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="734" y="0" width="42" height="24" uuid="d7402a28-1435-4ef8-872b-7b276dbe4647"/>
+				<reportElement x="755" y="0" width="42" height="24" uuid="d7402a28-1435-4ef8-872b-7b276dbe4647"/>
 				<box rightPadding="4">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -320,7 +321,7 @@ Due]]></text>
 Due]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="776" y="0" width="32" height="24" uuid="86bbfa02-b55c-470d-b831-5dfc0f3e2ce4"/>
+				<reportElement x="797" y="0" width="32" height="24" uuid="86bbfa02-b55c-470d-b831-5dfc0f3e2ce4"/>
 				<box rightPadding="4">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -334,7 +335,7 @@ Due]]></text>
 Due]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="808" y="0" width="40" height="24" uuid="cc80a4cc-965c-4509-bba6-725b58699a58"/>
+				<reportElement x="829" y="0" width="61" height="24" uuid="cc80a4cc-965c-4509-bba6-725b58699a58"/>
 				<box rightPadding="4">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -361,14 +362,14 @@ Due]]></text>
 				<text><![CDATA[#]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="848" y="0" width="62" height="24" uuid="d5941bca-ee4a-4a41-9b26-17d0cc30b9e1"/>
+				<reportElement x="890" y="0" width="120" height="24" uuid="d5941bca-ee4a-4a41-9b26-17d0cc30b9e1"/>
 				<box rightPadding="4">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<text><![CDATA[State]]></text>
@@ -378,7 +379,7 @@ Due]]></text>
 	<detail>
 		<band height="30">
 			<textField isBlankWhenNull="true">
-				<reportElement x="596" y="0" width="64" height="30" uuid="665c933c-6ec8-4287-a922-8c86b66c2dd0"/>
+				<reportElement x="617" y="0" width="64" height="30" uuid="665c933c-6ec8-4287-a922-8c86b66c2dd0"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -406,7 +407,7 @@ Due]]></text>
     : "-"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="776" y="0" width="32" height="30" uuid="3e8beb77-92a4-46aa-86b3-5af57fb603e0"/>
+				<reportElement x="797" y="0" width="32" height="30" uuid="3e8beb77-92a4-46aa-86b3-5af57fb603e0"/>
 				<box rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -458,7 +459,7 @@ Due]]></text>
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="558" y="0" width="38" height="30" uuid="a3da5ab3-a726-43fe-8d7d-bbe6f48c5edc"/>
+				<reportElement x="558" y="0" width="59" height="30" uuid="a3da5ab3-a726-43fe-8d7d-bbe6f48c5edc"/>
 				<box rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -468,10 +469,11 @@ Due]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{SUM_OF_PAIDS}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{SUM_OF_PAIDS} == null ? "0.00" : String.format("%,.2f", $V{SUM_OF_PAIDS})
+]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="695" y="0" width="39" height="30" uuid="70cb3a1e-449b-4683-a5cd-db7a06bff1ef"/>
+				<reportElement x="716" y="0" width="39" height="30" uuid="70cb3a1e-449b-4683-a5cd-db7a06bff1ef"/>
 				<box rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -484,7 +486,7 @@ Due]]></text>
 				<textFieldExpression><![CDATA[$F{INTERESTDUE} != null ? new java.text.DecimalFormat("#,##0.00").format($F{INTERESTDUE}) : "-"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="734" y="0" width="42" height="30" uuid="ff06d898-4d96-4173-b74f-018581b01ed8">
+				<reportElement x="755" y="0" width="42" height="30" uuid="ff06d898-4d96-4173-b74f-018581b01ed8">
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
 				</reportElement>
 				<box rightPadding="2">
@@ -500,7 +502,7 @@ Due]]></text>
 				<textFieldExpression><![CDATA[$F{FEEDUE} != null ? new java.text.DecimalFormat("#,##0.00").format($F{FEEDUE}) : "-"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="660" y="0" width="35" height="30" uuid="351c20b4-662c-48b6-bd48-258efe35228b"/>
+				<reportElement x="681" y="0" width="35" height="30" uuid="351c20b4-662c-48b6-bd48-258efe35228b"/>
 				<box rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -572,7 +574,7 @@ Due]]></text>
 				<textFieldExpression><![CDATA[$F{PENALTYPAID} != null ? new java.text.DecimalFormat("#,##0.00").format($F{PENALTYPAID}) : "-"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="808" y="0" width="40" height="30" uuid="1a852c39-26f4-4b3d-83f6-c774cecb3a58"/>
+				<reportElement x="829" y="0" width="61" height="30" uuid="1a852c39-26f4-4b3d-83f6-c774cecb3a58"/>
 				<box rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -582,17 +584,17 @@ Due]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{SUM_OF_DUES}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{SUM_OF_DUES} == null ? "0.00" : String.format("%,.2f", $V{SUM_OF_DUES})]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="848" y="0" width="62" height="30" uuid="d9e0f158-d173-4daa-91d1-b84b422dcc7d"/>
+				<reportElement x="890" y="0" width="120" height="30" uuid="d9e0f158-d173-4daa-91d1-b84b422dcc7d"/>
 				<box rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ACCOUNT_STATE}]]></textFieldExpression>

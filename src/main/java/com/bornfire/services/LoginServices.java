@@ -703,7 +703,7 @@ public class LoginServices {
 	    File folder = new File(exportpath1);
 	    if (!folder.exists()) folder.mkdirs();
 
-	    String fileName = "SHEDULE" + acctNo;
+	    String fileName = "SHEDULE -" + acctNo;
 	    File outputFile;
 
 	    try {
