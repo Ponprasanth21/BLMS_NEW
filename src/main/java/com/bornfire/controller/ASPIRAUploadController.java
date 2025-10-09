@@ -168,11 +168,11 @@ public class ASPIRAUploadController {
 	            }
 	            
 	            
-	            loadCsvToOracle(uploadPage);
+	            String status = loadCsvToOracle(uploadPage);
 	            
 	            logger.info("File uploaded successfully");
 
-	            return "File uploaded successfully";
+	            return status;
 
 	        } catch (IOException e) {
 	            e.printStackTrace();
@@ -188,11 +188,11 @@ public class ASPIRAUploadController {
 	    
 	    public String loadCsvToOracle(String uploadPage) {
 	        try {
-	            sqlLoaderService.runSqlLoader(uploadPage);
-	            return "CSV loaded successfully into Oracle!";
+	            String result = sqlLoaderService.runSqlLoader(uploadPage);
+	            return result;
 	        } catch (Exception e) {
 	            e.printStackTrace();
-	            return "Error while loading CSV: " + e.getMessage();
+	            return "Error while loading : " + e.getMessage();
 	        }
 	    }
 }
