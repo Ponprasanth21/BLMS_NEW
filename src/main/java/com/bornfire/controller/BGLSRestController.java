@@ -828,12 +828,19 @@ public class BGLSRestController {
 
 		String userid = (String) rq.getSession().getAttribute("USERID");
 		List<String> existingdata = organization_Branch_Rep.getexistingData();
+		
+		
 
 		if (existingdata.contains(organization_Branch_Entity.getBranch_code())) {
 			return "Branch Name Already Exist";
 		} else {
 			try {
 				Organization_Branch_Entity up = organization_Branch_Entity;
+				System.out.println(up.getBranch_code());
+				
+				if (up.getBranch_code() == null || up.getBranch_code().trim().isEmpty()) {
+				    return "Branch Code is required.";
+				}
 
 				up.setEntity_flg("N");
 				up.setModify_flg("N");

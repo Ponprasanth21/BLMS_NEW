@@ -86,7 +86,7 @@ public class BGLS_LMS_SCHEMES_TABLE_ENTITY {
     private Integer collectPrincipalEvery;
 
     @Column(name = "GRACE_PERIOD")
-    private Integer gracePeriod;
+    private String gracePeriod;
 
     @Column(name = "ROUND_OFF_REPAY_SCHEDULE")
     private String roundOffRepaySchedule;
@@ -290,7 +290,7 @@ public class BGLS_LMS_SCHEMES_TABLE_ENTITY {
     private String nonWorkingDaysArrears;
 
     @Column(name = "PENALTY_RATE_CHANGE")
-    private BigDecimal penaltyRateChange;
+    private String penaltyRateChange;
 
     @Column(name = "DEPOSIT_ACCOUNT_OPTION")
     private String depositAccountOption;
@@ -312,6 +312,14 @@ public class BGLS_LMS_SCHEMES_TABLE_ENTITY {
 
     @Column(name = "CONFIGURE_PAYMENT_HOLIDAYS", length = 5)
     private String configurePaymentHolidays = "N";
+    
+    @Column(name = "AUTO_SET_SETTLEMENT_ACCT", length = 5)
+    private String autoSetSettlementAcct = "N";
+    
+    @Column(name = "AUTO_CREATE_SETTLEMENT_ACCT", length = 5)
+    private String autoCreateSettlementAcct = "N";
+    
+    
 
     @Column(name = "ENTRY_USER")
     private String entryUser;
@@ -343,115 +351,6 @@ public class BGLS_LMS_SCHEMES_TABLE_ENTITY {
     private String verifyFlg;
     
     
-    
-
-	@Override
-	public String toString() {
-		return "BGLS_LMS_SCHEMES_TABLE_ENTITY [id=" + id + ", product=" + product + ", productCategory="
-				+ productCategory + ", productType=" + productType + ", state=" + state + ", productDescription="
-				+ productDescription + ", productAvailability=" + productAvailability + ", availableTo=" + availableTo
-				+ ", branches=" + branches + ", idType=" + idType + ", initialAccountState=" + initialAccountState
-				+ ", loanAmountConstraints=" + loanAmountConstraints + ", accountsManagedUnderCredit="
-				+ accountsManagedUnderCredit + ", interestCalcMethod=" + interestCalcMethod + ", interestType="
-				+ interestType + ", accruedIntAfterMaturity=" + accruedIntAfterMaturity + ", interestRateCharged="
-				+ interestRateCharged + ", interestRateConstraints=" + interestRateConstraints + ", daysInYear="
-				+ daysInYear + ", paymentIntervalMethod=" + paymentIntervalMethod + ", installmentConstraints="
-				+ installmentConstraints + ", firstDueDateOffset=" + firstDueDateOffset + ", collectPrincipalEvery="
-				+ collectPrincipalEvery + ", gracePeriod=" + gracePeriod + ", roundOffRepaySchedule="
-				+ roundOffRepaySchedule + ", repaymentScheduleEdit=" + repaymentScheduleEdit + ", prepaymentAcceptance="
-				+ prepaymentAcceptance + ", acceptPrepayFutureInt=" + acceptPrepayFutureInt
-				+ ", repaymentAllocationOrder=" + repaymentAllocationOrder + ", arrearsTolerancePeriod="
-				+ arrearsTolerancePeriod + ", arrearsDayCalcFrom=" + arrearsDayCalcFrom + ", arrearsToleranceAmt="
-				+ arrearsToleranceAmt + ", withAFloor=" + withAFloor + ", penaltyCalcMethod=" + penaltyCalcMethod
-				+ ", penaltyTolerancePeriod=" + penaltyTolerancePeriod + ", penaltyRateConstraints="
-				+ penaltyRateConstraints + ", closeDormantAccounts=" + closeDormantAccounts + ", lockArrearsAccount="
-				+ lockArrearsAccount + ", capCharges=" + capCharges + ", allowArbitraryFees=" + allowArbitraryFees
-				+ ", fee1Name=" + fee1Name + ", fee1IdType=" + fee1IdType + ", fee1Payment=" + fee1Payment
-				+ ", fee1AmortProfile=" + fee1AmortProfile + ", fee1Type=" + fee1Type + ", fee1Amount=" + fee1Amount
-				+ ", fee2Name=" + fee2Name + ", fee2IdType=" + fee2IdType + ", fee2Payment=" + fee2Payment
-				+ ", fee2AmortProfile=" + fee2AmortProfile + ", fee2Type=" + fee2Type + ", fee2Amount=" + fee2Amount
-				+ ", fee3Name=" + fee3Name + ", fee3IdType=" + fee3IdType + ", fee3Payment=" + fee3Payment
-				+ ", fee3AmortProfile=" + fee3AmortProfile + ", fee3Application=" + fee3Application + ", fee3Type="
-				+ fee3Type + ", fee3Amount=" + fee3Amount + ", fee4Name=" + fee4Name + ", fee4IdType=" + fee4IdType
-				+ ", fee4Payment=" + fee4Payment + ", fee4AmortProfile=" + fee4AmortProfile + ", fee4Type=" + fee4Type
-				+ ", fee4Amount=" + fee4Amount + ", fee5Name=" + fee5Name + ", fee5IdType=" + fee5IdType
-				+ ", fee5Payment=" + fee5Payment + ", fee5AmortProfile=" + fee5AmortProfile + ", fee5Application="
-				+ fee5Application + ", fee5Type=" + fee5Type + ", fee5Amount=" + fee5Amount + ", fee6Name=" + fee6Name
-				+ ", fee6IdType=" + fee6IdType + ", fee6Payment=" + fee6Payment + ", fee6AmortProfile="
-				+ fee6AmortProfile + ", fee6Type=" + fee6Type + ", fee6Amount=" + fee6Amount + ", enableLinking="
-				+ enableLinking + ", linkedDepositProduct=" + linkedDepositProduct + ", settlementOptions="
-				+ settlementOptions + ", enableGuarantors=" + enableGuarantors + ", enableCollaterals="
-				+ enableCollaterals + ", requiredSecurities=" + requiredSecurities + ", usingTemplate=" + usingTemplate
-				+ ", accruedIntPostFreq=" + accruedIntPostFreq + ", repaymentIntCalc=" + repaymentIntCalc
-				+ ", repaymentMadeEvery=" + repaymentMadeEvery + ", roundOffRepayCurrency=" + roundOffRepayCurrency
-				+ ", nonWorkingDaysResched=" + nonWorkingDaysResched + ", nonWorkingDaysArrears="
-				+ nonWorkingDaysArrears + ", penaltyRateChange=" + penaltyRateChange + ", depositAccountOption="
-				+ depositAccountOption + ", adjustPaymentDates=" + adjustPaymentDates + ", adjustPrincipalSchedule="
-				+ adjustPrincipalSchedule + ", adjustInterestSchedule=" + adjustInterestSchedule
-				+ ", adjustFeeSchedule=" + adjustFeeSchedule + ", adjustPenaltySchedule=" + adjustPenaltySchedule
-				+ ", configurePaymentHolidays=" + configurePaymentHolidays + ", entryUser=" + entryUser
-				+ ", modifyUser=" + modifyUser + ", verifyUser=" + verifyUser + ", entryTime=" + entryTime
-				+ ", verifyTime=" + verifyTime + ", delFlg=" + delFlg + ", entityFlg=" + entityFlg + ", modifyFlg="
-				+ modifyFlg + ", verifyFlg=" + verifyFlg + ", getId()=" + getId() + ", getProduct()=" + getProduct()
-				+ ", getProductCategory()=" + getProductCategory() + ", getProductType()=" + getProductType()
-				+ ", getState()=" + getState() + ", getProductDescription()=" + getProductDescription()
-				+ ", getProductAvailability()=" + getProductAvailability() + ", getAvailableTo()=" + getAvailableTo()
-				+ ", getBranches()=" + getBranches() + ", getIdType()=" + getIdType() + ", getInitialAccountState()="
-				+ getInitialAccountState() + ", getLoanAmountConstraints()=" + getLoanAmountConstraints()
-				+ ", getAccountsManagedUnderCredit()=" + getAccountsManagedUnderCredit() + ", getInterestCalcMethod()="
-				+ getInterestCalcMethod() + ", getInterestType()=" + getInterestType()
-				+ ", getAccruedIntAfterMaturity()=" + getAccruedIntAfterMaturity() + ", getInterestRateCharged()="
-				+ getInterestRateCharged() + ", getInterestRateConstraints()=" + getInterestRateConstraints()
-				+ ", getDaysInYear()=" + getDaysInYear() + ", getPaymentIntervalMethod()=" + getPaymentIntervalMethod()
-				+ ", getInstallmentConstraints()=" + getInstallmentConstraints() + ", getFirstDueDateOffset()="
-				+ getFirstDueDateOffset() + ", getCollectPrincipalEvery()=" + getCollectPrincipalEvery()
-				+ ", getGracePeriod()=" + getGracePeriod() + ", getRoundOffRepaySchedule()="
-				+ getRoundOffRepaySchedule() + ", getRepaymentScheduleEdit()=" + getRepaymentScheduleEdit()
-				+ ", getPrepaymentAcceptance()=" + getPrepaymentAcceptance() + ", getAcceptPrepayFutureInt()="
-				+ getAcceptPrepayFutureInt() + ", getRepaymentAllocationOrder()=" + getRepaymentAllocationOrder()
-				+ ", getArrearsTolerancePeriod()=" + getArrearsTolerancePeriod() + ", getArrearsDayCalcFrom()="
-				+ getArrearsDayCalcFrom() + ", getArrearsToleranceAmt()=" + getArrearsToleranceAmt()
-				+ ", getWithAFloor()=" + getWithAFloor() + ", getPenaltyCalcMethod()=" + getPenaltyCalcMethod()
-				+ ", getPenaltyTolerancePeriod()=" + getPenaltyTolerancePeriod() + ", getPenaltyRateConstraints()="
-				+ getPenaltyRateConstraints() + ", getCloseDormantAccounts()=" + getCloseDormantAccounts()
-				+ ", getLockArrearsAccount()=" + getLockArrearsAccount() + ", getCapCharges()=" + getCapCharges()
-				+ ", getAllowArbitraryFees()=" + getAllowArbitraryFees() + ", getFee1Name()=" + getFee1Name()
-				+ ", getFee1IdType()=" + getFee1IdType() + ", getFee1Payment()=" + getFee1Payment()
-				+ ", getFee1AmortProfile()=" + getFee1AmortProfile() + ", getFee1Type()=" + getFee1Type()
-				+ ", getFee1Amount()=" + getFee1Amount() + ", getFee2Name()=" + getFee2Name() + ", getFee2IdType()="
-				+ getFee2IdType() + ", getFee2Payment()=" + getFee2Payment() + ", getFee2AmortProfile()="
-				+ getFee2AmortProfile() + ", getFee2Type()=" + getFee2Type() + ", getFee2Amount()=" + getFee2Amount()
-				+ ", getFee3Name()=" + getFee3Name() + ", getFee3IdType()=" + getFee3IdType() + ", getFee3Payment()="
-				+ getFee3Payment() + ", getFee3AmortProfile()=" + getFee3AmortProfile() + ", getFee3Application()="
-				+ getFee3Application() + ", getFee3Type()=" + getFee3Type() + ", getFee3Amount()=" + getFee3Amount()
-				+ ", getFee4Name()=" + getFee4Name() + ", getFee4IdType()=" + getFee4IdType() + ", getFee4Payment()="
-				+ getFee4Payment() + ", getFee4AmortProfile()=" + getFee4AmortProfile() + ", getFee4Type()="
-				+ getFee4Type() + ", getFee4Amount()=" + getFee4Amount() + ", getFee5Name()=" + getFee5Name()
-				+ ", getFee5IdType()=" + getFee5IdType() + ", getFee5Payment()=" + getFee5Payment()
-				+ ", getFee5AmortProfile()=" + getFee5AmortProfile() + ", getFee5Application()=" + getFee5Application()
-				+ ", getFee5Type()=" + getFee5Type() + ", getFee5Amount()=" + getFee5Amount() + ", getFee6Name()="
-				+ getFee6Name() + ", getFee6IdType()=" + getFee6IdType() + ", getFee6Payment()=" + getFee6Payment()
-				+ ", getFee6AmortProfile()=" + getFee6AmortProfile() + ", getFee6Type()=" + getFee6Type()
-				+ ", getFee6Amount()=" + getFee6Amount() + ", getEnableLinking()=" + getEnableLinking()
-				+ ", getLinkedDepositProduct()=" + getLinkedDepositProduct() + ", getSettlementOptions()="
-				+ getSettlementOptions() + ", getEnableGuarantors()=" + getEnableGuarantors()
-				+ ", getEnableCollaterals()=" + getEnableCollaterals() + ", getRequiredSecurities()="
-				+ getRequiredSecurities() + ", getUsingTemplate()=" + getUsingTemplate() + ", getAccruedIntPostFreq()="
-				+ getAccruedIntPostFreq() + ", getRepaymentIntCalc()=" + getRepaymentIntCalc()
-				+ ", getRepaymentMadeEvery()=" + getRepaymentMadeEvery() + ", getRoundOffRepayCurrency()="
-				+ getRoundOffRepayCurrency() + ", getNonWorkingDaysResched()=" + getNonWorkingDaysResched()
-				+ ", getNonWorkingDaysArrears()=" + getNonWorkingDaysArrears() + ", getPenaltyRateChange()="
-				+ getPenaltyRateChange() + ", getDepositAccountOption()=" + getDepositAccountOption()
-				+ ", getAdjustPaymentDates()=" + getAdjustPaymentDates() + ", getAdjustPrincipalSchedule()="
-				+ getAdjustPrincipalSchedule() + ", getAdjustInterestSchedule()=" + getAdjustInterestSchedule()
-				+ ", getAdjustFeeSchedule()=" + getAdjustFeeSchedule() + ", getAdjustPenaltySchedule()="
-				+ getAdjustPenaltySchedule() + ", getConfigurePaymentHolidays()=" + getConfigurePaymentHolidays()
-				+ ", getEntryUser()=" + getEntryUser() + ", getModifyUser()=" + getModifyUser() + ", getVerifyUser()="
-				+ getVerifyUser() + ", getEntryTime()=" + getEntryTime() + ", getVerifyTime()=" + getVerifyTime()
-				+ ", getDelFlg()=" + getDelFlg() + ", getEntityFlg()=" + getEntityFlg() + ", getModifyFlg()="
-				+ getModifyFlg() + ", getVerifyFlg()=" + getVerifyFlg() + ", getClass()=" + getClass() + ", hashCode()="
-				+ hashCode() + ", toString()=" + super.toString() + "]";
-	}
 
 	public String getId() {
 		return id;
@@ -637,11 +536,12 @@ public class BGLS_LMS_SCHEMES_TABLE_ENTITY {
 		this.collectPrincipalEvery = collectPrincipalEvery;
 	}
 
-	public Integer getGracePeriod() {
+	
+	public String getGracePeriod() {
 		return gracePeriod;
 	}
 
-	public void setGracePeriod(Integer gracePeriod) {
+	public void setGracePeriod(String gracePeriod) {
 		this.gracePeriod = gracePeriod;
 	}
 
@@ -1181,11 +1081,13 @@ public class BGLS_LMS_SCHEMES_TABLE_ENTITY {
 		this.nonWorkingDaysArrears = nonWorkingDaysArrears;
 	}
 
-	public BigDecimal getPenaltyRateChange() {
+	
+
+	public String getPenaltyRateChange() {
 		return penaltyRateChange;
 	}
 
-	public void setPenaltyRateChange(BigDecimal penaltyRateChange) {
+	public void setPenaltyRateChange(String penaltyRateChange) {
 		this.penaltyRateChange = penaltyRateChange;
 	}
 
@@ -1318,6 +1220,24 @@ public class BGLS_LMS_SCHEMES_TABLE_ENTITY {
 	public void setVerifyFlg(String verifyFlg) {
 		this.verifyFlg = verifyFlg;
 	}
+
+	public String getAutoSetSettlementAcct() {
+		return autoSetSettlementAcct;
+	}
+
+	public void setAutoSetSettlementAcct(String autoSetSettlementAcct) {
+		this.autoSetSettlementAcct = autoSetSettlementAcct;
+	}
+
+	public String getAutoCreateSettlementAcct() {
+		return autoCreateSettlementAcct;
+	}
+
+	public void setAutoCreateSettlementAcct(String autoCreateSettlementAcct) {
+		this.autoCreateSettlementAcct = autoCreateSettlementAcct;
+	}
+	
+	
 
 	
     

@@ -660,7 +660,7 @@ function Delete() {
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="productDescription" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">GRACE_PERIOD</label>
-                                                <input type="number" id="gracePeriod" name="gracePeriod"
+                                                <input type="text" id="gracePeriod" name="gracePeriod"
                                                 th:value="${parameters.gracePeriod}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -1600,7 +1600,59 @@ function Delete() {
 
                                        
 
+                                        <div class="row g-3 mt-2">
+                                            <label
+                                                style="font-size: 1rem; font-weight: bold; padding: 8px;">Deposit Account Option</label>
+                                        </div>
+
                                         
+                                        <div class="row g-3 mt-2">
+                                            <!-- Line Of Credit Requirement -->
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <!-- <label for="lineOfCreditRequirement"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">ENABLE_GUARANTORS</label>
+                                                <input type="text" id="enableGuarantors" name="enableGuarantors"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;"> -->
+
+                                                 <input type="checkbox"
+                                                    id="autoSetSettlementAcct"
+                                                    name="autoSetSettlementAcct"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    value="N"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
+
+                                                    <label for="autoSetSettlementAcct"
+                                                    class="form-label mb-0 text-start ml-5">
+                                                    AUTO_SET_SETTLEMENT_ACCT
+                                                </label>
+                                            </div>
+
+                                            <!-- Product Security Settings Key -->
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <!-- <label for="productSecuritySettingsKey"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">ENABLE_COLLATERALS</label>
+                                                <input type="text" id="enableCollaterals" name="enableCollaterals"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;"> -->
+
+                                                 <input type="checkbox"
+                                                    id="autoCreateSettlementAcct"
+                                                    name="autoCreateSettlementAcct"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    value="N"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
+
+                                                    <label for="autoCreateSettlementAcct"
+                                                    class="form-label mb-0 text-start ml-5">
+                                                    AUTO_CREATE_SETTLEMENT_ACCT
+                                                </label>
+                                            </div>
+                                        </div>
 
 
                                         <div class="row g-3 mt-2">
@@ -1673,7 +1725,7 @@ function Delete() {
                                                     style="width: 55%;" readonly>
                                             </div>
 
-                                             <div class="col-md-4 d-flex align-items-center">
+                                             <!-- <div class="col-md-4 d-flex align-items-center">
                                                 <label for="principalPaymentSettingsKey"
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">DEPOSIT_ACCOUNT_OPTION</label>
@@ -1682,8 +1734,14 @@ function Delete() {
                                                     name="depositAccountOption"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
-                                            </div>
+                                            </div> -->
                                         </div>
+
+                                        
+
+
+
+
 
                                         <!-- <div class="row g-3 mt-2">
                                             
