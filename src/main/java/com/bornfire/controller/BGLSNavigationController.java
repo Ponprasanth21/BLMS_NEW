@@ -3796,11 +3796,20 @@ public class BGLSNavigationController {
 	@RequestMapping(value = "loanOperation", method = { RequestMethod.GET, RequestMethod.POST })
 	public String loanOperation(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
 
+		Date tranDateObj = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy"); // e.g., 21-SEP-2025
+		String formattedDate = sdf.format(tranDateObj);
+
 		Date TRANDATE = (Date) req.getSession().getAttribute("TRANDATE");
 		if (formmode == null || formmode.equals("list")) {
 			md.addAttribute("formmode", "list");
 			md.addAttribute("TRANDATE", TRANDATE);
 			md.addAttribute("booking", LOAN_ACT_MST_REPO.getActNo());
+			md.addAttribute("booking1", depositRep.getexistingData());
+			md.addAttribute("collection", LOAN_ACT_MST_REPO.getActNo1());
+			md.addAttribute("interest", LOAN_ACT_MST_REPO.getActNo21(formattedDate));
+			md.addAttribute("fees", LOAN_ACT_MST_REPO.getActNo31(formattedDate));
+			md.addAttribute("fees", LOAN_ACT_MST_REPO.getActNo31(formattedDate));
 			md.addAttribute("booking1", depositRep.getexistingData());
 
 		} else if (formmode.equals("list1")) {
