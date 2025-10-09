@@ -316,7 +316,10 @@
 	<script>
 		$(function () {
 			$("#creation_date, #last_modified_date, #dob, #approval_date, #as_on_date").datepicker({
-				dateFormat: "dd-mm-yy"
+				dateFormat: "dd-mm-yy",
+				changeMonth: true,
+				changeYear: true,
+
 			});
 		});
 
@@ -730,7 +733,14 @@
 		function back() {
 
 			event.preventDefault();
-			window.history.back();
+			// window.history.back();
+
+			const previousUrl = document.referrer;
+			if (previousUrl) {
+				window.location.href = previousUrl;
+			} else {
+				window.history.back();
+			}
 		}
 	</script>
 	<script>
@@ -3216,7 +3226,7 @@
 								<button class="btn-primary big-btn" onclick="list();">List</button>
 							</div>
 							<div class="btn-group nav-buttons float-right">
-								<button type="button" class="btn-primary big-btn" id="submitBtn">Upload</button>
+								<!-- <button type="button" class="btn-primary big-btn" id="submitBtn">Upload</button> -->
 							</div>
 						</div>
 						<div class="card-body">

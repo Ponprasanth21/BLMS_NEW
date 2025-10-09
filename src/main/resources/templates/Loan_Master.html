@@ -343,7 +343,12 @@
 
 		function back() {
 			event.preventDefault();
-			window.history.back();
+			const previousUrl = document.referrer;
+			if (previousUrl) {
+				window.location.href = previousUrl;
+			} else {
+				window.history.back();
+			}
 		}
 
 		function Homeln() {
@@ -1806,7 +1811,7 @@
 								<h6 style="font-size: 1.2rem;" class="ml-4">LOAN MASTER</h6>
 							</div>
 							<div class="btn-group nav-buttons float-right">
-								<button type="button" class="btn-primary big-btn" id="submitBtn">Upload</button>
+								<!-- <button type="button" class="btn-primary big-btn" id="submitBtn">Upload</button> -->
 								<button class="btn-primary big-btn ml-1" onclick="ListLoan();">List</button>
 							</div>
 						</div>

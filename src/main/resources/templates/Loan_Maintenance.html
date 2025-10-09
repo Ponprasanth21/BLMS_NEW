@@ -278,7 +278,12 @@
 
 		function back() {
 			event.preventDefault();
-			window.history.back();
+			const previousUrl = document.referrer;
+			if (previousUrl) {
+				window.location.href = previousUrl;
+			} else {
+				window.history.back();
+			}
 		}
 
 
@@ -810,7 +815,9 @@
 	<script>
 		$(function () {
 			$("#creation_date, #last_modified_date, #closed_date, #approved_date, #first_repaymentdate, #date_of_first_call, #expected_disbursementdate, #asondate, #manualoverride_expiry_date").datepicker({
-				dateFormat: "dd-mm-yy"
+				dateFormat: "dd-mm-yy",
+				changeMonth: true,
+				changeYear: true,
 			});
 		});
 	</script>
