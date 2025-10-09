@@ -281,10 +281,10 @@
 
 	<script>
 
-		$(document).on('click',"#readonly_remover",function(){
-			$('#filterAccountNumber3, #filterAccountName3').prop('disabled',false);
+		$(document).on('click', "#readonly_remover", function () {
+			$('#filterAccountNumber3, #filterAccountName3').prop('disabled', false);
 		});
-		
+
 		$(function () {
 			$("#fromdate").datepicker({
 				dateFormat: "dd-mm-yy",
@@ -448,18 +448,13 @@
 				// Get raw values from inputs
 				var fromdate = $('#fromdateinterest').val() || '';
 				var todate = $('#todateinterest').val() || '';
-				var transactindate = $('#transactiondates').val() || '';
 
-				// Format dates as dd-MM-yyyy for Spring controller
-				function formatDateForSpring(dateStr) {
-					if (!dateStr) return '';
-					const dateParts = dateStr.split('-'); // assumes dd-MM-yyyy already from input
-					return `${("0" + dateParts[0]).slice(-2)}-${("0" + dateParts[1]).slice(-2)}-${dateParts[2]}`;
-				}
+				// ✅ Get the account number from the text input
+				var acct_num = $("#interestaccount").val().trim();
 
-				var dateFrom = formatDateForSpring(fromdate.trim());
-				var DateTo = formatDateForSpring(todate.trim());
-				var transactionTo = formatDateForSpring(transactindate.trim());
+
+				var dateFrom = formatDateToDD(fromdate.trim());
+				var DateTo = formatDateToDD(todate.trim());
 
 				var operationType = "Interest";
 
@@ -533,15 +528,15 @@
 				if ($('#loan').is(':checked')) {
 					console.log("Loan option is checked.");
 
+					// Get raw values from inputs
 					var fromdate = $('#fromdatefees').val() || '';
 					var todate = $('#todatefees').val() || '';
-					var transactindate = $('#transactiondates').val() || '';
+
+					// ✅ Get the account number from the text input
+					var acct_num = $("#feesaccount").val().trim();
 
 					var dateFrom = formatDateToDD(fromdate.trim());
 					var DateTo = formatDateToDD(todate.trim());
-					var transactionTo = formatDateToDD(transactindate.trim());
-
-					var acctNum = document.getElementById("acct_num123").value;
 
 					$.ajax({
 						type: 'GET',
@@ -818,15 +813,16 @@
 
 				if ($('#loan').is(':checked')) {
 					console.log("Loan option is checked.");
+
+					// Get raw values from inputs
 					var fromdate = $('#fromdatebooking').val() || '';
 					var todate = $('#todatebooking').val() || '';
-					var transactindate = $('#transactiondates').val() || '';
+
+					// ✅ Get the account number from the text input
+					var actno1 = $("#bookingaccount").val().trim();
 
 					var dateFrom = formatDateToDD(fromdate.trim());
 					var DateTo = formatDateToDD(todate.trim());
-					var transactionTo = formatDateToDD(transactindate.trim());
-
-					var actno1 = document.getElementById('acct_num123').value;
 
 					$.ajax({
 						type: 'GET',

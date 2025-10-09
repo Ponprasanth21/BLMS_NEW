@@ -1,10 +1,11 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="/ASPIRA/js/jquery.min.js"></script>
-<script src="/ASPIRA/js/jquery-ui.min.js"></script>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="/ASPIRA/js/jquery.min.js"></script>
+	<script src="/ASPIRA/js/jquery-ui.min.js"></script>
 	<style>
 		.modal {
 			display: none;
@@ -300,28 +301,30 @@
 		.filterable .filters input[disabled]:-ms-input-placeholder {
 			color: #333;
 		}
-			.big-btn {
-  font-size: 16px;
-}
+
+		.big-btn {
+			font-size: 16px;
+		}
 	</style>
-<style>
- 
-#datacancel, #datacancel * {
-	box-sizing: content-box !important;
-}
+	<style>
+		#datacancel,
+		#datacancel * {
+			box-sizing: content-box !important;
+		}
 
-#SuccesPopUp, #SuccesPopUp * {
-	box-sizing: content-box !important;
-}
+		#SuccesPopUp,
+		#SuccesPopUp * {
+			box-sizing: content-box !important;
+		}
 
-#datacancel .modal-dialog-centered.modal-dialog-scrollable {
-	justify-content: flex-start !important;
-}
+		#datacancel .modal-dialog-centered.modal-dialog-scrollable {
+			justify-content: flex-start !important;
+		}
 
-#SuccesPopUp .modal-dialog-centered.modal-dialog-scrollable {
-	justify-content: flex-start !important;
-}
-</style>
+		#SuccesPopUp .modal-dialog-centered.modal-dialog-scrollable {
+			justify-content: flex-start !important;
+		}
+	</style>
 	<script>
 		function Home() {
 
@@ -329,7 +332,13 @@
 		}
 
 		function back() {
-			window.history.back();
+			event.preventDefault();
+			const previousUrl = document.referrer;
+			if (previousUrl) {
+				window.location.href = previousUrl;
+			} else {
+				window.history.back();
+			}
 		}
 
 		function flow(a) {
@@ -683,39 +692,39 @@
 				});
 
 			$('.filterable .filters input').keypress(function (e) {
-    var code = e.keyCode || e.which;
+				var code = e.keyCode || e.which;
 
-    // Run only when ENTER is pressed
-    if (code !== 13) return;
+				// Run only when ENTER is pressed
+				if (code !== 13) return;
 
-    /* Useful DOM data and selectors */
-    var $input = $(this),
-        inputContent = $input.val().toLowerCase(),
-        $panel = $input.parents('.filterable'),
-        column = $panel.find('.filters th').index($input.parents('th')),
-        $table = $panel.find('.table'),
-        $rows = $table.find('tbody tr');
+				/* Useful DOM data and selectors */
+				var $input = $(this),
+					inputContent = $input.val().toLowerCase(),
+					$panel = $input.parents('.filterable'),
+					column = $panel.find('.filters th').index($input.parents('th')),
+					$table = $panel.find('.table'),
+					$rows = $table.find('tbody tr');
 
-    /* Dirtiest filter function ever ;) */
-    var $filteredRows = $rows.filter(function () {
-        var value = $(this).find('td').eq(column).text().toLowerCase();
-        return value.indexOf(inputContent) === -1;
-    });
+				/* Dirtiest filter function ever ;) */
+				var $filteredRows = $rows.filter(function () {
+					var value = $(this).find('td').eq(column).text().toLowerCase();
+					return value.indexOf(inputContent) === -1;
+				});
 
-    /* Clean previous no-result if exist */
-    $table.find('tbody .no-result').remove();
+				/* Clean previous no-result if exist */
+				$table.find('tbody .no-result').remove();
 
-    /* Show all rows, hide filtered ones */
-    $rows.show();
-    $filteredRows.hide();
+				/* Show all rows, hide filtered ones */
+				$rows.show();
+				$filteredRows.hide();
 
-    /* Prepend no-result row if all rows are filtered */
-    if ($filteredRows.length === $rows.length) {
-        $table.find('tbody').prepend(
-            $('<tr class="no-result text-center"><td colspan="' + $table.find('.filters th').length + '">No result found</td></tr>')
-        );
-    }
-});
+				/* Prepend no-result row if all rows are filtered */
+				if ($filteredRows.length === $rows.length) {
+					$table.find('tbody').prepend(
+						$('<tr class="no-result text-center"><td colspan="' + $table.find('.filters th').length + '">No result found</td></tr>')
+					);
+				}
+			});
 
 		});
 </script>
@@ -988,176 +997,176 @@
 	}
 </script>
 <script th:inline="javascript">
-	document.addEventListener('DOMContentLoaded', function() {
+	document.addEventListener('DOMContentLoaded', function () {
 
-	   const fileInput = document.getElementById('fileInput');
-	    const submitBtn = document.getElementById('submitBtn');
+		const fileInput = document.getElementById('fileInput');
+		const submitBtn = document.getElementById('submitBtn');
 
-	    // Step 1: Open file chooser when submit button is clicked
-	    submitBtn.addEventListener('click', () => {
-	        fileInput.click();
-	    });
+		// Step 1: Open file chooser when submit button is clicked
+		submitBtn.addEventListener('click', () => {
+			fileInput.click();
+		});
 
-	    // Step 2: When file is selected, upload it
-	    fileInput.addEventListener('change', () => {
-	        if (fileInput.files.length > 0) {
-	            submitData(fileInput.files[0]); // pass the selected file
-	        }
-	    });
+		// Step 2: When file is selected, upload it
+		fileInput.addEventListener('change', () => {
+			if (fileInput.files.length > 0) {
+				submitData(fileInput.files[0]); // pass the selected file
+			}
+		});
 
-	    function submitData(file) {
-	        document.getElementById('loadingModal').style.display = 'flex';
-	        var form = $('#reportform_cust')[0];
-	        var data = new FormData(form);
-	        data.append("overwrite", false);
-	        data.append("fileInput", "REPAYMENT");
-	        data.append("file", file);   
-	        $.ajax({
-	            type: "POST",
-	            url: "UploadFileData",
-	            data: data,
-	            processData: false,
-	            contentType: false,
-	            success: function (response) {
-	                document.getElementById('loadingModal').style.display = 'none';
-	                console.log(response);
-	                if (response.status === "duplicate") {
-	                    $('#alertmsgpopup')
-	                        .text(`Duplicate Customer Id(s) found: ${response.id.join(", ")}. Do you want to overwrite them?`)
-	                        .css("white-space", "nowrap");
-	                    window.lastData = data; 
-	                    window.lastType = "CUSTOMER";  
+		function submitData(file) {
+			document.getElementById('loadingModal').style.display = 'flex';
+			var form = $('#reportform_cust')[0];
+			var data = new FormData(form);
+			data.append("overwrite", false);
+			data.append("fileInput", "REPAYMENT");
+			data.append("file", file);
+			$.ajax({
+				type: "POST",
+				url: "UploadFileData",
+				data: data,
+				processData: false,
+				contentType: false,
+				success: function (response) {
+					document.getElementById('loadingModal').style.display = 'none';
+					console.log(response);
+					if (response.status === "duplicate") {
+						$('#alertmsgpopup')
+							.text(`Duplicate Customer Id(s) found: ${response.id.join(", ")}. Do you want to overwrite them?`)
+							.css("white-space", "nowrap");
+						window.lastData = data;
+						window.lastType = "CUSTOMER";
 
-	                    $('#datacancel').modal("show");
-	                    return;
-	                }
-	                showResponse(response);
-	            },
-	            error: function (error) {
-	                document.getElementById('loadingModal').style.display = 'none';
-	                //showResponse("Error: " + error.responseText);
-	                
-	                let message = error.responseText;
-					    $('#Successmsgpopup').html("<h6 class='text-center'>" + message + "</h6>");
-					    $('#SuccesPopUp').modal('show'); 
-	            }
-	        });
-	    }
+						$('#datacancel').modal("show");
+						return;
+					}
+					showResponse(response);
+				},
+				error: function (error) {
+					document.getElementById('loadingModal').style.display = 'none';
+					//showResponse("Error: " + error.responseText);
+
+					let message = error.responseText;
+					$('#Successmsgpopup').html("<h6 class='text-center'>" + message + "</h6>");
+					$('#SuccesPopUp').modal('show');
+				}
+			});
+		}
 	});
-	
-	function showResponse(response) { 
+
+	function showResponse(response) {
 		let message = response;
 		$('#Successmsgpopup').html("<h6 class='text-center'>" + message + "</h6>");
 		$('#SuccesPopUp').modal('show');
 	}
-	
+
 	function backs() {
 		$("#normalalertvalues").modal("hide");
 	}
-		
-  // DELETE REF
- function deleteRecUpload(btn) {
-    $('#datacancel').modal('hide');
-    document.getElementById('loadingModal').style.display = 'flex';
 
-    // ✅ Reuse stored FormData
-    var formData = window.lastData;
-    if (!formData) {
-        console.error("No form data found from last upload");
-        return;
-    }
+	// DELETE REF
+	function deleteRecUpload(btn) {
+		$('#datacancel').modal('hide');
+		document.getElementById('loadingModal').style.display = 'flex';
 
-    // ✅ Ensure overwrite is set to true
-    formData.set("overwrite", true);
+		// ✅ Reuse stored FormData
+		var formData = window.lastData;
+		if (!formData) {
+			console.error("No form data found from last upload");
+			return;
+		}
 
-    $.ajax({
-        url: './UploadFileData',
-        type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function(response) {
-            document.getElementById('loadingModal').style.display = 'none';
-            showResponse(response);
+		// ✅ Ensure overwrite is set to true
+		formData.set("overwrite", true);
 
-        },
-        error: function(xhr, status, error) {
-            document.getElementById('loadingModal').style.display = 'none';
-            $('#alertmsg').text("Overwrite Upload failed");
-            $('#alert').modal("toggle");
-        }
-    });
-}
+		$.ajax({
+			url: './UploadFileData',
+			type: 'POST',
+			data: formData,
+			contentType: false,
+			processData: false,
+			success: function (response) {
+				document.getElementById('loadingModal').style.display = 'none';
+				showResponse(response);
 
-function handleMultipleFilterChange() {
-	// Disable all filter inputs first
-	$("#loan_id, #loan_name, #retailer_name, #retailer_branch_id, #status")
-		.prop("disabled", true).val("");
-
-	// Get selected filter
-	let selected = $("#filterselect").val();
-
-	if (selected === "LOAN_ID") {
-		$("#loan_id").prop("disabled", false).focus();
-	} else if (selected === "LOAN_NAME") {
-		$("#loan_name").prop("disabled", false).focus();
-	} else if (selected === "RETAILER_NAME") {
-		$("#retailer_name").prop("disabled", false).focus();
-	} else if (selected === "RETAILER_BRANCH_ID") {
-		$("#retailer_branch_id").prop("disabled", false).focus();
+			},
+			error: function (xhr, status, error) {
+				document.getElementById('loadingModal').style.display = 'none';
+				$('#alertmsg').text("Overwrite Upload failed");
+				$('#alert').modal("toggle");
+			}
+		});
 	}
-}
 
-  
+	function handleMultipleFilterChange() {
+		// Disable all filter inputs first
+		$("#loan_id, #loan_name, #retailer_name, #retailer_branch_id, #status")
+			.prop("disabled", true).val("");
+
+		// Get selected filter
+		let selected = $("#filterselect").val();
+
+		if (selected === "LOAN_ID") {
+			$("#loan_id").prop("disabled", false).focus();
+		} else if (selected === "LOAN_NAME") {
+			$("#loan_name").prop("disabled", false).focus();
+		} else if (selected === "RETAILER_NAME") {
+			$("#retailer_name").prop("disabled", false).focus();
+		} else if (selected === "RETAILER_BRANCH_ID") {
+			$("#retailer_branch_id").prop("disabled", false).focus();
+		}
+	}
+
+
 /*  function downloadExcel(type) {
 	 document.getElementById('loadingModal').style.display = 'flex';
 		const basePath = /*[[${#httpServletRequest.contextPath}]]*/ '';
 	/* 	window.location.href = basePath + '/ASPIRA/DisplayExcel?type=' + type;
 		   document.getElementById('loadingModal').style.display = 'none';
- } */ 
- function downloadExcel(type) {
-	    // Show loading modal
-	    document.getElementById('loadingModal').style.display = 'flex';
+ } */
+	function downloadExcel(type) {
+		// Show loading modal
+		document.getElementById('loadingModal').style.display = 'flex';
 
-	    const basePath = /*[[${#httpServletRequest.contextPath}]]*/ '';
-	    const url = basePath + '/DisplayExcel?type=' + type;
+		const basePath = /*[[${#httpServletRequest.contextPath}]]*/ '';
+		const url = basePath + '/DisplayExcel?type=' + type;
 
-	    $.ajax({
-	        url: url,
-	        type: 'GET',
-	        xhrFields: {
-	            responseType: 'blob' // Important to receive file as blob
-	        },
-	        success: function(blob, status, xhr) {
-	            // Get filename from response header if provided
-	            let filename = "file.xlsx";
-	            const disposition = xhr.getResponseHeader('Content-Disposition');
-	            if (disposition && disposition.indexOf('filename=') !== -1) {
-	                filename = disposition.split('filename=')[1].replace(/"/g, '');
-	            }
+		$.ajax({
+			url: url,
+			type: 'GET',
+			xhrFields: {
+				responseType: 'blob' // Important to receive file as blob
+			},
+			success: function (blob, status, xhr) {
+				// Get filename from response header if provided
+				let filename = "file.xlsx";
+				const disposition = xhr.getResponseHeader('Content-Disposition');
+				if (disposition && disposition.indexOf('filename=') !== -1) {
+					filename = disposition.split('filename=')[1].replace(/"/g, '');
+				}
 
-	            // Create a link to download the blob
-	            const downloadUrl = window.URL.createObjectURL(blob);
-	            const a = document.createElement('a');
-	            a.href = downloadUrl;
-	            a.download = filename;
-	            document.body.appendChild(a);
-	            a.click();
-	            a.remove();
-	            window.URL.revokeObjectURL(downloadUrl);
-	        },
-	        error: function(err) {
-	            console.error('Download error:', err);
-	            alert('Error downloading file.');
-	        },
-	        complete: function() {
-	            // Hide loading modal after success or error
-	            document.getElementById('loadingModal').style.display = 'none';
-	        }
-	    });
+				// Create a link to download the blob
+				const downloadUrl = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.href = downloadUrl;
+				a.download = filename;
+				document.body.appendChild(a);
+				a.click();
+				a.remove();
+				window.URL.revokeObjectURL(downloadUrl);
+			},
+			error: function (err) {
+				console.error('Download error:', err);
+				alert('Error downloading file.');
+			},
+			complete: function () {
+				// Hide loading modal after success or error
+				document.getElementById('loadingModal').style.display = 'none';
+			}
+		});
 	}
 
-	</script>
+</script>
 
 
 <body>
@@ -1176,15 +1185,14 @@ function handleMultipleFilterChange() {
 					<div class="card" style="border-radius: 2px">
 						<!-- Card Header -->
 						<form id="reportform_cust">
-							<input type="file" id="fileInput" name="file"
-								style="display: none" />
+							<input type="file" id="fileInput" name="file" style="display: none" />
 						</form>
 						<div class="card-header" style="background-color: #e9ecef; height: 50px">
 							<h6 class="float-left" style="font-size: 1.2rem; color: black;">LOAN
 								SCHEDULE</h6>
 
 							<div class="btn-group nav-buttons float-right">
-							<button type="button" class="btn-primary big-btn" id="submitBtn">Upload</button>
+								<!--<button type="button" class="btn-primary big-btn" id="submitBtn">Upload</button>-->
 								<button class="btn-primary big-btn ml-1" onclick="switchToList();">List</button>
 							</div>
 
@@ -1299,16 +1307,18 @@ function handleMultipleFilterChange() {
 									<h6 style="font-size: 1.2rem;">LOAN SCHEDULE - LIST</h6>
 								</div>
 								<div class="float-right">
-									<select class="form-control-sm bg-white " id="filterselect" onchange="handleMultipleFilterChange()" style="background-color: #e3e3e4;width: 156px !important;">
+									<select class="form-control-sm bg-white " id="filterselect"
+										onchange="handleMultipleFilterChange()"
+										style="background-color: #e3e3e4;width: 156px !important;">
 										<option>Select Filter</option>
 										<option value="LOAN_ID">LOAN ID</option>
 										<option value="LOAN_NAME">LOAN NAME</option>
 										<option value="RETAILER_NAME">RETAILER NAME</option>
 										<option value="RETAILER_BRANCH_ID">RETAILER BRANCH ID</option>
-								</select>
+									</select>
 									<!-- <button type="button" class="btn-primary big-btn btn-filter">Filter</button> -->
-								<button type="button"
-										class="btn-primary big-btn" onclick="downloadExcel('REPAYMENT')">Download</button>
+									<button type="button" class="btn-primary big-btn"
+										onclick="downloadExcel('REPAYMENT')">Download</button>
 								</div>
 							</div>
 							<div class="card-body" style="overflow-y: auto; border: 1px solid #ddd;">
@@ -1318,19 +1328,19 @@ function handleMultipleFilterChange() {
 										<thead class="thead-light"
 											style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
 											<tr class="filters">
-												<th style="width: 8%;"><input type="text" 
-														class="form-control font-weight-bold" id="s_no" placeholder="S.NO"
-														disabled></th>
-												<th style="width: 10%;"><input type="text"  id="loan_id"
+												<th style="width: 8%;"><input type="text"
+														class="form-control font-weight-bold" id="s_no"
+														placeholder="S.NO" disabled></th>
+												<th style="width: 10%;"><input type="text" id="loan_id"
 														class="form-control font-weight-bold" placeholder="LOAN ID"
 														disabled></th>
-												<th><input type="text"  id="loan_name"
+												<th><input type="text" id="loan_name"
 														class="form-control font-weight-bold" placeholder="LOAN NAME"
 														disabled></th>
 												<th><input type="text" id="retailer_name"
 														class="form-control font-weight-bold"
 														placeholder="RETAILER NAME" disabled></th>
-												<th><input type="text"  id="retailer_branch_id"
+												<th><input type="text" id="retailer_branch_id"
 														class="form-control font-weight-bold"
 														placeholder="RETAILER BRANCH ID" disabled></th>
 												<th style="width: 10%;"><input type="text" id="status"
@@ -1391,7 +1401,8 @@ function handleMultipleFilterChange() {
 							<div class="float-right">
 								<button class="btn-primary big-btn" id="repaymentschedule"
 									onclick="schedulePreClosure()">ACCOUNT</button>
-								<button class="btn-primary big-btn" id="ledgerschedule" onclick="ledgerPreClosure()">LEDGER</button>
+								<button class="btn-primary big-btn" id="ledgerschedule"
+									onclick="ledgerPreClosure()">LEDGER</button>
 							</div>
 						</div>
 
@@ -1408,17 +1419,15 @@ function handleMultipleFilterChange() {
 												Id</div>
 											<div class="col-sm-2">
 												<th:block th:if="${view != null and !#lists.isEmpty(view)}">
-												    <input type="text" id="id" name="id"
-												           th:value="${view[0][0]}"
-												           class="form-control form-control-sm bg-white border border-dark"
-												           readonly />
+													<input type="text" id="id" name="id" th:value="${view[0][0]}"
+														class="form-control form-control-sm bg-white border border-dark"
+														readonly />
 												</th:block>
 
 												<th:block th:unless="${view != null and !#lists.isEmpty(view)}">
-												    <input type="text" id="id" name="id"
-												           value=""
-												           class="form-control form-control-sm bg-white border border-dark"
-												           readonly />
+													<input type="text" id="id" name="id" value=""
+														class="form-control form-control-sm bg-white border border-dark"
+														readonly />
 												</th:block>
 
 
@@ -1584,21 +1593,15 @@ function handleMultipleFilterChange() {
 											<td style="font-size: 14px;"
 												th:text="${list[13] != null ? #numbers.formatDecimal(list[13], 1, 'COMMA', 2, 'POINT') : '0.00'}">
 											</td>
-											<td style="font-size: 14px;" th:text="${
-												            (list[5] != null ? list[5] : 0) + 
-												            (list[8] != null ? list[8] : 0) + 
-												            (list[11] != null ? list[11] : 0) + 
-												            (list[14] != null ? list[14] : 0) != null 
-												            ? #numbers.formatDecimal(
-												                (list[5] != null ? list[5] : 0) + 
-												                (list[8] != null ? list[8] : 0) + 
-												                (list[11] != null ? list[11] : 0) + 
-												                (list[14] != null ? list[14] : 0), 
-												                1, 'COMMA', 2, 'POINT') 
-												            : '0.00'}">
+											<!-- Total Dues (Remaining Amounts Only) -->
+											<td style="font-size: 14px;" th:text="${#numbers.formatDecimal(
+																					                    (list[3] != null && list[4] != null && (list[3] - list[4]) > 0 ? list[3] - list[4] : 0) +
+																					                    (list[6] != null && list[7] != null && (list[6] - list[7]) > 0 ? list[6] - list[7] : 0) +
+																					                    (list[9] != null && list[10] != null && (list[9] - list[10]) > 0 ? list[9] - list[10] : 0) +
+																					                    (list[12] != null && list[13] != null && (list[12] - list[13]) > 0 ? list[12] - list[13] : 0),
+																					                    1, 'COMMA', 2, 'POINT')}">
 											</td>
 										</tr>
-
 
 									</tbody>
 								</table>
@@ -1631,56 +1634,51 @@ function handleMultipleFilterChange() {
 			</div>
 		</div>
 	</div>
- <!-- Delete Confirmation Modal -->
-	<div class="modal fade" id="datacancel" style="background: #000000b0;margin-bottom:10px;"
-		role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
-			role="document">
-			<div class="modal-content"  >
+	<!-- Delete Confirmation Modal -->
+	<div class="modal fade" id="datacancel" style="background: #000000b0;margin-bottom:10px;" role="dialog"
+		aria-labelledby="deleteModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+			<div class="modal-content">
 
 				<!-- Modal Header -->
-				
+
 
 				<!-- Modal Body -->
 				<div class="modal-body">
-					<h5  id="alertmsgpopup" style="font-size: 17px; color: black; padding: 15px;"></h5>
+					<h5 id="alertmsgpopup" style="font-size: 17px; color: black; padding: 15px;"></h5>
 				</div>
 				<!-- Modal Footer -->
 				<div style="padding: 10px; text-align: center;">
-					<button type="button" class="btn btn-outline-dark me-3"
-						style="font-size: 16px;"  onclick="$('#datacancel').modal('hide')">Cancel</button>
-					<button type="button" class="btn btn-outline-dark me-3" id="refDelete"
-						style="font-size: 16px;" onclick="deleteRecUpload(this);"
-						th:attr="data-formmode=delete">Confirm  , OverWrite</button>
+					<button type="button" class="btn btn-outline-dark me-3" style="font-size: 16px;"
+						onclick="$('#datacancel').modal('hide')">Cancel</button>
+					<button type="button" class="btn btn-outline-dark me-3" id="refDelete" style="font-size: 16px;"
+						onclick="deleteRecUpload(this);" th:attr="data-formmode=delete">Confirm , OverWrite</button>
 				</div>
 
 			</div>
 		</div>
 	</div>
-	
+
 	<!-- success pop up -->
-	<div class="modal fade" id="SuccesPopUp" style="background: #000000b0;margin-bottom:10px;"
-		role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-		<div
-			class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
-			role="document">
-			<div class="modal-content" style="min-height:212px;margin-left:0px;" >
+	<div class="modal fade" id="SuccesPopUp" style="background: #000000b0;margin-bottom:10px;" role="dialog"
+		aria-labelledby="deleteModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+			<div class="modal-content" style="min-height:212px;margin-left:0px;">
 				<!-- Modal Body -->
 				<div class="modal-body" style="align-content: center;">
-					<h5  id="Successmsgpopup" style="font-size: 17px; color: black; padding: 15px;"></h5>
+					<h5 id="Successmsgpopup" style="font-size: 17px; color: black; padding: 15px;"></h5>
 				</div>
 				<!-- Modal Footer -->
 				<div style="padding: 10px; text-align: center;">
-					<button type="button" class="btn btn-outline-dark me-3"
-						style="font-size: 16px;"  onclick="$('#SuccesPopUp').modal('hide')">Cancel</button>
+					<button type="button" class="btn btn-outline-dark me-3" style="font-size: 16px;"
+						onclick="$('#SuccesPopUp').modal('hide')">Cancel</button>
 				</div>
 
 			</div>
 		</div>
 	</div>
-	 
-	
+
+
 </body>
 
 </html>
