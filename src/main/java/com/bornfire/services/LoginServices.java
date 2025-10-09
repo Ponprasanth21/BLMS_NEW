@@ -697,5 +697,56 @@ public class LoginServices {
 	}
 
 
+	public File getSheduleDownload(String filetype, String acctNo) throws JRException, SQLException, IOException {
+	    System.out.println("Generating report for account: " + acctNo);
 
+	    File folder = new File(exportpath1);
+	    if (!folder.exists()) folder.mkdirs();
+
+	    String fileName = "SHEDULE" + acctNo;
+	    File outputFile;
+
+	    try {
+	        // Load and compile Jasper
+	        Resource resource = new ClassPathResource("/static/jasper/SCHDULE.jrxml");
+	        if (!resource.exists()) throw new FileNotFoundException("Jasper file not found: " + resource.getFilename());
+
+	        InputStream jasperStream = resource.getInputStream();
+	        JasperReport jasperReport = JasperCompileManager.compileReport(jasperStream);
+
+	        // Set parameters
+	        HashMap<String, Object> parameters = new HashMap<>();
+	        parameters.put("LOAN_ID", acctNo);
+
+	        // Fill report
+	        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, srcdataSource.getConnection());
+
+	        // Export
+	        if ("pdf".equalsIgnoreCase(filetype)) {
+	            fileName += ".pdf";
+	            outputFile = new File(exportpath1, fileName);
+	            JasperExportManager.exportReportToPdfFile(jasperPrint, outputFile.getAbsolutePath());
+	        } else {
+	            fileName += ".xlsx";
+	            outputFile = new File(exportpath1, fileName);
+
+	            SimpleXlsxReportConfiguration reportConfig = new SimpleXlsxReportConfiguration();
+	            reportConfig.setSheetNames(new String[]{fileName});
+
+	            JRXlsxExporter exporter = new JRXlsxExporter();
+	            exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+	            exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(outputFile));
+	            exporter.setConfiguration(reportConfig);
+	            exporter.exportReport();
+	        }
+
+	        System.out.println("Report exported successfully: " + outputFile.getAbsolutePath());
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw new JRException("Error generating Account Ledger report", e);
+	    }
+
+	    return outputFile;
+	}
 }

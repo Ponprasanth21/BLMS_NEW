@@ -1,6 +1,7 @@
 package com.bornfire.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -145,6 +146,7 @@ import com.ibm.icu.text.SimpleDateFormat;
 import com.monitorjbl.xlsx.exceptions.ParseException;
 
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.repo.InputStreamResource;
 
 @Controller
 @ConfigurationProperties("default")
@@ -4334,7 +4336,20 @@ public class BGLSNavigationController {
 
 		return "CREDIT_FACILITY_REPORT.html";
 	}
+	
+	@RequestMapping(value = "downloadShedulePdf", method = RequestMethod.GET)
+	@ResponseBody
+	public FileSystemResource downloadShedulePdf(HttpServletResponse response,
+			@RequestParam(required = false) String acctNo) throws IOException, SQLException, JRException {
 
+		String filetype = "pdf";
+		File repfile = loginServices.getSheduleDownload(filetype, acctNo);
+
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		response.setHeader("Content-Disposition", "attachment; filename=" + repfile.getName());
+
+		return new FileSystemResource(repfile);
+	}
 	@RequestMapping(value = "Parameter", method = { RequestMethod.GET, RequestMethod.POST })
 	public String Parameters(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String refnumber,
@@ -4358,5 +4373,4 @@ public class BGLSNavigationController {
 		return "BACP/PARAMETER";
 	}
 
-	
 }

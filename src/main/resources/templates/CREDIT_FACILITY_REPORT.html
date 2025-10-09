@@ -1341,6 +1341,17 @@
 				    // document.getElementById("acctNoLabel").textContent = "Account No: " + idValue;
 				}
 				
+				
+		function submitAccount(){
+			
+			var filetype = 'pdf';
+			var acctNo=document.getElementById("acctNo").value;
+			alert("filetype"+filetype+"acctNo"+acctNo);
+			location.href = './downloadShedulePdf?' + '&filetype=' + filetype
+							+ '&acctNo=' + acctNo;
+			
+		}
+				
 
 	</script>
 
@@ -1404,7 +1415,7 @@
 								</div>
 
 								<div class="text-center">
-									<button type="button" class="btn btn-primary"
+									<button type="button" class="btn btn-primary" data-filetype='pdf'
 										onclick="submitAccount()">Submit</button>
 								</div>
 							</div>
