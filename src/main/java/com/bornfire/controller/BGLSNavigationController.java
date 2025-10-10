@@ -156,19 +156,19 @@ public class BGLSNavigationController {
 
 	@Autowired
 	LoginServices loginServices;
-	
+
 	@Autowired
 	BGLS_ORG_BRANCH_REPO BGLS_ORG_BRANCH_REPO;
 
 	@Autowired
 	Collateral_management_Repo collateral_management_Repo;
-	
+
 	@Autowired
 	MULTIPLE_TRANSACTION_REPO MULTIPLE_TRANSACTION_REPO;
 
 	@Autowired
 	DataSource srcdataSource;
-	
+
 	@Autowired
 	MultipleTransactionService multipleTransactionService;
 
@@ -338,10 +338,10 @@ public class BGLSNavigationController {
 
 	@Autowired
 	DateChangeService DateChangeService;
-	
+
 	@Autowired
 	BGLS_LMS_SCHEMES_TABLE_REPO lmsschemerepo;
-	
+
 	@Autowired
 	com.bornfire.services.ExelDownloadService ExelDownloadService;
 
@@ -411,15 +411,23 @@ public class BGLSNavigationController {
 
 		if (formmode == null || formmode.equals("add")) {
 			md.addAttribute("formmode", "add");
-			List<Organization_Entity> organization = organization_Repo.getAllList();
-			md.addAttribute("organization", organization.get(0));
+            Organization_Entity organizationList = null;
+            List<Organization_Entity> organization = organization_Repo.getAllList();
+            if(!organization.isEmpty()){
+                organizationList = organization.get(0);
+            }
+			md.addAttribute("organization", organizationList);
 
 			md.addAttribute("OrgBranch", organization_Branch_Rep.getbranchlist());
 
 		} else if (formmode.equals("ModifyHead")) {
 			md.addAttribute("formmode", "ModifyHead");
-			List<Organization_Entity> organization = organization_Repo.getAllList();
-			md.addAttribute("organization", organization.get(0));
+            Organization_Entity organizationList = null;
+            List<Organization_Entity> organization = organization_Repo.getAllList();
+            if(!organization.isEmpty()){
+                organizationList = organization.get(0);
+            }
+			md.addAttribute("organization", organizationList);
 		} else if (formmode.equals("DeleteBranch")) {
 			md.addAttribute("formmode", "DeleteBranch");
 			md.addAttribute("OrgBranch", organization_Branch_Rep.getOrgBranch1(branch_code));
@@ -2096,7 +2104,7 @@ public class BGLSNavigationController {
 		/*
 		 * List<String> srl = BGLS_BAMInventryMastRep.getdatas(); System.out.println(srl
 		 * + "srlllllllllllllllll"); md.addAttribute("lists", srl);
-		 * 
+		 *
 		 * List<String> lastTransferDate = BGLS_BAMInventryMastRep.getdatas();
 		 * md.addAttribute("lastTransferDate", lastTransferDate);
 		 * System.out.println("Last Transfer Date: " + lastTransferDate);
@@ -2419,9 +2427,9 @@ public class BGLSNavigationController {
 		} /*
 			 * else if (formmode.equals("flow")) { md.addAttribute("formmode", "flow");
 			 * md.addAttribute("customerdata", depositRep.getCustdataact(act));
-			 * 
+			 *
 			 * md.addAttribute("listact", td_defn_Repo.getactList(act));
-			 * 
+			 *
 			 * }
 			 */
 		return "DepositsActOpening";
@@ -2614,65 +2622,65 @@ public class BGLSNavigationController {
 	/*
 	 * @RequestMapping(value = "Doatransactionpushdemo", method =
 	 * RequestMethod.POST)
-	 * 
+	 *
 	 * @ResponseBody public String Doatransactionpushdemo(Model md,
 	 * HttpServletRequest rq, @ModelAttribute DAB_Entity DAB_Entity) {
 	 * System.out.println("huhjhjhkjhkjhkjhkjh"); List<Object[]> debitCreditData =
 	 * tRAN_MAIN_TRM_WRK_REP.getNetDebitCreditWithCountForCurrentDate();
 	 * List<String> accountNumbers = new ArrayList<>(); List<String> netAmounts =
 	 * new ArrayList<>(); // Corrected variable name
-	 * 
+	 *
 	 * // Extracting account num and net amount not submitting for (Object[] record
 	 * : debitCreditData) { String accountNum = record[0].toString(); // Get account
 	 * number from first column accountNumbers.add(accountNum); // Add account
 	 * number to the list
-	 * 
+	 *
 	 * // Assuming the net amount is in the fifth column (index 4) String netAmount
 	 * = record[4].toString(); netAmounts.add(netAmount); // Add the net amount to
 	 * the list
-	 * 
+	 *
 	 * // Print individual account numbers and net amounts
 	 * System.out.println(accountNum + " accountNumbers");
 	 * System.out.println("Net Amount: " + netAmount); }
-	 * 
+	 *
 	 * // Not important just for sysout for (int i = 0; i < accountNumbers.size();
 	 * i++) { String accountNum = accountNumbers.get(i); String netAmount =
 	 * netAmounts.get(i); System.out.println(accountNum + " accountNumbersforloop");
 	 * System.out.println(netAmount + " Net_amountforloop");
-	 * 
+	 *
 	 * // tRAN_MAIN_TRM_WRK_REP.insertNewAccountBalance(accountNum, netAmount); }
-	 * 
+	 *
 	 * List<DAB_Entity> exist = dAB_Repo.get_transaction_acc_num(accountNumbers);
-	 * 
+	 *
 	 * // Convert accountNumbers list to a Set for faster lookup Set<String>
 	 * accountNumbersSet = new HashSet<>(accountNumbers);
-	 * 
+	 *
 	 * String acctnum = ""; // Main for loop to set save if (accountNumbers != null)
 	 * { for (DAB_Entity entity : exist) { acctnum = entity.getAcct_num();
-	 * 
+	 *
 	 * if (accountNumbersSet.contains(acctnum)) { // Check if the account number is
 	 * in the passed list // Find the index of the existing account number int index
 	 * = accountNumbers.indexOf(acctnum); String netAmount = netAmounts.get(index);
 	 * // Get the corresponding net amount
-	 * 
+	 *
 	 * System.out.println(acctnum + " existaccuntnum");
 	 * System.out.println("Net Amount: " + netAmount);
-	 * 
+	 *
 	 * // List<TRAN_MAIN_TRM_WRK_ENTITY> up2 =
 	 * tRAN_MAIN_TRM_WRK_REP.set_dab_acc_num(acctnum); List<DAB_Entity> up3 = new
 	 * ArrayList<>();
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * }
-	 * 
-	 * 
+	 *
+	 *
 	 * } }
-	 * 
+	 *
 	 * // Optionally, print the account numbers
-	 * 
+	 *
 	 * return "Successfully"; }
-	 * 
+	 *
 	 */
 
 	@RequestMapping(value = "Doatransactionpush", method = RequestMethod.POST)
@@ -2767,20 +2775,20 @@ public class BGLSNavigationController {
 	/*
 	 * @Transactional public String insertOrUpdateAccountBalances(List<String>
 	 * accountNumbers, List<String> netAmounts) { LocalDate today = LocalDate.now();
-	 * 
+	 *
 	 * for (int i = 0; i < accountNumbers.size(); i++) { String accountNum =
 	 * accountNumbers.get(i); BigDecimal netAmount = new
 	 * BigDecimal(netAmounts.get(i));
-	 * 
+	 *
 	 * // Step 1: Check if account number exists List<BigDecimal> existingBalances =
 	 * tRAN_MAIN_TRM_WRK_REP.findTRAN_DATE_BALByAccountNumber(accountNum);
-	 * 
+	 *
 	 * if (!existingBalances.isEmpty()) { // Account exists, update END_TRAN_DATE of
 	 * the latest record to yesterday System.out.println("Account exists: " +
 	 * accountNum + ", updating END_TRAN_DATE to yesterday.");
 	 * tRAN_MAIN_TRM_WRK_REP.updateEndDateToYesterday(accountNum,
 	 * today.minusDays(1));
-	 * 
+	 *
 	 * // Set TRAN_DATE_BAL to the sum of existing balance and netAmount BigDecimal
 	 * newTRAN_DATE_BAL = existingBalances.get(0).add(netAmount);
 	 * System.out.println("New TRAN_DATE_BAL for account " + accountNum + ": " +
@@ -2900,15 +2908,15 @@ public class BGLSNavigationController {
 	 * false) String formmode, Model model, HttpServletRequest
 	 * request,@RequestParam(required = false) @DateTimeFormat(pattern =
 	 * "yyyy-MM-dd") Date current) {
-	 * 
-	 * 
+	 *
+	 *
 	 * List<TRAN_MAIN_TRM_WRK_ENTITY> work =
 	 * tRAN_MAIN_TRM_WRK_REP.passdate(current);
-	 * 
+	 *
 	 * // Use the 'work' list as required for (TRAN_MAIN_TRM_WRK_ENTITY entity :
 	 * work) { // Do something with each entity }
 	 * System.out.println("passdate"+work);
-	 * 
+	 *
 	 * return ""; }
 	 */
 
@@ -3013,7 +3021,7 @@ public class BGLSNavigationController {
 		return "InterestBatchJob";
 	}
 
-//SURIYA 
+//SURIYA
 	@PostMapping("/uploadatatogled")
 	@ResponseBody
 	public String uploadatatogled(@RequestBody List<GeneralLedgerWork_Entity> generalLedgerWorkEntities,
@@ -3188,8 +3196,8 @@ public class BGLSNavigationController {
 		/*
 		 * if (formmode == null || formmode.equals("list")) {
 		 * model.addAttribute("formmode", "list");
-		 * 
-		 * 
+		 *
+		 *
 		 * }
 		 */
 		if (formmode == null || formmode.equals("Lease")) {
@@ -3671,7 +3679,7 @@ public class BGLSNavigationController {
 			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
 			md.addAttribute("acct_bal", chart_Acc_Rep.getacctbal(id));
 			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
-			
+
 			md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
 
 
@@ -4165,10 +4173,10 @@ public class BGLSNavigationController {
 		return "BACP/PARAMETERADD";
 	}
 
-	
+
 	@Autowired
 	BGLS_ORG_BRANCH_REPO branchrepo;
-	
+
 	@RequestMapping(value = "Parameterview", method = { RequestMethod.GET, RequestMethod.POST })
 	public String parameterEdit(@RequestParam(required = false) String id,
 			@RequestParam(required = false, defaultValue = "view") String formmode, // <--- add this
@@ -4187,7 +4195,7 @@ public class BGLSNavigationController {
 
 		return "BACP/PARAMETERVIEW.html";
 	}
-	
+
 
 
 	@RequestMapping(value = "Parameterdelete", method = { RequestMethod.GET, RequestMethod.POST })
@@ -4249,9 +4257,9 @@ public class BGLSNavigationController {
 		}
 		return "BalancingReport.html";
 	}
-	
-	
-	
+
+
+
 	@RequestMapping(value = "loanMaster", method = { RequestMethod.GET, RequestMethod.POST })
 	public String loanMaster(
 	        @RequestParam(required = false) String formmode,
@@ -4277,7 +4285,7 @@ public class BGLSNavigationController {
 	        md.addAttribute("customer_id", LOAN_ACT_MST_REPO.getLoanValueCUSTOMER_ID(holder_key));
 	        md.addAttribute("customer_name", LOAN_ACT_MST_REPO.getLoanValueCUSTOMER_NAME(holder_key));
 	        md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
-	        
+
 //	        List<CLIENT_MASTER_ENTITY> clients = LOAN_ACT_MST_REPO.getLoanValueList(holder_key);
 
 //	        String customerId ="";
@@ -4287,7 +4295,7 @@ public class BGLSNavigationController {
 //	            customerName = clients.get(0).getFirst_name();
 //	            System.out.println("Customer ID: " + customerId);
 //	        }
-	        
+
 //	        for (CLIENT_MASTER_ENTITY client : clients) {
 //	            System.out.println("Client ID: " + clients[0].getCustomer_id());
 //	            System.out.println("First Name: " + clients.getFirst_name());
@@ -4295,7 +4303,7 @@ public class BGLSNavigationController {
 //	            System.out.println("Mobile: " + client.getMobilePhone());
 //	            System.out.println("---------------------");
 //	        }
-	        
+
 	    } else if (formmode.equals("list")) {
 	        model.addAttribute("formmode", "list");
 	        md.addAttribute("user", user);
@@ -4303,7 +4311,7 @@ public class BGLSNavigationController {
 	    System.out.println("returned");
 	    return "Loan_Master.html";
 	}
-	
+
 	@PostMapping("/submitBulkCollection")
 	@ResponseBody
 	public ResponseEntity<?> submitBulkCollection(HttpServletRequest request,
@@ -4323,7 +4331,7 @@ public class BGLSNavigationController {
 	                .body("Error saving bulk collection: " + e.getMessage());
 	    }
 	}
-	
+
 	@RequestMapping(value = "credit_facility_report", method = { RequestMethod.GET, RequestMethod.POST })
 	public String credit_facility_report(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String userid, Model md, HttpServletRequest req) {
@@ -4334,12 +4342,12 @@ public class BGLSNavigationController {
 
 			md.addAttribute("formmode", "list");
 			md.addAttribute("loanvalues",LOAN_ACT_MST_REPO.getAllDetails());
-			// Details List 
-	        int offset = 0;  
-	        int limit = 50;   
+			// Details List
+	        int offset = 0;
+	        int limit = 50;
 	        md.addAttribute("loanDetails", LOAN_ACT_MST_REPO.getLoanNo(offset, limit));
 
-		} 
+		}
 
 		return "CREDIT_FACILITY_REPORT.html";
 	}
@@ -4373,7 +4381,7 @@ public class BGLSNavigationController {
 			md.addAttribute("lms_schemes", lmsschemerepo.getSchemeList());
 			md.addAttribute("menu", "AMLCustomerKYC");
 			md.addAttribute("menuname", "CustomerKYC");
-			md.addAttribute("formmode", "list"); 
+			md.addAttribute("formmode", "list");
 
 		}
 
@@ -4392,5 +4400,5 @@ public class BGLSNavigationController {
 
 		return new FileSystemResource(repfile);
 	}
-	
+
 }

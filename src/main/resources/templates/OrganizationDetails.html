@@ -467,7 +467,7 @@ VERSION     : 2.0
 
 		function ModifyTab2Submit() {
 			$.ajax({
-				url: './tab2modify',
+				url: '/ASPIRA/tab2modify',
 				data: $("#tab2modify").serialize(),
 				type: 'POST',
 				success: function (data) {
@@ -1724,10 +1724,10 @@ VERSION     : 2.0
 									</div>
 
 									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Pic No</div>
+									<div class="col-sm-2">Remarks</div>
 									<div class="col-sm-2">
 
-										<input type="text" name="pic_no" id="pic_no" th:value="${OrgBranch?.pic_no}"
+										<input type="text" name="pic_no" id="pic_no" th:value="${OrgBranch?.remarks}"
 											readonly class="form-control form-control-sm bg-white border border-dark" />
 
 
@@ -1766,7 +1766,7 @@ VERSION     : 2.0
 
 
 									<div class="col-sm-2">
-										<input type="number" name="mobile" id="mobile" th:value="${OrgBranch?.mobile}"
+										<input maxlength="8" type="number" name="mobile" id="mobile" th:value="${OrgBranch?.mobile}"
 											readonly class="form-control form-control-sm bg-white border border-dark" />
 
 									</div>
@@ -2005,7 +2005,7 @@ VERSION     : 2.0
 
 
 									<div class="col-sm-2">
-										<input type="number" name="mobile" id="mobile" th:value="${OrgBranch?.mobile}"
+										<input type="number" maxlength="8" name="mobile" id="mobile" th:value="${OrgBranch?.mobile}"
 											readonly class="form-control form-control-sm bg-white border border-dark" />
 
 									</div>
@@ -2244,7 +2244,7 @@ VERSION     : 2.0
 
 
 									<div class="col-sm-2">
-										<input type="number" name="mobile" id="mobile" th:value="${OrgBranch?.mobile}"
+										<input type="number" maxlength="8" name="mobile" id="mobile" th:value="${OrgBranch?.mobile}"
 											class="form-control form-control-sm bg-white border border-dark" />
 
 									</div>
@@ -2601,7 +2601,7 @@ VERSION     : 2.0
 
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2">
-										Branch Name <span class="text-danger">*</span>
+										Branch Name
 									</div>
 									<div class="col-sm-2">
 										<input type="text" name="branch_name" id="branch_name"
@@ -2614,7 +2614,7 @@ VERSION     : 2.0
 
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2">
-										Branch Head <span class="text-danger">*</span>
+										Branch Head
 									</div>
 
 
@@ -2626,7 +2626,7 @@ VERSION     : 2.0
 
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2">
-										Designation <span class="text-danger">*</span>
+										Designation
 									</div>
 									<div class="col-sm-2">
 
@@ -2641,7 +2641,7 @@ VERSION     : 2.0
 
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2">
-										Swift Code <span class="text-danger">*</span>
+										Swift Code
 									</div>
 
 
@@ -2670,7 +2670,7 @@ VERSION     : 2.0
 
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2">
-										Land Line <span class="text-danger">*</span>
+										Land Line
 									</div>
 
 
@@ -2682,7 +2682,7 @@ VERSION     : 2.0
 
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2">
-										Fax <span class="text-danger">*</span>
+										Fax
 									</div>
 									<div class="col-sm-2">
 
@@ -2697,19 +2697,19 @@ VERSION     : 2.0
 
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2">
-										Mobile <span class="text-danger">*</span>
+										Mobile
 									</div>
 
 
 									<div class="col-sm-2">
-										<input type="number" name="mobile" id="mobile"
+										<input type="number" maxlength="8" name="mobile" id="mobile"
 											class="form-control form-control-sm bg-white border border-dark" />
 
 									</div>
 
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2">
-										Contact Person <span class="text-danger">*</span>
+										Contact Person
 									</div>
 									<div class="col-sm-2">
 

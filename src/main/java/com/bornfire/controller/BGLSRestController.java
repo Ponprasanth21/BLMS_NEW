@@ -148,7 +148,7 @@ import com.bornfire.services.RepaymentScheduleServices;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 import java.nio.charset.StandardCharsets;
-
+import java.util.Objects;
 @RestController
 @Transactional
 
@@ -824,7 +824,7 @@ public class BGLSRestController {
 	@RequestMapping(value = "OrgBranchAdd", method = RequestMethod.POST)
 	@ResponseBody
 	public String OrgBranchAdd(Model md, HttpServletRequest rq,
-			@ModelAttribute Organization_Branch_Entity organization_Branch_Entity) {
+			Organization_Branch_Entity organization_Branch_Entity) {
 
 		String userid = (String) rq.getSession().getAttribute("USERID");
 		List<String> existingdata = organization_Branch_Rep.getexistingData();
@@ -836,7 +836,7 @@ public class BGLSRestController {
 		} else {
 			try {
 				Organization_Branch_Entity up = organization_Branch_Entity;
-				System.out.println(up.getBranch_code());
+				System.out.println(up.getBranch_code()+" ==========");
 				
 				if (up.getBranch_code() == null || up.getBranch_code().trim().isEmpty()) {
 				    return "Branch Code is required.";
@@ -1050,6 +1050,7 @@ public class BGLSRestController {
 					audit.setEvent_id(user.getUserid());
 				});
 
+
 				audit.setModi_details(sb.toString());
 				audit.setAudit_ref_no(auditID.toString());
 
@@ -1069,10 +1070,10 @@ public class BGLSRestController {
 	}
 
 	/* Thanveer */
-	@RequestMapping(value = "tab2modify", method = RequestMethod.POST)
-	@ResponseBody
+    @RequestMapping(value = "tab2modify", method = RequestMethod.POST)
+//    @ResponseBody
 	public String tab2modify(Model md, HttpServletRequest rq,
-			@ModelAttribute Organization_Branch_Entity organization_Branch_Entity) {
+                             @ModelAttribute Organization_Branch_Entity organization_Branch_Entity) {
 
 		/*
 		 * Organization_Branch_Entity up = organization_Branch_Entity;
@@ -1091,26 +1092,26 @@ public class BGLSRestController {
 		String msg = "";
 		if (up.isPresent()) {
 			Organization_Branch_Entity us1 = up.get();
-			if ((us1.getBranch_name().equals(organization_Branch_Entity.getBranch_name())
-					&& us1.getDesignation().equals(organization_Branch_Entity.getDesignation())
-					&& us1.getSwift_code().equals(organization_Branch_Entity.getSwift_code())
-					// && us1.getPic_no().equals(organization_Branch_Entity.getPic_no())
-					&& us1.getLand_line().equals(organization_Branch_Entity.getLand_line())
-					&& us1.getFax().equals(organization_Branch_Entity.getFax()) && us1.getMobile() != null
-					&& us1.getMobile().equals(organization_Branch_Entity.getMobile())
-					&& us1.getCont_person().equals(organization_Branch_Entity.getCont_person())
-					&& us1.getBranch_head().equals(organization_Branch_Entity.getBranch_head())
-					&& us1.getWebsite().equals(organization_Branch_Entity.getWebsite())
-					&& us1.getMail_id().equals(organization_Branch_Entity.getMail_id())
-					&& us1.getAdd_1().equals(organization_Branch_Entity.getAdd_1())
-					&& us1.getAdd_2().equals(organization_Branch_Entity.getAdd_2())
-					&& us1.getCity().equals(organization_Branch_Entity.getCity())
-					&& us1.getState().equals(organization_Branch_Entity.getState())
-					&& us1.getCountry().equals(organization_Branch_Entity.getCountry())
-					&& us1.getRemarks().equals(organization_Branch_Entity.getRemarks())
-					&& us1.getZip_code().equals(organization_Branch_Entity.getZip_code()))) {
-				msg = "No any Modification done";
-			} else {
+            if (Objects.equals(us1.getBranch_name(), organization_Branch_Entity.getBranch_name())
+                    && Objects.equals(us1.getDesignation(), organization_Branch_Entity.getDesignation())
+                    && Objects.equals(us1.getSwift_code(), organization_Branch_Entity.getSwift_code())
+                    && Objects.equals(us1.getLand_line(), organization_Branch_Entity.getLand_line())
+                    && Objects.equals(us1.getFax(), organization_Branch_Entity.getFax())
+                    && Objects.equals(us1.getMobile(), organization_Branch_Entity.getMobile())
+                    && Objects.equals(us1.getCont_person(), organization_Branch_Entity.getCont_person())
+                    && Objects.equals(us1.getBranch_head(), organization_Branch_Entity.getBranch_head())
+                    && Objects.equals(us1.getWebsite(), organization_Branch_Entity.getWebsite())
+                    && Objects.equals(us1.getMail_id(), organization_Branch_Entity.getMail_id())
+                    && Objects.equals(us1.getAdd_1(), organization_Branch_Entity.getAdd_1())
+                    && Objects.equals(us1.getAdd_2(), organization_Branch_Entity.getAdd_2())
+                    && Objects.equals(us1.getCity(), organization_Branch_Entity.getCity())
+                    && Objects.equals(us1.getState(), organization_Branch_Entity.getState())
+                    && Objects.equals(us1.getCountry(), organization_Branch_Entity.getCountry())
+                    && Objects.equals(us1.getRemarks(), organization_Branch_Entity.getRemarks())
+                    && Objects.equals(us1.getZip_code(), organization_Branch_Entity.getZip_code())) {
+
+                msg = "No any Modification done";
+            } else {
 				System.out.println(organization_Branch_Entity.getMobile() + "UYIU");
 
 				organization_Branch_Entity.setModify_flg("Y");
@@ -1121,103 +1122,103 @@ public class BGLSRestController {
 				// for audit
 				StringBuilder stringBuilder = new StringBuilder();
 
-				if ((us1.getBranch_name().equals(organization_Branch_Entity.getBranch_name())
-						&& us1.getBranch_head().equals(organization_Branch_Entity.getBranch_head())
-						&& us1.getDesignation().equals(organization_Branch_Entity.getDesignation())
-						&& us1.getSwift_code().equals(organization_Branch_Entity.getSwift_code())
-						// && us1.getPic_no().equals(organization_Branch_Entity.getPic_no())
-						&& us1.getLand_line().equals(organization_Branch_Entity.getLand_line())
-						&& us1.getFax().equals(organization_Branch_Entity.getFax()) && us1.getMobile() != null
-						&& us1.getMobile().equals(organization_Branch_Entity.getMobile())
-						&& us1.getCont_person().equals(organization_Branch_Entity.getCont_person())
-						&& us1.getWebsite().equals(organization_Branch_Entity.getWebsite())
-						&& us1.getMail_id().equals(organization_Branch_Entity.getMail_id())
-						&& us1.getAdd_1().equals(organization_Branch_Entity.getAdd_1())
-						&& us1.getAdd_2().equals(organization_Branch_Entity.getAdd_2())
-						&& us1.getCity().equals(organization_Branch_Entity.getCity())
-						&& us1.getState().equals(organization_Branch_Entity.getState())
-						&& us1.getCountry().equals(organization_Branch_Entity.getCountry())
-						&& us1.getRemarks().equals(organization_Branch_Entity.getRemarks())
-						&& us1.getZip_code().equals(organization_Branch_Entity.getZip_code()))) {
+                if (Objects.equals(us1.getBranch_name(), organization_Branch_Entity.getBranch_name())
+                        && Objects.equals(us1.getBranch_head(), organization_Branch_Entity.getBranch_head())
+                        && Objects.equals(us1.getDesignation(), organization_Branch_Entity.getDesignation())
+                        && Objects.equals(us1.getSwift_code(), organization_Branch_Entity.getSwift_code())
+                        && Objects.equals(us1.getLand_line(), organization_Branch_Entity.getLand_line())
+                        && Objects.equals(us1.getFax(), organization_Branch_Entity.getFax())
+                        && Objects.equals(us1.getMobile(), organization_Branch_Entity.getMobile())
+                        && Objects.equals(us1.getCont_person(), organization_Branch_Entity.getCont_person())
+                        && Objects.equals(us1.getWebsite(), organization_Branch_Entity.getWebsite())
+                        && Objects.equals(us1.getMail_id(), organization_Branch_Entity.getMail_id())
+                        && Objects.equals(us1.getAdd_1(), organization_Branch_Entity.getAdd_1())
+                        && Objects.equals(us1.getAdd_2(), organization_Branch_Entity.getAdd_2())
+                        && Objects.equals(us1.getCity(), organization_Branch_Entity.getCity())
+                        && Objects.equals(us1.getState(), organization_Branch_Entity.getState())
+                        && Objects.equals(us1.getCountry(), organization_Branch_Entity.getCountry())
+                        && Objects.equals(us1.getRemarks(), organization_Branch_Entity.getRemarks())
+                        && Objects.equals(us1.getZip_code(), organization_Branch_Entity.getZip_code())) {
 
-				}
-				if (!us1.getBranch_name().equals(organization_Branch_Entity.getBranch_name())) {
-					stringBuilder = stringBuilder.append("Branch Name+" + us1.getBranch_name() + "+"
-							+ organization_Branch_Entity.getBranch_name() + "||");
-				}
-				if (!us1.getBranch_head().equals(organization_Branch_Entity.getBranch_head())) {
-					stringBuilder = stringBuilder.append("Branch Head+" + us1.getBranch_head() + "+"
-							+ organization_Branch_Entity.getBranch_head() + "||");
-				}
-				if (!us1.getDesignation().equals(organization_Branch_Entity.getDesignation())) {
-					stringBuilder = stringBuilder.append("Designation+" + us1.getDesignation() + "+"
-							+ organization_Branch_Entity.getDesignation() + "||");
-				}
-				if (!us1.getSwift_code().equals(organization_Branch_Entity.getSwift_code())) {
-					stringBuilder = stringBuilder.append("Swift Code+" + us1.getSwift_code() + "+"
-							+ organization_Branch_Entity.getSwift_code() + "||");
-				}
-				/*
-				 * if (!us1.getPic_no().equals(organization_Branch_Entity.getPic_no())) {
-				 * stringBuilder = stringBuilder .append("Pic No+" + us1.getPic_no() + "+" +
-				 * organization_Branch_Entity.getPic_no() + "||"); }
-				 */
-				if (!us1.getLand_line().equals(organization_Branch_Entity.getLand_line())) {
-					stringBuilder = stringBuilder.append(
-							"Land Line+" + us1.getLand_line() + "+" + organization_Branch_Entity.getLand_line() + "||");
-				}
-				if (!us1.getFax().equals(organization_Branch_Entity.getFax())) {
-					stringBuilder = stringBuilder
-							.append("Fax+" + us1.getFax() + "+" + organization_Branch_Entity.getFax() + "||");
-				}
-				if (!(us1.getMobile() != null && us1.getMobile().equals(organization_Branch_Entity.getMobile()))) {
-					stringBuilder = stringBuilder
-							.append("Mobile+" + us1.getMobile() + "+" + organization_Branch_Entity.getMobile() + "||");
-				}
-				if (!(us1.getRemarks() != null && us1.getRemarks().equals(organization_Branch_Entity.getRemarks()))) {
-					stringBuilder = stringBuilder.append(
-							"Mobile+" + us1.getRemarks() + "+" + organization_Branch_Entity.getRemarks() + "||");
-				}
-				if (!us1.getCont_person().equals(organization_Branch_Entity.getCont_person())) {
-					stringBuilder = stringBuilder.append("Contact Person+" + us1.getCont_person() + "+"
-							+ organization_Branch_Entity.getCont_person() + "||");
-				}
-				if (!us1.getWebsite().equals(organization_Branch_Entity.getWebsite())) {
-					stringBuilder = stringBuilder.append(
-							"Web Site+" + us1.getWebsite() + "+" + organization_Branch_Entity.getWebsite() + "||");
-				}
-				if (!us1.getMail_id().equals(organization_Branch_Entity.getMail_id())) {
-					stringBuilder = stringBuilder.append(
-							"Mail Id+" + us1.getMail_id() + "+" + organization_Branch_Entity.getMail_id() + "||");
-				}
-				if (!us1.getAdd_1().equals(organization_Branch_Entity.getAdd_1())) {
-					stringBuilder = stringBuilder
-							.append("Address 1+" + us1.getAdd_1() + "+" + organization_Branch_Entity.getAdd_1() + "||");
-				}
+                }
 
-				if (!us1.getAdd_2().equalsIgnoreCase(organization_Branch_Entity.getAdd_2())) {
-					stringBuilder = stringBuilder
-							.append("Address 2+" + us1.getAdd_2() + "+" + organization_Branch_Entity.getAdd_2() + "||");
-
-				}
-				if (!us1.getCity().equalsIgnoreCase(organization_Branch_Entity.getCity())) {
-					stringBuilder = stringBuilder
-							.append("City+" + us1.getCity() + "+" + organization_Branch_Entity.getCity() + "||");
-
-				}
-				if (!us1.getCountry().equalsIgnoreCase(organization_Branch_Entity.getCountry())) {
-					stringBuilder = stringBuilder
-							.append("State+" + us1.getCountry() + "+" + organization_Branch_Entity.getCountry() + "||");
-				}
-				if (!us1.getState().equalsIgnoreCase(organization_Branch_Entity.getState())) {
-					stringBuilder = stringBuilder
-							.append("Country+" + us1.getState() + "+" + organization_Branch_Entity.getState() + "||");
-				}
-
-				if (!us1.getZip_code().equalsIgnoreCase(organization_Branch_Entity.getZip_code())) {
-					stringBuilder = stringBuilder.append(
-							"Zip Code+" + us1.getZip_code() + "+" + organization_Branch_Entity.getZip_code() + "||");
-				}
+//                if (!us1.getBranch_name().equals(organization_Branch_Entity.getBranch_name())) {
+//					stringBuilder = stringBuilder.append("Branch Name+" + us1.getBranch_name() + "+"
+//							+ organization_Branch_Entity.getBranch_name() + "||");
+//				}
+//				if (!us1.getBranch_head().equals(organization_Branch_Entity.getBranch_head())) {
+//					stringBuilder = stringBuilder.append("Branch Head+" + us1.getBranch_head() + "+"
+//							+ organization_Branch_Entity.getBranch_head() + "||");
+//				}
+//				if (!us1.getDesignation().equals(organization_Branch_Entity.getDesignation())) {
+//					stringBuilder = stringBuilder.append("Designation+" + us1.getDesignation() + "+"
+//							+ organization_Branch_Entity.getDesignation() + "||");
+//				}
+//				if (!us1.getSwift_code().equals(organization_Branch_Entity.getSwift_code())) {
+//					stringBuilder = stringBuilder.append("Swift Code+" + us1.getSwift_code() + "+"
+//							+ organization_Branch_Entity.getSwift_code() + "||");
+//				}
+//				/*
+//				 * if (!us1.getPic_no().equals(organization_Branch_Entity.getPic_no())) {
+//				 * stringBuilder = stringBuilder .append("Pic No+" + us1.getPic_no() + "+" +
+//				 * organization_Branch_Entity.getPic_no() + "||"); }
+//				 */
+//				if (!us1.getLand_line().equals(organization_Branch_Entity.getLand_line())) {
+//					stringBuilder = stringBuilder.append(
+//							"Land Line+" + us1.getLand_line() + "+" + organization_Branch_Entity.getLand_line() + "||");
+//				}
+//				if (!us1.getFax().equals(organization_Branch_Entity.getFax())) {
+//					stringBuilder = stringBuilder
+//							.append("Fax+" + us1.getFax() + "+" + organization_Branch_Entity.getFax() + "||");
+//				}
+//				if (!(us1.getMobile() != null && us1.getMobile().equals(organization_Branch_Entity.getMobile()))) {
+//					stringBuilder = stringBuilder
+//							.append("Mobile+" + us1.getMobile() + "+" + organization_Branch_Entity.getMobile() + "||");
+//				}
+//				if (!(us1.getRemarks() != null && us1.getRemarks().equals(organization_Branch_Entity.getRemarks()))) {
+//					stringBuilder = stringBuilder.append(
+//							"Mobile+" + us1.getRemarks() + "+" + organization_Branch_Entity.getRemarks() + "||");
+//				}
+//				if (!us1.getCont_person().equals(organization_Branch_Entity.getCont_person())) {
+//					stringBuilder = stringBuilder.append("Contact Person+" + us1.getCont_person() + "+"
+//							+ organization_Branch_Entity.getCont_person() + "||");
+//				}
+//				if (!us1.getWebsite().equals(organization_Branch_Entity.getWebsite())) {
+//					stringBuilder = stringBuilder.append(
+//							"Web Site+" + us1.getWebsite() + "+" + organization_Branch_Entity.getWebsite() + "||");
+//				}
+//				if (!us1.getMail_id().equals(organization_Branch_Entity.getMail_id())) {
+//					stringBuilder = stringBuilder.append(
+//							"Mail Id+" + us1.getMail_id() + "+" + organization_Branch_Entity.getMail_id() + "||");
+//				}
+//				if (!us1.getAdd_1().equals(organization_Branch_Entity.getAdd_1())) {
+//					stringBuilder = stringBuilder
+//							.append("Address 1+" + us1.getAdd_1() + "+" + organization_Branch_Entity.getAdd_1() + "||");
+//				}
+//
+//				if (!us1.getAdd_2().equalsIgnoreCase(organization_Branch_Entity.getAdd_2())) {
+//					stringBuilder = stringBuilder
+//							.append("Address 2+" + us1.getAdd_2() + "+" + organization_Branch_Entity.getAdd_2() + "||");
+//
+//				}
+//				if (!us1.getCity().equalsIgnoreCase(organization_Branch_Entity.getCity())) {
+//					stringBuilder = stringBuilder
+//							.append("City+" + us1.getCity() + "+" + organization_Branch_Entity.getCity() + "||");
+//
+//				}
+//				if (!us1.getCountry().equalsIgnoreCase(organization_Branch_Entity.getCountry())) {
+//					stringBuilder = stringBuilder
+//							.append("State+" + us1.getCountry() + "+" + organization_Branch_Entity.getCountry() + "||");
+//				}
+//				if (!us1.getState().equalsIgnoreCase(organization_Branch_Entity.getState())) {
+//					stringBuilder = stringBuilder
+//							.append("Country+" + us1.getState() + "+" + organization_Branch_Entity.getState() + "||");
+//				}
+//
+//				if (!us1.getZip_code().equalsIgnoreCase(organization_Branch_Entity.getZip_code())) {
+//					stringBuilder = stringBuilder.append(
+//							"Zip Code+" + us1.getZip_code() + "+" + organization_Branch_Entity.getZip_code() + "||");
+//				}
 
 				audit.setAudit_date(new Date());
 				audit.setEntry_time(new Date());
@@ -1231,9 +1232,8 @@ public class BGLSRestController {
 				audit.setEvent_name(user.getUsername());
 				audit.setEvent_id(user.getUserid());
 				// audit.setEvent_name(up.getUsername());
-				String modiDetails = stringBuilder.toString();
-
-				audit.setModi_details(modiDetails);
+//				String modiDetails = stringBuilder.toString();
+				audit.setModi_details("Modify Successfully In Branch Screen");
 				audit.setAudit_ref_no(auditID.toString());
 				UserProfile auth_user = userProfileRep.getRole(userid);
 				String auth_user_val = auth_user.getAuth_user();
