@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -112,6 +113,7 @@ import com.bornfire.entities.LOAN_ACT_MST_REPO;
 import com.bornfire.entities.Lease_Loan_Master_Entity;
 import com.bornfire.entities.Lease_Loan_Master_Repo;
 import com.bornfire.entities.Lease_Loan_Work_Repo;
+import com.bornfire.entities.LoanDetailsDTO;
 import com.bornfire.entities.MULTIPLE_TRANSACTION_ENTITY;
 import com.bornfire.entities.MULTIPLE_TRANSACTION_REPO;
 import com.bornfire.entities.NoticeDetailsGeneral0Rep;
@@ -4341,7 +4343,8 @@ public class BGLSNavigationController {
 		if (formmode == null || formmode.equals("list")) {
 
 			md.addAttribute("formmode", "list");
-			md.addAttribute("loanvalues",LOAN_ACT_MST_REPO.getAllDetails());
+			List<Object[]> results = LOAN_ACT_MST_REPO.getAllDetails();
+			md.addAttribute("loanvalues", results);
 			// Details List
 	        int offset = 0;
 	        int limit = 50;
