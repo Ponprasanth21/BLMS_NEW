@@ -166,7 +166,8 @@
         }
 
         function Back() {
-            window.history.back();
+            // window.history.back();
+            window.location.href = 'Parameter';
         }
 
 
@@ -195,7 +196,7 @@
                 type: 'POST',
                 contentType: 'application/json',    // Important: send JSON
                 data: JSON.stringify(formData),
-                    // Send form data in request body
+                // Send form data in request body
                 success: function (data) {
                     // Show server response in modal
                     $("#alertmsg").text(data);
@@ -352,7 +353,8 @@
                                         </div>
 
                                         <div class="row g-3 mt-2">
-                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Product Availability</label>
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Product
+                                                Availability</label>
                                         </div>
 
                                         <div class="row g-3 mt-2">
@@ -384,10 +386,11 @@
 
                                             <!-- Grace Period Type -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="BRANCHES" class="form-label me-2 mb-0 text-end" style="width: 45%;">BRANCHES</label>
-                                                <select id="branches" name="branches" 
-                                                        class="form-control form-control-sm border border-dark" 
-                                                        style="width: 55%;">
+                                                <label for="BRANCHES" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">BRANCHES</label>
+                                                <select id="branches" name="branches"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
                                                 </select>
                                             </div>
 
@@ -423,8 +426,7 @@
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="interestType" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">INITIAL_ACCOUNT_STATE</label>
-                                                <input type="text" id="initialAccountState"
-                                                    name="initialAccountState"
+                                                <input type="text" id="initialAccountState" name="initialAccountState"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;">
                                             </div>
@@ -480,8 +482,7 @@
                                                 <label for="maxFirstRepaymentDueDateOffset"
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ACCRUED_INT_POST_FREQ</label>
-                                                <input type="text" id="accruedIntPostFreq"
-                                                    name="accruedIntPostFreq"
+                                                <input type="text" id="accruedIntPostFreq" name="accruedIntPostFreq"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;">
                                             </div>
@@ -501,14 +502,13 @@
 
 
                                         <div class="row g-3 mt-2">
-                                           
+
 
 
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="maxNumInstallments" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">INTEREST_RATE_CHARGED</label>
-                                                <input type="text" id="interestRateCharged"
-                                                    name="interestRateCharged"
+                                                <input type="text" id="interestRateCharged" name="interestRateCharged"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;">
                                             </div>
@@ -536,7 +536,7 @@
 
                                         <div class="row g-3 mt-2">
 
-                                            
+
 
                                             <!-- Interest Accrued Accounting Method -->
                                             <div class="col-md-4 d-flex align-items-center">
@@ -549,17 +549,15 @@
                                             </div>
 
                                             <div class="col-md-4 d-flex justify-content-between align-items-center">
-                                                
 
-                                                <input type="checkbox"
-                                                    id="accruedIntAfterMaturity"
+
+                                                <input type="checkbox" id="accruedIntAfterMaturity"
                                                     name="accruedIntAfterMaturity"
                                                     class="form-check-input border border-dark ms-2 ml-1"
-                                                    style="width: 20px; height: 20px;"
-                                                    value="N"
+                                                    style="width: 20px; height: 20px;" value="N"
                                                     onchange="this.value = this.checked ? 'Y' : 'N'">
 
-                                                    <label for="accruedIntAfterMaturity"
+                                                <label for="accruedIntAfterMaturity"
                                                     class="form-label mb-0 text-start ml-5">
                                                     ACCRUED_INT_AFTER_MATURITY
                                                 </label>
@@ -588,8 +586,7 @@
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="loanProductType" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">REPAYMENT_MADE_EVERY</label>
-                                                <input type="number" id="repaymentMadeEvery"
-                                                    name="repaymentMadeEvery"
+                                                <input type="number" id="repaymentMadeEvery" name="repaymentMadeEvery"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;">
                                             </div>
@@ -613,8 +610,7 @@
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="minPenaltyRate" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FIRST_DUE_DATE_OFFSET</label>
-                                                <input type="number" id="firstDueDateOffset"
-                                                    name="firstDueDateOffset"
+                                                <input type="number" id="firstDueDateOffset" name="firstDueDateOffset"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;">
                                             </div>
@@ -642,7 +638,7 @@
                                         </div>
 
                                         <div class="row g-3 mt-2">
-                                     
+
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="productName" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ROUND_OFF_REPAY_SCHEDULE</label>
@@ -674,86 +670,81 @@
                                         </div>
 
                                         <div class="row g-3 mt-2">
-                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Repayment Schedule Edit</label>
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Repayment
+                                                Schedule Edit</label>
                                         </div>
 
                                         <div class="row g-3 mt-2">
-                                            
-                                            <div class="col-md-2 d-flex align-items-center">
-                                                <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="adjustPaymentDates" name="adjustPaymentDates"
-                                                                value="N"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;">
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="adjustPaymentDates">Adjust Payment Dates</label>
-                                                        </div>
-                                            </div>
-                                            <div class="col-md-2 d-flex align-items-center">
-                                                <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="adjustPrincipalSchedule"
-                                                                name="adjustPrincipalSchedule" value="N"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;">
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="adjustPrincipalSchedule">Adjust Principal Payment
-                                                                Schedule</label>
-                                                        </div>
-                                            </div>
-                                            <div class="col-md-2 d-flex align-items-center">
-                                                <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="adjustInterestSchedule"
-                                                                name="adjustInterestSchedule" value="N"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;">
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="adjustInterestSchedule">Adjust Interest Payment
-                                                                Schedule</label>
-                                                        </div>
-                                            </div>
-                                            <div class="col-md-2 d-flex align-items-center">
-                                                <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="adjustFeeSchedule" name="adjustFeeSchedule"
-                                                                value="N"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;">
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="adjustFeeSchedule">Adjust Fee Payment
-                                                                Schedule</label>
-                                                        </div>
-                                            </div>
-                                            <div class="col-md-2 d-flex align-items-center">
-                                                 <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="adjustPenaltySchedule" name="adjustPenaltySchedule"
-                                                                value="N"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;">
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="adjustPenaltySchedule">Adjust Penalty Payment
-                                                                Schedule</label>
-                                                        </div>
-                                            </div>
-                                            <div class="col-md-2 d-flex align-items-center">
-                                                <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="configurePaymentHolidays"
-                                                                name="configurePaymentHolidays" value="N"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;">
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="configurePaymentHolidays">Configure Payment
-                                                                Holidays</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                         
 
-                                        
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="adjustPaymentDates" name="adjustPaymentDates" value="N"
+                                                        onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;">
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="adjustPaymentDates">Adjust Payment Dates</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="adjustPrincipalSchedule" name="adjustPrincipalSchedule"
+                                                        value="N" onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;">
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="adjustPrincipalSchedule">Adjust Principal Payment
+                                                        Schedule</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="adjustInterestSchedule" name="adjustInterestSchedule"
+                                                        value="N" onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;">
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="adjustInterestSchedule">Adjust Interest Payment
+                                                        Schedule</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="adjustFeeSchedule" name="adjustFeeSchedule" value="N"
+                                                        onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;">
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="adjustFeeSchedule">Adjust Fee Payment
+                                                        Schedule</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="adjustPenaltySchedule" name="adjustPenaltySchedule"
+                                                        value="N" onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;">
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="adjustPenaltySchedule">Adjust Penalty Payment
+                                                        Schedule</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="configurePaymentHolidays" name="configurePaymentHolidays"
+                                                        value="N" onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;">
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="configurePaymentHolidays">Configure Payment
+                                                        Holidays</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
 
 
                                         <div class="row g-3 mt-2">
@@ -766,8 +757,7 @@
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="repaymentPeriodUnit" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">PREPAYMENT_ACCEPTANCE</label>
-                                                <input type="text" id="prepaymentAcceptance"
-                                                    name="prepaymentAcceptance"
+                                                <input type="text" id="prepaymentAcceptance" name="prepaymentAcceptance"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;">
                                             </div>
@@ -791,10 +781,11 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;">
                                                     <option value="">select</option>
-                                                    <option value="Fee">Fee</option>
-                                                    <option value="Penalty">Penalty</option>
-                                                    <option value="Interest">Interest</option>
-                                                    <option value="Principal">Principal</option>
+                                                    <option value="Fee,Penalty,Interest,Principal">
+                                                        Fee,Penalty,Interest,Principal</option>
+                                                    <option value="Principal,Interest,Fee,Penalty">
+                                                        Principal,Interest,Fee,Penalty</option>
+
                                                 </select>
                                             </div>
                                         </div>
@@ -821,8 +812,7 @@
                                                 <label for="defaultPrincipalRepaymentInterval"
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ARREARS_DAY_CALC_FROM</label>
-                                                <input type="text" id="arrearsDayCalcFrom"
-                                                    name="arrearsDayCalcFrom"
+                                                <input type="text" id="arrearsDayCalcFrom" name="arrearsDayCalcFrom"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;">
                                             </div>
@@ -832,8 +822,7 @@
                                                 <label for="loanPenaltyCalculationMethod"
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ARREARS_TOLERANCE_AMT</label>
-                                                <input type="number" id="arrearsToleranceAmt"
-                                                    name="arrearsToleranceAmt"
+                                                <input type="number" id="arrearsToleranceAmt" name="arrearsToleranceAmt"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;">
                                             </div>
@@ -845,8 +834,7 @@
                                                 <label for="loanPenaltyGracePeriod"
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">WITH_A_FLOOR</label>
-                                                <input type="number" id="withAFloor"
-                                                    name="withAFloor"
+                                                <input type="number" id="withAFloor" name="withAFloor"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;">
                                             </div>
@@ -928,20 +916,18 @@
                                                     name="closeDormantAccounts"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
-                                                
-                                                    <input type="checkbox"
-                                                    id="closeDormantAccounts"
+
+                                                <input type="checkbox" id="closeDormantAccounts"
                                                     name="closeDormantAccounts"
                                                     class="form-check-input border border-dark ms-2 ml-1"
-                                                    style="width: 20px; height: 20px;"
-                                                    value="N"
+                                                    style="width: 20px; height: 20px;" value="N"
                                                     onchange="this.value = this.checked ? 'Y' : 'N'">
 
-                                                    <label for="closeDormantAccounts"
+                                                <label for="closeDormantAccounts"
                                                     class="form-label mb-0 text-start ml-5">
                                                     CLOSE_DORMANT_ACCOUNTS
                                                 </label>
-                                                
+
                                             </div>
 
                                             <!-- Repayment Allocation Order -->
@@ -953,16 +939,12 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                                <input type="checkbox"
-                                                    id="lockArrearsAccount"
-                                                    name="lockArrearsAccount"
+                                                <input type="checkbox" id="lockArrearsAccount" name="lockArrearsAccount"
                                                     class="form-check-input border border-dark ms-2 ml-1"
-                                                    style="width: 20px; height: 20px;"
-                                                    value="N"
+                                                    style="width: 20px; height: 20px;" value="N"
                                                     onchange="this.value = this.checked ? 'Y' : 'N'">
 
-                                                    <label for="lockArrearsAccount"
-                                                    class="form-label mb-0 text-start ml-5">
+                                                <label for="lockArrearsAccount" class="form-label mb-0 text-start ml-5">
                                                     LOCK_ARREARS_ACCOUNT
                                                 </label>
                                             </div>
@@ -975,16 +957,12 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                                <input type="checkbox"
-                                                    id="capCharges"
-                                                    name="capCharges"
+                                                <input type="checkbox" id="capCharges" name="capCharges"
                                                     class="form-check-input border border-dark ms-2 ml-1"
-                                                    style="width: 20px; height: 20px;"
-                                                    value="N"
+                                                    style="width: 20px; height: 20px;" value="N"
                                                     onchange="this.value = this.checked ? 'Y' : 'N'">
 
-                                                    <label for="capCharges"
-                                                    class="form-label mb-0 text-start ml-5">
+                                                <label for="capCharges" class="form-label mb-0 text-start ml-5">
                                                     CAP_CHARGES
                                                 </label>
                                             </div>
@@ -1005,16 +983,12 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                                <input type="checkbox"
-                                                    id="allowArbitraryFees"
-                                                    name="allowArbitraryFees"
+                                                <input type="checkbox" id="allowArbitraryFees" name="allowArbitraryFees"
                                                     class="form-check-input border border-dark ms-2 ml-1"
-                                                    style="width: 20px; height: 20px;"
-                                                    value="N"
+                                                    style="width: 20px; height: 20px;" value="N"
                                                     onchange="this.value = this.checked ? 'Y' : 'N'">
 
-                                                    <label for="allowArbitraryFees"
-                                                    class="form-label mb-0 text-start ml-5">
+                                                <label for="allowArbitraryFees" class="form-label mb-0 text-start ml-5">
                                                     ALLOW_ARBITARY_FEES
                                                 </label>
                                             </div>
@@ -1086,6 +1060,19 @@
                                         </div>
 
                                         <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE1_APPLICATION</label>
+                                                <input type="text" id="fee1Application" name="fee1Application"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
 
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
@@ -1141,6 +1128,19 @@
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">AMOUNT</label>
                                                 <input type="number" id="fee2Amount" name="fee2Amount"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE2_APPLICATION</label>
+                                                <input type="text" id="fee2Application" name="fee2Application"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;">
                                             </div>
@@ -1290,6 +1290,19 @@
                                         </div>
 
                                         <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE4_APPLICATION</label>
+                                                <input type="text" id="fee4Application" name="fee4Application"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
 
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
@@ -1376,7 +1389,6 @@
                                                     style="width: 55%;">
                                             </div>
 
-                                            <!-- Account Linking Enabled -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE6_ID_TYPE</label>
@@ -1385,7 +1397,6 @@
                                                     style="width: 55%;">
                                             </div>
 
-                                            <!-- Auto Link Accounts -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE6_PAYMENT</label>
@@ -1398,7 +1409,6 @@
 
                                         <div class="row g-3 mt-2">
 
-                                            <!-- Auto Create Linked Accounts -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="autoCreateLinkedAccounts"
                                                     class="form-label me-2 mb-0 text-end"
@@ -1429,12 +1439,657 @@
 
                                         </div>
 
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE6_APPLICATION</label>
+                                                <input type="text" id="fee6Application" name="fee6Application"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee7Name" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE7_NAME</label>
+                                                <input type="text" id="fee7Name" name="fee7Name"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee7IdType" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE7_ID_TYPE</label>
+                                                <input type="text" id="fee7IdType" name="fee7IdType"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee7Payment" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE7_PAYMENT</label>
+                                                <input type="text" id="fee7Payment" name="fee7Payment"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee7AmortProfile" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE7_AMORT_PROFILE</label>
+                                                <input type="text" id="fee7AmortProfile" name="fee7AmortProfile"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee7Type" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee7Type" name="fee7Type"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee7Amount" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee7Amount" name="fee7Amount"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee7Application" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE7_APPLICATION</label>
+                                                <input type="text" id="fee7Application" name="fee7Application"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
 
 
 
 
 
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee8Name" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE8_NAME</label>
+                                                <input type="text" id="fee8Name" name="fee8Name"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
 
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee8IdType" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE8_ID_TYPE</label>
+                                                <input type="text" id="fee8IdType" name="fee8IdType"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee8Payment" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE8_PAYMENT</label>
+                                                <input type="text" id="fee8Payment" name="fee8Payment"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee8AmortProfile" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE8_AMORT_PROFILE</label>
+                                                <input type="text" id="fee8AmortProfile" name="fee8AmortProfile"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee8Type" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee8Type" name="fee8Type"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee8Amount" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee8Amount" name="fee8Amount"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee8Application" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE8_APPLICATION</label>
+                                                <input type="text" id="fee8Application" name="fee8Application"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee9Name" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE9_NAME</label>
+                                                <input type="text" id="fee9Name" name="fee9Name"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee9IdType" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE9_ID_TYPE</label>
+                                                <input type="text" id="fee9IdType" name="fee9IdType"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee9Payment" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE9_PAYMENT</label>
+                                                <input type="text" id="fee9Payment" name="fee9Payment"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee9AmortProfile" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE9_AMORT_PROFILE</label>
+                                                <input type="text" id="fee9AmortProfile" name="fee9AmortProfile"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee9Type" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee9Type" name="fee9Type"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee9Amount" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee9Amount" name="fee9Amount"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee9Application" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE9_APPLICATION</label>
+                                                <input type="text" id="fee9Application" name="fee9Application"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee10Name" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE10_NAME</label>
+                                                <input type="text" id="fee10Name" name="fee10Name"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee10IdType" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE10_ID_TYPE</label>
+                                                <input type="text" id="fee10IdType" name="fee10IdType"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee10Payment" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE10_PAYMENT</label>
+                                                <input type="text" id="fee10Payment" name="fee10Payment"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee10AmortProfile" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE10_AMORT_PROFILE</label>
+                                                <input type="text" id="fee10AmortProfile" name="fee10AmortProfile"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee10Type" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee10Type" name="fee10Type"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee10Amount" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee10Amount" name="fee10Amount"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee10Application" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE10_APPLICATION</label>
+                                                <input type="text" id="fee10Application" name="fee10Application"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee11Name" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE11_NAME</label>
+                                                <input type="text" id="fee11Name" name="fee11Name"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee11IdType" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE11_ID_TYPE</label>
+                                                <input type="text" id="fee11IdType" name="fee11IdType"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee11Payment" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE11_PAYMENT</label>
+                                                <input type="text" id="fee11Payment" name="fee11Payment"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee11AmortProfile" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE11_AMORT_PROFILE</label>
+                                                <input type="text" id="fee11AmortProfile" name="fee11AmortProfile"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee11Type" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee11Type" name="fee11Type"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee11Amount" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee11Amount" name="fee11Amount"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee11Application" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE11_APPLICATION</label>
+                                                <input type="text" id="fee11Application" name="fee11Application"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee12Name" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE12_NAME</label>
+                                                <input type="text" id="fee12Name" name="fee12Name"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee12IdType" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE12_ID_TYPE</label>
+                                                <input type="text" id="fee12IdType" name="fee12IdType"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee12Payment" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE12_PAYMENT</label>
+                                                <input type="text" id="fee12Payment" name="fee12Payment"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee12AmortProfile" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE12_AMORT_PROFILE</label>
+                                                <input type="text" id="fee12AmortProfile" name="fee12AmortProfile"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee12Type" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee12Type" name="fee12Type"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee12Amount" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee12Amount" name="fee12Amount"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee12Application" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE12_APPLICATION</label>
+                                                <input type="text" id="fee12Application" name="fee12Application"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee13Name" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE13_NAME</label>
+                                                <input type="text" id="fee13Name" name="fee13Name"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee13IdType" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE13_ID_TYPE</label>
+                                                <input type="text" id="fee13IdType" name="fee13IdType"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee13Payment" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE13_PAYMENT</label>
+                                                <input type="text" id="fee13Payment" name="fee13Payment"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee13AmortProfile" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE13_AMORT_PROFILE</label>
+                                                <input type="text" id="fee13AmortProfile" name="fee13AmortProfile"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee13Type" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee13Type" name="fee13Type"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee13Amount" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee13Amount" name="fee13Amount"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee13Application" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE13_APPLICATION</label>
+                                                <input type="text" id="fee13Application" name="fee13Application"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee15Name" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE15_NAME</label>
+                                                <input type="text" id="fee15Name" name="fee15Name"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee15IdType" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE15_ID_TYPE</label>
+                                                <input type="text" id="fee15IdType" name="fee15IdType"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee15Payment" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE15_PAYMENT</label>
+                                                <input type="text" id="fee15Payment" name="fee15Payment"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee15AmortProfile" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE15_AMORT_PROFILE</label>
+                                                <input type="text" id="fee15AmortProfile" name="fee15AmortProfile"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee15Type" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee15Type" name="fee15Type"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee15Amount" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee15Amount" name="fee15Amount"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee15Application" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE15_APPLICATION</label>
+                                                <input type="text" id="fee15Application" name="fee15Application"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee16Name" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE16_NAME</label>
+                                                <input type="text" id="fee16Name" name="fee16Name"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee16IdType" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE16_ID_TYPE</label>
+                                                <input type="text" id="fee16IdType" name="fee16IdType"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee16Payment" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE16_PAYMENT</label>
+                                                <input type="text" id="fee16Payment" name="fee16Payment"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee16AmortProfile" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE16_AMORT_PROFILE</label>
+                                                <input type="text" id="fee16AmortProfile" name="fee16AmortProfile"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee16Type" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee16Type" name="fee16Type"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee16Amount" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee16Amount" name="fee16Amount"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee16Application" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE16_APPLICATION</label>
+                                                <input type="text" id="fee16Application" name="fee16Application"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="fee17Name" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE17_NAME</label>
+        <input type="text" id="fee17Name" name="fee17Name"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;">
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="fee17IdType" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE17_ID_TYPE</label>
+        <input type="text" id="fee17IdType" name="fee17IdType"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;">
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="fee17Payment" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE17_PAYMENT</label>
+        <input type="text" id="fee17Payment" name="fee17Payment"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;">
+    </div>
+</div>
+
+<div class="row g-3 mt-2">
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="fee17AmortProfile" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE17_AMORT_PROFILE</label>
+        <input type="text" id="fee17AmortProfile" name="fee17AmortProfile"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;">
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="fee17Type" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">TYPE</label>
+        <input type="text" id="fee17Type" name="fee17Type"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;">
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="fee17Amount" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">AMOUNT</label>
+        <input type="number" id="fee17Amount" name="fee17Amount"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;">
+    </div>
+</div>
+
+<div class="row g-3 mt-2 ">
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="fee17Application" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE17_APPLICATION</label>
+        <input type="text" id="fee17Application" name="fee17Application"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;">
+    </div>
+</div>
 
 
 
@@ -1449,14 +2104,13 @@
 
                                         <div class="row g-3 mt-2">
                                             <!-- Offset Percentage -->
-                                            
+
 
                                             <!-- Account Initial State -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="accountInitialState" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">LINKED_DEPOSIT_PRODUCT</label>
-                                                <input type="text" id="linkedDepositProduct"
-                                                    name="linkedDepositProduct"
+                                                <input type="text" id="linkedDepositProduct" name="linkedDepositProduct"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;">
                                             </div>
@@ -1477,28 +2131,24 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                            <input type="checkbox"
-                                                    id="enableLinking"
-                                                    name="enableLinking"
+                                                <input type="checkbox" id="enableLinking" name="enableLinking"
                                                     class="form-check-input border border-dark ms-2 ml-1"
-                                                    style="width: 20px; height: 20px;"
-                                                    value="N"
+                                                    style="width: 20px; height: 20px;" value="N"
                                                     onchange="this.value = this.checked ? 'Y' : 'N'">
 
-                                                    <label for="enableLinking"
-                                                    class="form-label mb-0 text-start ml-5">
+                                                <label for="enableLinking" class="form-label mb-0 text-start ml-5">
                                                     ENABLE_LINKING
                                                 </label>
                                             </div>
                                         </div>
 
-                                       
-                                            <div class="row g-3 mt-2">
-                                            <label
-                                                style="font-size: 1rem; font-weight: bold; padding: 8px;">Deposit Account Option</label>
+
+                                        <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Deposit
+                                                Account Option</label>
                                         </div>
 
-                                        
+
                                         <div class="row g-3 mt-2">
                                             <!-- Line Of Credit Requirement -->
                                             <div class="col-md-2 d-flex align-items-center">
@@ -1509,15 +2159,13 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                                 <input type="checkbox"
-                                                    id="autoSetSettlementAcct"
+                                                <input type="checkbox" id="autoSetSettlementAcct"
                                                     name="autoSetSettlementAcct"
                                                     class="form-check-input border border-dark ms-2 ml-1"
-                                                    style="width: 20px; height: 20px;"
-                                                    value="N"
+                                                    style="width: 20px; height: 20px;" value="N"
                                                     onchange="this.value = this.checked ? 'Y' : 'N'">
 
-                                                    <label for="autoSetSettlementAcct"
+                                                <label for="autoSetSettlementAcct"
                                                     class="form-label mb-0 text-start ml-5">
                                                     AUTO_SET_SETTLEMENT_ACCT
                                                 </label>
@@ -1532,21 +2180,19 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                                 <input type="checkbox"
-                                                    id="autoCreateSettlementAcct"
+                                                <input type="checkbox" id="autoCreateSettlementAcct"
                                                     name="autoCreateSettlementAcct"
                                                     class="form-check-input border border-dark ms-2 ml-1"
-                                                    style="width: 20px; height: 20px;"
-                                                    value="N"
+                                                    style="width: 20px; height: 20px;" value="N"
                                                     onchange="this.value = this.checked ? 'Y' : 'N'">
 
-                                                    <label for="autoCreateSettlementAcct"
+                                                <label for="autoCreateSettlementAcct"
                                                     class="form-label mb-0 text-start ml-5">
                                                     AUTO_CREATE_SETTLEMENT_ACCT
                                                 </label>
                                             </div>
                                         </div>
-                                        
+
 
 
                                         <div class="row g-3 mt-2">
@@ -1567,16 +2213,12 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                                 <input type="checkbox"
-                                                    id="enableGuarantors"
-                                                    name="enableGuarantors"
+                                                <input type="checkbox" id="enableGuarantors" name="enableGuarantors"
                                                     class="form-check-input border border-dark ms-2 ml-1"
-                                                    style="width: 20px; height: 20px;"
-                                                    value="N"
+                                                    style="width: 20px; height: 20px;" value="N"
                                                     onchange="this.value = this.checked ? 'Y' : 'N'">
 
-                                                    <label for="enableGuarantors"
-                                                    class="form-label mb-0 text-start ml-5">
+                                                <label for="enableGuarantors" class="form-label mb-0 text-start ml-5">
                                                     ENABLE_GUARANTORS
                                                 </label>
                                             </div>
@@ -1590,16 +2232,12 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                                 <input type="checkbox"
-                                                    id="enableCollaterals"
-                                                    name="enableCollaterals"
+                                                <input type="checkbox" id="enableCollaterals" name="enableCollaterals"
                                                     class="form-check-input border border-dark ms-2 ml-1"
-                                                    style="width: 20px; height: 20px;"
-                                                    value="N"
+                                                    style="width: 20px; height: 20px;" value="N"
                                                     onchange="this.value = this.checked ? 'Y' : 'N'">
 
-                                                    <label for="enableCollaterals"
-                                                    class="form-label mb-0 text-start ml-5">
+                                                <label for="enableCollaterals" class="form-label mb-0 text-start ml-5">
                                                     ENABLE_COLLATERALS
                                                 </label>
                                             </div>
@@ -1614,7 +2252,7 @@
                                                     style="width: 55%;">
                                             </div>
 
-                                             <!-- <div class="col-md-4 d-flex align-items-center">
+                                            <!-- <div class="col-md-4 d-flex align-items-center">
                                                 <label for="principalPaymentSettingsKey"
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">DEPOSIT_ACCOUNT_OPTION</label>
@@ -1625,7 +2263,7 @@
                                             </div> -->
                                         </div>
 
-                                    
+
 
 
 
@@ -1641,7 +2279,8 @@
                                         <button class="btn-primary big-btn" onclick="Home();">Home</button>
                                         <button class="btn-primary big-btn" type="button"
                                             onclick="SubmitLmsScheme();">Submit</button>
-                                        <button class="btn-primary big-btn" onclick="Back();">Back</button>
+                                        <button class="btn-primary big-btn" type="button"
+                                            onclick="Back();">Back</button>
 
                                     </div>
                                 </form>

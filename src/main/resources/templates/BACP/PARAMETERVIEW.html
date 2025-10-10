@@ -162,121 +162,174 @@
         }
 
         function Back() {
-            window.history.back();
+            // window.history.back();
+            window.location.href = 'Parameter';
         }
 
 
 
 
 
-function SubmitLmsScheme() {
-    // Collect form data into an object
-    const formData = {};
-    $("#refForm").serializeArray().forEach(function(field) {
-        formData[field.name] = field.value;
-    });
-
-    // Optional: simple validation for required fields
-    const requiredFields = ['id', 'activated'];
-
-    for (const field of requiredFields) {
-        if (!formData[field] || formData[field].trim() === "") {
-            alert(`Please fill in the ${field} field.`);
-            return;
-        }
-    }
-
-    $.ajax({
-        url: './lms_scheme_Add',            // Backend endpoint
-        type: 'POST',
-        contentType: 'application/json',    // Important: send JSON
-        data: JSON.stringify(formData),     // Send form data in request body
-        success: function(data) {
-            // Show server response in modal
-            $("#alertmsg").text(data);
-            $('#alert').modal('show');
-
-            // Redirect when user clicks OK
-            $("#alertOkBtn").off("click").on("click", function() {
-                $('#alert').modal('hide'); 
-                window.location.href = './parameter'; 
+        function SubmitLmsScheme() {
+            // Collect form data into an object
+            const formData = {};
+            $("#refForm").serializeArray().forEach(function (field) {
+                formData[field.name] = field.value;
             });
-        },
-        error: function(xhr, status, error) {
-            // Show error in modal
-            $("#alertmsg").text("Error while saving: " + error);
-            $('#alert').modal('show');
+
+            // Optional: simple validation for required fields
+            const requiredFields = ['id', 'activated'];
+
+            for (const field of requiredFields) {
+                if (!formData[field] || formData[field].trim() === "") {
+                    alert(`Please fill in the ${field} field.`);
+                    return;
+                }
+            }
+
+            $.ajax({
+                url: './lms_scheme_Add',            // Backend endpoint
+                type: 'POST',
+                contentType: 'application/json',    // Important: send JSON
+                data: JSON.stringify(formData),     // Send form data in request body
+                success: function (data) {
+                    // Show server response in modal
+                    $("#alertmsg").text(data);
+                    $('#alert').modal('show');
+
+                    // Redirect when user clicks OK
+                    $("#alertOkBtn").off("click").on("click", function () {
+                        $('#alert').modal('hide');
+                        window.location.href = './parameter';
+                    });
+                },
+                error: function (xhr, status, error) {
+                    // Show error in modal
+                    $("#alertmsg").text("Error while saving: " + error);
+                    $('#alert').modal('show');
+                }
+            });
         }
-    });
+
+
+        function VerifyScheme() {
+            var paramsId = $('#params_id').val();
+            console.log(paramsId);
+
+            if (!paramsId) {
+                alert("Scheme ID not found!");
+                return;
+            }
+
+            $.ajax({
+                url: '/ASPIRA/verifyScheme',   // <-- include context path
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ id: paramsId }),
+                success: function (response) {
+                    if (response.success) {
+                        $("#alertmsg").text(response.message || "Scheme verified successfully!");
+                        $('#alert').modal('show');
+
+                        // Redirect when user clicks OK
+                        $("#alertOkBtn").off("click").on("click", function () {
+                            $('#alert').modal('hide'); // hide modal
+
+                            // window.history.back();
+                            window.location.reload();
+                        });
+                    } else {
+                        alert("Verification failed: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error: " + error);
+                    alert("An error occurred during verification!");
+                }
+            });
+        }
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Assume this is the value you want to preselect (from backend or hidden input)
+            let selectedBranch = $("#selectedBranch").val(); // example hidden input or variable
+
+            $.ajax({
+                url: "api/branches",
+                type: "GET",
+                success: function (data) {
+                    console.log(data);
+                    let dropdown = $("#branches");
+                    dropdown.empty().append('<option value="">Select Branch</option>');
+                    
+                    $.each(data, function (index, code) {
+                        let isSelected = (code === selectedBranch) ? "selected" : "";
+                        dropdown.append('<option value="' + code + '" ' + isSelected + '>' + code + '</option>');
+                    });
+                    
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching branches: " + error);
+                }
+            });
+        });
+
+        function addscheme() {
+            location.href = "Parameteradd";
+        }
+
+
+
+        function redirectToVerify(element) {
+            // Get the ID from the clicked element's data attribute
+            const Id = element.getAttribute('data-refid');
+            // Navigate to verify mode
+            location.href = './Parameterview?id=' + Id + '&formmode=verify';
+        }
+
+        function redirectToDelete(element) {
+            const refId = element.getAttribute('data-refid');
+            if (refId) {
+                location.href = './Parameterdelete?id=' + refId;
+            }
+        }
+
+        function redirectToEdit(element) {
+    const refId = element.getAttribute('params_id');
+    if (refId) {
+        location.href = './Parameterupdate?id=' + refId;
+    }
 }
 
 
-function VerifyScheme() {
-    var paramsId = $('#params_id').val();
-    console.log(paramsId);
 
-    if (!paramsId) {
-        alert("Scheme ID not found!");
+function Delete() {
+    const paramId = document.getElementById('params_id').value; // make sure your input field has id="id"
+
+    if (!paramId) {
+        alert("Parameter ID not found!");
         return;
     }
 
     $.ajax({
-        url: '/ASPIRA/verifyScheme',   // <-- include context path
+        url: './parametersdelete',   // exact mapping
         type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ id: paramsId }),
+        data: { id: paramId },      // must match entity field
         success: function(response) {
-            if (response.success) {
-                $("#alertmsg").text(response.message || "Scheme verified successfully!");
-                $('#alert').modal('show');
+            $("#alertmsg").text(response || "Record deleted successfully");
+            $('#alert').modal('show');
 
-                // Redirect when user clicks OK
-                $("#alertOkBtn").off("click").on("click", function() {
-                    $('#alert').modal('hide'); // hide modal
-              
-                    window.history.back(); 
-                });
-            } else {
-                alert("Verification failed: " + response.message);
-            }
+            $("#alertOkBtn").off("click").on("click", function() {
+                $('#alert').modal('hide'); 
+                window.location.href = './Parameter';
+            });
         },
         error: function(xhr, status, error) {
-            console.error("Error: " + error);
-            alert("An error occurred during verification!");
+            $("#alertmsg").text("Error while deleting: " + error);
+            $('#alert').modal('show');
         }
     });
 }
-
-
-document.addEventListener("DOMContentLoaded", function () {
-    // Assume this is the value you want to preselect (from backend or hidden input)
-    let selectedBranch = $("#selectedBranch").val(); // example hidden input or variable
-
-    $.ajax({
-        url: "api/branches",
-        type: "GET",
-        success: function (data) {
-            console.log(data);
-            let dropdown = $("#branches");
-            dropdown.empty().append('<option value="">Select Branch</option>');
-
-            $.each(data, function (index, code) {
-                let isSelected = (code === selectedBranch) ? "selected" : "";
-                dropdown.append('<option value="' + code + '" ' + isSelected + '>' + code + '</option>');
-            });
-        },
-        error: function (xhr, status, error) {
-            console.error("Error fetching branches: " + error);
-        }
-    });
-});
-
-
-
-
-
-
-
     </script>
 
 
@@ -300,11 +353,14 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <div class="float-left">
                                     <h6 style="font-size: 1.2rem; color: black;">PARAMETER LIST - VIEW</h6>
                                 </div>
+                                <!-- <div class="float-right">
+                                    <button class="btn-primary big-btn" onclick="addscheme()">Add</button>
+                                </div> -->
                             </div>
 
                             <div class="card-body">
 
-                                 <form class="border border-secondary" id="refForm" autocomplete="off">
+                                <form class="border border-secondary" id="refForm" autocomplete="off">
 
 
                                     <div class="container-fluid mt-3">
@@ -325,8 +381,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="id" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ID</label>
-                                                <input type="text" id="id" name="id"
-                                                    th:value="${parameters.id}"
+                                                <input type="text" id="id" name="id" th:value="${parameters.id}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -374,13 +429,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
                                             <!-- Field 5 -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="defaultGracePeriod" class="form-label me-2 mb-0 text-end" style="width: 45%;">STATE</label>
+                                                <label for="defaultGracePeriod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">STATE</label>
                                                 <select id="state" name="state"
-                                                        class="form-control form-control-sm border border-dark"
-                                                        style="width: 55%;" disabled>
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" disabled>
                                                     <option value="">select</option>
-                                                    <option value="Y" th:selected="${parameters.state == 'Y'}">Active</option>
-                                                    <option value="N" th:selected="${parameters.state == 'N'}">Inactive</option>
+                                                    <option value="Y" th:selected="${parameters.state == 'Y'}">Active
+                                                    </option>
+                                                    <option value="N" th:selected="${parameters.state == 'N'}">Inactive
+                                                    </option>
                                                 </select>
                                             </div>
 
@@ -392,12 +450,13 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <input type="text" id="productDescription" name="productDescription"
                                                     th:value="${parameters.productDescription}"
                                                     class="form-control form-control-sm border border-dark"
-                                                    style="width: 55%;"  readonly>
+                                                    style="width: 55%;" readonly>
                                             </div>
                                         </div>
 
                                         <div class="row g-3 mt-2">
-                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Product Availability</label>
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Product
+                                                Availability</label>
                                         </div>
 
                                         <div class="row g-3 mt-2">
@@ -413,27 +472,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
                                             <!-- Default Repayment Period Count -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="availableTo" class="form-label me-2 mb-0 text-end" style="width: 45%;">AVAILABLE_TO</label>
+                                                <label for="availableTo" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AVAILABLE_TO</label>
                                                 <select id="availableTo" name="availableTo"
-                                                        class="form-control form-control-sm border border-dark"
-                                                        style="width: 55%;" disabled>
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" disabled>
                                                     <option value="">select</option>
-                                                    <option value="Clients" th:selected="${parameters.availableTo == 'Clients'}">Clients</option>
-                                                    <option value="Groups" th:selected="${parameters.availableTo == 'Groups'}">Groups</option>
-                                                    <option value="Groups(Solidarity)" th:selected="${parameters.availableTo == 'Groups(Solidarity)'}">Groups(Solidarity)</option>
-                                                    <option value="All Branches" th:selected="${parameters.availableTo == 'All Branches'}">All Branches</option>
+                                                    <option value="Clients"
+                                                        th:selected="${parameters.availableTo == 'Clients'}">Clients
+                                                    </option>
+                                                    <option value="Groups"
+                                                        th:selected="${parameters.availableTo == 'Groups'}">Groups
+                                                    </option>
+                                                    <option value="Groups(Solidarity)"
+                                                        th:selected="${parameters.availableTo == 'Groups(Solidarity)'}">
+                                                        Groups(Solidarity)</option>
+                                                    <option value="All Branches"
+                                                        th:selected="${parameters.availableTo == 'All Branches'}">All
+                                                        Branches</option>
                                                 </select>
                                             </div>
 
                                             <!-- Grace Period Type -->
                                             <div class="col-md-4 d-flex align-items-center">
-                                                <label for="BRANCHES" class="form-label me-2 mb-0 text-end" style="width: 45%;">BRANCHES</label>
+                                                <label for="BRANCHES" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">BRANCHES</label>
                                                 <input type="text" id="branches" name="branches"
-       th:value="${parameters.branches}"
-       class="form-control form-control-sm border border-dark"
-       style="width: 55%;" readonly>
+                                                    th:value="${parameters.branches}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" readonly>
 
-                                                
+
 
                                             </div>
 
@@ -452,7 +521,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ID_TYPE</label>
                                                 <input type="text" id="idType" name="idType"
-                                                th:value="${parameters.idType}"
+                                                    th:value="${parameters.idType}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -462,7 +531,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">USING_TEMPLATE</label>
                                                 <input type="text" id="usingTemplate" name="usingTemplate"
-                                                th:value="${parameters.usingTemplate}"
+                                                    th:value="${parameters.usingTemplate}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -472,7 +541,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="interestType" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">INITIAL_ACCOUNT_STATE</label>
                                                 <input type="text" id="initialAccountState"
-                                                th:value="${parameters.initialAccountState}"
+                                                    th:value="${parameters.initialAccountState}"
                                                     name="initialAccountState"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -493,7 +562,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">LOAN_AMOUNT_CONSTRAINTS</label>
                                                 <input type="text" id="loanAmountConstraints"
-                                                th:value="${parameters.loanAmountConstraints}"
+                                                    th:value="${parameters.loanAmountConstraints}"
                                                     name="loanAmountConstraints"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -504,7 +573,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="interestType" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ACCOUNTS_MANAGED_UNDER_CREDIT_ARRANGEMENTS</label>
                                                 <input type="text" id="accountsManagedUnderCredit"
-                                                th:value="${parameters.accountsManagedUnderCredit}"
+                                                    th:value="${parameters.accountsManagedUnderCredit}"
                                                     name="accountsManagedUnderCredit"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -523,7 +592,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="lastModifiedDate" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">INTEREST_CALC_METHOD</label>
                                                 <input type="text" id="interestCalcMethod" name="interestCalcMethod"
-                                                th:value="${parameters.interestCalcMethod}"
+                                                    th:value="${parameters.interestCalcMethod}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -533,7 +602,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ACCRUED_INT_POST_FREQ</label>
                                                 <input type="text" id="accruedIntPostFreq"
-                                                th:value="${parameters.accruedIntPostFreq}"
+                                                    th:value="${parameters.accruedIntPostFreq}"
                                                     name="accruedIntPostFreq"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -544,7 +613,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="maxGracePeriod" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">INTEREST_TYPE</label>
                                                 <input type="text" id="interestType" name="interestType"
-                                                th:value="${parameters.interestType}"
+                                                    th:value="${parameters.interestType}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -555,14 +624,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                                         <div class="row g-3 mt-2">
-                                           
+
 
 
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="maxNumInstallments" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">INTEREST_RATE_CHARGED</label>
                                                 <input type="text" id="interestRateCharged"
-                                                th:value="${parameters.interestRateCharged}"
+                                                    th:value="${parameters.interestRateCharged}"
                                                     name="interestRateCharged"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -573,7 +642,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="maxPenaltyRate" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">INTEREST_RATE_CONSTRAINTS</label>
                                                 <input type="number" id="interestRateConstraints"
-                                                th:value="${parameters.interestRateConstraints}"
+                                                    th:value="${parameters.interestRateConstraints}"
                                                     name="interestRateConstraints"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -584,7 +653,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="minGracePeriod" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">DAYS_IN_YEAR</label>
                                                 <input type="number" id="daysInYear" name="daysInYear"
-                                                th:value="${parameters.daysInYear}"
+                                                    th:value="${parameters.daysInYear}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -593,7 +662,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                                         <div class="row g-3 mt-2">
 
-                                            
+
 
                                             <!-- Interest Accrued Accounting Method -->
                                             <div class="col-md-4 d-flex align-items-center">
@@ -601,25 +670,23 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">REPAYMENT_INT_CALC</label>
                                                 <input type="text" id="repaymentIntCalc" name="repaymentIntCalc"
-                                                th:value="${parameters.repaymentIntCalc}"
+                                                    th:value="${parameters.repaymentIntCalc}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
 
                                             <div class="col-md-4 d-flex justify-content-between align-items-center">
-                                                
-
-                                               <input type="checkbox"
-       id="accruedIntAfterMaturity"
-       name="accruedIntAfterMaturity"
-       class="form-check-input border border-dark ms-2 ml-1"
-       style="width: 20px; height: 20px;"
-       th:checked="${parameters.accruedIntAfterMaturity == 'Y'}"
-       value="N"
-       onchange="this.value = this.checked ? 'Y' : 'N'"  disabled>
 
 
-                                                    <label for="accruedIntAfterMaturity"
+                                                <input type="checkbox" id="accruedIntAfterMaturity"
+                                                    name="accruedIntAfterMaturity"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    th:checked="${parameters.accruedIntAfterMaturity == 'Y'}" value="N"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
+
+
+                                                <label for="accruedIntAfterMaturity"
                                                     class="form-label mb-0 text-start ml-5">
                                                     ACCRUED_INT_AFTER_MATURITY
                                                 </label>
@@ -640,7 +707,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="minLoanAmount" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">PAYMENT_INTERVAL_METHOD</label>
                                                 <input type="text" id="paymentIntervalMethod"
-                                                th:value="${parameters.paymentIntervalMethod}"
+                                                    th:value="${parameters.paymentIntervalMethod}"
                                                     name="paymentIntervalMethod"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -650,7 +717,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="loanProductType" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">REPAYMENT_MADE_EVERY</label>
                                                 <input type="number" id="repaymentMadeEvery"
-                                                th:value="${parameters.repaymentMadeEvery}"
+                                                    th:value="${parameters.repaymentMadeEvery}"
                                                     name="repaymentMadeEvery"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -663,7 +730,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="minNumInstallments" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">INSTALLMENT_CONSTRAINTS</label>
                                                 <input type="number" id="installmentConstraints"
-                                                th:value="${parameters.installmentConstraints}"
+                                                    th:value="${parameters.installmentConstraints}"
                                                     name="installmentConstraints"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -677,7 +744,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="minPenaltyRate" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FIRST_DUE_DATE_OFFSET</label>
                                                 <input type="number" id="firstDueDateOffset"
-                                                th:value="${parameters.firstDueDateOffset}"
+                                                    th:value="${parameters.firstDueDateOffset}"
                                                     name="firstDueDateOffset"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -687,7 +754,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="defaultPenaltyRate" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">COLLECT_PRINCIPAL_EVERY</label>
                                                 <input type="number" id="collectPrincipalEvery"
-                                                th:value="${parameters.collectPrincipalEvery}"
+                                                    th:value="${parameters.collectPrincipalEvery}"
                                                     name="collectPrincipalEvery"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -698,7 +765,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="productDescription" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">GRACE_PERIOD</label>
                                                 <input type="text" id="gracePeriod" name="gracePeriod"
-                                                th:value="${parameters.gracePeriod}"
+                                                    th:value="${parameters.gracePeriod}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -713,7 +780,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="productName" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ROUND_OFF_REPAY_SCHEDULE</label>
                                                 <input type="text" id="roundOffRepaySchedule"
-                                                th:value="${parameters.roundOffRepaySchedule}"
+                                                    th:value="${parameters.roundOffRepaySchedule}"
                                                     name="roundOffRepaySchedule"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -723,7 +790,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="forIndividuals" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ROUND_OFF_REPAY_CURRENCY</label>
                                                 <input type="text" id="roundOffRepayCurrency"
-                                                th:value="${parameters.roundOffRepayCurrency}"
+                                                    th:value="${parameters.roundOffRepayCurrency}"
                                                     name="roundOffRepayCurrency"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -734,7 +801,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="forPureGroups" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">NON_WORKING_DAYS_RESCHED</label>
                                                 <input type="text" id="nonWorkingDaysResched"
-                                                th:value="${parameters.nonWorkingDaysResched}"
+                                                    th:value="${parameters.nonWorkingDaysResched}"
                                                     name="nonWorkingDaysResched"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -742,97 +809,96 @@ document.addEventListener("DOMContentLoaded", function () {
 
                                         </div>
 
-                                       <div class="row g-3 mt-2">
-                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Repayment Schedule Edit</label>
+                                        <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Repayment
+                                                Schedule Edit</label>
                                         </div>
 
                                         <div class="row g-3 mt-2">
-                                            
+
                                             <div class="col-md-2 d-flex align-items-center">
                                                 <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="adjustPaymentDates" name="adjustPaymentDates"
-                                                                value="Y"
-                                                                th:checked="${parameters.adjustPaymentDates == 'Y'}"
-                                                                th:value="${parameters.adjustPaymentDates}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;" disabled>
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="adjustPaymentDates">Adjust Payment Dates</label>
-                                                        </div>
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="adjustPaymentDates" name="adjustPaymentDates" value="Y"
+                                                        th:checked="${parameters.adjustPaymentDates == 'Y'}"
+                                                        th:value="${parameters.adjustPaymentDates}"
+                                                        onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;" disabled>
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="adjustPaymentDates">Adjust Payment Dates</label>
+                                                </div>
                                             </div>
                                             <div class="col-md-2 d-flex align-items-center">
                                                 <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="adjustPrincipalSchedule"
-                                                                name="adjustPrincipalSchedule" value="Y"
-                                                                th:checked="${parameters.adjustPrincipalSchedule == 'Y'}"
-                                                                th:value="${parameters.adjustPrincipalSchedule}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;" disabled>
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="adjustPrincipalSchedule">Adjust Principal Payment
-                                                                Schedule</label>
-                                                        </div>
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="adjustPrincipalSchedule" name="adjustPrincipalSchedule"
+                                                        value="Y"
+                                                        th:checked="${parameters.adjustPrincipalSchedule == 'Y'}"
+                                                        th:value="${parameters.adjustPrincipalSchedule}"
+                                                        onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;" disabled>
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="adjustPrincipalSchedule">Adjust Principal Payment
+                                                        Schedule</label>
+                                                </div>
                                             </div>
                                             <div class="col-md-2 d-flex align-items-center">
                                                 <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="adjustInterestSchedule"
-                                                                name="adjustInterestSchedule" value="Y"
-                                                                th:checked="${parameters.adjustInterestSchedule == 'Y'}"
-                                                                th:value="${parameters.adjustInterestSchedule}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;" disabled>
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="adjustInterestSchedule">Adjust Interest Payment
-                                                                Schedule</label>
-                                                        </div>
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="adjustInterestSchedule" name="adjustInterestSchedule"
+                                                        value="Y"
+                                                        th:checked="${parameters.adjustInterestSchedule == 'Y'}"
+                                                        th:value="${parameters.adjustInterestSchedule}"
+                                                        onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;" disabled>
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="adjustInterestSchedule">Adjust Interest Payment
+                                                        Schedule</label>
+                                                </div>
                                             </div>
                                             <div class="col-md-2 d-flex align-items-center">
                                                 <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="adjustFeeSchedule" name="adjustFeeSchedule"
-                                                                value="Y"
-                                                                th:checked="${parameters.adjustFeeSchedule == 'Y'}"
-                                                                th:value="${parameters.adjustFeeSchedule}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;" disabled>
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="adjustFeeSchedule">Adjust Fee Payment
-                                                                Schedule</label>
-                                                        </div>
-                                            </div>
-                                            <div class="col-md-2 d-flex align-items-center">
-                                                 <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="adjustPenaltySchedule" name="adjustPenaltySchedule"
-                                                                value="Y"
-                                                                th:checked="${parameters.adjustPenaltySchedule == 'Y'}"
-                                                                th:value="${parameters.adjustPenaltySchedule}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;" disabled>
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="adjustPenaltySchedule">Adjust Penalty Payment
-                                                                Schedule</label>
-                                                        </div>
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="adjustFeeSchedule" name="adjustFeeSchedule" value="Y"
+                                                        th:checked="${parameters.adjustFeeSchedule == 'Y'}"
+                                                        th:value="${parameters.adjustFeeSchedule}"
+                                                        onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;" disabled>
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="adjustFeeSchedule">Adjust Fee Payment
+                                                        Schedule</label>
+                                                </div>
                                             </div>
                                             <div class="col-md-2 d-flex align-items-center">
                                                 <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                id="configurePaymentHolidays"
-                                                                name="configurePaymentHolidays" value="Y"
-                                                                th:checked="${parameters.configurePaymentHolidays == 'Y'}"
-                                                                th:value="${parameters.configurePaymentHolidays}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;" disabled>
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="configurePaymentHolidays">Configure Payment
-                                                                Holidays</label>
-                                                        </div>
-                                                    </div>
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="adjustPenaltySchedule" name="adjustPenaltySchedule"
+                                                        value="Y"
+                                                        th:checked="${parameters.adjustPenaltySchedule == 'Y'}"
+                                                        th:value="${parameters.adjustPenaltySchedule}"
+                                                        onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;" disabled>
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="adjustPenaltySchedule">Adjust Penalty Payment
+                                                        Schedule</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        id="configurePaymentHolidays" name="configurePaymentHolidays"
+                                                        value="Y"
+                                                        th:checked="${parameters.configurePaymentHolidays == 'Y'}"
+                                                        th:value="${parameters.configurePaymentHolidays}"
+                                                        onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;" disabled>
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="configurePaymentHolidays">Configure Payment
+                                                        Holidays</label>
+                                                </div>
+                                            </div>
                                         </div>
-                                         
+
 
 
                                         <div class="row g-3 mt-2">
@@ -846,7 +912,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="repaymentPeriodUnit" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">PREPAYMENT_ACCEPTANCE</label>
                                                 <input type="text" id="prepaymentAcceptance"
-                                                th:value="${parameters.prepaymentAcceptance}"
+                                                    th:value="${parameters.prepaymentAcceptance}"
                                                     name="prepaymentAcceptance"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -857,7 +923,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="prepaymentAcceptance" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ACCEPT_PREPAY_FUTURE_INT</label>
                                                 <input type="text" id="acceptPrepayFutureInt"
-                                                th:value="${parameters.acceptPrepayFutureInt}"
+                                                    th:value="${parameters.acceptPrepayFutureInt}"
                                                     name="acceptPrepayFutureInt"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -869,14 +935,22 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">REPAYMENT_ALLOCATION_ORDER</label>
                                                 <select id="repaymentAllocationOrder" name="repaymentAllocationOrder"
-        class="form-control form-control-sm border border-dark"
-        style="width: 55%;" disabled>
-    <option value="">select</option>
-    <option value="Fee" th:selected="${parameters.repaymentAllocationOrder == 'Fee'}">Fee</option>
-    <option value="Penalty" th:selected="${parameters.repaymentAllocationOrder == 'Penalty'}">Penalty</option>
-    <option value="Interest" th:selected="${parameters.repaymentAllocationOrder == 'Interest'}">Interest</option>
-    <option value="Principal" th:selected="${parameters.repaymentAllocationOrder == 'Principal'}">Principal</option>
-</select>
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" disabled>
+                                                    <option value="">select</option>
+                                                    <option value="Fee,Penalty,Interest,Principal"
+                                                        th:selected="${parameters.repaymentAllocationOrder == 'Fee,Penalty,Interest,Principal'}">
+                                                        Fee,Penalty,Interest,Principal</option>
+                                                    <option value="Principal,Interest,Fee,Penalty"
+                                                        th:selected="${parameters.repaymentAllocationOrder == 'Principal,Interest,Fee,Penalty'}">
+                                                        Principal,Interest,Fee,Penalty</option>
+                                                    <!-- <option value="Interest"
+                                                        th:selected="${parameters.repaymentAllocationOrder == 'Interest'}">
+                                                        Interest</option>
+                                                    <option value="Principal"
+                                                        th:selected="${parameters.repaymentAllocationOrder == 'Principal'}">
+                                                        Principal</option> -->
+                                                </select>
 
                                             </div>
                                         </div>
@@ -893,7 +967,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="allowArbitraryFees" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ARREARS_TOLERANCE_PERIOD</label>
                                                 <input type="number" id="arrearsTolerancePeriod"
-                                                th:value="${parameters.arrearsTolerancePeriod}"
+                                                    th:value="${parameters.arrearsTolerancePeriod}"
                                                     name="arrearsTolerancePeriod"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -905,7 +979,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ARREARS_DAY_CALC_FROM</label>
                                                 <input type="text" id="arrearsDayCalcFrom"
-                                                th:value="${parameters.arrearsDayCalcFrom}"
+                                                    th:value="${parameters.arrearsDayCalcFrom}"
                                                     name="arrearsDayCalcFrom"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -917,7 +991,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ARREARS_TOLERANCE_AMT</label>
                                                 <input type="number" id="arrearsToleranceAmt"
-                                                th:value="${parameters.arrearsToleranceAmt}"
+                                                    th:value="${parameters.arrearsToleranceAmt}"
                                                     name="arrearsToleranceAmt"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -930,8 +1004,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="loanPenaltyGracePeriod"
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">WITH_A_FLOOR</label>
-                                                <input type="number" id="withAFloor"
-                                                th:value="${parameters.withAFloor}"
+                                                <input type="number" id="withAFloor" th:value="${parameters.withAFloor}"
                                                     name="withAFloor"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -942,7 +1015,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">NON_WORKING_DAYS_ARREARS</label>
                                                 <input type="text" id="nonWorkingDaysArrears"
-                                                th:value="${parameters.nonWorkingDaysArrears}"
+                                                    th:value="${parameters.nonWorkingDaysArrears}"
                                                     name="nonWorkingDaysArrears"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -962,7 +1035,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">PENALTY_CALC_METHOD</label>
                                                 <input type="text" id="penaltyCalcMethod" name="penaltyCalcMethod"
-                                                th:value="${parameters.penaltyCalcMethod}"
+                                                    th:value="${parameters.penaltyCalcMethod}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -973,7 +1046,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">PENALTY_TOLERANCE_PERIOD</label>
                                                 <input type="number" id="penaltyTolerancePeriod"
-                                                th:value="${parameters.penaltyTolerancePeriod}"
+                                                    th:value="${parameters.penaltyTolerancePeriod}"
                                                     name="penaltyTolerancePeriod"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -984,7 +1057,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="daysInYear" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">PENALTY_RATE_CONSTRAINTS</label>
                                                 <input type="number" id="penaltyRateConstraints"
-                                                th:value="${parameters.penaltyRateConstraints}"
+                                                    th:value="${parameters.penaltyRateConstraints}"
                                                     name="penaltyRateConstraints"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -996,8 +1069,8 @@ document.addEventListener("DOMContentLoaded", function () {
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="forAllBranches" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">PENALTY_RATE_CHANGE</label>
-                                                <input type="number" id="penaltyRateChange" name="penaltyRateChange"
-                                                th:value="${parameters.penaltyRateChange}"
+                                                <input type="text" id="penaltyRateChange" name="penaltyRateChange"
+                                                    th:value="${parameters.penaltyRateChange}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1019,22 +1092,20 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     name="closeDormantAccounts"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
-                                                
-                                                    <input type="checkbox"
-       id="closeDormantAccounts"
-       name="closeDormantAccounts"
-       class="form-check-input border border-dark ms-2 ml-1"
-       style="width: 20px; height: 20px;"
-       th:checked="${parameters.closeDormantAccounts == 'Y'}"
-       value="N"
-       onchange="this.value = this.checked ? 'Y' : 'N'" disabled >
+
+                                                <input type="checkbox" id="closeDormantAccounts"
+                                                    name="closeDormantAccounts"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    th:checked="${parameters.closeDormantAccounts == 'Y'}" value="N"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
 
 
-                                                    <label for="closeDormantAccounts"
+                                                <label for="closeDormantAccounts"
                                                     class="form-label mb-0 text-start ml-5">
                                                     CLOSE_DORMANT_ACCOUNTS
                                                 </label>
-                                                
+
                                             </div>
 
                                             <!-- Repayment Allocation Order -->
@@ -1046,18 +1117,14 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                                <input type="checkbox"
-       id="lockArrearsAccount"
-       name="lockArrearsAccount"
-       class="form-check-input border border-dark ms-2 ml-1"
-       style="width: 20px; height: 20px;"
-       th:checked="${parameters.lockArrearsAccount == 'Y'}"
-       value="N"
-       onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
+                                                <input type="checkbox" id="lockArrearsAccount" name="lockArrearsAccount"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    th:checked="${parameters.lockArrearsAccount == 'Y'}" value="N"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
 
 
-                                                    <label for="lockArrearsAccount"
-                                                    class="form-label mb-0 text-start ml-5">
+                                                <label for="lockArrearsAccount" class="form-label mb-0 text-start ml-5">
                                                     LOCK_ARREARS_ACCOUNT
                                                 </label>
                                             </div>
@@ -1070,18 +1137,14 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                                <input type="checkbox"
-       id="capCharges"
-       name="capCharges"
-       class="form-check-input border border-dark ms-2 ml-1"
-       style="width: 20px; height: 20px;"
-       th:checked="${parameters.capCharges == 'Y'}"
-       value="N"
-       onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
+                                                <input type="checkbox" id="capCharges" name="capCharges"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    th:checked="${parameters.capCharges == 'Y'}" value="N"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
 
 
-                                                    <label for="capCharges"
-                                                    class="form-label mb-0 text-start ml-5">
+                                                <label for="capCharges" class="form-label mb-0 text-start ml-5">
                                                     CAP_CHARGES
                                                 </label>
                                             </div>
@@ -1102,18 +1165,14 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                                <input type="checkbox"
-       id="allowArbitraryFees"
-       name="allowArbitraryFees"
-       class="form-check-input border border-dark ms-2 ml-1"
-       style="width: 20px; height: 20px;"
-       th:checked="${parameters.allowArbitraryFees == 'Y'}"
-       value="N"
-       onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
+                                                <input type="checkbox" id="allowArbitraryFees" name="allowArbitraryFees"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    th:checked="${parameters.allowArbitraryFees == 'Y'}" value="N"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
 
 
-                                                    <label for="allowArbitraryFees"
-                                                    class="form-label mb-0 text-start ml-5">
+                                                <label for="allowArbitraryFees" class="form-label mb-0 text-start ml-5">
                                                     ALLOW_ARBITARY_FEES
                                                 </label>
                                             </div>
@@ -1127,7 +1186,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE1_NAME</label>
                                                 <input type="text" id="fee1Name" name="fee1Name"
-                                                th:value="${parameters.fee1Name}"
+                                                    th:value="${parameters.fee1Name}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1137,7 +1196,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE1_ID_TYPE</label>
                                                 <input type="text" id="fee1IdType" name="fee1IdType"
-                                                th:value="${parameters.fee1IdType}"
+                                                    th:value="${parameters.fee1IdType}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1147,7 +1206,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE1_PAYMENT</label>
                                                 <input type="text" id="fee1Payment" name="fee1Payment"
-                                                th:value="${parameters.fee1Payment}"
+                                                    th:value="${parameters.fee1Payment}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1162,7 +1221,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE1_AMORT_PROFILE</label>
                                                 <input type="text" id="fee1AmortProfile" name="fee1AmortProfile"
-                                                th:value="${parameters.fee1AmortProfile}"
+                                                    th:value="${parameters.fee1AmortProfile}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1172,7 +1231,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">TYPE</label>
                                                 <input type="text" id="fee1Type" name="fee1Type"
-                                                th:value="${parameters.fee1Type}"
+                                                    th:value="${parameters.fee1Type}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1182,7 +1241,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">AMOUNT</label>
                                                 <input type="number" id="fee1Amount" name="fee1Amount"
-                                                th:value="${parameters.fee1Amount}"
+                                                    th:value="${parameters.fee1Amount}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1191,12 +1250,24 @@ document.addEventListener("DOMContentLoaded", function () {
                                         </div>
 
                                         <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE1_APPLICATION</label>
+                                                <input type="text" id="fee1Application" name="fee1Application"
+                                                    th:value="${parameters.fee1Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" readonly>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
 
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE2_NAME</label>
                                                 <input type="text" id="fee2Name" name="fee2Name"
-                                                th:value="${parameters.fee2Name}"
+                                                    th:value="${parameters.fee2Name}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1206,7 +1277,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE2_ID_TYPE</label>
                                                 <input type="text" id="fee2IdType" name="fee2IdType"
-                                                th:value="${parameters.fee2IdType}"
+                                                    th:value="${parameters.fee2IdType}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1216,7 +1287,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE2_PAYMENT</label>
                                                 <input type="text" id="fee2Payment" name="fee2Payment"
-                                                th:value="${parameters.fee2Payment}"
+                                                    th:value="${parameters.fee2Payment}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1231,7 +1302,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE2_AMORT_PROFILE</label>
                                                 <input type="text" id="fee2AmortProfile" name="fee2AmortProfile"
-                                                th:value="${parameters.fee2AmortProfile}"
+                                                    th:value="${parameters.fee2AmortProfile}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1241,7 +1312,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">TYPE</label>
                                                 <input type="text" id="fee2Type" name="fee2Type"
-                                                th:value="${parameters.fee2Type}"
+                                                    th:value="${parameters.fee2Type}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1251,12 +1322,24 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">AMOUNT</label>
                                                 <input type="number" id="fee2Amount" name="fee2Amount"
-                                                th:value="${parameters.fee2Amount}"
+                                                    th:value="${parameters.fee2Amount}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
 
 
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE2_APPLICATION</label>
+                                                <input type="text" id="fee2Application" name="fee2Application"
+                                                    th:value="${parameters.fee2Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" readonly>
+                                            </div>
                                         </div>
 
 
@@ -1267,7 +1350,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE3_NAME</label>
                                                 <input type="text" id="fee3Name" name="fee3Name"
-                                                th:value="${parameters.fee3Name}"
+                                                    th:value="${parameters.fee3Name}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1277,7 +1360,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE3_ID_TYPE</label>
                                                 <input type="text" id="fee3IdType" name="fee3IdType"
-                                                th:value="${parameters.fee3IdType}"
+                                                    th:value="${parameters.fee3IdType}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1287,7 +1370,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE3_PAYMENT</label>
                                                 <input type="text" id="fee3Payment" name="fee3Payment"
-                                                th:value="${parameters.fee3Payment}"
+                                                    th:value="${parameters.fee3Payment}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1302,7 +1385,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE3_AMORT_PROFILE</label>
                                                 <input type="text" id="fee3AmortProfile" name="fee3AmortProfile"
-                                                th:value="${parameters.fee3AmortProfile}"
+                                                    th:value="${parameters.fee3AmortProfile}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1312,7 +1395,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">TYPE</label>
                                                 <input type="text" id="fee3Type" name="fee3Type"
-                                                th:value="${parameters.fee3Type}"
+                                                    th:value="${parameters.fee3Type}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1322,7 +1405,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">AMOUNT</label>
                                                 <input type="number" id="fee3Amount" name="fee3Amount"
-                                                th:value="${parameters.fee3Amount}"
+                                                    th:value="${parameters.fee3Amount}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1337,20 +1420,20 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE3_APPLICATION</label>
                                                 <input type="text" id="fee3Application" name="fee3Application"
-                                                th:value="${parameters.fee3Application}"
+                                                    th:value="${parameters.fee3Application}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
-
-
                                         </div>
+
+
                                         <div class="row g-3 mt-2 ">
 
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE4_NAME</label>
                                                 <input type="text" id="fee4Name" name="fee4Name"
-                                                th:value="${parameters.fee4Name}"
+                                                    th:value="${parameters.fee4Name}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1360,7 +1443,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE4_ID_TYPE</label>
                                                 <input type="text" id="fee4IdType" name="fee4IdType"
-                                                th:value="${parameters.fee4IdType}"
+                                                    th:value="${parameters.fee4IdType}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1370,7 +1453,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE4_PAYMENT</label>
                                                 <input type="text" id="fee4Payment" name="fee4Payment"
-                                                th:value="${parameters.fee4Payment}"
+                                                    th:value="${parameters.fee4Payment}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1385,7 +1468,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE4_AMORT_PROFILE</label>
                                                 <input type="text" id="fee4AmortProfile" name="fee4AmortProfile"
-                                                th:value="${parameters.fee4AmortProfile}"
+                                                    th:value="${parameters.fee4AmortProfile}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1395,7 +1478,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">TYPE</label>
                                                 <input type="text" id="fee4Type" name="fee4Type"
-                                                th:value="${parameters.fee4Type}"
+                                                    th:value="${parameters.fee4Type}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1405,7 +1488,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">AMOUNT</label>
                                                 <input type="number" id="fee4Amount" name="fee4Amount"
-                                                th:value="${parameters.fee4Amount}"
+                                                    th:value="${parameters.fee4Amount}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1414,12 +1497,24 @@ document.addEventListener("DOMContentLoaded", function () {
                                         </div>
 
                                         <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE4_APPLICATION</label>
+                                                <input type="text" id="fee4Application" name="fee4Application"
+                                                    th:value="${parameters.fee4Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" readonly>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
 
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE5_NAME</label>
                                                 <input type="text" id="fee5Name" name="fee5Name"
-                                                th:value="${parameters.fee5Name}"
+                                                    th:value="${parameters.fee5Name}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1429,7 +1524,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE5_ID_TYPE</label>
                                                 <input type="text" id="fee5IdType" name="fee5IdType"
-                                                th:value="${parameters.fee5IdType}"
+                                                    th:value="${parameters.fee5IdType}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1439,7 +1534,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE5_PAYMENT</label>
                                                 <input type="text" id="fee5Payment" name="fee5Payment"
-                                                th:value="${parameters.fee5Payment}"
+                                                    th:value="${parameters.fee5Payment}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1454,7 +1549,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE5_AMORT_PROFILE</label>
                                                 <input type="text" id="fee5AmortProfile" name="fee5AmortProfile"
-                                                th:value="${parameters.fee5AmortProfile}"
+                                                    th:value="${parameters.fee5AmortProfile}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1464,7 +1559,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">TYPE</label>
                                                 <input type="text" id="fee5Type" name="fee5Type"
-                                                th:value="${parameters.fee5Type}"
+                                                    th:value="${parameters.fee5Type}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1474,7 +1569,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">AMOUNT</label>
                                                 <input type="number" id="fee5Amount" name="fee5Amount"
-                                                th:value="${parameters.fee5Amount}"
+                                                    th:value="${parameters.fee5Amount}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1488,7 +1583,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE5_APPLICATION</label>
                                                 <input type="text" id="fee5Application" name="fee5Application"
-                                                th:value="${parameters.fee5Application}"
+                                                    th:value="${parameters.fee5Application}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1503,7 +1598,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE6_NAME</label>
                                                 <input type="text" id="fee6Name" name="fee6Name"
-                                                th:value="${parameters.fee6Name}"
+                                                    th:value="${parameters.fee6Name}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1513,7 +1608,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE6_ID_TYPE</label>
                                                 <input type="text" id="fee6IdType" name="fee6IdType"
-                                                th:value="${parameters.fee6IdType}"
+                                                    th:value="${parameters.fee6IdType}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1523,7 +1618,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE6_PAYMENT</label>
                                                 <input type="text" id="fee6Payment" name="fee6Payment"
-                                                th:value="${parameters.fee6Payment}"
+                                                    th:value="${parameters.fee6Payment}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1538,7 +1633,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">FEE6_AMORT_PROFILE</label>
                                                 <input type="text" id="fee6AmortProfile" name="fee6AmortProfile"
-                                                th:value="${parameters.fee6AmortProfile}"
+                                                    th:value="${parameters.fee6AmortProfile}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1548,7 +1643,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">TYPE</label>
                                                 <input type="text" id="fee6Type" name="fee6Type"
-                                                th:value="${parameters.fee6Type}"
+                                                    th:value="${parameters.fee6Type}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1558,13 +1653,916 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">AMOUNT</label>
                                                 <input type="number" id="fee6Amount" name="fee6Amount"
-                                                th:value="${parameters.fee6Amount}"
+                                                    th:value="${parameters.fee6Amount}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
 
 
                                         </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE6_APPLICATION</label>
+                                                <input type="text" id="fee6Application" name="fee6Application"
+                                                    th:value="${parameters.fee6Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" readonly>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row g-3 mt-2 ">
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE7_NAME</label>
+        <input type="text" id="fee7Name" name="fee7Name"
+            th:value="${parameters.fee7Name}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Account Linking Enabled -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE7_ID_TYPE</label>
+        <input type="text" id="fee7IdType" name="fee7IdType"
+            th:value="${parameters.fee7IdType}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Auto Link Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE7_PAYMENT</label>
+        <input type="text" id="fee7Payment" name="fee7Payment"
+            th:value="${parameters.fee7Payment}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2">
+
+    <!-- Auto Create Linked Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE7_AMORT_PROFILE</label>
+        <input type="text" id="fee7AmortProfile" name="fee7AmortProfile"
+            th:value="${parameters.fee7AmortProfile}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">TYPE</label>
+        <input type="text" id="fee7Type" name="fee7Type"
+            th:value="${parameters.fee7Type}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">AMOUNT</label>
+        <input type="number" id="fee7Amount" name="fee7Amount"
+            th:value="${parameters.fee7Amount}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2 ">
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE7_APPLICATION</label>
+        <input type="text" id="fee7Application" name="fee7Application"
+            th:value="${parameters.fee7Application}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+</div>
+
+
+<div class="row g-3 mt-2 ">
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE8_NAME</label>
+        <input type="text" id="fee8Name" name="fee8Name"
+            th:value="${parameters.fee8Name}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Account Linking Enabled -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE8_ID_TYPE</label>
+        <input type="text" id="fee8IdType" name="fee8IdType"
+            th:value="${parameters.fee8IdType}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Auto Link Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE8_PAYMENT</label>
+        <input type="text" id="fee8Payment" name="fee8Payment"
+            th:value="${parameters.fee8Payment}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2">
+
+    <!-- Auto Create Linked Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE8_AMORT_PROFILE</label>
+        <input type="text" id="fee8AmortProfile" name="fee8AmortProfile"
+            th:value="${parameters.fee8AmortProfile}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">TYPE</label>
+        <input type="text" id="fee8Type" name="fee8Type"
+            th:value="${parameters.fee8Type}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">AMOUNT</label>
+        <input type="number" id="fee8Amount" name="fee8Amount"
+            th:value="${parameters.fee8Amount}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2 ">
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE8_APPLICATION</label>
+        <input type="text" id="fee8Application" name="fee8Application"
+            th:value="${parameters.fee8Application}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+</div>
+
+
+<div class="row g-3 mt-2 ">
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE9_NAME</label>
+        <input type="text" id="fee9Name" name="fee9Name"
+            th:value="${parameters.fee9Name}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Account Linking Enabled -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE9_ID_TYPE</label>
+        <input type="text" id="fee9IdType" name="fee9IdType"
+            th:value="${parameters.fee9IdType}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Auto Link Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE9_PAYMENT</label>
+        <input type="text" id="fee9Payment" name="fee9Payment"
+            th:value="${parameters.fee9Payment}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2">
+
+    <!-- Auto Create Linked Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE9_AMORT_PROFILE</label>
+        <input type="text" id="fee9AmortProfile" name="fee9AmortProfile"
+            th:value="${parameters.fee9AmortProfile}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">TYPE</label>
+        <input type="text" id="fee9Type" name="fee9Type"
+            th:value="${parameters.fee9Type}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">AMOUNT</label>
+        <input type="number" id="fee9Amount" name="fee9Amount"
+            th:value="${parameters.fee9Amount}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2 ">
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE9_APPLICATION</label>
+        <input type="text" id="fee9Application" name="fee9Application"
+            th:value="${parameters.fee9Application}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+</div>
+
+
+<div class="row g-3 mt-2 ">
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE10_NAME</label>
+        <input type="text" id="fee10Name" name="fee10Name"
+            th:value="${parameters.fee10Name}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Account Linking Enabled -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE10_ID_TYPE</label>
+        <input type="text" id="fee10IdType" name="fee10IdType"
+            th:value="${parameters.fee10IdType}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Auto Link Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE10_PAYMENT</label>
+        <input type="text" id="fee10Payment" name="fee10Payment"
+            th:value="${parameters.fee10Payment}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2">
+
+    <!-- Auto Create Linked Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE10_AMORT_PROFILE</label>
+        <input type="text" id="fee10AmortProfile" name="fee10AmortProfile"
+            th:value="${parameters.fee10AmortProfile}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">TYPE</label>
+        <input type="text" id="fee10Type" name="fee10Type"
+            th:value="${parameters.fee10Type}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">AMOUNT</label>
+        <input type="number" id="fee10Amount" name="fee10Amount"
+            th:value="${parameters.fee10Amount}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2 ">
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE10_APPLICATION</label>
+        <input type="text" id="fee10Application" name="fee10Application"
+            th:value="${parameters.fee10Application}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+</div>
+
+
+<div class="row g-3 mt-2 ">
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE11_NAME</label>
+        <input type="text" id="fee11Name" name="fee11Name"
+            th:value="${parameters.fee11Name}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Account Linking Enabled -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE11_ID_TYPE</label>
+        <input type="text" id="fee11IdType" name="fee11IdType"
+            th:value="${parameters.fee11IdType}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Auto Link Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE11_PAYMENT</label>
+        <input type="text" id="fee11Payment" name="fee11Payment"
+            th:value="${parameters.fee11Payment}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2">
+
+    <!-- Auto Create Linked Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE11_AMORT_PROFILE</label>
+        <input type="text" id="fee11AmortProfile" name="fee11AmortProfile"
+            th:value="${parameters.fee11AmortProfile}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">TYPE</label>
+        <input type="text" id="fee11Type" name="fee11Type"
+            th:value="${parameters.fee11Type}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">AMOUNT</label>
+        <input type="number" id="fee11Amount" name="fee11Amount"
+            th:value="${parameters.fee11Amount}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2 ">
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE11_APPLICATION</label>
+        <input type="text" id="fee11Application" name="fee11Application"
+            th:value="${parameters.fee11Application}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+</div>
+
+
+<div class="row g-3 mt-2 ">
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE12_NAME</label>
+        <input type="text" id="fee12Name" name="fee12Name"
+            th:value="${parameters.fee12Name}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Account Linking Enabled -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE12_ID_TYPE</label>
+        <input type="text" id="fee12IdType" name="fee12IdType"
+            th:value="${parameters.fee12IdType}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Auto Link Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE12_PAYMENT</label>
+        <input type="text" id="fee12Payment" name="fee12Payment"
+            th:value="${parameters.fee12Payment}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2">
+
+    <!-- Auto Create Linked Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE12_AMORT_PROFILE</label>
+        <input type="text" id="fee12AmortProfile" name="fee12AmortProfile"
+            th:value="${parameters.fee12AmortProfile}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">TYPE</label>
+        <input type="text" id="fee12Type" name="fee12Type"
+            th:value="${parameters.fee12Type}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">AMOUNT</label>
+        <input type="number" id="fee12Amount" name="fee12Amount"
+            th:value="${parameters.fee12Amount}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2 ">
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE12_APPLICATION</label>
+        <input type="text" id="fee12Application" name="fee12Application"
+            th:value="${parameters.fee12Application}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+</div>
+
+
+<div class="row g-3 mt-2 ">
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE13_NAME</label>
+        <input type="text" id="fee13Name" name="fee13Name"
+            th:value="${parameters.fee13Name}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Account Linking Enabled -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE13_ID_TYPE</label>
+        <input type="text" id="fee13IdType" name="fee13IdType"
+            th:value="${parameters.fee13IdType}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Auto Link Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE13_PAYMENT</label>
+        <input type="text" id="fee13Payment" name="fee13Payment"
+            th:value="${parameters.fee13Payment}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2">
+
+    <!-- Auto Create Linked Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE13_AMORT_PROFILE</label>
+        <input type="text" id="fee13AmortProfile" name="fee13AmortProfile"
+            th:value="${parameters.fee13AmortProfile}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">TYPE</label>
+        <input type="text" id="fee13Type" name="fee13Type"
+            th:value="${parameters.fee13Type}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">AMOUNT</label>
+        <input type="number" id="fee13Amount" name="fee13Amount"
+            th:value="${parameters.fee13Amount}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2 ">
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE13_APPLICATION</label>
+        <input type="text" id="fee13Application" name="fee13Application"
+            th:value="${parameters.fee13Application}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+</div>
+
+
+<div class="row g-3 mt-2 ">
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE14_NAME</label>
+        <input type="text" id="fee14Name" name="fee14Name"
+            th:value="${parameters.fee14Name}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Account Linking Enabled -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE14_ID_TYPE</label>
+        <input type="text" id="fee14IdType" name="fee14IdType"
+            th:value="${parameters.fee14IdType}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Auto Link Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE14_PAYMENT</label>
+        <input type="text" id="fee14Payment" name="fee14Payment"
+            th:value="${parameters.fee14Payment}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2">
+
+    <!-- Auto Create Linked Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE14_AMORT_PROFILE</label>
+        <input type="text" id="fee14AmortProfile" name="fee14AmortProfile"
+            th:value="${parameters.fee14AmortProfile}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">TYPE</label>
+        <input type="text" id="fee14Type" name="fee14Type"
+            th:value="${parameters.fee14Type}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">AMOUNT</label>
+        <input type="number" id="fee14Amount" name="fee14Amount"
+            th:value="${parameters.fee14Amount}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2 ">
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE14_APPLICATION</label>
+        <input type="text" id="fee14Application" name="fee14Application"
+            th:value="${parameters.fee14Application}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+</div>
+
+
+<div class="row g-3 mt-2 ">
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE15_NAME</label>
+        <input type="text" id="fee15Name" name="fee15Name"
+            th:value="${parameters.fee15Name}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Account Linking Enabled -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE15_ID_TYPE</label>
+        <input type="text" id="fee15IdType" name="fee15IdType"
+            th:value="${parameters.fee15IdType}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Auto Link Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE15_PAYMENT</label>
+        <input type="text" id="fee15Payment" name="fee15Payment"
+            th:value="${parameters.fee15Payment}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2">
+
+    <!-- Auto Create Linked Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE15_AMORT_PROFILE</label>
+        <input type="text" id="fee15AmortProfile" name="fee15AmortProfile"
+            th:value="${parameters.fee15AmortProfile}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">TYPE</label>
+        <input type="text" id="fee15Type" name="fee15Type"
+            th:value="${parameters.fee15Type}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">AMOUNT</label>
+        <input type="number" id="fee15Amount" name="fee15Amount"
+            th:value="${parameters.fee15Amount}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2 ">
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE15_APPLICATION</label>
+        <input type="text" id="fee15Application" name="fee15Application"
+            th:value="${parameters.fee15Application}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+</div>
+
+
+<div class="row g-3 mt-2 ">
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE16_NAME</label>
+        <input type="text" id="fee16Name" name="fee16Name"
+            th:value="${parameters.fee16Name}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Account Linking Enabled -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE16_ID_TYPE</label>
+        <input type="text" id="fee16IdType" name="fee16IdType"
+            th:value="${parameters.fee16IdType}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Auto Link Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE16_PAYMENT</label>
+        <input type="text" id="fee16Payment" name="fee16Payment"
+            th:value="${parameters.fee16Payment}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2">
+
+    <!-- Auto Create Linked Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE16_AMORT_PROFILE</label>
+        <input type="text" id="fee16AmortProfile" name="fee16AmortProfile"
+            th:value="${parameters.fee16AmortProfile}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">TYPE</label>
+        <input type="text" id="fee16Type" name="fee16Type"
+            th:value="${parameters.fee16Type}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">AMOUNT</label>
+        <input type="number" id="fee16Amount" name="fee16Amount"
+            th:value="${parameters.fee16Amount}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2 ">
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE16_APPLICATION</label>
+        <input type="text" id="fee16Application" name="fee16Application"
+            th:value="${parameters.fee16Application}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+</div>
+
+<div class="row g-3 mt-2 ">
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE17_NAME</label>
+        <input type="text" id="fee17Name" name="fee17Name"
+            th:value="${parameters.fee17Name}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Account Linking Enabled -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE17_ID_TYPE</label>
+        <input type="text" id="fee17IdType" name="fee17IdType"
+            th:value="${parameters.fee17IdType}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <!-- Auto Link Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE17_PAYMENT</label>
+        <input type="text" id="fee17Payment" name="fee17Payment"
+            th:value="${parameters.fee17Payment}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2">
+
+    <!-- Auto Create Linked Accounts -->
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE17_AMORT_PROFILE</label>
+        <input type="text" id="fee17AmortProfile" name="fee17AmortProfile"
+            th:value="${parameters.fee17AmortProfile}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">TYPE</label>
+        <input type="text" id="fee17Type" name="fee17Type"
+            th:value="${parameters.fee17Type}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">AMOUNT</label>
+        <input type="number" id="fee17Amount" name="fee17Amount"
+            th:value="${parameters.fee17Amount}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2 ">
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE17_APPLICATION</label>
+        <input type="text" id="fee17Application" name="fee17Application"
+            th:value="${parameters.fee17Application}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" readonly>
+    </div>
+</div>
+
 
 
 
@@ -1586,14 +2584,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
                                         <div class="row g-3 mt-2">
                                             <!-- Offset Percentage -->
-                                            
+
 
                                             <!-- Account Initial State -->
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="accountInitialState" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">LINKED_DEPOSIT_PRODUCT</label>
                                                 <input type="text" id="linkedDepositProduct"
-                                                th:value="${parameters.linkedDepositProduct}"
+                                                    th:value="${parameters.linkedDepositProduct}"
                                                     name="linkedDepositProduct"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
@@ -1604,7 +2602,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">SETTLEMENT_OPTIONS</label>
                                                 <input type="text" id="settlementOptions" name="settlementOptions"
-                                                th:value="${parameters.settlementOptions}"
+                                                    th:value="${parameters.settlementOptions}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
@@ -1616,30 +2614,26 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                            <input type="checkbox"
-       id="enableLinking"
-       name="enableLinking"
-       class="form-check-input border border-dark ms-2 ml-1"
-       style="width: 20px; height: 20px;"
-       th:checked="${parameters.enableLinking == 'Y'}"
-       value="N"
-       onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
+                                                <input type="checkbox" id="enableLinking" name="enableLinking"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    th:checked="${parameters.enableLinking == 'Y'}" value="N"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
 
 
-                                                    <label for="enableLinking"
-                                                    class="form-label mb-0 text-start ml-5">
+                                                <label for="enableLinking" class="form-label mb-0 text-start ml-5">
                                                     ENABLE_LINKING
                                                 </label>
                                             </div>
                                         </div>
 
-                                       
-                                         <div class="row g-3 mt-2">
-                                            <label
-                                                style="font-size: 1rem; font-weight: bold; padding: 8px;">Deposit Account Option</label>
+
+                                        <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Deposit
+                                                Account Option</label>
                                         </div>
 
-                                        
+
                                         <div class="row g-3 mt-2">
                                             <!-- Line Of Credit Requirement -->
                                             <div class="col-md-2 d-flex align-items-center">
@@ -1650,16 +2644,14 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                                 <input type="checkbox"
-                                                    id="autoSetSettlementAcct"
+                                                <input type="checkbox" id="autoSetSettlementAcct"
                                                     name="autoSetSettlementAcct"
                                                     class="form-check-input border border-dark ms-2 ml-1"
-                                                    style="width: 20px; height: 20px;"
-                                                    value="N"
+                                                    style="width: 20px; height: 20px;" value="N"
                                                     th:checked="${parameters.autoSetSettlementAcct == 'Y'}"
                                                     onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
 
-                                                    <label for="autoSetSettlementAcct"
+                                                <label for="autoSetSettlementAcct"
                                                     class="form-label mb-0 text-start ml-5">
                                                     AUTO_SET_SETTLEMENT_ACCT
                                                 </label>
@@ -1674,22 +2666,20 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                                 <input type="checkbox"
-                                                    id="autoCreateSettlementAcct"
+                                                <input type="checkbox" id="autoCreateSettlementAcct"
                                                     name="autoCreateSettlementAcct"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
-                                                    th:checked="${parameters.autoCreateSettlementAcct == 'Y'}"
-                                                    value="N"
+                                                    th:checked="${parameters.autoCreateSettlementAcct == 'Y'}" value="N"
                                                     onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
 
-                                                    <label for="autoCreateSettlementAcct"
+                                                <label for="autoCreateSettlementAcct"
                                                     class="form-label mb-0 text-start ml-5">
                                                     AUTO_CREATE_SETTLEMENT_ACCT
                                                 </label>
                                             </div>
                                         </div>
-                                        
+
 
 
                                         <div class="row g-3 mt-2">
@@ -1710,18 +2700,14 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                                 <input type="checkbox"
-       id="enableGuarantors"
-       name="enableGuarantors"
-       class="form-check-input border border-dark ms-2 ml-1"
-       style="width: 20px; height: 20px;"
-       th:checked="${parameters.enableGuarantors == 'Y'}"
-       value="N"
-       onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
+                                                <input type="checkbox" id="enableGuarantors" name="enableGuarantors"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    th:checked="${parameters.enableGuarantors == 'Y'}" value="N"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
 
 
-                                                    <label for="enableGuarantors"
-                                                    class="form-label mb-0 text-start ml-5">
+                                                <label for="enableGuarantors" class="form-label mb-0 text-start ml-5">
                                                     ENABLE_GUARANTORS
                                                 </label>
                                             </div>
@@ -1735,18 +2721,14 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                                 <input type="checkbox"
-       id="enableCollaterals"
-       name="enableCollaterals"
-       class="form-check-input border border-dark ms-2 ml-1"
-       style="width: 20px; height: 20px;"
-       th:checked="${parameters.enableCollaterals == 'Y'}"
-       value="N"
-       onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
+                                                <input type="checkbox" id="enableCollaterals" name="enableCollaterals"
+                                                    class="form-check-input border border-dark ms-2 ml-1"
+                                                    style="width: 20px; height: 20px;"
+                                                    th:checked="${parameters.enableCollaterals == 'Y'}" value="N"
+                                                    onchange="this.value = this.checked ? 'Y' : 'N'" disabled>
 
 
-                                                    <label for="enableCollaterals"
-                                                    class="form-label mb-0 text-start ml-5">
+                                                <label for="enableCollaterals" class="form-label mb-0 text-start ml-5">
                                                     ENABLE_COLLATERALS
                                                 </label>
                                             </div>
@@ -1757,12 +2739,12 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">REQUIRED_SECURITIES</label>
                                                 <input type="text" id="requiredSecurities" name="requiredSecurities"
-                                                th:value="${parameters.requiredSecurities}"
+                                                    th:value="${parameters.requiredSecurities}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" readonly>
                                             </div>
 
-                                             <!-- <div class="col-md-4 d-flex align-items-center">
+                                            <!-- <div class="col-md-4 d-flex align-items-center">
                                                 <label for="principalPaymentSettingsKey"
                                                     class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">DEPOSIT_ACCOUNT_OPTION</label>
@@ -1775,7 +2757,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                         </div>
 
 
-                                       
+
 
                                         <!-- <div class="row g-3 mt-2">
                                             
@@ -1789,11 +2771,22 @@ document.addEventListener("DOMContentLoaded", function () {
                                     </div>
 
                                     <div class="card-footer text-center" style="background-color: #e9ecef;">
-                                        <input type="hidden" name="params_id" id="params_id" th:value="${parameters.id}">
+                                        <input type="hidden" name="params_id" id="params_id"
+                                            th:value="${parameters.id}">
                                         <button class="btn-primary big-btn" onclick="Home();">Home</button>
-                                        <button class="btn-primary big-btn" type="button" onclick="VerifyScheme();" th:if="${formMode=='verify'}" >Verify</button>
-                                        <button class="btn-primary big-btn" onclick="Back();">Back</button>
-
+                                        <input type="hidden" name="params_id" id="params_id"
+                                            th:value="${parameters.id}">
+                                        <button class="btn-primary big-btn" type="button" onclick="VerifyScheme();" th:if="${parameters.modifyFlg=='N'}" >Verify</button>
+                                        <button class="btn-primary big-btn" type="button"
+                                            th:if="${parameters.modifyFlg=='Y'}"
+                                            th:attr="params_id=${parameters.id}"
+                                            onclick="redirectToEdit(this);">Modify</button>
+                                        <button class="btn-primary big-btn" type="button"
+                                            th:if="${parameters.modifyFlg=='Y'}"
+                                            th:attr="params_id=${parameters.id}"
+                                            onclick="Delete();">Delete</button>
+                                        <button class="btn-primary big-btn" type="button"
+                                            onclick="Back();">Back</button>
                                     </div>
                                 </form>
                             </div>
@@ -1825,7 +2818,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 <div class="modal-body" style="text-align: center;">
                     <h6 id="alertmsg"></h6>
-                    <button type="button" class="btn-primary big-btn" id="alertOkBtn" onclick="$('#alert').modal('hide')">Close</button>
+                    <button type="button" class="btn-primary big-btn" id="alertOkBtn"
+                        onclick="$('#alert').modal('hide')">Close</button>
                 </div>
             </div>
         </div>

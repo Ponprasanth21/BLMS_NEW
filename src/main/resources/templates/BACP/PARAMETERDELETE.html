@@ -162,7 +162,8 @@
         }
 
         function Back() {
-            window.history.back();
+            // window.history.back();
+             window.location.href = 'Parameter';
         }
 
 
@@ -1759,7 +1760,7 @@ function Delete() {
                                         <button class="btn-primary big-btn" onclick="Home();">Home</button>
                                         <input type="hidden" name="params_id" id="params_id" th:value="${parameters.id}">
                                         <button class="btn-primary big-btn" type="button" onclick="Delete();">DELETE</button>
-                                        <button class="btn-primary big-btn" onclick="Back();">Back</button>
+                                        <button class="btn-primary big-btn"  type="button" onclick="Back();">Back</button>
 
                                     </div>
                                 </form>

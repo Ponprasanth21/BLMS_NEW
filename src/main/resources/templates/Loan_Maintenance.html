@@ -245,7 +245,7 @@
 
 			// If default option selected, load pagination (or reset table)
 			if (status === "STATUS" || status.trim() === "") {
-				// handleFilterChange(1);  // your default pagination function
+				handleFilterChange(1);  
 				return;
 			}
 
@@ -259,13 +259,13 @@
 					if (response && response.length > 0) {
 						updateTable(response);  // same table update function you already have
 					} else {
-						$("#usertable").html(
+						$("#loanfilterbody").html(
 							`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
 						);
 					}
 				},
 				error: function () {
-					$("#usertable").html(
+					$("#loanfilterbody").html(
 						`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
 					);
 				},

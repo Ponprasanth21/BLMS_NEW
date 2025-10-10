@@ -162,7 +162,8 @@
         }
 
         function Back() {
-            window.history.back();
+            // window.history.back();
+            window.location.href = 'Parameter';
         }
 
 
@@ -260,40 +261,40 @@
         // }
 
         function VerifyScheme() {
-    var paramsId = $('#params_id').val();
-    console.log(paramsId);
+            var paramsId = $('#params_id').val();
+            console.log(paramsId);
 
-    if (!paramsId) {
-        alert("Scheme ID not found!");
-        return;
-    }
-
-    $.ajax({
-        url: '/ASPIRA/verifyScheme',   // <-- include context path
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ id: paramsId }),
-        success: function(response) {
-            if (response.success) {
-                $("#alertmsg").text(response.message || "Scheme verified successfully!");
-                $('#alert').modal('show');
-
-                // Redirect when user clicks OK
-                $("#alertOkBtn").off("click").on("click", function() {
-                    $('#alert').modal('hide'); // hide modal
-              
-                    window.history.back(); 
-                });
-            } else {
-                alert("Verification failed: " + response.message);
+            if (!paramsId) {
+                alert("Scheme ID not found!");
+                return;
             }
-        },
-        error: function(xhr, status, error) {
-            console.error("Error: " + error);
-            alert("An error occurred during verification!");
+
+            $.ajax({
+                url: '/ASPIRA/verifyScheme',   // <-- include context path
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ id: paramsId }),
+                success: function (response) {
+                    if (response.success) {
+                        $("#alertmsg").text(response.message || "Scheme verified successfully!");
+                        $('#alert').modal('show');
+
+                        // Redirect when user clicks OK
+                        $("#alertOkBtn").off("click").on("click", function () {
+                            $('#alert').modal('hide'); // hide modal
+
+                            window.history.back();
+                        });
+                    } else {
+                        alert("Verification failed: " + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error: " + error);
+                    alert("An error occurred during verification!");
+                }
+            });
         }
-    });
-}
 
 
         function UpdateParameter() {
@@ -546,6 +547,7 @@
                                                             let dropdown = $("#branches");
                                                             dropdown.empty().append('<option value="">Select Branch</option>');
 
+
                                                             // Get the selected value from hidden input AFTER AJAX data is ready
                                                             let selectedBranch = $("#selectedBranch").val();
 
@@ -746,8 +748,8 @@
                                             <div class="col-md-4 d-flex justify-content-between align-items-center">
 
 
-                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}" id="accruedIntAfterMaturity"
-                                                    name="accruedIntAfterMaturity"
+                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
+                                                    id="accruedIntAfterMaturity" name="accruedIntAfterMaturity"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
                                                     th:checked="${parameters.accruedIntAfterMaturity == 'Y'}"
@@ -844,7 +846,7 @@
                                         </div>
 
                                         <div class="row g-3 mt-2">
-                                            
+
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="productName" class="form-label me-2 mb-0 text-end"
                                                     style="width: 45%;">ROUND_OFF_REPAY_SCHEDULE</label>
@@ -888,96 +890,101 @@
 
 
                                         <div class="row g-3 mt-2">
-                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Repayment Schedule Edit</label>
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Repayment
+                                                Schedule Edit</label>
                                         </div>
 
                                         <div class="row g-3 mt-2">
-                                            
+
                                             <div class="col-md-2 d-flex align-items-center">
                                                 <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
-                                                                id="adjustPaymentDates" name="adjustPaymentDates"
-                                                                value="Y"
-                                                                th:checked="${parameters.adjustPaymentDates == 'Y'}"
-                                                                th:value="${parameters.adjustPaymentDates}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;">
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="adjustPaymentDates">Adjust Payment Dates</label>
-                                                        </div>
-                                            </div>
-                                            <div class="col-md-2 d-flex align-items-center">
-                                                <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
-                                                                id="adjustPrincipalSchedule"
-                                                                name="adjustPrincipalSchedule" value="Y"
-                                                                th:checked="${parameters.adjustPrincipalSchedule == 'Y'}"
-                                                                th:value="${parameters.adjustPrincipalSchedule}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;">
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="adjustPrincipalSchedule">Adjust Principal Payment
-                                                                Schedule</label>
-                                                        </div>
-                                            </div>
-                                            <div class="col-md-2 d-flex align-items-center">
-                                                <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
-                                                                id="adjustInterestSchedule"
-                                                                name="adjustInterestSchedule" value="Y"
-                                                                th:checked="${parameters.adjustInterestSchedule == 'Y'}"
-                                                                th:value="${parameters.adjustInterestSchedule}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;">
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="adjustInterestSchedule">Adjust Interest Payment
-                                                                Schedule</label>
-                                                        </div>
-                                            </div>
-                                            <div class="col-md-2 d-flex align-items-center">
-                                                <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
-                                                                id="adjustFeeSchedule" name="adjustFeeSchedule"
-                                                                value="Y"
-                                                                th:checked="${parameters.adjustFeeSchedule == 'Y'}"
-                                                                th:value="${parameters.adjustFeeSchedule}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;">
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="adjustFeeSchedule">Adjust Fee Payment
-                                                                Schedule</label>
-                                                        </div>
-                                            </div>
-                                            <div class="col-md-2 d-flex align-items-center">
-                                                 <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
-                                                                id="adjustPenaltySchedule" name="adjustPenaltySchedule"
-                                                                value="Y"
-                                                                th:checked="${parameters.adjustPenaltySchedule == 'Y'}"
-                                                                th:value="${parameters.adjustPenaltySchedule}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;">
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="adjustPenaltySchedule">Adjust Penalty Payment
-                                                                Schedule</label>
-                                                        </div>
-                                            </div>
-                                            <div class="col-md-2 d-flex align-items-center">
-                                                <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
-                                                                id="configurePaymentHolidays"
-                                                                name="configurePaymentHolidays" value="Y"
-                                                                th:checked="${parameters.configurePaymentHolidays == 'Y'}"
-                                                                th:value="${parameters.configurePaymentHolidays}"
-                                                                onchange="this.value = this.checked ? 'Y' : 'N'"
-                                                                style="width: 20px; height: 20px;">
-                                                            <label class="form-check-label mt-1 ml-1"
-                                                                for="configurePaymentHolidays">Configure Payment
-                                                                Holidays</label>
-                                                        </div>
-                                                    </div>
+                                                    <input class="form-check-input" type="checkbox"
+                                                        th:disabled="${parameters.modifyFlg == 'N'}"
+                                                        id="adjustPaymentDates" name="adjustPaymentDates" value="Y"
+                                                        th:checked="${parameters.adjustPaymentDates == 'Y'}"
+                                                        th:value="${parameters.adjustPaymentDates}"
+                                                        onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;">
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="adjustPaymentDates">Adjust Payment Dates</label>
                                                 </div>
-                                         
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        th:disabled="${parameters.modifyFlg == 'N'}"
+                                                        id="adjustPrincipalSchedule" name="adjustPrincipalSchedule"
+                                                        value="Y"
+                                                        th:checked="${parameters.adjustPrincipalSchedule == 'Y'}"
+                                                        th:value="${parameters.adjustPrincipalSchedule}"
+                                                        onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;">
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="adjustPrincipalSchedule">Adjust Principal Payment
+                                                        Schedule</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        th:disabled="${parameters.modifyFlg == 'N'}"
+                                                        id="adjustInterestSchedule" name="adjustInterestSchedule"
+                                                        value="Y"
+                                                        th:checked="${parameters.adjustInterestSchedule == 'Y'}"
+                                                        th:value="${parameters.adjustInterestSchedule}"
+                                                        onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;">
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="adjustInterestSchedule">Adjust Interest Payment
+                                                        Schedule</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        th:disabled="${parameters.modifyFlg == 'N'}"
+                                                        id="adjustFeeSchedule" name="adjustFeeSchedule" value="Y"
+                                                        th:checked="${parameters.adjustFeeSchedule == 'Y'}"
+                                                        th:value="${parameters.adjustFeeSchedule}"
+                                                        onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;">
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="adjustFeeSchedule">Adjust Fee Payment
+                                                        Schedule</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        th:disabled="${parameters.modifyFlg == 'N'}"
+                                                        id="adjustPenaltySchedule" name="adjustPenaltySchedule"
+                                                        value="Y"
+                                                        th:checked="${parameters.adjustPenaltySchedule == 'Y'}"
+                                                        th:value="${parameters.adjustPenaltySchedule}"
+                                                        onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;">
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="adjustPenaltySchedule">Adjust Penalty Payment
+                                                        Schedule</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        th:disabled="${parameters.modifyFlg == 'N'}"
+                                                        id="configurePaymentHolidays" name="configurePaymentHolidays"
+                                                        value="Y"
+                                                        th:checked="${parameters.configurePaymentHolidays == 'Y'}"
+                                                        th:value="${parameters.configurePaymentHolidays}"
+                                                        onchange="this.value = this.checked ? 'Y' : 'N'"
+                                                        style="width: 20px; height: 20px;">
+                                                    <label class="form-check-label mt-1 ml-1"
+                                                        for="configurePaymentHolidays">Configure Payment
+                                                        Holidays</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
 
 
 
@@ -1027,18 +1034,18 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                                     <option value="">select</option>
-                                                    <option value="Fee"
-                                                        th:selected="${parameters.repaymentAllocationOrder == 'Fee'}">
-                                                        Fee</option>
-                                                    <option value="Penalty"
-                                                        th:selected="${parameters.repaymentAllocationOrder == 'Penalty'}">
-                                                        Penalty</option>
-                                                    <option value="Interest"
+                                                    <option value="Fee,Penalty,Interest,Principal"
+                                                        th:selected="${parameters.repaymentAllocationOrder == 'Fee,Penalty,Interest,Principal'}">
+                                                        Fee,Penalty,Interest,Principal</option>
+                                                    <option value="Principal,Interest,Fee,Penalty"
+                                                        th:selected="${parameters.repaymentAllocationOrder == 'Principal,Interest,Fee,Penalty'}">
+                                                        Principal,Interest,Fee,Penalty</option>
+                                                    <!-- <option value="Interest"
                                                         th:selected="${parameters.repaymentAllocationOrder == 'Interest'}">
                                                         Interest</option>
                                                     <option value="Principal"
                                                         th:selected="${parameters.repaymentAllocationOrder == 'Principal'}">
-                                                        Principal</option>
+                                                        Principal</option> -->
                                                 </select>
 
                                             </div>
@@ -1182,8 +1189,8 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}"> -->
 
-                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}" id="closeDormantAccounts"
-                                                    name="closeDormantAccounts"
+                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
+                                                    id="closeDormantAccounts" name="closeDormantAccounts"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
                                                     th:checked="${parameters.closeDormantAccounts == 'Y'}"
@@ -1207,7 +1214,8 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}"> -->
 
-                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}" id="lockArrearsAccount" name="lockArrearsAccount"
+                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
+                                                    id="lockArrearsAccount" name="lockArrearsAccount"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
                                                     th:checked="${parameters.lockArrearsAccount == 'Y'}"
@@ -1228,7 +1236,8 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}"> -->
 
-                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}" id="capCharges" name="capCharges"
+                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
+                                                    id="capCharges" name="capCharges"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
                                                     th:checked="${parameters.capCharges == 'Y'}"
@@ -1257,7 +1266,8 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}"> -->
 
-                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}" id="allowArbitraryFees" name="allowArbitraryFees"
+                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
+                                                    id="allowArbitraryFees" name="allowArbitraryFees"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
                                                     th:checked="${parameters.allowArbitraryFees == 'Y'}"
@@ -1343,6 +1353,20 @@
                                         </div>
 
                                         <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE1_APPLICATION</label>
+                                                <input type="text" id="fee1Application" name="fee1Application"
+                                                    th:value="${parameters.fee1Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
 
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
@@ -1404,6 +1428,20 @@
                                                     style="width: 45%;">AMOUNT</label>
                                                 <input type="number" id="fee2Amount" name="fee2Amount"
                                                     th:value="${parameters.fee2Amount}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE2_APPLICATION</label>
+                                                <input type="text" id="fee2Application" name="fee2Application"
+                                                    th:value="${parameters.fee2Application}"
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
                                             </div>
@@ -1566,6 +1604,20 @@
                                         </div>
 
                                         <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE4_APPLICATION</label>
+                                                <input type="text" id="fee4Application" name="fee4Application"
+                                                    th:value="${parameters.fee4Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
 
                                             <div class="col-md-4 d-flex align-items-center">
                                                 <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
@@ -1718,6 +1770,893 @@
 
                                         </div>
 
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE6_APPLICATION</label>
+                                                <input type="text" id="fee6Application" name="fee6Application"
+                                                    th:value="${parameters.fee6Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+
+                                        </div>
+
+
+                                        <div class="row g-3 mt-2 ">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE7_NAME</label>
+                                                <input type="text" id="fee7Name" name="fee7Name"
+                                                    th:value="${parameters.fee7Name}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <!-- Account Linking Enabled -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE7_ID_TYPE</label>
+                                                <input type="text" id="fee7IdType" name="fee7IdType"
+                                                    th:value="${parameters.fee7IdType}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <!-- Auto Link Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE7_PAYMENT</label>
+                                                <input type="text" id="fee7Payment" name="fee7Payment"
+                                                    th:value="${parameters.fee7Payment}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <!-- Auto Create Linked Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE7_AMORT_PROFILE</label>
+                                                <input type="text" id="fee7AmortProfile" name="fee7AmortProfile"
+                                                    th:value="${parameters.fee7AmortProfile}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee7Type" name="fee7Type"
+                                                    th:value="${parameters.fee7Type}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee7Amount" name="fee7Amount"
+                                                    th:value="${parameters.fee7Amount}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE7_APPLICATION</label>
+                                                <input type="text" id="fee7Application" name="fee7Application"
+                                                    th:value="${parameters.fee7Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE8_NAME</label>
+                                                <input type="text" id="fee8Name" name="fee8Name"
+                                                    th:value="${parameters.fee8Name}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <!-- Account Linking Enabled -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE8_ID_TYPE</label>
+                                                <input type="text" id="fee8IdType" name="fee8IdType"
+                                                    th:value="${parameters.fee8IdType}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <!-- Auto Link Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE8_PAYMENT</label>
+                                                <input type="text" id="fee8Payment" name="fee8Payment"
+                                                    th:value="${parameters.fee8Payment}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <!-- Auto Create Linked Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE8_AMORT_PROFILE</label>
+                                                <input type="text" id="fee8AmortProfile" name="fee8AmortProfile"
+                                                    th:value="${parameters.fee8AmortProfile}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee8Type" name="fee8Type"
+                                                    th:value="${parameters.fee8Type}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee8Amount" name="fee8Amount"
+                                                    th:value="${parameters.fee8Amount}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE8_APPLICATION</label>
+                                                <input type="text" id="fee8Application" name="fee8Application"
+                                                    th:value="${parameters.fee8Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE9_NAME</label>
+                                                <input type="text" id="fee9Name" name="fee9Name"
+                                                    th:value="${parameters.fee9Name}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <!-- Account Linking Enabled -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE9_ID_TYPE</label>
+                                                <input type="text" id="fee9IdType" name="fee9IdType"
+                                                    th:value="${parameters.fee9IdType}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <!-- Auto Link Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE9_PAYMENT</label>
+                                                <input type="text" id="fee9Payment" name="fee9Payment"
+                                                    th:value="${parameters.fee9Payment}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <!-- Auto Create Linked Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE9_AMORT_PROFILE</label>
+                                                <input type="text" id="fee9AmortProfile" name="fee9AmortProfile"
+                                                    th:value="${parameters.fee9AmortProfile}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee9Type" name="fee9Type"
+                                                    th:value="${parameters.fee9Type}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee9Amount" name="fee9Amount"
+                                                    th:value="${parameters.fee9Amount}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE9_APPLICATION</label>
+                                                <input type="text" id="fee9Application" name="fee9Application"
+                                                    th:value="${parameters.fee9Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row g-3 mt-2 ">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE10_NAME</label>
+                                                <input type="text" id="fee10Name" name="fee10Name"
+                                                    th:value="${parameters.fee10Name}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <!-- Account Linking Enabled -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE10_ID_TYPE</label>
+                                                <input type="text" id="fee10IdType" name="fee10IdType"
+                                                    th:value="${parameters.fee10IdType}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <!-- Auto Link Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE10_PAYMENT</label>
+                                                <input type="text" id="fee10Payment" name="fee10Payment"
+                                                    th:value="${parameters.fee10Payment}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <!-- Auto Create Linked Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE10_AMORT_PROFILE</label>
+                                                <input type="text" id="fee10AmortProfile" name="fee10AmortProfile"
+                                                    th:value="${parameters.fee10AmortProfile}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee10Type" name="fee10Type"
+                                                    th:value="${parameters.fee10Type}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee10Amount" name="fee10Amount"
+                                                    th:value="${parameters.fee10Amount}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE10_APPLICATION</label>
+                                                <input type="text" id="fee10Application" name="fee10Application"
+                                                    th:value="${parameters.fee10Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row g-3 mt-2 ">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE11_NAME</label>
+                                                <input type="text" id="fee11Name" name="fee11Name"
+                                                    th:value="${parameters.fee11Name}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <!-- Account Linking Enabled -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE11_ID_TYPE</label>
+                                                <input type="text" id="fee11IdType" name="fee11IdType"
+                                                    th:value="${parameters.fee11IdType}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <!-- Auto Link Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE11_PAYMENT</label>
+                                                <input type="text" id="fee11Payment" name="fee11Payment"
+                                                    th:value="${parameters.fee11Payment}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <!-- Auto Create Linked Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE11_AMORT_PROFILE</label>
+                                                <input type="text" id="fee11AmortProfile" name="fee11AmortProfile"
+                                                    th:value="${parameters.fee11AmortProfile}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee11Type" name="fee11Type"
+                                                    th:value="${parameters.fee11Type}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee11Amount" name="fee11Amount"
+                                                    th:value="${parameters.fee11Amount}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE11_APPLICATION</label>
+                                                <input type="text" id="fee11Application" name="fee11Application"
+                                                    th:value="${parameters.fee11Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row g-3 mt-2 ">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE12_NAME</label>
+                                                <input type="text" id="fee12Name" name="fee12Name"
+                                                    th:value="${parameters.fee12Name}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <!-- Account Linking Enabled -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE12_ID_TYPE</label>
+                                                <input type="text" id="fee12IdType" name="fee12IdType"
+                                                    th:value="${parameters.fee12IdType}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <!-- Auto Link Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE12_PAYMENT</label>
+                                                <input type="text" id="fee12Payment" name="fee12Payment"
+                                                    th:value="${parameters.fee12Payment}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <!-- Auto Create Linked Accounts -->
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE12_AMORT_PROFILE</label>
+                                                <input type="text" id="fee12AmortProfile" name="fee12AmortProfile"
+                                                    th:value="${parameters.fee12AmortProfile}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee12Type" name="fee12Type"
+                                                    th:value="${parameters.fee12Type}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee12Amount" name="fee12Amount"
+                                                    th:value="${parameters.fee12Amount}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE12_APPLICATION</label>
+                                                <input type="text" id="fee12Application" name="fee12Application"
+                                                    th:value="${parameters.fee12Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE13_NAME</label>
+                                                <input type="text" id="fee13Name" name="fee13Name"
+                                                    th:value="${parameters.fee13Name}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE13_ID_TYPE</label>
+                                                <input type="text" id="fee13IdType" name="fee13IdType"
+                                                    th:value="${parameters.fee13IdType}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE13_PAYMENT</label>
+                                                <input type="text" id="fee13Payment" name="fee13Payment"
+                                                    th:value="${parameters.fee13Payment}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE13_AMORT_PROFILE</label>
+                                                <input type="text" id="fee13AmortProfile" name="fee13AmortProfile"
+                                                    th:value="${parameters.fee13AmortProfile}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee13Type" name="fee13Type"
+                                                    th:value="${parameters.fee13Type}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee13Amount" name="fee13Amount"
+                                                    th:value="${parameters.fee13Amount}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE13_APPLICATION</label>
+                                                <input type="text" id="fee13Application" name="fee13Application"
+                                                    th:value="${parameters.fee13Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row g-3 mt-2 ">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE14_NAME</label>
+                                                <input type="text" id="fee14Name" name="fee14Name"
+                                                    th:value="${parameters.fee14Name}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE14_ID_TYPE</label>
+                                                <input type="text" id="fee14IdType" name="fee14IdType"
+                                                    th:value="${parameters.fee14IdType}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE14_PAYMENT</label>
+                                                <input type="text" id="fee14Payment" name="fee14Payment"
+                                                    th:value="${parameters.fee14Payment}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE14_AMORT_PROFILE</label>
+                                                <input type="text" id="fee14AmortProfile" name="fee14AmortProfile"
+                                                    th:value="${parameters.fee14AmortProfile}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee14Type" name="fee14Type"
+                                                    th:value="${parameters.fee14Type}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee14Amount" name="fee14Amount"
+                                                    th:value="${parameters.fee14Amount}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE14_APPLICATION</label>
+                                                <input type="text" id="fee14Application" name="fee14Application"
+                                                    th:value="${parameters.fee14Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row g-3 mt-2 ">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE15_NAME</label>
+                                                <input type="text" id="fee15Name" name="fee15Name"
+                                                    th:value="${parameters.fee15Name}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE15_ID_TYPE</label>
+                                                <input type="text" id="fee15IdType" name="fee15IdType"
+                                                    th:value="${parameters.fee15IdType}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE15_PAYMENT</label>
+                                                <input type="text" id="fee15Payment" name="fee15Payment"
+                                                    th:value="${parameters.fee15Payment}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE15_AMORT_PROFILE</label>
+                                                <input type="text" id="fee15AmortProfile" name="fee15AmortProfile"
+                                                    th:value="${parameters.fee15AmortProfile}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee15Type" name="fee15Type"
+                                                    th:value="${parameters.fee15Type}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee15Amount" name="fee15Amount"
+                                                    th:value="${parameters.fee15Amount}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE15_APPLICATION</label>
+                                                <input type="text" id="fee15Application" name="fee15Application"
+                                                    th:value="${parameters.fee15Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row g-3 mt-2 ">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE16_NAME</label>
+                                                <input type="text" id="fee16Name" name="fee16Name"
+                                                    th:value="${parameters.fee16Name}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE16_ID_TYPE</label>
+                                                <input type="text" id="fee16IdType" name="fee16IdType"
+                                                    th:value="${parameters.fee16IdType}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE16_PAYMENT</label>
+                                                <input type="text" id="fee16Payment" name="fee16Payment"
+                                                    th:value="${parameters.fee16Payment}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE16_AMORT_PROFILE</label>
+                                                <input type="text" id="fee16AmortProfile" name="fee16AmortProfile"
+                                                    th:value="${parameters.fee16AmortProfile}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee16Type" name="fee16Type"
+                                                    th:value="${parameters.fee16Type}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee16Amount" name="fee16Amount"
+                                                    th:value="${parameters.fee16Amount}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="autoCreateLinkedAccounts"
+                                                    class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE16_APPLICATION</label>
+                                                <input type="text" id="fee16Application" name="fee16Application"
+                                                    th:value="${parameters.fee16Application}"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row g-3 mt-2 ">
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountingMethod" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE17_NAME</label>
+        <input type="text" id="fee17Name" name="fee17Name"
+            th:value="${parameters.fee17Name}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="accountLinkingEnabled" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE17_ID_TYPE</label>
+        <input type="text" id="fee17IdType" name="fee17IdType"
+            th:value="${parameters.fee17IdType}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoLinkAccounts" class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE17_PAYMENT</label>
+        <input type="text" id="fee17Payment" name="fee17Payment"
+            th:value="${parameters.fee17Payment}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2">
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE17_AMORT_PROFILE</label>
+        <input type="text" id="fee17AmortProfile" name="fee17AmortProfile"
+            th:value="${parameters.fee17AmortProfile}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">TYPE</label>
+        <input type="text" id="fee17Type" name="fee17Type"
+            th:value="${parameters.fee17Type}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+    </div>
+
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">AMOUNT</label>
+        <input type="number" id="fee17Amount" name="fee17Amount"
+            th:value="${parameters.fee17Amount}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+    </div>
+
+</div>
+
+<div class="row g-3 mt-2 ">
+    <div class="col-md-4 d-flex align-items-center">
+        <label for="autoCreateLinkedAccounts"
+            class="form-label me-2 mb-0 text-end"
+            style="width: 45%;">FEE17_APPLICATION</label>
+        <input type="text" id="fee17Application" name="fee17Application"
+            th:value="${parameters.fee17Application}"
+            class="form-control form-control-sm border border-dark"
+            style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}">
+    </div>
+</div>
+
 
 
 
@@ -1768,7 +2707,8 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}"> -->
 
-                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}" id="enableLinking" name="enableLinking"
+                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
+                                                    id="enableLinking" name="enableLinking"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
                                                     th:checked="${parameters.enableLinking == 'Y'}"
@@ -1786,11 +2726,11 @@
 
 
                                         <div class="row g-3 mt-2">
-                                            <label
-                                                style="font-size: 1rem; font-weight: bold; padding: 8px;">Deposit Account Option</label>
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Deposit
+                                                Account Option</label>
                                         </div>
 
-                                        
+
                                         <div class="row g-3 mt-2">
                                             <!-- Line Of Credit Requirement -->
                                             <div class="col-md-2 d-flex align-items-center">
@@ -1801,16 +2741,16 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                                 <input type="checkbox"
-                                                    id="autoSetSettlementAcct"
+                                                <input type="checkbox" id="autoSetSettlementAcct"
                                                     name="autoSetSettlementAcct"
                                                     class="form-check-input border border-dark ms-2 ml-1"
-                                                    style="width: 20px; height: 20px;"
-                                                    value="N"
+                                                    style="width: 20px; height: 20px;" value="N"
+                                                    th:checked="${parameters.autoSetSettlementAcct == 'Y'}"
+                                                    th:value="${parameters.autoSetSettlementAcct}"
                                                     onchange="this.value = this.checked ? 'Y' : 'N'"
                                                     th:disabled="${parameters.modifyFlg == 'N'}">
 
-                                                    <label for="autoSetSettlementAcct"
+                                                <label for="autoSetSettlementAcct"
                                                     class="form-label mb-0 text-start ml-5">
                                                     AUTO_SET_SETTLEMENT_ACCT
                                                 </label>
@@ -1825,15 +2765,15 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;"> -->
 
-                                                 <input type="checkbox"
-                                                    id="autoCreateSettlementAcct"
+                                                <input type="checkbox" id="autoCreateSettlementAcct"
                                                     name="autoCreateSettlementAcct"
                                                     class="form-check-input border border-dark ms-2 ml-1"
-                                                    style="width: 20px; height: 20px;"
-                                                    value="N"
+                                                    style="width: 20px; height: 20px;" value="N"
+                                                    th:checked="${parameters.autoCreateSettlementAcct == 'Y'}"
+                                                    th:value="${parameters.autoCreateSettlementAcct}"
                                                     onchange="this.value = this.checked ? 'Y' : 'N'">
 
-                                                    <label for="autoCreateSettlementAcct"
+                                                <label for="autoCreateSettlementAcct"
                                                     class="form-label mb-0 text-start ml-5"
                                                     th:disabled="${parameters.modifyFlg == 'N'}">
                                                     AUTO_CREATE_SETTLEMENT_ACCT
@@ -1859,7 +2799,8 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}"> -->
 
-                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}" id="enableGuarantors" name="enableGuarantors"
+                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
+                                                    id="enableGuarantors" name="enableGuarantors"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
                                                     th:checked="${parameters.enableGuarantors == 'Y'}"
@@ -1881,7 +2822,8 @@
                                                     class="form-control form-control-sm border border-dark"
                                                     style="width: 55%;" th:disabled="${parameters.modifyFlg == 'N'}"> -->
 
-                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}" id="enableCollaterals" name="enableCollaterals"
+                                                <input type="checkbox" th:disabled="${parameters.modifyFlg == 'N'}"
+                                                    id="enableCollaterals" name="enableCollaterals"
                                                     class="form-check-input border border-dark ms-2 ml-1"
                                                     style="width: 20px; height: 20px;"
                                                     th:checked="${parameters.enableCollaterals == 'Y'}"
@@ -1918,7 +2860,7 @@
                                         </div>
 
 
-                                        
+
 
 
 
@@ -1936,14 +2878,18 @@
                                     </div>
 
                                     <div class="card-footer text-center" style="background-color: #e9ecef;">
-                                        <input type="hidden" name="params_id" id="params_id" th:value="${parameters.id}">
+                                        <input type="hidden" name="params_id" id="params_id"
+                                            th:value="${parameters.id}">
                                         <button class="btn-primary big-btn" onclick="Home();">Home</button>
                                         <input type="hidden" name="params_id" id="params_id"
                                             th:value="${parameters.id}">
-                                        <button class="btn-primary big-btn" type="button" onclick="VerifyScheme();" th:if="${parameters.modifyFlg=='N'}" >Verify</button>
-                                        <button class="btn-primary big-btn" type="button" th:if="${parameters.modifyFlg=='Y'}"
+                                        <button class="btn-primary big-btn" type="button" onclick="VerifyScheme();"
+                                            th:if="${parameters.modifyFlg=='N'}">Verify</button>
+                                        <button class="btn-primary big-btn" type="button"
+                                            th:if="${parameters.modifyFlg=='Y'}"
                                             onclick="UpdateParameter();">Submit</button>
-                                        <button class="btn-primary big-btn" onclick="Back();">Back</button>
+                                        <button class="btn-primary big-btn" type="button"
+                                            onclick="Back();">Back</button>
 
                                     </div>
                                 </form>
