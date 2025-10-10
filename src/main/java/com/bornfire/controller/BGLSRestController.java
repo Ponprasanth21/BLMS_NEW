@@ -5583,7 +5583,8 @@ public class BGLSRestController {
 //            customer.setAsondate(customer.getAsondate() != null ? customer.getAsondate() : existingCustomer.getAsondate());
 //
 //            
-			customer.setLast_modified_date(customer.getLast_modified_date() != null ? customer.getLast_modified_date() : existingCustomer.getLast_modified_date());
+//			customer.setLast_modified_date(customer.getLast_modified_date() != null ? customer.getLast_modified_date() : existingCustomer.getLast_modified_date());
+			customer.setLast_modified_date(new Date());
 			customer.setEncoded_key(
 					customer.getEncoded_key() != null ? customer.getEncoded_key() : existingCustomer.getEncoded_key());
 			customer.setCustomer_id(
