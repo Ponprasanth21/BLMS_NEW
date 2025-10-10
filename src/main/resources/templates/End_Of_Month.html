@@ -304,9 +304,11 @@ document.getElementById("RECONDate").max = new Date().toISOString().split("T")[0
 </script>
 <script>
 function downloadReport() {
+	document.getElementById('loadingModal').style.display = 'flex';
     const dueDate = document.getElementById("DUEDate").value;
 
     if (!dueDate) {
+    	document.getElementById('loadingModal').style.display = 'none';
         $.toast({
             heading: 'Warning',
             text: 'Please select a Due Date.',
@@ -329,6 +331,7 @@ function downloadReport() {
             responseType: 'blob'  // For Excel download
         },
         success: function(blob, status, xhr) {
+        	document.getElementById('loadingModal').style.display = 'none';
             const filename = xhr.getResponseHeader('Content-Disposition')?.split('filename=')[1] || 'Loan_Report.xlsx';
 
             if (blob.size === 0) {
@@ -350,6 +353,7 @@ function downloadReport() {
             document.body.removeChild(link);
         },
         error: function(err) {
+        	document.getElementById('loadingModal').style.display = 'none';
             $.toast({
                 heading: 'Error',
                 text: 'Something went wrong while generating the report.',

@@ -281,7 +281,7 @@ public class RepaymentScheduleServices {
 	        mappedData.add(map);
 	    }
 
-	    try (InputStream jasperStream = getClass().getResourceAsStream("/static/jasper/EOB.jrxml")) {
+	    try (InputStream jasperStream = getClass().getResourceAsStream("/static/jasper/EOM.jrxml")) {
 	        JasperReport jasperReport = JasperCompileManager.compileReport(jasperStream);
 
 	        // Data source for Jasper
