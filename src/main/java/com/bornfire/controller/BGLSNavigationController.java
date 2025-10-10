@@ -341,6 +341,9 @@ public class BGLSNavigationController {
 	
 	@Autowired
 	BGLS_LMS_SCHEMES_TABLE_REPO lmsschemerepo;
+	
+	@Autowired
+	com.bornfire.services.ExelDownloadService ExelDownloadService;
 
 	public String getPagesize() {
 		return pagesize;
@@ -4331,19 +4334,23 @@ public class BGLSNavigationController {
 
 			md.addAttribute("formmode", "list");
 			md.addAttribute("loanvalues",LOAN_ACT_MST_REPO.getAllDetails());
+			// Details List 
+	        int offset = 0;  
+	        int limit = 50;   
+	        md.addAttribute("loanDetails", LOAN_ACT_MST_REPO.getLoanNo(offset, limit));
 
 		} 
 
 		return "CREDIT_FACILITY_REPORT.html";
 	}
-	
+
 	@RequestMapping(value = "downloadShedulePdf", method = RequestMethod.GET)
 	@ResponseBody
 	public FileSystemResource downloadShedulePdf(HttpServletResponse response,
 			@RequestParam(required = false) String acctNo) throws IOException, SQLException, JRException {
 
 		String filetype = "pdf";
-		File repfile = loginServices.getSheduleDownload(filetype, acctNo);
+		File repfile = ExelDownloadService.getSheduleDownload(filetype, acctNo);
 
 		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 		response.setHeader("Content-Disposition", "attachment; filename=" + repfile.getName());
@@ -4372,5 +4379,18 @@ public class BGLSNavigationController {
 
 		return "BACP/PARAMETER";
 	}
+	@RequestMapping(value = "downloadDetailsPdf", method = RequestMethod.GET)
+	@ResponseBody
+	public FileSystemResource downloadDetailsPdf(HttpServletResponse response,
+			@RequestParam(required = false) String loanNo) throws IOException, SQLException, JRException {
 
+		String filetype = "pdf";
+		File repfile = ExelDownloadService.getDetailDownload(filetype, loanNo);
+
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		response.setHeader("Content-Disposition", "attachment; filename=" + repfile.getName());
+
+		return new FileSystemResource(repfile);
+	}
+	
 }

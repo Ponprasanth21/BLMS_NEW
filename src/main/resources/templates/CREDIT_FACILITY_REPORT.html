@@ -193,7 +193,7 @@
 			margin-left: 400PX;
 			margin-right: auto;
 			border-radius: 10px;
-			box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+
 			font-family: Arial, sans-serif;
 		}
 
@@ -1229,20 +1229,34 @@
 
 
 	<script>
+		
+			document.addEventListener("DOMContentLoaded", function() {
+				// Call the openTab function with 'Details' to show Detail tab by default
+				openTab('Details');
+			});
+	
+
 		function openTab(tabName) {
 			const detailBtn = document.getElementById("DetailButton");
 			const scheduleBtn = document.getElementById("ScheduleButton");
 			const scheduleContent = document.getElementById("ScheduleContent");
+			const detailContent = document.getElementById("detailContent");
 
-			// Toggle active class
+			// Remove active state from both
 			detailBtn.classList.remove("active");
 			scheduleBtn.classList.remove("active");
+
+			// Hide both contents
+			scheduleContent.style.display = "none";
+			detailContent.style.display = "none";
+
+			// Show the selected tab content
 			if (tabName === 'Schedule') {
 				scheduleBtn.classList.add("active");
-				scheduleContent.style.display = "block"; // show input + icon
-			} else {
+				scheduleContent.style.display = "block";
+			} else if (tabName === 'Details') {
 				detailBtn.classList.add("active");
-				scheduleContent.style.display = "none"; // hide schedule content
+				detailContent.style.display = "block";
 			}
 		}
 
@@ -1251,15 +1265,21 @@
 			const myModal = new bootstrap.Modal(document.getElementById('myModal'));
 			myModal.show();
 		}
-		function closeModal(event) {
-		    event.preventDefault(); // stop default behavior if triggered by a button or link
+		function closeModal() {
+			// Hide modal
+			var modal = document.getElementById("myModal");
+			modal.style.display = "none";
 
-		    var modal = document.getElementById("myModal");
-		    modal.style.display = "none"; // hide modal
+			// Remove backdrop
+			var backdrop = document.querySelector('.modal-backdrop');
+			if (backdrop) {
+				backdrop.parentNode.removeChild(backdrop);
+			}
 
-		    // ✅ Refresh the page
-		    window.location.reload();
+			// Remove modal-open class from body to restore scrolling
+			document.body.classList.remove('modal-open');
 		}
+
 
 		$(document)
 			.ready(
@@ -1332,31 +1352,81 @@
 				event.preventDefault(); // Prevent the default action of the button
 				// Your filtering logic goes here
 			});
-			
-			function setAccountNo(idValue) {
-				    // If you want to set it in the input box
-				    document.getElementById("acctNo").value = idValue;
 
-				    // OR if you want to show it next to the label (instead of inside input)
-				    // document.getElementById("acctNoLabel").textContent = "Account No: " + idValue;
-				}
-				
-				
-		function submitAccount(){
-			
-			var filetype = 'pdf';
-			var acctNo=document.getElementById("acctNo").value;
-			alert("filetype"+filetype+"acctNo"+acctNo);
-			location.href = './downloadShedulePdf?' + '&filetype=' + filetype
-							+ '&acctNo=' + acctNo;
-			
+		function setAccountNo(idValue) {
+			// If you want to set it in the input box
+			document.getElementById("acctNo").value = idValue;
+
+			// OR if you want to show it next to the label (instead of inside input)
+			// document.getElementById("acctNoLabel").textContent = "Account No: " + idValue;
 		}
-				
+
+
+		function submitAccount() {
+
+			var filetype = 'pdf';
+			var acctNo = document.getElementById("acctNo").value;
+			location.href = './downloadShedulePdf?' + '&filetype=' + filetype
+				+ '&acctNo=' + acctNo;
+
+			document.getElementById("acctNo").value = '';
+		}
+
+		function closemainModal() {
+			const modalEl = document.getElementById('myModal');
+			const modalInstance = bootstrap.Modal.getInstance(modalEl);
+			if (modalInstance) {
+				modalInstance.hide();
+			} else {
+				const newModal = new bootstrap.Modal(modalEl);
+				newModal.hide();
+			}
+		}
+
+
 
 	</script>
 
+	<script>
+
+		function submitLoan() {
+
+			var filetype = 'pdf';
+			var loanNo = document.getElementById("loanNo").value;
+			
+			location.href = './downloadDetailsPdf?' + '&filetype=' + filetype
+				+ '&loanNo=' + loanNo;
+
+		}
+
+		function openModal1() {
+			const myModal = new bootstrap.Modal(document.getElementById('myModal2'));
+			myModal.show();
+		}
+		function setloanNo(idValue) {
+			// If you want to set it in the input box
+			document.getElementById("loanNo").value = idValue;
+
+			// OR if you want to show it next to the label (instead of inside input)
+			// document.getElementById("acctNoLabel").textContent = "Account No: " + idValue;
+		}
+		
+		function closeModal1(event) {
+		    if (event) event.preventDefault(); // stop form submission
+		    var modal2 = document.getElementById("myModal2");
+		    modal2.style.display = "none"; // ✅ fixed variable name
+
+		    var backdrop = document.querySelector('.modal-backdrop');
+		    if (backdrop) {
+		        backdrop.parentNode.removeChild(backdrop);
+		    }
+
+		    document.body.classList.remove('modal-open');
+		}
+
 	
 
+	</script>
 </head>
 
 
@@ -1399,6 +1469,27 @@
 								style="font-size: 16px; padding: 4px 8px; height:40%; width:30%;"
 								onclick="openTab('Schedule')">Schedule</button>
 						</div>
+						<div id="detailContent" style="display:none; margin-top: 40px;">
+													<div class="card mx-auto"
+														style="width: 600px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+
+
+														<div class="d-flex justify-content-center align-items-center mb-3">
+															<label for="loanNo" style="margin-right: 10px;">Loan No:</label>
+															<input type="text" id="loanNo" class="form-control"
+																style="width: 150px; display:inline-block;">
+															<button type="button" onclick="openModal1()" style="border-radius: 5px;">
+																<img src="images/search.svg" alt="Search"
+																	style="width:20px; height:30px; cursor:pointer;margin-left: 3px;border-radius:5px">
+															</button>
+														</div>
+
+														<div class="text-center">
+															<button type="button" class="btn btn-primary" data-filetype='pdf'
+																onclick="submitLoan()">Submit</button>
+														</div>
+													</div>
+												</div>
 						<div id="ScheduleContent" style="display:none; margin-top: 40px;">
 							<div class="card mx-auto"
 								style="width: 600px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
@@ -1420,6 +1511,7 @@
 								</div>
 							</div>
 						</div>
+						
 						<div class="card-footer text-center" style="background-color: #e9ecef;margin-top:10px">
 							<button class="btn-primary big-btn" onclick="Home();">Home</button>
 							<button class="btn-primary big-btn" onclick="Back();">Back</button>
@@ -1456,32 +1548,30 @@
 							<thead>
 								<tr class="filters">
 
-									<th style="width:100px;"><input type="text" class="form-control font-weight-bold" placeholder="SNO"
-																				disabled></th>
+									<th style="width:100px;"><input type="text" class="form-control font-weight-bold"
+											placeholder="SNO" disabled></th>
 									<th><input type="text" id="filterclassification" oninput="filtermodal()"
 											class="form-control font-weight-bold" placeholder="Account No" disabled>
 									</th>
 									<th><input type="text" id="filteraccountname" oninput="filtermodal()"
 											class="form-control font-weight-bold" placeholder="Account Name" disabled>
 									</th>
-									
-									<th style="width:200px;"><input type="text" class="form-control font-weight-bold" placeholder="Action"
-										style="text-align: center;"
-											disabled></th>
+
+									<th style="width:200px;"><input type="text" class="form-control font-weight-bold"
+											placeholder="Action" style="text-align: center;" disabled></th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr th:each="details, stat : ${loanvalues}">
-								    <td th:text="${stat.count}"></td> <!-- S.No -->
-								    <td th:text="${details.id}"></td>
-								    <td th:text="${details.loan_name}"></td>
+									<td th:text="${stat.count}"></td> <!-- S.No -->
+									<td th:text="${details.id}"></td>
+									<td th:text="${details.loan_name}"></td>
 
-								    <!-- ✅ 4th column: radio button -->
+									<!-- ✅ 4th column: radio button -->
 									<td class="text-center">
-									        <input type="radio" name="selectedLoan"
-									               th:value="${details.id}"
-									               onclick="setAccountNo(this.value)">
-									    </td>
+										<input type="radio" name="selectedLoan" th:value="${details.id}"
+											onclick="setAccountNo(this.value);closeModal()">
+									</td>
 								</tr>
 
 
@@ -1489,18 +1579,75 @@
 						</table>
 					</div>
 					<div class="text-center">
-						<button class="btn-primary big-btn" onclick="closeModal(this);">Close</button>
+						<button type="button" class="btn-primary big-btn" onclick="closeModal()">Close</button>
 					</div>
 				</div>
 			</form>
 		</div>
 	</div>
 
-	
+	<!--for Detail modal-->
+	<div id="myModal2" class="modal">
+		<div class="modal-content1">
+			<form id="uploadForm1" method="post" autocomplete="off">
+				<div class="panel panel-primary filterable">
+					<button class="btn text-white btn-filter btn-primary float-right">filter</button>
 
-	
+					<div style="max-height: 350px; overflow-y: auto;">
+						<table class="table table-bordered table-sm">
+							<thead>
+								<tr class="filters">
+
+									<th style="width:100px;"><input type="text" class="form-control font-weight-bold"
+											placeholder="SNO" disabled></th>
+									<th><input type="text" id="filterclassification" oninput="filtermodal()"
+											class="form-control font-weight-bold" placeholder="Loan No" disabled>
+									</th>
+									<th><input type="text" id="filteraccountname" oninput="filtermodal()"
+											class="form-control font-weight-bold" placeholder="Account Name" disabled>
+									</th>
+
+									<th style="width:200px;"><input type="text" class="form-control font-weight-bold"
+											placeholder="Action" style="text-align: center;" disabled></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="details, stat : ${loanvalues}">
+									<td th:text="${stat.count}"></td> <!-- S.No -->
+									<td th:text="${details.id}"></td>
+									<td th:text="${details.loan_name}"></td>
+
+									<!-- ✅ 4th column: radio button -->
+									<td class="text-center">
+										<input type="radio" name="selectedLoan" th:value="${details.id}"
+											onclick="setloanNo(this.value);closeModal1()">
+									</td>
+								</tr>
+
+
+							</tbody>
+						</table>
+					</div>
+					<div class="text-center">
+						<button class="btn-primary big-btn" onclick="closeModal1(event);">Close</button>
+
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+
 
 
 </body>
+<script>
+
+	function closemainModal() {
+		alert("closemainModal");
+		$('#myModal').modal('hide');
+	}
+
+</script>
 
 </html>
