@@ -162,6 +162,7 @@ import com.bornfire.services.InterestCalculationServices;
 import com.bornfire.services.LeaseLoanService;
 import com.bornfire.services.LoginServices;
 import com.bornfire.services.RepaymentScheduleServices;
+import com.bornfire.services.*;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 import java.nio.charset.StandardCharsets;
@@ -176,6 +177,9 @@ public class BGLSRestController {
 
 	@Autowired
 	BglsLmsSchemesRepo bgls_lms_scheme_repo;
+	
+	@Autowired
+	private ExelDownloadService exelDownloadService;
 
 	@Autowired
 	Employee_Profile_Rep employee_Profile_Rep;
@@ -10186,24 +10190,27 @@ public class BGLSRestController {
 	    return bglsorgbranch.getBranchName(branch_key);
 	}
 
-	   @GetMapping("/downloadLoanDue")
-	    public ResponseEntity<byte[]> downloadLoanDue(@RequestParam("dueDate") String dueDate) {
-	    	
-	    	List<Object[]> rawData = lOAN_REPAYMENT_REPO.findLoanDueByDate(dueDate);
-	        byte[] excelData = repaymentScheduleServices.generateLoanDueExcel(rawData,dueDate);
+	@GetMapping("/downloadLoanDue")
+	public ResponseEntity<byte[]> downloadLoanDue(@RequestParam("dueDate") String dueDate) {
 
-	        if (excelData == null || excelData.length == 0) {
-	            return ResponseEntity.ok()
-	                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-	                    .body(new byte[0]); // Frontend will show "No Data"
-	        }
+	    List<Object[]> rawData = lOAN_REPAYMENT_REPO.findLoanDueByDate(dueDate);
+	    byte[] excelData = exelDownloadService.generateLoanDueExcel(rawData, dueDate);
 
-	        HttpHeaders headers = new HttpHeaders();
-	        headers.setContentDisposition(ContentDisposition.builder("attachment")
-	                .filename("End_Of_Month.xlsx")
-	                .build());
-	        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-
-	        return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+	    if (excelData == null || excelData.length == 0) {
+	        return ResponseEntity.ok()
+	                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+	                .body(new byte[0]);
 	    }
+
+	    String fileName = "End_Of_Month_" + dueDate + ".xlsx"; // Correct filename
+
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.setContentDisposition(ContentDisposition.builder("attachment")
+	            .filename(fileName)
+	            .build());
+	    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+	    return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+	}
+
 }

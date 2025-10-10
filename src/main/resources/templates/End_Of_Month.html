@@ -366,6 +366,41 @@ function downloadReport() {
     });
 }
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const dueDateInput = document.getElementById('DUEDate');
+
+    const today = new Date();
+    dueDateInput.value = formatDateLocal(today);
+
+    function getLastDayOfMonth(date) {
+        return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    }
+
+    window.prevMonth = function () {
+        let current = new Date(dueDateInput.value);
+        current.setDate(1);
+        current.setMonth(current.getMonth() - 1);
+        let lastDayPrevMonth = getLastDayOfMonth(current);
+        dueDateInput.value = formatDateLocal(lastDayPrevMonth);
+    }
+
+    window.nextMonth = function () {
+        let current = new Date(dueDateInput.value);
+        current.setDate(1);
+        current.setMonth(current.getMonth() + 1);
+        let lastDayNextMonth = getLastDayOfMonth(current);
+        dueDateInput.value = formatDateLocal(lastDayNextMonth);
+    }
+
+    function formatDateLocal(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+});
+</script>
 </head>
 <title>ASPIRA</title>
 
@@ -375,28 +410,47 @@ function downloadReport() {
 	</div>
 <!----------------------------------------------------------------------------------------- Start ---------------------------------------------------------------------------->
 	<div class="container-manager">
-	<div class="row">
-		<div class="col-sm-11 ml-5 mt-2">
-			<div th:if="${formmode}=='list'">
-				<div class="card w-100 border panel panel-primary filterable">
+		<div class="row">
+			<div class="col-sm-11 ml-5 mt-2">
+				<div th:if="${formmode} == 'list'">
+					<div class="card w-100 border shadow-sm">
 
-					<!-- Card Header -->
-					<div class="card-header" style="background-color: #e9ecef; height: 50px;">
-						<h6 style="font-size: 1.2rem;">END OF MONTH REPORT</h6>
-					</div>
+						<!-- Card Header -->
+						<div
+							class="card-header d-flex justify-content-center align-items-center"
+							style="background-color: #f5f5f5; border-bottom: 1px solid #ddd;">
+							<h5 class="mb-0 fw-semibold text-dark text-center">END OF
+								MONTH REPORT</h5>
+						</div>
 
-					<!-- Card Body -->
-						<div class="card-body p-3">
-							<div class="form-group">
-								<div class="row formline mt-2 ml-2 justify-content-center align-items-center text-center">
-									<div class="col-sm-2">
-										<label for="DUEDate" class="col-form-label">Due Date</label>
-									</div>
-									<div class="col-sm-2">
-										<input type="date" id="DUEDate" name="due_date"
-											class="form-control form-control-sm" />
-									</div>
+						<!-- Card Body -->
+						<div class="card-body p-3 d-flex justify-content-center">
+							<div class="d-flex align-items-center">
+								<!-- Previous Month Button -->
+								<button type="button"
+									class="btn btn-primary btn-sm rounded-circle shadow-sm"
+									onclick="prevMonth()">
+									<i class="fas fa-chevron-left"></i>
+								</button>
+
+								<!-- Date Picker -->
+								<div class="input-group input-group-sm shadow-sm rounded mx-2"
+									style="max-width: 200px;">
+									<input type="date" id="DUEDate" name="due_date"
+										class="form-control"
+										style="border: 1px solid #ced4da; border-radius: 4px; padding: 0.375rem 0.75rem;" />
+
+									<!--                     <span class="input-group-text bg-white border-1">
+                        <i class="fas fa-calendar-alt"></i>
+                    </span> -->
 								</div>
+
+								<!-- Next Month Button -->
+								<button type="button"
+									class="btn btn-primary btn-sm rounded-circle shadow-sm"
+									onclick="nextMonth()">
+									<i class="fas fa-chevron-right"></i>
+								</button>
 							</div>
 						</div>
 
@@ -406,13 +460,14 @@ function downloadReport() {
 								onclick="home()">Home</button>
 							<button type="button" class="btn-primary big-btn"
 								form="IPSAccessRole" th:attr="data-formmode=${formmode}"
-								onclick="downloadReport();">Submit</button>
+								onclick="downloadReport()">Download</button>
 							<button type="button" class="btn-primary big-btn"
 								onclick="back()">Back</button>
 						</div>
+
 					</div>
+				</div>
+				<!----------------------------------------------------------------------------------------- End ---------------------------------------------------------------------------->
 			</div>
-<!----------------------------------------------------------------------------------------- End ---------------------------------------------------------------------------->			
 		</div>
 	</div>
-</div>
