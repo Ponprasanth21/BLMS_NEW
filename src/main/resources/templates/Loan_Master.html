@@ -1117,13 +1117,13 @@
 										<thead class="thead-light"
 											style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
 											<tr class="filters">
-												<th style="width: 6%;">S.NO</th>
+												<th style="width: 4%;">S.NO</th>
 												<th style="width: 10%;"><input type="text" id="loanIdFilter"
 														class="form-control" placeholder="LOAN ID" disabled></th>
 												<th><input type="text" id="loanTypeFilter" class="form-control"
 														placeholder="LOAN TYPE" disabled></th>
 												<th>LOAN NAME</th>
-												<th><input type="text" id="mobileFilter" class="form-control"
+												<th  style="width: 9%;"><input type="text" id="mobileFilter" class="form-control"
 														placeholder="MOBILE NUMBER" disabled></th>
 												<!-- <th>RETAILER NAME</th> -->
 												<th>RETAILER BRANCH ID</th>
@@ -1180,7 +1180,7 @@
 							</div>
 							<div class="float-right">
 								<button class="btn-primary big-btn" id="repaymentschedule"
-									onclick="schedulePreClosure()">SCHEDULER</button>
+									onclick="schedulePreClosure()">SCHEDULE</button>
 								<button class="btn-primary big-btn" id="ledgerschedule"
 									onclick="ledgerPreClosure()">LEDGER</button>
 							</div>
@@ -1811,7 +1811,7 @@
 								<h6 style="font-size: 1.2rem;" class="ml-4">LOAN MASTER</h6>
 							</div>
 							<div class="btn-group nav-buttons float-right">
-								<!-- <button type="button" class="btn-primary big-btn" id="submitBtn">Upload</button> -->
+								<button type="button" class="btn-primary mr-2 big-btn" id="submitBtn" disabled style="cursor: not-allowed;" >Upload</button>
 								<button class="btn-primary big-btn ml-1" onclick="ListLoan();">List</button>
 							</div>
 						</div>

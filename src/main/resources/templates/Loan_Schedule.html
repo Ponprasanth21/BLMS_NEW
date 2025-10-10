@@ -1192,7 +1192,7 @@
 								SCHEDULE</h6>
 
 							<div class="btn-group nav-buttons float-right">
-								<!--<button type="button" class="btn-primary big-btn" id="submitBtn">Upload</button>-->
+								<button type="button" class="btn-primary big-btn" id="submitBtn" style="cursor: not-allowed;" disabled >Upload</button>
 								<button class="btn-primary big-btn ml-1" onclick="switchToList();">List</button>
 							</div>
 
@@ -1328,14 +1328,14 @@
 										<thead class="thead-light"
 											style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
 											<tr class="filters">
-												<th style="width: 8%;"><input type="text"
+												<th style="width: 4%;"><input type="text"
 														class="form-control font-weight-bold" id="s_no"
 														placeholder="S.NO" disabled></th>
-												<th style="width: 10%;"><input type="text" id="loan_id"
-														class="form-control font-weight-bold" placeholder="LOAN ID"
-														disabled></th>
 												<th><input type="text" id="loan_name"
 														class="form-control font-weight-bold" placeholder="LOAN NAME"
+														disabled></th>
+												<th style="width: 10%;"><input type="text" id="loan_id"
+														class="form-control font-weight-bold" placeholder="LOAN ID"
 														disabled></th>
 												<th><input type="text" id="retailer_name"
 														class="form-control font-weight-bold"
@@ -1353,11 +1353,12 @@
 											<th:block th:if="${list != null and #lists.size(list) > 0}">
 												<tr th:each="item, iterator : ${list}" class="userlist">
 													<td style="font-size: 14px" th:text="${iterator.index + 1}"></td>
+													<td style="font-size: 14px" th:text="${item?.loan_name}"></td>
 													<td style="font-size: 14px" class="text-primary" th:attr="data-id=${item?.id},
 										                         data-account_holderkey=${item?.account_holderkey},
 										                         data-encoded_key=${item?.encoded_key}" th:text="${item?.id}"
 														onclick="ClickId(this);"></td>
-													<td style="font-size: 14px" th:text="${item?.loan_name}"></td>
+													
 													<td style="font-size: 14px" th:text="${item?.retailer_name}">TEST
 													</td>
 													<td style="font-size: 14px" th:text="${item?.retailer_branch}">TEST
