@@ -7,6 +7,7 @@
 	<queryString>
 		<![CDATA[SELECT a.ENCODED_KEY,
          a.account_state,
+         a.id,
        b.DUE_DATE AS dueDate,
        b.REPAID_DATE AS repaidDate,
        b.PRINCIPAL_EXP AS principalExp,
@@ -20,14 +21,18 @@
        b.FEE_DUE AS feeDue,
        b.PENALTY_EXP AS penaltyExp,
        b.PENALTY_PAID AS penaltyPaid,
-       b.PENALTY_DUE AS penaltyDue
-FROM LOAN_ACCOUNT_MASTER_TBL a
-JOIN LOAN_REPAYMENT_TBL b 
-  ON a.ENCODED_KEY = b.PARENT_ACCOUNT_KEY
+       b.PENALTY_DUE AS penaltyDue,
+       c.FIRST_NAME || ' ' || LAST_NAME AS ACCOUNT_HOLDER_NAME
+FROM  LOAN_ACCOUNT_MASTER_TBL a
+JOIN  CLIENT_MASTER_TBL c
+ON    a.account_holderkey = c.encoded_key
+JOIN  LOAN_REPAYMENT_TBL b
+ON    b.PARENT_ACCOUNT_KEY = a.encoded_key
 WHERE a.ENCODED_KEY = (select ENCODED_KEY from LOAN_ACCOUNT_MASTER_TBL where id=$P{LOAN_ID})
-  AND a.DEL_FLG = 'N'
+  AND a.DEL_FLG = 'N' 
   AND b.DEL_FLG = 'N'
-ORDER BY b.DUE_DATE ASC]]>
+ORDER BY b.DUE_DATE ASC
+]]>
 	</queryString>
 	<field name="ENCODED_KEY" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="ENCODED_KEY"/>
@@ -36,6 +41,10 @@ ORDER BY b.DUE_DATE ASC]]>
 	<field name="ACCOUNT_STATE" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="ACCOUNT_STATE"/>
 		<property name="com.jaspersoft.studio.field.label" value="ACCOUNT_STATE"/>
+	</field>
+	<field name="ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="ID"/>
 	</field>
 	<field name="DUEDATE" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.name" value="DUEDATE"/>
@@ -93,12 +102,15 @@ ORDER BY b.DUE_DATE ASC]]>
 		<property name="com.jaspersoft.studio.field.name" value="PENALTYDUE"/>
 		<property name="com.jaspersoft.studio.field.label" value="PENALTYDUE"/>
 	</field>
+	<field name="ACCOUNT_HOLDER_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ACCOUNT_HOLDER_NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCOUNT_HOLDER_NAME"/>
+	</field>
 	<variable name="SUM_OF_PAIDS" class="java.math.BigDecimal">
 		<variableExpression><![CDATA[($F{PRINCIPALPAID} != null ? $F{PRINCIPALPAID} : java.math.BigDecimal.ZERO)
     .add($F{INTERESTPAID} != null ? $F{INTERESTPAID} : java.math.BigDecimal.ZERO)
     .add($F{FEEPAID} != null ? $F{FEEPAID} : java.math.BigDecimal.ZERO)
-    .add($F{PENALTYPAID} != null ? $F{PENALTYPAID} : java.math.BigDecimal.ZERO)
-]]></variableExpression>
+    .add($F{PENALTYPAID} != null ? $F{PENALTYPAID} : java.math.BigDecimal.ZERO)]]></variableExpression>
 	</variable>
 	<variable name="SUM_OF_DUES" class="java.math.BigDecimal">
 		<variableExpression><![CDATA[($F{PRINCIPALDUE} != null ? $F{PRINCIPALDUE} : BigDecimal.ZERO)
@@ -109,23 +121,23 @@ ORDER BY b.DUE_DATE ASC]]>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
-	<title>
-		<band height="24" splitType="Stretch">
+	<pageHeader>
+		<band height="30">
+			<textField>
+				<reportElement x="0" y="0" width="140" height="30" uuid="b8e0a9df-9065-4df8-b61a-3e879b10b060"/>
+				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd-MM-yyyy hh:mm:ss a").format(new java.util.Date())
+]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="681" y="0" width="329" height="30" uuid="3fcc6d1b-b121-488c-8db3-352f29d20b78"/>
+				<textFieldExpression><![CDATA[$F{ACCOUNT_HOLDER_NAME}+" -"+$F{ID}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="132">
 			<staticText>
-				<reportElement x="88" y="0" width="50" height="24" uuid="aae3edf2-f1d6-462d-bf3a-d7696925b843"/>
-				<box rightPadding="4">
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<text><![CDATA[Principal Expected]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="30" y="0" width="58" height="24" uuid="71bf2ca9-d7aa-4b1f-b007-285a8a7ec294"/>
+				<reportElement x="30" y="108" width="58" height="24" uuid="f25b9093-c490-4c3d-8058-f56dccfa1763"/>
 				<box>
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -139,21 +151,7 @@ ORDER BY b.DUE_DATE ASC]]>
 				<text><![CDATA[Due]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="138" y="0" width="50" height="24" uuid="10041de3-2eba-40c1-baa3-246264d7d3fa"/>
-				<box rightPadding="4">
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<text><![CDATA[Interest
-Expected]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="188" y="0" width="60" height="24" uuid="457acdb6-5c10-468f-a5bd-3e693e0f7b69"/>
+				<reportElement x="755" y="108" width="42" height="24" uuid="bde3d53f-5e31-456c-b797-cabd402da965"/>
 				<box rightPadding="4">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -164,10 +162,37 @@ Expected]]></text>
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<text><![CDATA[Fees
-Expected]]></text>
+Due]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="298" y="0" width="60" height="24" uuid="74f89b4f-6656-41e7-880d-15253b80a43b"/>
+				<reportElement x="716" y="108" width="39" height="24" uuid="5d03d26e-007b-4fbd-8141-f989b63cf1ec"/>
+				<box rightPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Interest 
+Due]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="108" width="30" height="24" uuid="d6df8970-7295-44c8-b88c-b7db262cf9e5"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[#]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="298" y="108" width="60" height="24" uuid="4a8d2ed0-e023-4be7-8832-f9dd17a6df05"/>
 				<box rightPadding="4">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -181,49 +206,7 @@ Expected]]></text>
 Expected]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="248" y="0" width="50" height="24" uuid="579ad39f-f198-410c-97e8-ec776519f269"/>
-				<box rightPadding="4">
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<text><![CDATA[Penality
-Expected]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="408" y="0" width="50" height="24" uuid="447feeb1-c2a3-42e4-a740-f6e8498a61b9"/>
-				<box rightPadding="4">
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<text><![CDATA[Interest 
-Paid]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="558" y="0" width="59" height="24" uuid="2316bd41-f569-4118-aaca-06102c763373"/>
-				<box rightPadding="4">
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<text><![CDATA[Total 
-Paid]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="458" y="0" width="50" height="24" uuid="ca65cadc-377b-499e-8193-a8c2b813af88"/>
+				<reportElement x="458" y="108" width="50" height="24" uuid="6569e34b-07bb-48a6-86b9-57f5a48949f4"/>
 				<box rightPadding="4">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -237,36 +220,8 @@ Paid]]></text>
 Paid]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="358" y="0" width="50" height="24" uuid="b57dee6c-3f80-4805-b5cd-33c0de0cbfc2"/>
+				<reportElement x="890" y="108" width="120" height="24" uuid="63453379-ca6e-47ae-9c1b-77142ba751bc"/>
 				<box rightPadding="4">
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<text><![CDATA[Principal
-Paid]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="508" y="0" width="50" height="24" uuid="fa22af37-c3dc-4450-adbe-06baf91b0a26"/>
-				<box rightPadding="4">
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<text><![CDATA[Penality
-Paid]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="617" y="0" width="64" height="24" uuid="66f12b36-164d-454a-bfc9-92bd1b04d5aa"/>
-				<box rightPadding="1">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -275,39 +230,10 @@ Paid]]></text>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<text><![CDATA[Paid
-Date]]></text>
+				<text><![CDATA[State]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="681" y="0" width="35" height="24" uuid="0b55714d-287e-49f7-ab4b-86c435976673"/>
-				<box rightPadding="4">
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<text><![CDATA[Principal
-Due]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="716" y="0" width="39" height="24" uuid="86d7ac4c-df63-472d-a18a-6759b78cda7b"/>
-				<box rightPadding="4">
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<text><![CDATA[Interest 
-Due]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="755" y="0" width="42" height="24" uuid="d7402a28-1435-4ef8-872b-7b276dbe4647"/>
+				<reportElement x="188" y="108" width="60" height="24" uuid="7bcb535f-a2e7-4c17-98d1-96c1d009deea"/>
 				<box rightPadding="4">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -318,10 +244,38 @@ Due]]></text>
 					<font fontName="Arial" size="8"/>
 				</textElement>
 				<text><![CDATA[Fees
-Due]]></text>
+Expected]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="797" y="0" width="32" height="24" uuid="86bbfa02-b55c-470d-b831-5dfc0f3e2ce4"/>
+				<reportElement x="408" y="108" width="50" height="24" uuid="4fb74054-8b46-4907-baf1-a26113fdee3e"/>
+				<box rightPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Interest 
+Paid]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="508" y="108" width="50" height="24" uuid="c7f79737-cf92-4895-b26c-606a210a56c2"/>
+				<box rightPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Penality
+Paid]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="797" y="108" width="32" height="24" uuid="9d265271-1173-4218-b6be-e67d0adc7087"/>
 				<box rightPadding="4">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -335,7 +289,63 @@ Due]]></text>
 Due]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="829" y="0" width="61" height="24" uuid="cc80a4cc-965c-4509-bba6-725b58699a58"/>
+				<reportElement x="358" y="108" width="50" height="24" uuid="c78ad20e-4d3f-4e41-add8-a54f76e205bc"/>
+				<box rightPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Principal
+Paid]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="617" y="108" width="64" height="24" uuid="5605c667-1c02-450c-ae04-da017d1d4021"/>
+				<box rightPadding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Paid
+Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="138" y="108" width="50" height="24" uuid="f5905b8f-5795-490a-9849-8459a8f818bb"/>
+				<box rightPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Interest
+Expected]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="558" y="108" width="59" height="24" uuid="b4b90117-1c2e-4a46-a91a-97643641a9e7"/>
+				<box rightPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Total 
+Paid]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="829" y="108" width="61" height="24" uuid="c309903f-20a0-444d-b9da-ce6f1cb67999"/>
 				<box rightPadding="4">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -349,33 +359,63 @@ Due]]></text>
 Due]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="0" width="30" height="24" uuid="efdcb664-90d4-46ce-b0de-053c8a637209"/>
-				<box>
-					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="8"/>
-				</textElement>
-				<text><![CDATA[#]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="890" y="0" width="120" height="24" uuid="d5941bca-ee4a-4a41-9b26-17d0cc30b9e1"/>
+				<reportElement x="681" y="108" width="35" height="24" uuid="35eeb2d3-6c9f-4497-9da9-7ab824f2f26f"/>
 				<box rightPadding="4">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial" size="8"/>
 				</textElement>
-				<text><![CDATA[State]]></text>
+				<text><![CDATA[Principal
+Due]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="88" y="108" width="50" height="24" uuid="c8417d98-e648-49ca-978b-5b3b780b6e8e"/>
+				<box rightPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Principal Expected]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="248" y="108" width="50" height="24" uuid="9e0f3508-9a54-4a8f-805e-3f58b9444ee7"/>
+				<box rightPadding="4">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Penality
+Expected]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="451" y="51" width="528" height="30" uuid="10592701-3abf-485d-b702-d476c63c34f7"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ACCOUNT_HOLDER_NAME}
+]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="323" y="51" width="128" height="30" uuid="d38e82e6-120a-4b9e-b8b8-6d0e14cb0390"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SCHEDULE REPORT  -"]]></textFieldExpression>
+			</textField>
 		</band>
-	</title>
+	</columnHeader>
 	<detail>
 		<band height="30">
 			<textField isBlankWhenNull="true">
@@ -469,8 +509,7 @@ Due]]></text>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="Arial"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{SUM_OF_PAIDS} == null ? "0.00" : String.format("%,.2f", $V{SUM_OF_PAIDS})
-]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{SUM_OF_PAIDS} == null ? "0.00" : String.format("%,.2f", $V{SUM_OF_PAIDS})]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="716" y="0" width="39" height="30" uuid="70cb3a1e-449b-4683-a5cd-db7a06bff1ef"/>
