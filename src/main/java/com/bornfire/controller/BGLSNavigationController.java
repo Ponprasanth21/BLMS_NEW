@@ -4387,6 +4387,14 @@ public class BGLSNavigationController {
 
 		return "BACP/PARAMETER";
 	}
+	@RequestMapping(value = "end_of_month", method = { RequestMethod.GET, RequestMethod.POST })
+	public String end_of_month(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
+		if (formmode == null || formmode.equals("list")) {
+			md.addAttribute("formmode", "list");
+		}
+		return "End_Of_Month";
+	}
+	
 	@RequestMapping(value = "downloadDetailsPdf", method = RequestMethod.GET)
 	@ResponseBody
 	public FileSystemResource downloadDetailsPdf(HttpServletResponse response,
