@@ -408,4 +408,40 @@ public interface LOAN_REPAYMENT_REPO extends JpaRepository<LOAN_REPAYMENT_ENTITY
 nativeQuery = true)
 List<LOAN_REPAYMENT_ENTITY> getRepaymentDetails();
 
+
+@Query(value = "SELECT  " +
+        "cmt.activation_date, " +
+        "cmt.FIRST_NAME || ' ' || cmt.LAST_NAME AS accountHolderName, " +
+        "cmt.CUSTOMER_ID AS accountHolderId, " +
+        "lam.ID AS accountId, " +
+        "lam.loan_amount, " +
+        "lam.MANUALOVERRIDE_AMOUNT, " +
+        "lam.repayment_installments, " +
+        "lam.interest_rate, " +
+        "lam.principal_balance, " +
+        "lam.interest_balance, " +
+        "lam.fees_balance, " +
+        "(lam.principal_balance + lam.interest_balance + lam.fees_balance) AS totalBalance, " +
+        "cmt.LOAN_CYCLE, " +
+        "cmt.EMAIL_ADDRESS, " +
+        "cmt.MOBILE_PHONE, " +
+        "lam.EMPLOYMENT_STATUS, " +
+        "cmt.FIRST_NAME || ' - ' || lam.EMPLOYER_NAME AS employer, " +
+        "lam.account_state, " +
+        "(lam.principal_paid + lam.interest_paid + lam.fees_paid) AS totalPaid, " +
+        "lam.principal_paid, " +
+        "lam.interest_paid, " +
+        "lam.fees_paid, " +
+        "lam.retailer_name, " +
+        "lam.days_late, " +
+        "cmt.gender, " +
+        "cmt.birth_date " +
+        "FROM LOAN_ACCOUNT_MASTER_TBL lam " +
+        "JOIN CLIENT_MASTER_TBL cmt ON lam.account_holderkey = cmt.encoded_key " +
+        "JOIN LOAN_REPAYMENT_TBL lrt ON lrt.PARENT_ACCOUNT_KEY = lam.encoded_key " +
+        "WHERE cmt.encoded_key IS NOT NULL " +
+        "AND TRUNC(lrt.DUE_DATE) = TO_DATE(:dueDate, 'DD-MM-YYYY')", nativeQuery = true)
+List<Object[]> findLoanDueByDate(@Param("dueDate") String dueDate);
+
+
 }

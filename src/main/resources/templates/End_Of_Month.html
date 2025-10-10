@@ -1,0 +1,414 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/ASPIRA/js/jquery.min.js"></script>
+<script src="/ASPIRA/js/jquery-ui.min.js"></script>
+<style>
+.modal {
+	display: none;
+	/* Hidden by default */
+	position: absolute;
+	/* Stay in place */
+	z-index: 1;
+	/* Sit on top */
+	padding-top: 100px;
+	/* Location of the box */
+	left: 0;
+	top: 0;
+	width: 100%;
+	/* Full width */
+	height: 100%;
+	/* Full height */
+	overflow: auto;
+	/* Enable scroll if needed */
+	background-color: rgb(0, 0, 0);
+	/* Fallback color */
+	background-color: rgba(0, 0, 0, 0.4);
+	/* Black w/ opacity */
+}
+
+.modal-header {
+	padding: 2px 16px;
+	background-color: #BBC3CB;
+	color: balck;
+}
+
+.modal-body {
+	padding: 2px 16px;
+}
+
+.modal-footer {
+	padding: 2px 16px;
+	background-color: #BBC3CB;
+	color: black;
+}
+
+/* Modal Content */
+.modal-content {
+	background-color: #fefefe;
+	margin: auto;
+	/* //padding: 20px; */
+	border: 1px solid #888;
+	width: 80%;
+	height: 0%;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0
+		rgba(0, 0, 0, 0.19);
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 0.4s;
+	animation-name: animatetop;
+	animation-duration: 0.4s
+}
+
+body {
+	font-size: 0.8rem;
+}
+
+.btn {
+	line-height: 0.5rem;
+}
+
+.container-manager {
+	width: 83.5%;
+	padding-right: 15px;
+	padding-left: 15px;
+	margin-right: auto;
+	margin-left: 17.3%;
+	margin-top: 80px;
+}
+
+.table .thead-light th {
+	color: #495057;
+	background-color: #e9ecef;
+	border-color: #dee2e6;
+	width: 23px;
+}
+
+.tablinks {
+	background-color: #f2f2f2;
+	color: #000;
+}
+
+.tablinks.active {
+	background-color: #007bff;
+	color: #fff;
+}
+
+.tab {
+	overflow: hidden;
+	border: 1px solid #ccc;
+	background-color: #f1f1f1;
+}
+
+.scroll {
+	max-height: 60vh;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+.tab button {
+	background-color: inherit;
+	float: left;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 14px 16px;
+	transition: 0.3s;
+	font-size: 17px;
+}
+
+.tab button:hover {
+	background-color: #ddd;
+}
+
+.tabcontent {
+	display: none;
+	padding: 6px 12px;
+	border: 0px solid #ccc;
+	border-top: none;
+}
+
+#myPieChart {
+	width: 100px;
+	height: 100px;
+}
+
+.input-group-text {
+	cursor: pointer;
+}
+
+#eyeIcon {
+	font-size: 1.2rem;
+}
+
+input, select {
+	width: 75% !important;
+	padding: 2px;
+}
+
+.mmdd {
+	height: 25px;
+	width: 35% !important;
+}
+
+.ml-2 {
+	margin-left: 1px;
+}
+
+button:focus {
+	outline: unset !important;
+	border: unset !important;
+}
+
+.borderRemove {
+	border: none;
+}
+</style>
+<style>
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 70%;
+	height: 20%;
+	/* 	margin-left: 200px; */
+}
+
+.modal-content {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 70%;
+	height: 20%;
+	/* 	margin-left: 200px; */
+}
+
+.modal-pass {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 40%;
+	height: 25%;
+	margin-left: 400PX;
+	margin-right: auto;
+	border-radius: 10px;
+	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+	font-family: Arial, sans-serif;
+}
+
+.close {
+	color: red;
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.close:hover, .close:focus {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+}
+</style>
+<style>
+.password-info {
+	visibility: hidden;
+	width: 320px;
+	background-color: #333;
+	color: #fff;
+	text-align: left;
+	border-radius: 10px;
+	padding: 10px;
+	position: absolute;
+	z-index: 1;
+	top: calc(100% + 10px);
+	left: 50%;
+	transform: translateX(-50%);
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+input:hover+.password-info {
+	visibility: visible;
+	opacity: 0.8;
+}
+
+.filterable .filters input[disabled] {
+	background-color: transparent;
+	border: none;
+	cursor: auto;
+	box-shadow: none;
+	padding: 0;
+	height: auto;
+}
+
+.filterable .filters input[disabled]::-webkit-input-placeholder {
+	color: #333;
+}
+
+.filterable .filters input[disabled]::-moz-placeholder {
+	color: #333;
+}
+
+.filterable .filters input[disabled]:-ms-input-placeholder {
+	color: #333;
+}
+
+.big-btn {
+	font-size: 16px;
+}
+</style>
+<!--  model style-->
+<style>
+#datacancel, #datacancel * {
+	box-sizing: content-box !important;
+}
+
+#SuccesPopUp, #SuccesPopUp * {
+	box-sizing: content-box !important;
+}
+
+#datacancel .modal-dialog-centered.modal-dialog-scrollable {
+	justify-content: flex-start !important;
+}
+
+#SuccesPopUp .modal-dialog-centered.modal-dialog-scrollable {
+	justify-content: flex-start !important;
+}
+</style>
+<script>
+function home() {
+	location.href = 'ASPIRA/Dashboard';
+}
+function back() {
+	event.preventDefault();
+	window.history.back();
+}
+// Set today's date as max (so user can only pick today or past dates)
+document.getElementById("RECONDate").max = new Date().toISOString().split("T")[0];
+</script>
+<script>
+function downloadReport() {
+    const dueDate = document.getElementById("DUEDate").value;
+
+    if (!dueDate) {
+        $.toast({
+            heading: 'Warning',
+            text: 'Please select a Due Date.',
+            icon: 'warning',
+            position: { left: 1600, top: 0 },
+            hideAfter: 3000
+        });
+        return;
+    }
+
+    // Format date YYYY-MM-DD → DD-MM-YYYY if needed in backend
+    const [year, month, day] = dueDate.split("-");
+    const formattedDate = `${day}-${month}-${year}`;
+
+    $.ajax({
+        url: './downloadLoanDue',
+        type: 'GET',
+        data: { dueDate: formattedDate },
+        xhrFields: {
+            responseType: 'blob'  // For Excel download
+        },
+        success: function(blob, status, xhr) {
+            const filename = xhr.getResponseHeader('Content-Disposition')?.split('filename=')[1] || 'Loan_Report.xlsx';
+
+            if (blob.size === 0) {
+                $.toast({
+                    heading: 'No Data',
+                    text: 'No records available for the selected date.',
+                    icon: 'info',
+                    position: { left: 1600, top: 0 },
+                    hideAfter: 3000
+                });
+                return;
+            }
+
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = filename.replace(/"/g, '');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        },
+        error: function(err) {
+            $.toast({
+                heading: 'Error',
+                text: 'Something went wrong while generating the report.',
+                icon: 'error',
+                position: { left: 1600, top: 0 },
+                hideAfter: 3000
+            });
+            console.error(err);
+        }
+    });
+}
+</script>
+</head>
+<title>ASPIRA</title>
+
+<body>
+	<div class="col-sm-2">
+		<div th:insert="BGLSHeaderMenu :: header"></div>
+	</div>
+<!----------------------------------------------------------------------------------------- Start ---------------------------------------------------------------------------->
+	<div class="container-manager">
+	<div class="row">
+		<div class="col-sm-11 ml-5 mt-2">
+			<div th:if="${formmode}=='list'">
+				<div class="card w-100 border panel panel-primary filterable">
+
+					<!-- Card Header -->
+					<div class="card-header" style="background-color: #e9ecef; height: 50px;">
+						<h6 style="font-size: 1.2rem;">END OF MONTH</h6>
+					</div>
+
+					<!-- Card Body -->
+						<div class="card-body p-3">
+							<div class="form-group">
+								<div class="row formline mt-2 ml-2 justify-content-center align-items-center text-center">
+									<div class="col-sm-2">
+										<label for="DUEDate" class="col-form-label">Due Date</label>
+									</div>
+									<div class="col-sm-2">
+										<input type="date" id="DUEDate" name="due_date"
+											class="form-control form-control-sm" />
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Card Footer -->
+						<div class="card-footer text-center">
+							<button type="button" class="btn-primary big-btn"
+								onclick="home()">Home</button>
+							<button type="button" class="btn-primary big-btn"
+								form="IPSAccessRole" th:attr="data-formmode=${formmode}"
+								onclick="downloadReport();">Submit</button>
+							<button type="button" class="btn-primary big-btn"
+								onclick="back()">Back</button>
+						</div>
+					</div>
+			</div>
+<!----------------------------------------------------------------------------------------- End ---------------------------------------------------------------------------->			
+		</div>
+	</div>
+</div>

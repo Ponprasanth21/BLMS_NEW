@@ -1,6 +1,23 @@
 package com.bornfire.controller;
 
 import java.io.IOException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.MediaType;  // ✅ This is the one you were missing
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.MediaType;  // ✅ This is the one you were missing
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -10169,4 +10186,24 @@ public class BGLSRestController {
 	    return bglsorgbranch.getBranchName(branch_key);
 	}
 
+	   @GetMapping("/downloadLoanDue")
+	    public ResponseEntity<byte[]> downloadLoanDue(@RequestParam("dueDate") String dueDate) {
+	    	
+	    	List<Object[]> rawData = lOAN_REPAYMENT_REPO.findLoanDueByDate(dueDate);
+	        byte[] excelData = repaymentScheduleServices.generateLoanDueExcel(rawData,dueDate);
+
+	        if (excelData == null || excelData.length == 0) {
+	            return ResponseEntity.ok()
+	                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+	                    .body(new byte[0]); // Frontend will show "No Data"
+	        }
+
+	        HttpHeaders headers = new HttpHeaders();
+	        headers.setContentDisposition(ContentDisposition.builder("attachment")
+	                .filename("End_Of_Month.xlsx")
+	                .build());
+	        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+	        return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+	    }
 }
