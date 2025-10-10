@@ -360,4 +360,8 @@ List<Object[]> getAllDetails();
 			+ "  AND c.due_date = ?1", nativeQuery = true)
 	List<Object[]> getActNo31(String datas);
 
+    @Query(value = "SELECT a.id, b.FIRST_NAME || ' ' || b.LAST_NAME AS acct_name " + "FROM loan_account_master_tbl a "
+            + "JOIN client_master_tbl b ON a.account_holderkey = b.encoded_key " + "ORDER BY a.id", nativeQuery = true)
+    List<Object[]> getAccountWithClientName();
+
 }

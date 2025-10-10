@@ -6949,7 +6949,7 @@ public class BGLSRestController {
 		System.out.println("THE GETTING ACCOUNT NUMBER IS HERE " + accountNumber);
 
 		double totalFlowAmount = 0.0;
-		List<Object[]> loanFlowRecords = lOAN_REPAYMENT_REPO.getloanflowsvaluedatas5112(accountNumber);
+        List<Object[]> loanFlowRecords = lOAN_REPAYMENT_REPO.getLoanFlowsWithCustomer(accountNumber);
 		List<Map<String, Object>> formattedRecords = new ArrayList<>();
 
 		// Fetch latest TRAN_DATE from BGLS_CONTROL_TABLE
@@ -9024,7 +9024,7 @@ public class BGLSRestController {
 
 		double totalFlowAmount = 0.0; // Initialize total sum
 
-		List<Object[]> loanFlowRecords = lOAN_REPAYMENT_REPO.getloanflowsvaluedatas511(accountNumber);
+        List<Object[]> loanFlowRecords = lOAN_REPAYMENT_REPO.getLoanFlowsWithCustomer(accountNumber);
 		List<Map<String, Object>> formattedRecords = new ArrayList<>();
 
 		// Fetch latest TRAN_DATE from BGLS_CONTROL_TABLE

@@ -3865,6 +3865,7 @@ public class BGLSNavigationController {
 			md.addAttribute("booking", LOAN_ACT_MST_REPO.getActNo());
 			md.addAttribute("booking1", depositRep.getexistingData());
 			md.addAttribute("chartaccount", chart_Acc_Rep.getListoffice());
+            md.addAttribute("preclosure", LOAN_ACT_MST_REPO.getAccountWithClientName());
 		} else if (formmode.equals("view")) {
 			md.addAttribute("formmode", "view");
 
