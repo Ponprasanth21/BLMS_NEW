@@ -40,7 +40,10 @@ public interface Lease_Loan_Master_Repo extends JpaRepository<Lease_Loan_Master_
             "       a.employer_name, " +
             "       a.disbursement_date, " +
             "       a.loan_amount, " +
-            "       b.acct_bal " +
+            "       b.acct_bal, " +
+            "       a.ACCOUNT_HOLDERKEY, " +
+            "       a.ASSIGNED_BRANCHKEY,  " +
+            "       a.ID  " +
             "FROM   loan_account_master_tbl a " +
             "JOIN   bgls_chart_of_accounts b " +
             "       ON b.acct_num = a.id " +

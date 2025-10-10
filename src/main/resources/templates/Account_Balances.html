@@ -572,9 +572,14 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 
 		function clicktoacctloan(a) {
-    var loan_accountno = a.getAttribute("data-acct");
+    		var loan_accountno = a.getAttribute("data-acct");
 
-    location.href = 'drawDownLoanMaintanace?formmode=view&loan_accountno=' + encodeURIComponent(loan_accountno);
+			var id = a.getAttribute('data-id');
+			var holder_key = a.getAttribute('data-account_holderkey');
+			var branch_key = a.getAttribute('data-branch_key');
+
+			location.href = 'loanMaster?formmode=viewloan&id='+id+'&holder_key='+holder_key+'&branch_key='+branch_key+''
+    // location.href = 'drawDownLoanMaintanace?formmode=view&loan_accountno=' + encodeURIComponent(loan_accountno);
 }
 
 		function clicktoacctdeposit(a) {
@@ -591,10 +596,10 @@ document.addEventListener('DOMContentLoaded', function() {
 			button.disabled = true;*/
 			var accountNo = a.getAttribute('data-acct');
 			var customer_id = a.getAttribute('data-customer_id');
+			var acct_holder_key = a.getAttribute('data-account_holderkey');
+			var branch_key = a.getAttribute('data-branch_key');
 			
-			console.log(customer_id+" "+accountNo);
-			
-			location.href='customerMaster?formmode=view&module=module2&id='+customer_id;
+			location.href='customerMaster?formmode=view&module=module1&id='+customer_id+'&holder_key='+acct_holder_key+'&branch_key='+branch_key+''
 			
 		}
 	</script>
@@ -700,7 +705,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						<div class="radio-container">
 							<label class="mr-3"> <input type="radio"
 								name="accountType" value="retail" onclick="clkLease()"
-								class="mr-1"> Lease Account Balances
+								class="mr-1">Account Balances
 							</label> <label> <input type="radio" name="accountType"
 								value="corporate" onclick="clkDeposit()"> Deposit
 								Account Balances
@@ -731,7 +736,7 @@ document.addEventListener('DOMContentLoaded', function() {
 								<div class="">
 									<div class="card-header d-flex justify-content-between align-items-center">
 									    <h4 style="font-family: verdana; font-size: x-large; font-style: inherit;">
-									        Lease Account Balances
+									        Account Balances
 									    </h4>
 
 									    <div class="d-flex align-items-center">
@@ -808,10 +813,10 @@ document.addEventListener('DOMContentLoaded', function() {
     <tr th:each="lease,iter : ${leaseaccount}">
         <td th:text="${iter.index + 1}"></td>
         <td th:text="${lease[0]}" class="text-primary"
-            th:attr="data-customer_id=${lease[0]}, data-loan_id=${lease[0]}"
+            th:attr="data-customer_id=${lease[0]}, data-loan_id=${lease[0]}, data-account_holderkey=${(lease[6])}, data-branch_key=${(lease[7])}"
             onclick="viewCustomerMaster(this);"></td>
         <td th:text="${lease[1]}" class="text-primary"
-            th:attr="data-acct=${lease[1]}"
+             th:attr="data-id=${lease[8]}, data-loan_id=${lease[0]}, data-account_holderkey=${(lease[6])}, data-branch_key=${(lease[7])}"
             onclick="clicktoacctloan(this)"></td>
         <td th:text="${lease[2]}"></td>
         <td th:text="${#dates.format(lease[3], 'dd-MM-yyyy')}"></td>
