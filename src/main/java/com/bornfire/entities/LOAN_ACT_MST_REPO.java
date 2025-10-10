@@ -335,7 +335,7 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
 List<Object[]> getAllDetails();
 
 
-	@Query(value = "  SELECT l.*, c.MOBILE_PHONE AS mobile_phone,c.FIRST_NAME AS first_name,c.LAST_NAME AS last_name   "
+	@Query(value = "  SELECT l.ID,c.FIRST_NAME || ' ' || c.LAST_NAME AS accountHolderName , c.MOBILE_PHONE AS mobile_phone,c.FIRST_NAME AS first_name,c.LAST_NAME AS last_name   "
 			+ "  FROM LOAN_ACCOUNT_MASTER_TBL l  " + "  INNER JOIN CLIENT_MASTER_TBL c  "
 			+ "      ON c.ENCODED_KEY = l.ACCOUNT_HOLDERKEY  " + "  ORDER BY l.ID  "
 			+ "  OFFSET ?1 ROWS FETCH NEXT ?2 ROWS ONLY  ", nativeQuery = true)

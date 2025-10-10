@@ -1353,22 +1353,22 @@
 				// Your filtering logic goes here
 			});
 
-			function setAccountNo(idValue, acctNameValue) {
-			    // Set account number
-			    var input = document.getElementById("acctNo");
-			    if (input) {
-			        input.value = idValue;
-			    }
-
-			    // Set account holder name
-			    var acctNameInput = document.getElementById("acctName");
-			    if (acctNameInput) {
-			        acctNameInput.value = acctNameValue;
-			    }
-
-			    console.log("Selected Account ID:", idValue);
-			    console.log("Selected Account Name:", acctNameValue);
+		function setAccountNo(idValue, acctNameValue) {
+			// Set account number
+			var input = document.getElementById("acctNo");
+			if (input) {
+				input.value = idValue;
 			}
+
+			// Set account holder name
+			var acctNameInput = document.getElementById("acctName");
+			if (acctNameInput) {
+				acctNameInput.value = acctNameValue;
+			}
+
+			console.log("Selected Account ID:", idValue);
+			console.log("Selected Account Name:", acctNameValue);
+		}
 
 
 
@@ -1404,24 +1404,18 @@
 		function submitLoan() {
 
 			var filetype = 'pdf';
-			var loanNo = document.getElementById("loanNo").value;
+			var acctNo = document.getElementById("acctNo").value;
 
 			location.href = './downloadDetailsPdf?' + '&filetype=' + filetype
-				+ '&loanNo=' + loanNo;
+				+ '&acctNo=' + acctNo;
 
 		}
 
 		function openModal1() {
-			const myModal = new bootstrap.Modal(document.getElementById('myModal2'));
-			myModal.show();
+			const myModal2 = new bootstrap.Modal(document.getElementById('myModal2'));
+			myModal2.show();
 		}
-		function setloanNo(idValue) {
-			// If you want to set it in the input box
-			document.getElementById("loanNo").value = idValue;
 
-			// OR if you want to show it next to the label (instead of inside input)
-			// document.getElementById("acctNoLabel").textContent = "Account No: " + idValue;
-		}
 
 		function closeModal1(event) {
 			if (event) event.preventDefault(); // stop form submission
@@ -1464,47 +1458,54 @@
 
 
 					<div class="card w-100 border">
-						<div class="card-header d-flex justify-content-between align-items-center" 
-						     style="background-color: #e9ecef; height: 50px;">
+						<div class="card-header d-flex justify-content-between align-items-center"
+							style="background-color: #e9ecef; height: 50px;">
 
-						    <!-- Left side: Title -->
-						    <div class="float-left">
-						        <h6 style="font-size: 1.2rem; color: black; margin: 0;">Credit Facility Report</h6>
-						    </div>
+							<!-- Left side: Title -->
+							<div class="float-left">
+								<h6 style="font-size: 1.2rem; color: black; margin: 0;">Credit Facility Report</h6>
+							</div>
 
-						    <!-- Right side: Buttons -->
-						    <div class="btn-group" role="group" style="gap: 10px;">
-						        <button class="tablinks active rounded-pill" id="DetailButton"
-						            style="font-size: 14px; padding: 6px 14px; border: 1px solid #ccc; "
-						            onclick="openTab('Details')">
-						            Details
-						        </button>
+							<!-- Right side: Buttons -->
+							<div class="btn-group" role="group" style="gap: 10px;">
+								<button class="tablinks active " id="DetailButton"
+									style="font-size: 14px; padding: 6px 14px; border: 1px solid #ccc; "
+									onclick="openTab('Details')">
+									Details
+								</button>
 
-						        <button class="tablinks rounded-pill" id="ScheduleButton"
-						            style="font-size: 14px; padding: 6px 14px; border: 1px solid #ccc; "
-						            onclick="openTab('Schedule')">
-						            Schedule
-						        </button>
-						    </div>
+								<button class="tablinks " id="ScheduleButton"
+									style="font-size: 14px; padding: 6px 14px; border: 1px solid #ccc; "
+									onclick="openTab('Schedule')">
+									Schedule
+								</button>
+							</div>
 						</div>
 
 
-						
+
 						<div id="detailContent" style="display:none; margin-top: 40px;">
 							<div class="card mx-auto"
-								style="width: 600px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+								style="width: 800px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+								<div class="d-flex align-items-center mb-3" style="gap: 60px;">
+									<!-- Account No -->
+									<div class="d-flex align-items-center" style="gap:5px;">
+										<label for="acctNo" class="mb-0">Account No:</label>
+										<input type="text" id="acctNo" class="form-control" style="width: 150px;" readonly>
+										<button type="button" onclick="openModal1()" class="btn btn-light p-1"
+											style="border-radius: 5px;">
+											<img src="images/search.svg" alt="Search"
+												style="width:20px; height:30px; cursor:pointer; border-radius:5px;">
+										</button>
+									</div>
 
-
-								<div class="d-flex justify-content-center align-items-center mb-3">
-									<label for="loanNo" style="margin-right: 10px;">Loan No:</label>
-									<input type="text" id="loanNo" class="form-control"
-										style="width: 150px; display:inline-block;">
-									<button type="button" onclick="openModal1()" style="border-radius: 5px;">
-										<img src="images/search.svg" alt="Search"
-											style="width:20px; height:30px; cursor:pointer;margin-left: 3px;border-radius:5px">
-									</button>
+									<!-- Account Name -->
+									<div class="d-flex align-items-center" style="gap: 8px;">
+										<label for="acctName" class="mb-0">Account Name:</label>
+										<input type="text" id="acctName" class="form-control" style="width: 300px;"
+											readonly>
+									</div>
 								</div>
-
 								<div class="text-center">
 									<button type="button" class="btn btn-primary" data-filetype='pdf'
 										onclick="submitLoan()">Submit</button>
@@ -1517,22 +1518,23 @@
 
 
 								<div class="d-flex align-items-center mb-3" style="gap: 60px;">
-								    <!-- Account No -->
-								    <div class="d-flex align-items-center" style="gap:5px;">
-								        <label for="acctNo" class="mb-0">Account No:</label>
-								        <input type="text" id="acctNo" class="form-control" style="width: 150px;">
-								        <button type="button" onclick="openModal()" class="btn btn-light p-1" style="border-radius: 5px;">
-								            <img src="images/search.svg" alt="Search"
-								                 style="width:20px; height:30px; cursor:pointer; border-radius:5px;">
-								        </button>
-								    </div>
+									<!-- Account No -->
+									<div class="d-flex align-items-center" style="gap:5px;">
+										<label for="acctNo" class="mb-0">Account No:</label>
+										<input type="text" id="acctNo" class="form-control" style="width: 150px;" readonly>
+										<button type="button" onclick="openModal()" class="btn btn-light p-1"
+											style="border-radius: 5px;">
+											<img src="images/search.svg" alt="Search"
+												style="width:20px; height:30px; cursor:pointer; border-radius:5px;">
+										</button>
+									</div>
 
-								    <!-- Account Name -->
-								    <div class="d-flex align-items-center" style="gap: 8px;">
-								        <label for="acctName" class="mb-0">Account Name:</label>
-								        <input type="text" id="acctName" class="form-control" style="width: 300px;"
-										readonly>
-								    </div>
+									<!-- Account Name -->
+									<div class="d-flex align-items-center" style="gap: 8px;">
+										<label for="acctName" class="mb-0">Account Name:</label>
+										<input type="text" id="acctName" class="form-control" style="width: 300px;"
+											readonly>
+									</div>
 								</div>
 
 
@@ -1551,17 +1553,7 @@
 
 
 				</div>
-
-
-
-
-
-
-
 			</div>
-
-
-
 		</div>
 	</div>
 
@@ -1593,23 +1585,19 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr th:each="details, stat : ${loanvalues}"
-								    th:data-id="${details[0]}"
-								    th:data-name="${details[1]}"
-								    style="cursor: pointer;"
-								    onclick="setAccountNo(this.getAttribute('data-id'), this.getAttribute('data-name')); closeModal();">
+								<tr th:each="details, stat : ${loanvalues}" th:data-id="${details[0]}"
+									th:data-name="${details[1]}" style="cursor: pointer;"
+									onclick="setAccountNo(this.getAttribute('data-id'), this.getAttribute('data-name')); closeModal();">
 
-								    <td th:text="${stat.count}"></td>
-								    <td th:text="${details[0]}"></td> <!-- ID -->
-								    <td th:text="${details[1]}"></td> <!-- Account Holder Name -->
+									<td th:text="${stat.count}"></td>
+									<td th:text="${details[0]}"></td> <!-- ID -->
+									<td th:text="${details[1]}"></td> <!-- Account Holder Name -->
 
-								    <td class="text-center">
-								        <input type="radio"
-								               name="selectedLoan"
-								               th:value="${details[0]}"
-								               th:data-name="${details[1]}"
-								               onclick="event.stopPropagation(); setAccountNo(this.value, this.getAttribute('data-name')); closeModal();">
-								    </td>
+									<td class="text-center">
+										<input type="radio" name="selectedLoan" th:value="${details[0]}"
+											th:data-name="${details[1]}"
+											onclick="event.stopPropagation(); setAccountNo(this.value, this.getAttribute('data-name')); closeModal();">
+									</td>
 								</tr>
 
 
@@ -1641,7 +1629,7 @@
 									<th style="width:100px;"><input type="text" class="form-control font-weight-bold"
 											placeholder="SNO" disabled></th>
 									<th><input type="text" id="filterclassification" oninput="filtermodal()"
-											class="form-control font-weight-bold" placeholder="Loan No" disabled>
+											class="form-control font-weight-bold" placeholder="Account No" disabled>
 									</th>
 									<th><input type="text" id="filteraccountname" oninput="filtermodal()"
 											class="form-control font-weight-bold" placeholder="Account Name" disabled>
@@ -1652,24 +1640,34 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr th:each="details, stat : ${loanvalues}">
+								<tr th:each="details, stat : ${loanDetails}" th:data-id="${details[0]}"
+									th:data-name="${details[1]}" style="cursor: pointer;"
+									onclick="setAccountNo(this.getAttribute('data-id'), this.getAttribute('data-name')); closeModal1();">
 
+									<td th:text="${stat.count}"></td>
+									<td th:text="${details[0]}"></td> <!-- ID -->
+									<td th:text="${details[1]}"></td> <!-- Account Holder Name -->
+
+									<td class="text-center">
+										<input type="radio" name="selectedLoan" th:value="${details[0]}"
+											th:data-name="${details[1]}"
+											onclick="event.stopPropagation(); setAccountNo(this.value, this.getAttribute('data-name')); closeModal1();">
+									</td>
 								</tr>
+
+
 
 
 							</tbody>
 						</table>
 					</div>
 					<div class="text-center">
-						<button class="btn-primary big-btn" onclick="closeModal1(event);">Close</button>
-
+						<button type="button" class="btn-primary big-btn" onclick="closeModal1()">Close</button>
 					</div>
 				</div>
 			</form>
 		</div>
 	</div>
-
-
 
 
 </body>

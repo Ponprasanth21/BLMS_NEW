@@ -928,13 +928,13 @@ public class ExelDownloadService {
 	    return outputFile;
 	}
 	
-	public File getDetailDownload(String filetype, String loanNo) throws JRException, SQLException, IOException {
-	    System.out.println("Generating report for account: " + loanNo);
+	public File getDetailDownload(String filetype, String acctNo) throws JRException, SQLException, IOException {
+	    System.out.println("Generating report for account: " + acctNo);
 
 	    File folder = new File(exportpath1);
 	    if (!folder.exists()) folder.mkdirs();
 
-	    String fileName = "DETAILS -" + loanNo;
+	    String fileName = "DETAILS -" + acctNo;
 	    File outputFile;
 
 	    try {
@@ -947,7 +947,7 @@ public class ExelDownloadService {
 
 	        // Set parameters
 	        HashMap<String, Object> parameters = new HashMap<>();
-	        parameters.put("LOAN_NO", loanNo);
+	        parameters.put("LOAN_NO", acctNo);
 
 	        // Fill report
 	        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, srcdataSource.getConnection());

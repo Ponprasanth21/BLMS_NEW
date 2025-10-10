@@ -4401,10 +4401,10 @@ public class BGLSNavigationController {
 	@RequestMapping(value = "downloadDetailsPdf", method = RequestMethod.GET)
 	@ResponseBody
 	public FileSystemResource downloadDetailsPdf(HttpServletResponse response,
-			@RequestParam(required = false) String loanNo) throws IOException, SQLException, JRException {
+			@RequestParam(required = false) String acctNo) throws IOException, SQLException, JRException {
 
 		String filetype = "pdf";
-		File repfile = ExelDownloadService.getDetailDownload(filetype, loanNo);
+		File repfile = ExelDownloadService.getDetailDownload(filetype, acctNo);
 
 		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 		response.setHeader("Content-Disposition", "attachment; filename=" + repfile.getName());
