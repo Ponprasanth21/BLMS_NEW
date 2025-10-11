@@ -735,9 +735,7 @@ document.addEventListener('DOMContentLoaded', function() {
 							<div class="card panel panel-primary filterable">
 								<div class="">
 									<div class="card-header d-flex justify-content-between align-items-center">
-									    <h4 style="font-family: verdana; font-size: x-large; font-style: inherit;">
-									        Account Balances
-									    </h4>
+									<h6 style="font-size: 1.2rem;">ACCOUNT BALANCES- LIST</h6>
 
 									    <div class="d-flex align-items-center">
 									        <input type="date" id="date_of_loan" onchange="leasedate()"
@@ -748,32 +746,18 @@ document.addEventListener('DOMContentLoaded', function() {
 									</div>
 
 
-									<div class="card-body p-0">
-										<div class="table-responsive mt-2">
-											<table class=" table  table-bordered  table-hover table-sm">
-												<thead>
+									<div class="card-body" style="overflow-y: auto; border: 1px solid #ddd;">
+										<div class="table-responsive" id="cardBody">
+											<table class=" table  table-bordered  table-hover table-sm" style="margin-bottom: 0px; font-size: initial;">
+												<thead class="thead-light" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
 													<tr class="filters">
-														<th><input type="text" 									
-															class="form-control font-weight-bold "
-															placeholder="SR NO" disabled></th>
-														<th><input type="text" 									
-													        class="form-control font-weight-bold "
-															placeholder="CUSTOMER ID" disabled></th>
-														<th><input type="text" 									
-															class="form-control font-weight-bold "
-														    placeholder="ACCOUNT ID" disabled></th>
-														<th><input type="text" 									
-														    class="form-control font-weight-bold "
-															placeholder="ACCOUNT NAME" disabled></th>
-														<th><input type="text"
-															class="form-control font-weight-bold "
-															placeholder="DATE OF LOAN" disabled></th>
-														<th class="text-right"><input type="text"
-															class="form-control font-weight-bold "
-															placeholder="LOAN AMOUNT" disabled></th>
-														<th class="text-right"><input type="text"
-														class="form-control font-weight-bold  "
-														placeholder="OUTSTANDING BAL" disabled></th>
+													<th style="width:4%">SRL NO</th>
+													<th style="width:8%">CUSTOMER ID</th>
+													<th style="width:9%">ACCOUNT ID</th>
+													<th style="width:12%">ACCOUNT NAME</th>
+													<th style="width:8%">DATE OF LOAN</th>
+													<th style="width:8%">LOAN AMOUNT</th>
+													<th style="width:8%">LOAN AMOUNT</th>
 													</tr>
 													
 												</thead>
