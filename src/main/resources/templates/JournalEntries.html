@@ -717,6 +717,12 @@
 			closeModalmass(a);
 		}
 
+		function enableFilters() {
+			  document.querySelectorAll(".filters input").forEach(input => {
+			    input.disabled = false;
+			    input.focus();
+			  });
+			}
 
 	</script>
 <script>
@@ -2394,6 +2400,55 @@
 
 	});
 	</script>
+<script>
+  // Function to enable or disable the filter inputs
+  function enableFilters() {
+    const filters = document.querySelectorAll(".filters input[type='text']");
+    const isDisabled = filters[0].disabled;
+
+    filters.forEach(input => {
+      input.disabled = !isDisabled;
+      input.value = ""; // clear old filters when toggling
+    });
+
+    // If filters are being disabled, show all rows again
+    if (isDisabled === false) {
+      const rows = document.querySelectorAll("#myModal tbody tr");
+      rows.forEach(row => (row.style.display = ""));
+    }
+
+    // Update button text
+    const btn = document.querySelector(".btn-filter");
+    btn.textContent = isDisabled ? "Disable Filter" : "Filter";
+  }
+
+  // Function to filter modal table rows based on input values
+  function filtermodal1() {
+    const classification = document.getElementById("filterclassification").value.toUpperCase();
+    const accountid = document.getElementById("filteraccountid").value.toUpperCase();
+    const accountname = document.getElementById("filteraccountname").value.toUpperCase();
+    const currency = document.getElementById("filtercurrency").value.toUpperCase();
+    const credit = document.getElementById("filtercredit").value.toUpperCase();
+    const debit = document.getElementById("filterdebit").value.toUpperCase();
+    const balance = document.getElementById("filterbalance").value.toUpperCase();
+
+    const rows = document.querySelectorAll("#myModal tbody tr");
+
+    rows.forEach(row => {
+      const cells = row.getElementsByTagName("td");
+      const match =
+        (cells[0].textContent.toUpperCase().includes(classification) || classification === "") &&
+        (cells[1].textContent.toUpperCase().includes(accountid) || accountid === "") &&
+        (cells[2].textContent.toUpperCase().includes(accountname) || accountname === "") &&
+        (cells[3].textContent.toUpperCase().includes(currency) || currency === "") &&
+        (cells[4].textContent.toUpperCase().includes(credit) || credit === "") &&
+        (cells[5].textContent.toUpperCase().includes(debit) || debit === "") &&
+        (cells[6].textContent.toUpperCase().includes(balance) || balance === "");
+
+      row.style.display = match ? "" : "none";
+    });
+  }
+</script>
 
 
 </head>
@@ -4905,74 +4960,66 @@
 
 	<!-- ------------------------------------ACCOUNT ID Mdal---------------------------------- -->
 
-	<div id="myModal" class="modal" style="font-size:120%;">
-		<div class="modal-content1">
-			<div class="close text-right" onclick="closeModal(this);">&times;</div>
-			<form id="uploadForm1" method="post" autocomplete="off">
-				<div class="panel panel-primary filterable">
-					<button class="btn text-white btn-filter btn-primary float-right">filter</button>
+<!-- Modal -->
+<div id="myModal" class="modal" role="dialog" aria-modal="true" style="font-size: 120%;">
+  <div class="modal-content1" style="height: 46%;">
+    <form id="uploadForm1" method="post" autocomplete="off" style="margin-top: -1%;">
+      
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="popupAlert" style="font-size: 18px;">Account Details</h5>
+        <div class="panel panel-primary filterable">
+          <button type="button" class="text-white btn-filter btn-primary float-right" onclick="enableFilters()">Filter</button>
+        </div>
+      </div>
 
-					<div style="max-height: 350px; overflow-y: auto;">
-						<table class="table table-bordered table-sm">
-							<thead>
-								<tr class="filters">
+      <!-- Modal Body -->
+      <div style="max-height: 350px; overflow-y: auto;">
+        <table class="table table-bordered table-sm">
+          <thead>
+            <tr class="filters">
+              <th style="width:7%"><input type="text" id="filterclassification" oninput="filtermodal1()" class="form-control font-weight-bold" placeholder="Classification" disabled></th>
+              <th style="width:2%"><input type="text" id="filteraccountid" oninput="filtermodal1()" class="form-control font-weight-bold" placeholder="Account ID" disabled></th>
+              <th style="width:15%"><input type="text"id="filteraccountname" oninput="filtermodal1()" class="form-control font-weight-bold" placeholder="Account Name" disabled></th>
+              <th style="width:6%"><input type="text" id="filtercurrency" oninput="filtermodal1()" class="form-control font-weight-bold" placeholder="Currency" disabled></th>
+              <th style="width:4%"><input type="text" id="filtercredit" oninput="filtermodal1()" class="form-control font-weight-bold" placeholder="Credit" disabled style="text-align: right;"></th>
+              <th style="width:4%"><input type="text" id="filterdebit" oninput="filtermodal1()" class="form-control font-weight-bold" placeholder="Debit" disabled style="text-align: right;"></th>
+              <th style="width:4%"><input type="text" id="filterbalance" oninput="filtermodal1()" class="form-control font-weight-bold" placeholder="Balance" disabled style="text-align: right;"></th>
+              <th style="width:4%"><input type="text" class="form-control font-weight-bold" placeholder="Action" disabled></th>
+            </tr>
+          </thead>
 
-									<th><input type="text" id="filterclassification" oninput="filtermodal()"
-											class="form-control font-weight-bold" placeholder="Classification" disabled>
-									</th>
-									<th><input type="text" id="filteraccountname" oninput="filtermodal()"
-											class="form-control font-weight-bold" placeholder="ACCOUNT ID" disabled>
-									</th>
-									<th><input type="text" id="filteraccountname" oninput="filtermodal()"
-											class="form-control font-weight-bold" placeholder="Account Name" disabled>
-									</th>
-									<th><input type="text" oninput="filtermodal()" id="filtercurrency"
-											class="form-control font-weight-bold" placeholder="Currency" disabled></th>
-									<th><input type="text" oninput="filtermodal()" id="filterdebit"
-											class="form-control font-weight-bold" placeholder="Credit" disabled
-											style="text-align: right;">
-									</th>
-									<th><input type="text" oninput="filtermodal()" id="filtercredit"
-											class="form-control font-weight-bold" placeholder="Debit" disabled
-											style="text-align: right;">
-									</th>
-									<th><input type="text" oninput="filtermodal()" id="filterbalance"
-											class="form-control font-weight-bold" placeholder="Balance" disabled
-											style="text-align: right;">
-									</th>
+          <tbody>
+            <tr th:each="salpay : ${popup}">
+              <td th:text="${salpay?.classification}"></td>
+              <td th:text="${salpay?.acct_num}"></td>
+              <td th:text="${salpay?.acct_name}"></td>
+              <td th:text="${salpay?.acct_crncy}"></td>
+              <td th:text="${salpay?.cr_amt == 0 ? '0.00' : #numbers.formatDecimal(salpay?.cr_amt, 0, 'COMMA', 2, 'POINT')}" style="text-align: right;"></td>
+              <td th:text="${salpay?.dr_amt == 0 ? '0.00' : #numbers.formatDecimal(salpay?.dr_amt, 0, 'COMMA', 2, 'POINT')}" style="text-align: right;"></td>
+              <td th:text="${salpay?.acct_bal == 0 ? '0.00' : #numbers.formatDecimal(salpay?.acct_bal, 0, 'COMMA', 2, 'POINT')}" style="text-align: right;"></td>
+              <td style="text-align: center;">
+                <input type="radio"
+                       th:attr="data-acct_num=${salpay.acct_num}, 
+                                data-acct_name=${salpay.acct_name}, 
+                                data-acct_crncy=${salpay.acct_crncy}, 
+                                data-ref_crncy=${salpay.ref_crncy}"
+                       onclick="setAccountDetails(this)" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
+      <!-- Modal Footer -->
+      <div class="text-center mt-2">
+        <button type="button" class="btn-primary big-btn" onclick="closeModal(this);">Close</button>
+      </div>
 
-									<th><input type="text" class="form-control font-weight-bold" placeholder="Action"
-											disabled></th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr th:each="salpay : ${popup}">
-									<td th:text="${salpay?.classification}"></td>
-									<td th:text="${salpay?.acct_num}"></td>
-									<td th:text="${salpay?.acct_name}"></td>
-									<td th:text="${salpay?.acct_crncy}"></td>
+    </form>
+  </div>
+</div>
 
-									<td th:text="${salpay?.cr_amt== 0 ? '0.00' :#numbers.formatDecimal(salpay?.cr_amt, 0, 'COMMA', 2, 'POINT')}"
-										style="text-align: right;"></td>
-									<td th:text="${salpay?.dr_amt== 0 ? '0.00' :#numbers.formatDecimal(salpay?.dr_amt, 0, 'COMMA', 2, 'POINT')}"
-										style="text-align: right;"></td>
-									<td th:text="${salpay?.acct_bal== 0 ? '0.00' :#numbers.formatDecimal(salpay?.acct_bal, 0, 'COMMA', 2, 'POINT')}"
-										style="text-align: right;"></td>
-
-									<td style="text-align: center"><input type="radio" th:attr="data-acct_num=${salpay.acct_num},data-acct_name=${salpay.acct_name},data-acct_crncy=${salpay.acct_crncy}
-											,data-ref_crncy=${salpay.ref_crncy}" onclick="setAccountDetails(this)" /></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-					<div class="text-center">
-						<button class="btn-primary big-btn" onclick="closeModal(this);">Close</button>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
 
 	<div id="tranRefModal" class="modal" style="font-size:120%;">
 		<div class="modal-content">
@@ -5198,19 +5245,13 @@
 		</div>
 	</div>
 	<!-- ------------------------------------Alert Modal ---------------------------------- -->
-	<div class="modal fade" data-backdrop="false" data-keyboard="false" id="normalalert" tabindex="-1" role="dialog"
-		aria-hidden="true">
+	<div class="modal fade" data-backdrop="false" data-keyboard="false" id="normalalert" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 			<div class="modal-content"
-				style="position: fixed; left: 50%; transform: translate(-50%, 0%); width: 30%; height: 25%;">
-				<div class="modal-header">
-					<h5 class="modal-title">Alerts</h5>
-
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true"
-						onclick="$('#normalalert').modal('hide')">×</button>
-				</div>
-				<div class="modal-body" style="text-align: center;">
-					<h6 id="normalalertmsg"></h6>
+				style="position: fixed; left: 50%; transform: translate(-50%, 0%); width: 22%; height: 14%;">
+				
+				<div class="modal-body mb-2" style="text-align: center;">
+					<h6 id="normalalertmsg" style="margin-bottom: 4%;"></h6>
 					<button type="button" class="btn-primary big-btn" data-dismiss="modal"
 						onclick="$('#normalalert').modal('hide')">Close</button>
 				</div>
@@ -5337,8 +5378,7 @@
 						<div class="row formline">
 							<div class="col-sm-6">Upload File :</div>
 							<div class="col-sm-6">
-								<form action="#" th:object="${reportform}" method="post" enctype="multipart/form-data"
-									id="reportform">
+								<form action="#" th:object="${reportform}" method="post" enctype="multipart/form-data" id="reportform">
 									<input type="file" name="file" id="fileInput"
 										class="form-control form-control-sm bg-white border border-dark"
 										accept=".xml, .xls, .xlsx" />
@@ -5355,11 +5395,9 @@
 						<button type="button" class="btn-primary big-btn" data-dismiss="modal"
 							onclick="refreshPage()">Close</button>
 					</div>
-
 				</div>
 			</div>
 		</div>
 	</div>
 </body>
-
 </html>
