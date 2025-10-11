@@ -533,7 +533,6 @@ input:hover+.password-info {
 								<br>
 								<div class="row-formline"
 									style="display: flex; align-items: right; justify-content: right; margin-right: 30px; margin-top: 10px; margin-bottom: 10px; font-size: 16px">
-
 									<div
 										style="text-align: center; font-weight: bold; margin-right: 470px">Total</div>
 									<div id="totalCredits"
@@ -542,33 +541,17 @@ input:hover+.password-info {
 									<div id="totalDebits"
 										style="text-align: right; font-weight: bold"></div>
 								</div>
-
-
 							</div>
-
 							<div class="card-footer text-center mt-2"
 								style="background-color: #e9ecef">
-
-
 								<button class="btn-primary big-btn" onclick="Home();">Home</button>
 								<button class="btn-primary big-btn" onclick="Back();">Back</button>
-
 							</div>
 						</div>
 					</div>
-
 				</div>
 			</div>
-
-
-
-
-
-
 		</div>
-
-
-
 	</div>
 </body>
 <script>
@@ -576,20 +559,26 @@ let balancedate;
 
 document.addEventListener('DOMContentLoaded', function () {
     const dateInput = document.getElementById('reportDate');
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0]; // yyyy-MM-dd format
 
-    // Use the current value of reportDate as the max selectable date
-    const maxDate = dateInput.value;
-    dateInput.setAttribute('max', maxDate);
+    // Always prevent selecting future dates
+    dateInput.setAttribute('max', todayStr);
 
-    // Optional: if user types a date after maxDate, reset to maxDate
-    dateInput.addEventListener('change', function() {
+    // If no value or a future date is set, default to today
+    if (!dateInput.value || dateInput.value > todayStr) {
+        dateInput.value = todayStr;
+    }
+
+    // When user changes date
+    dateInput.addEventListener('change', function () {
         balancedate = this.value;
 
-        // Prevent future selection beyond maxDate
-        if (balancedate > maxDate) {
-            alert('Dates after ' + maxDate + ' are not allowed!');
-            this.value = maxDate;
-            balancedate = maxDate;
+        // Prevent selecting future date
+        if (balancedate > todayStr) {
+            alert('Future dates beyond ' + todayStr + ' are not allowed!');
+            this.value = todayStr;
+            balancedate = todayStr;
         }
 
         console.log('Selected Date:', balancedate);
@@ -600,73 +589,64 @@ document.addEventListener('DOMContentLoaded', function () {
             url: './trialBalanceReports1',
             data: { balancedate: balancedate },
             type: 'GET',
-            success: function(data) {
+            success: function (data) {
                 console.log('Data received:', data);
 
-                // Clear the table body before appending new rows
                 $('#placelist').empty();
+                let totalCredits = 0;
+                let totalDebits = 0;
 
-                let totalCredits = 0; // Initialize total credits
-                let totalDebits = 0;  // Initialize total debits
+                if (data.length === 0) {
+                    $('#placelist').append(`
+                        <tr>
+                            <td colspan="9" class="text-center text-danger">No data available</td>
+                        </tr>
+                    `);
+                    document.getElementById('totalCredits').textContent = '0.00';
+                    document.getElementById('totalDebits').textContent = '0.00';
+                    return;
+                }
 
                 data.forEach(trial => {
-                    const row = document.createElement('tr');
-
-                    const creditValue = trial[7] ? trial[7] : 0.00;
-                    const debitValue = trial[8] ? trial[8] : 0.00;
+                    const creditValue = trial[7] ? parseFloat(trial[7]) : 0.00;
+                    const debitValue = trial[8] ? parseFloat(trial[8]) : 0.00;
 
                     totalCredits += creditValue;
                     totalDebits += debitValue;
 
-                    const formattedCreditValue = creditValue.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
+                    const formattedCredit = creditValue.toLocaleString(undefined, {
+                        minimumFractionDigits: 2, maximumFractionDigits: 2
                     });
 
-                    const formattedDebitValue = debitValue.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
+                    const formattedDebit = debitValue.toLocaleString(undefined, {
+                        minimumFractionDigits: 2, maximumFractionDigits: 2
                     });
 
-                    row.innerHTML = `
-                        <td>${trial[0]}</td>
-                        <td>${trial[1]}</td>
-                        <td>${trial[2]}</td>
-                        <td class="text-primary" data-glshcode="${trial[3]}" data-date="${balancedate}" onclick="viewglshDAB(this);">
-                            ${trial[3]}
-                        </td>
-                        <td>${trial[4]}</td>
-                        <td>${trial[5]}</td>
-                        <td>${trial[6]}</td>
-                        <td style="text-align: right">${formattedCreditValue}</td>
-                        <td style="text-align: right">${formattedDebitValue}</td>
-                    `;
-
-                    $('#placelist').append(row);
+                    $('#placelist').append(`
+                        <tr>
+                            <td>${trial[0]}</td>
+                            <td>${trial[1]}</td>
+                            <td>${trial[2]}</td>
+                            <td class="text-primary" data-glshcode="${trial[3]}" data-date="${balancedate}" onclick="viewglshDAB(this);">${trial[3]}</td>
+                            <td>${trial[4]}</td>
+                            <td>${trial[5]}</td>
+                            <td>${trial[6]}</td>
+                            <td style="text-align: right">${formattedCredit}</td>
+                            <td style="text-align: right">${formattedDebit}</td>
+                        </tr>
+                    `);
                 });
 
-                const totalCredits1 = totalCredits.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
-                const totalDebits1 = totalDebits.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                });
-
-                document.getElementById('totalCredits').textContent = totalCredits1;
-                document.getElementById('totalDebits').textContent = totalDebits1;
+                document.getElementById('totalCredits').textContent = totalCredits.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                document.getElementById('totalDebits').textContent = totalDebits.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             },
-            error: function(err) {
+            error: function (err) {
                 console.error('Error fetching data:', err);
             }
         });
     });
 });
 </script>
-
-
-
 <script>
 // Function to calculate total credits and debits
 function calculateTotals() {

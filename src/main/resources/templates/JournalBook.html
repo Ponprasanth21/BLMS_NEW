@@ -210,69 +210,106 @@
 	document.addEventListener('DOMContentLoaded', function () {
 	    const dateInput = document.getElementById('reportDate');
 
-	    // Use the current value in reportDate as the max
-	    const maxDate = dateInput.value; // this will restrict future selection
-	    dateInput.setAttribute('max', maxDate);
+	    // 🔹 Set today's date as max (prevents future date selection)
+	    const today = new Date().toISOString().split('T')[0];
+	    dateInput.setAttribute('max', today);
 
-	    // Optional: if user types a date after maxDate, reset to maxDate
+	    // Optional: if value is empty, set to today initially
+	    if (!dateInput.value) {
+	        dateInput.value = today;
+	    }
+
+	    // 🔹 When user selects a date
 	    dateInput.addEventListener('change', function () {
 	        const selectedDate = this.value;
 
-	        if (selectedDate > maxDate) {
-	            alert('Dates after ' + maxDate + ' are not allowed!');
-	            this.value = maxDate;
+	        // Prevent future date entry manually
+	        if (selectedDate > today) {
+	            alert('Future dates are not allowed!');
+	            this.value = today;
 	            return;
 	        }
 
 	        console.log('Selected Date:', selectedDate);
 
-	        // Your existing AJAX logic
+	        // 🔹 Fetch data using AJAX
 	        $.ajax({
 	            url: './journalbook2',
 	            data: { selectedDate: selectedDate },
 	            type: 'GET',
 	            success: function (data) {
-	                $('#placelist').empty();
+	                $('#placelist').empty(); // Clear previous rows
 
-	                if (data.length === 0) {
+	                if (!data || data.length === 0) {
 	                    $('#placelist').append(`
 	                        <tr>
-	                            <td colspan="10" style="text-align: center; font-weight: bold;color:red">No records found</td>
+	                            <td colspan="10" class="text-center text-danger" style="font-weight: 500;">
+	                                No data available
+	                            </td>
 	                        </tr>
 	                    `);
-	                } else {
-	                    data.forEach(trial => {
-	                        const dateObj = new Date(trial.tran_date);
-	                        const formattedDate = `${String(dateObj.getDate()).padStart(2,'0')}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${dateObj.getFullYear()}`;
-	                        const formattedAmount = parseFloat(trial.tran_amt).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-	                        $('#placelist').append(`
-	                            <tr>
-	                                <td>${formattedDate}</td>
-	                                <td>${trial.tran_id}</td>
-	                                <td>${trial.part_tran_type}</td>
-	                                <td>${trial.acct_crncy}</td>
-	                                <td>${formattedAmount}</td>
-	                                <td>${trial.acct_num}</td>
-	                                <td>${trial.acct_name}</td>
-	                                <td>${trial.tran_particular}</td>
-	                                <td>${trial.tran_status}</td>
-	                                <td>
-	                                    <div class="dropdown" style="text-align: center;">
-	                                        <button class="btn-primary big-btn" type="button" data-toggle="dropdown">Action</button>
-	                                        <div class="dropdown-menu">
-	                                            ${trial.tran_status === 'ENTERED' ? `
-	                                                <a class="dropdown-item" data-tranid="${trial.tran_id}" data-partnid="${trial.part_tran_id}" data-acctnum="${trial.acct_num}" onclick="deleteuser(this);">Delete</a>
-	                                                <div class="dropdown-divider"></div>
-	                                            ` : ''}
-	                                            <a class="dropdown-item" data-tranid="${trial.tran_id}" data-partnid="${trial.part_tran_id}" data-acctnum="${trial.acct_num}" onclick="enquiryuser(this);">View</a>
-	                                        </div>
-	                                    </div>
-	                                </td>
-	                            </tr>
-	                        `);
-	                    });
+	                    return;
 	                }
+
+	                // 🔹 Populate table
+	                data.forEach(trial => {
+	                    const dateObj = new Date(trial.tran_date);
+	                    const formattedDate = `${String(dateObj.getDate()).padStart(2, '0')}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${dateObj.getFullYear()}`;
+	                    const formattedAmount = parseFloat(trial.tran_amt).toLocaleString('en-US', {
+	                        minimumFractionDigits: 2,
+	                        maximumFractionDigits: 2
+	                    });
+
+	                    $('#placelist').append(`
+	                        <tr>
+	                            <td>${formattedDate}</td>
+	                            <td>${trial.tran_id}</td>
+	                            <td>${trial.part_tran_type}</td>
+	                            <td>${trial.acct_crncy}</td>
+	                            <td>${formattedAmount}</td>
+	                            <td>${trial.acct_num}</td>
+	                            <td>${trial.acct_name}</td>
+	                            <td>${trial.tran_particular}</td>
+	                            <td>${trial.tran_status}</td>
+	                            <td>
+	                                <div class="dropdown action-dropdown" style="text-align: center;">
+	                                    <button class="btn btn-action dropdown-toggle big-btn"
+	                                            type="button"
+	                                            title="Action"
+	                                            data-toggle="dropdown"
+	                                            aria-haspopup="true"
+	                                            aria-expanded="false"
+	                                            style="padding: 0px;">
+	                                        Action
+	                                    </button>
+
+	                                    <div class="dropdown-menu" style="padding: 0px;">
+	                                        ${trial.tran_status === 'ENTERED' ? `
+	                                            <a class="dropdown-item delete-item"
+	                                               data-tranid="${trial.tran_id}"
+	                                               data-partnid="${trial.part_tran_id}"
+	                                               data-acctnum="${trial.acct_num}"
+	                                               title="Delete"
+	                                               onclick="deleteuser(this)">
+	                                                Delete
+	                                            </a>
+	                                            <div class="dropdown-divider"></div>
+	                                        ` : ''}
+
+	                                        <a class="dropdown-item view-item"
+	                                           data-tranid="${trial.tran_id}"
+	                                           data-partnid="${trial.part_tran_id}"
+	                                           data-acctnum="${trial.acct_num}"
+	                                           title="View"
+	                                           onclick="enquiryuser(this)">
+	                                            View
+	                                        </a>
+	                                    </div>
+	                                </div>
+	                            </td>
+	                        </tr>
+	                    `);
+	                });
 	            },
 	            error: function (err) {
 	                console.error('Error fetching data:', err);
@@ -420,7 +457,7 @@
 						<div class="card w-100 border panel panel-primary filterable">
 							<div class="card-header" style="background-color: #e9ecef; height: 50px">
 								<div class="float-left">
-									<h6 style="font-size: 1.2rem; color: black;">TRANSACTION
+									<h6 style="font-size: 1.2rem;">TRANSACTION
 										MAINTANANCE - LIST</h6>
 
 								</div>
@@ -440,47 +477,17 @@
 										style="margin-bottom: 0px; font-size: initial; table-layout: fixed; width: 100%;"
 										id="usertable">
 										<thead class="thead-light">
-
-
 											<tr class="filters">
-												<th style="text-align: center"> <input type="text"
-														class="form-control font-weight-bold" placeholder="TRAN DATE"
-														disabled></th>
-											 
-												<th style="text-align: center"> <input type="text"
-														class="form-control font-weight-bold" placeholder="TRAN ID"
-														disabled></th>
-												 
-												<th style="text-align: center"><input type="text"
-														class="form-control font-weight-bold" placeholder="PA TRAN TY "
-														disabled></th>
-											 
-												<th style="text-align: center"> <input type="text"
-														class="form-control font-weight-bold" placeholder="CURRENCY"
-														disabled></th>
-											 
-												<th style="text-align: center"> <input type="text"
-														class="form-control font-weight-bold" placeholder="AMOUNT"
-														disabled></th>
-											 
-												<th style="text-align: center;"> <input type="text"
-														class="form-control font-weight-bold" placeholder="ACCT ID"
-														disabled></th>
-												 
-												<th style="text-align: center; "><input type="text"
-														class="form-control font-weight-bold" placeholder="ACCT NAME "
-														disabled></th>
-											 
-												<th style="text-align: center; ;"><input type="text"
-														class="form-control font-weight-bold"
-														placeholder="TRAN PARTICULAR" disabled></th>
-											 
-												<th style="text-align: center"> <input type="text"
-														class="form-control font-weight-bold" placeholder="STATUS"
-														disabled></th>
-											 	<th style="text-align: center"> <input type="text"
-														class="form-control font-weight-bold" placeholder="SELECT"
-														disabled></th>
+											<th style="width:5%">TRAN DATE</th>
+											<th style="width:6%">TRAN ID</th>
+											<th style="width:4%">PA TRAN TY</th>
+											<th style="width:4%">CURRENCY</th>
+											<th style="width:6%">AMOUNT</th>
+											<th style="width:10%">ACCT ID</th>
+											<th style="width:10%">ACCT NAME</th>
+											<th style="width:7%">TRAN PARTICULAR</th>
+											<th style="width:5%">STATUS</th>
+											<th style="width:4%">SELECT</th>
 											</tr>
 										</thead>
 										<tbody id="placelist">

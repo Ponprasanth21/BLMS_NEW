@@ -250,48 +250,34 @@ input:hover+.password-info {
 <script th:inline="javascript">
 /* <![CDATA[ */
 var trandate = /*[[${TRANDATE}]]*/'1970-01-01'; // Default if null
-
-// Format date as yyyy-MM-dd for input[type=date]
-function formatForInput(date) {
-    var d = new Date(date);
-    var day = ('0' + d.getDate()).slice(-2);
-    var month = ('0' + (d.getMonth() + 1)).slice(-2);
-    var year = d.getFullYear();
-    return `${year}-${month}-${day}`;
-}
-
-// Format date as dd-MM-yyyy
-function formatDate(date) {
-    var d = new Date(date);
-    var day = ('0' + d.getDate()).slice(-2);
-    var month = ('0' + (d.getMonth() + 1)).slice(-2);
-    var year = d.getFullYear();
-    return `${day}-${month}-${year}`;
-}
-
 document.addEventListener('DOMContentLoaded', function() {
     var dateOfLoanInput = document.getElementById('date_of_loan');
     var depositInput = document.getElementById('deposit_periods');
 
-    // Set max date to trandate for both inputs
-    if (trandate) {
-        var maxDate = formatForInput(trandate);
-        if (dateOfLoanInput) {
-            dateOfLoanInput.setAttribute('max', maxDate);
-            dateOfLoanInput.value = maxDate; // optional: default to max
-        }
-        if (depositInput) {
-            depositInput.setAttribute('max', maxDate);
-        }
+    // Get today's date in yyyy-MM-dd format
+    var today = new Date();
+    var yyyy = today.getFullYear();
+    var mm = ('0' + (today.getMonth() + 1)).slice(-2);
+    var dd = ('0' + today.getDate()).slice(-2);
+    var todayStr = `${yyyy}-${mm}-${dd}`;
+
+    // Apply max date = today
+    if (dateOfLoanInput) {
+        dateOfLoanInput.setAttribute('max', todayStr);
+        dateOfLoanInput.value = todayStr; // optional: prefill with today
+    }
+
+    if (depositInput) {
+        depositInput.setAttribute('max', todayStr);
     }
 
     // Prevent manually entering future dates
     function blockFutureDate(input) {
         input.addEventListener('change', function() {
             var selectedDate = new Date(this.value);
-            var maxSelectableDate = new Date(trandate);
-            if (selectedDate > maxSelectableDate) {
-                alert('Future dates beyond ' + formatForInput(maxSelectableDate) + ' are not allowed!');
+            var currentDate = new Date(todayStr);
+            if (selectedDate > currentDate) {
+                alert('Future dates are not allowed!');
                 this.value = ''; // clear invalid date
             }
         });
@@ -299,14 +285,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (dateOfLoanInput) blockFutureDate(dateOfLoanInput);
     if (depositInput) blockFutureDate(depositInput);
-
-    // Format value before submission
-    document.querySelector('form').addEventListener('submit', function() {
-        if (dateOfLoanInput.value) {
-            dateOfLoanInput.value = formatDate(dateOfLoanInput.value);
-        }
-    });
 });
+
 /* ]]> */
 </script>
 
@@ -343,6 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 	<script>
 		function leasedate() {
+			document.getElementById('loadingModal').style.display = 'flex';
 			var date_of_loan = document.getElementById('date_of_loan').value;
 			//alert(date_of_loan);
 			console.log(date_of_loan)
@@ -371,6 +352,7 @@ document.addEventListener('DOMContentLoaded', function() {
 							date_of_loan : formattedDate
 						},
 						success : function(response) {
+							document.getElementById('loadingModal').style.display = 'none';
 							console.log("Formatted date_of_loan: "
 									+ formattedDate);
 							var tableBody = $('#leasetbody');
@@ -381,9 +363,9 @@ document.addEventListener('DOMContentLoaded', function() {
 								var noDataRow = '<tr><td colspan="7" class="text-center text-danger">No data available</td></tr>';
 								tableBody.append(noDataRow);
 							} else {
+								document.getElementById('loadingModal').style.display = 'none';
 								// Populate the table with data from the response
-								$
-										.each(
+								$ .each(
 												response,
 												function(index, leaseaccount) {
 													var dateString = leaseaccount[3];
@@ -434,6 +416,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 						},
 						error : function(xhr, status, error) {
+							document.getElementById('loadingModal').style.display = 'none';
 							// Log the error for debugging purposes
 							console.error("Error: " + error);
 							$('#errorMessage')

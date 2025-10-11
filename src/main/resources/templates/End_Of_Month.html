@@ -369,8 +369,9 @@ function downloadReport() {
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const dueDateInput = document.getElementById('DUEDate');
-
     const today = new Date();
+
+    // Initialize input with today's date
     dueDateInput.value = formatDateLocal(today);
 
     function getLastDayOfMonth(date) {
@@ -385,13 +386,44 @@ document.addEventListener('DOMContentLoaded', function () {
         dueDateInput.value = formatDateLocal(lastDayPrevMonth);
     }
 
+    let toastShown = false; // global flag to prevent multiple toasts
+
     window.nextMonth = function () {
         let current = new Date(dueDateInput.value);
         current.setDate(1);
         current.setMonth(current.getMonth() + 1);
         let lastDayNextMonth = getLastDayOfMonth(current);
+
+        if (lastDayNextMonth > today) {
+            // ✅ Show toast only once
+            if (!toastShown) {
+                toastShown = true;
+                $.toast({
+                    heading: 'Warning',
+                    text: 'You cannot go beyond today\'s date!',
+                    icon: 'warning',
+                    position: { left: 1600, top: 0 },
+                    hideAfter: 3000
+                });
+                // Reset after 3s to allow later valid re-triggers
+                setTimeout(() => toastShown = false, 3000);
+            }
+            return;
+        }
+
         dueDateInput.value = formatDateLocal(lastDayNextMonth);
-    }
+    };
+
+    // 🚫 Prevent user from manually selecting a future date
+    dueDateInput.setAttribute('max', formatDateLocal(today));
+
+    dueDateInput.addEventListener('change', function () {
+        const selectedDate = new Date(this.value);
+        if (selectedDate > today) {
+            alert("Future dates are not allowed!");
+            this.value = formatDateLocal(today); // reset to today
+        }
+    });
 
     function formatDateLocal(date) {
         const year = date.getFullYear();
@@ -420,7 +452,7 @@ document.addEventListener('DOMContentLoaded', function () {
 							class="card-header d-flex justify-content-center align-items-center"
 							style="background-color: #f5f5f5; border-bottom: 1px solid #ddd;">
 							<h5 class="mb-0 fw-semibold text-dark text-center">END OF
-								MONTH REPORT</h5>
+								MONTH - REPORTS</h5>
 						</div>
 
 						<!-- Card Body -->

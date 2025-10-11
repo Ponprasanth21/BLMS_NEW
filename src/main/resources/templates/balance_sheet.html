@@ -292,23 +292,36 @@ $(document).ready(function() {
 
 document.addEventListener("DOMContentLoaded", function() {
     const dateInput = document.getElementById("assetDate");
-    const trandateGet = document.getElementById("trandateget").value;
+    const trandateGet = document.getElementById("trandateget")?.value || "";
 
-    // Convert 'dd-MM-yyyy' to 'yyyy-MM-dd' format
-    const parts = trandateGet.split("-");
-    const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+    const today = new Date();
+    const todayStr = today.toISOString().split("T")[0]; // yyyy-MM-dd
 
-    // Set the formatted date to the date input
+    let formattedDate = todayStr; // default to today
+
+    // Convert backend 'dd-MM-yyyy' to 'yyyy-MM-dd' if available
+    if (trandateGet && trandateGet.includes("-")) {
+        const parts = trandateGet.split("-");
+        if (parts.length === 3) {
+            const [day, month, year] = parts;
+            formattedDate = `${year}-${month}-${day}`;
+        }
+    }
+
+    // Use today if backend date is in the future
+    if (formattedDate > todayStr) {
+        formattedDate = todayStr;
+    }
+
+    // Set value and max to prevent future selection
     dateInput.value = formattedDate;
+    dateInput.setAttribute("max", todayStr);
 
-    // Set max attribute to prevent future dates beyond trandateget
-    dateInput.setAttribute('max', formattedDate);
-
-    // Optional: Block manually typed dates beyond max
-    dateInput.addEventListener('change', function() {
-        if (this.value > formattedDate) {
-            alert('Dates after ' + formattedDate + ' are not allowed!');
-            this.value = formattedDate;
+    // Prevent manual typing of future dates
+    dateInput.addEventListener("change", function() {
+        if (this.value > todayStr) {
+            alert('Future dates beyond ' + todayStr + ' are not allowed!');
+            this.value = todayStr;
         }
     });
 });
