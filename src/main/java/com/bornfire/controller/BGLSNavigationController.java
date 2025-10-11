@@ -110,6 +110,7 @@ import com.bornfire.entities.HolidayMaster_Entity;
 import com.bornfire.entities.HolidayMaster_Rep;
 import com.bornfire.entities.LOAN_ACT_MST_ENTITY;
 import com.bornfire.entities.LOAN_ACT_MST_REPO;
+import com.bornfire.entities.LOAN_REPAYMENT_REPO;
 import com.bornfire.entities.Lease_Loan_Master_Entity;
 import com.bornfire.entities.Lease_Loan_Master_Repo;
 import com.bornfire.entities.Lease_Loan_Work_Repo;
@@ -346,6 +347,12 @@ public class BGLSNavigationController {
 
 	@Autowired
 	com.bornfire.services.ExelDownloadService ExelDownloadService;
+	
+	@Autowired
+	LOAN_REPAYMENT_REPO lOAN_REPAYMENT_REPO;
+	
+	@Autowired
+	TRAN_MAIN_TRM_WRK_REP TRAN_MAIN_TRM_WRK_REP;
 
 	public String getPagesize() {
 		return pagesize;
@@ -413,22 +420,22 @@ public class BGLSNavigationController {
 
 		if (formmode == null || formmode.equals("add")) {
 			md.addAttribute("formmode", "add");
-            Organization_Entity organizationList = null;
-            List<Organization_Entity> organization = organization_Repo.getAllList();
-            if(!organization.isEmpty()){
-                organizationList = organization.get(0);
-            }
+			Organization_Entity organizationList = null;
+			List<Organization_Entity> organization = organization_Repo.getAllList();
+			if (!organization.isEmpty()) {
+				organizationList = organization.get(0);
+			}
 			md.addAttribute("organization", organizationList);
 
 			md.addAttribute("OrgBranch", organization_Branch_Rep.getbranchlist());
 
 		} else if (formmode.equals("ModifyHead")) {
 			md.addAttribute("formmode", "ModifyHead");
-            Organization_Entity organizationList = null;
-            List<Organization_Entity> organization = organization_Repo.getAllList();
-            if(!organization.isEmpty()){
-                organizationList = organization.get(0);
-            }
+			Organization_Entity organizationList = null;
+			List<Organization_Entity> organization = organization_Repo.getAllList();
+			if (!organization.isEmpty()) {
+				organizationList = organization.get(0);
+			}
 			md.addAttribute("organization", organizationList);
 		} else if (formmode.equals("DeleteBranch")) {
 			md.addAttribute("formmode", "DeleteBranch");
@@ -3571,8 +3578,8 @@ public class BGLSNavigationController {
 
 	@RequestMapping(value = "customerMaster", method = { RequestMethod.GET, RequestMethod.POST })
 	public String customerMaster(@RequestParam(required = false) String formmode,
-			@RequestParam(required = false) String module, @RequestParam(required = false) String id, Model md,String branch_key,
-			HttpServletRequest req) {
+			@RequestParam(required = false) String module, @RequestParam(required = false) String id, Model md,
+			String branch_key, HttpServletRequest req) {
 
 		String user = (String) req.getSession().getAttribute("USERID");
 		Date TRANDATE = (Date) req.getSession().getAttribute("TRANDATE");
@@ -3642,8 +3649,10 @@ public class BGLSNavigationController {
 	/* Aishu */
 	@RequestMapping(value = "Loan_Maintenance", method = { RequestMethod.GET, RequestMethod.POST })
 	public String Loan_Maintanance(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req,
-			@RequestParam(required = false) String id, @RequestParam(required = false) String holder_key,@RequestParam(required = false) String branch_key,
-			@RequestParam(defaultValue = "1") int page // page number for pagination
+			@RequestParam(required = false) String id, @RequestParam(required = false) String holder_key,
+			@RequestParam(required = false) String branch_key, @RequestParam(defaultValue = "1") int page // page number
+																											// for
+																											// pagination
 	) {
 
 		int limit = 200; // 200 rows per page
@@ -3683,7 +3692,6 @@ public class BGLSNavigationController {
 			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
 
 			md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
-
 
 		} else if (formmode.equals("verify")) {
 			md.addAttribute("formmode", "verify");
@@ -3865,7 +3873,7 @@ public class BGLSNavigationController {
 			md.addAttribute("booking", LOAN_ACT_MST_REPO.getActNo());
 			md.addAttribute("booking1", depositRep.getexistingData());
 			md.addAttribute("chartaccount", chart_Acc_Rep.getListoffice());
-            md.addAttribute("preclosure", LOAN_ACT_MST_REPO.getAccountWithClientName());
+			md.addAttribute("preclosure", LOAN_ACT_MST_REPO.getAccountWithClientName());
 		} else if (formmode.equals("view")) {
 			md.addAttribute("formmode", "view");
 
@@ -3885,8 +3893,13 @@ public class BGLSNavigationController {
 			md.addAttribute("formmode", "add");
 			List<Organization_Entity> organization = organization_Repo.getAllList();
 			// md.addAttribute("organization", organization.get(0));
-
 			md.addAttribute("OrgBranch", organization_Branch_Rep.getbranchlist());
+			md.addAttribute("disbursement", TRAN_MAIN_TRM_WRK_REP.getRepaymentDetailsvalue());
+			md.addAttribute("interest", TRAN_MAIN_TRM_WRK_REP.getinterestDetailsvalue());
+			md.addAttribute("fees", TRAN_MAIN_TRM_WRK_REP.getfeesDetailsvalue());
+			md.addAttribute("penalty", TRAN_MAIN_TRM_WRK_REP.getpenaltyDetailsvalue());
+			md.addAttribute("recovery", TRAN_MAIN_TRM_WRK_REP.getrecoveryDetailsvalue());
+			md.addAttribute("OrgBranch", organization_Branch_Rep.getOrgBranch(branch_name));
 
 		} else if (formmode.equals("ModifyHead")) {
 			md.addAttribute("formmode", "ModifyHead");
@@ -4176,7 +4189,6 @@ public class BGLSNavigationController {
 		return "BACP/PARAMETERADD";
 	}
 
-
 	@Autowired
 	BGLS_ORG_BRANCH_REPO branchrepo;
 
@@ -4184,13 +4196,13 @@ public class BGLSNavigationController {
 	public String parameterEdit(@RequestParam(required = false) String id,
 			@RequestParam(required = false, defaultValue = "view") String formmode, // <--- add this
 			Model md) {
-			System.out.println(id);
+		System.out.println(id);
 		// Fetch the entity/entities
 		BGLS_LMS_SCHEMES_TABLE_ENTITY entity = lmsschemerepo.findById(id).orElse(null);
 		md.addAttribute("parameters", entity);
-		System.out.println("branch : "+entity.getBranches());
+		System.out.println("branch : " + entity.getBranches());
 		List<BGLS_ORG_BRANCH_ENTITY> branch = branchrepo.findAll();
-		md.addAttribute("branches",branch );
+		md.addAttribute("branches", branch);
 		System.out.println(entity.getProduct());
 
 		// Pass the mode to Thymeleaf
@@ -4199,14 +4211,12 @@ public class BGLSNavigationController {
 		return "BACP/PARAMETERVIEW.html";
 	}
 
-
-
 	@RequestMapping(value = "Parameterdelete", method = { RequestMethod.GET, RequestMethod.POST })
 	public String parameterDELETE(@RequestParam(required = false) String id, Model md) {
 		BGLS_LMS_SCHEMES_TABLE_ENTITY entity = lmsschemerepo.findById(id).orElse(null);
 		md.addAttribute("parameters", entity);
 		List<BGLS_ORG_BRANCH_ENTITY> branch = branchrepo.findAll();
-		md.addAttribute("branches",branch );
+		md.addAttribute("branches", branch);
 		return "BACP/PARAMETERDELETE.html";
 	}
 
@@ -4215,7 +4225,7 @@ public class BGLSNavigationController {
 		BGLS_LMS_SCHEMES_TABLE_ENTITY entity = lmsschemerepo.findById(id).orElse(null);
 		md.addAttribute("parameters", entity);
 		List<BGLS_ORG_BRANCH_ENTITY> branch = branchrepo.findAll();
-		md.addAttribute("branches",branch );
+		md.addAttribute("branches", branch);
 		return "BACP/PARAMETERUPDATE.html";
 	}
 
@@ -4261,33 +4271,27 @@ public class BGLSNavigationController {
 		return "BalancingReport.html";
 	}
 
-
-
 	@RequestMapping(value = "loanMaster", method = { RequestMethod.GET, RequestMethod.POST })
-	public String loanMaster(
-	        @RequestParam(required = false) String formmode,
-	        @RequestParam(defaultValue = "1") int page,
-	        @RequestParam(defaultValue = "200") int limit,
-	        Model model, Model md,
-	        HttpServletRequest request,
-	        @RequestParam(required = false) String id,
-	        @RequestParam(required = false) String holder_key, String branch_key ) {
+	public String loanMaster(@RequestParam(required = false) String formmode,
+			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "200") int limit, Model model,
+			Model md, HttpServletRequest request, @RequestParam(required = false) String id,
+			@RequestParam(required = false) String holder_key, String branch_key) {
 
-	    String user = (String) request.getSession().getAttribute("USERID");
+		String user = (String) request.getSession().getAttribute("USERID");
 
-	    if (formmode == null || formmode.equals("loanscrn")) {
-	        model.addAttribute("formmode", "loanscrn");
+		if (formmode == null || formmode.equals("loanscrn")) {
+			model.addAttribute("formmode", "loanscrn");
 
-	    } else if (formmode.equals("viewloan")) {
-	        model.addAttribute("formmode", "viewloan");
-	        md.addAttribute("user", user);
-	        md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
-	        md.addAttribute("acct_bal", chart_Acc_Rep.getacctbal(id));
-	        Map<String,String> value = new HashMap<>();
+		} else if (formmode.equals("viewloan")) {
+			model.addAttribute("formmode", "viewloan");
+			md.addAttribute("user", user);
+			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+			md.addAttribute("acct_bal", chart_Acc_Rep.getacctbal(id));
+			Map<String, String> value = new HashMap<>();
 //	        LOAN_ACT_MST_REPO.getLoanValueList(holder_key);
-	        md.addAttribute("customer_id", LOAN_ACT_MST_REPO.getLoanValueCUSTOMER_ID(holder_key));
-	        md.addAttribute("customer_name", LOAN_ACT_MST_REPO.getLoanValueCUSTOMER_NAME(holder_key));
-	        md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
+			md.addAttribute("customer_id", LOAN_ACT_MST_REPO.getLoanValueCUSTOMER_ID(holder_key));
+			md.addAttribute("customer_name", LOAN_ACT_MST_REPO.getLoanValueCUSTOMER_NAME(holder_key));
+			md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
 
 //	        List<CLIENT_MASTER_ENTITY> clients = LOAN_ACT_MST_REPO.getLoanValueList(holder_key);
 
@@ -4307,32 +4311,31 @@ public class BGLSNavigationController {
 //	            System.out.println("---------------------");
 //	        }
 
-	    } else if (formmode.equals("list")) {
-	        model.addAttribute("formmode", "list");
-	        md.addAttribute("user", user);
-	    }
-	    System.out.println("returned");
-	    return "Loan_Master.html";
+		} else if (formmode.equals("list")) {
+			model.addAttribute("formmode", "list");
+			md.addAttribute("user", user);
+		}
+		System.out.println("returned");
+		return "Loan_Master.html";
 	}
 
 	@PostMapping("/submitBulkCollection")
 	@ResponseBody
 	public ResponseEntity<?> submitBulkCollection(HttpServletRequest request,
-	                                              @RequestBody List<MULTIPLE_TRANSACTION_ENTITY> transactions) {
-	    String user = (String) request.getSession().getAttribute("USERID");
-	    String username = (String) request.getSession().getAttribute("USERNAME");
-	    try {
-	    	multipleTransactionService.saveBulkCollection(transactions, user, username);
-	        return ResponseEntity.ok("Bulk collection saved successfully!");
-	    } catch (IllegalArgumentException e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-	                .body("Validation failed: " + e.getMessage());
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                .body("Error saving bulk collection: " + e.getMessage());
-	    }
+			@RequestBody List<MULTIPLE_TRANSACTION_ENTITY> transactions) {
+		String user = (String) request.getSession().getAttribute("USERID");
+		String username = (String) request.getSession().getAttribute("USERNAME");
+		try {
+			multipleTransactionService.saveBulkCollection(transactions, user, username);
+			return ResponseEntity.ok("Bulk collection saved successfully!");
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation failed: " + e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Error saving bulk collection: " + e.getMessage());
+		}
 	}
 
 	@RequestMapping(value = "credit_facility_report", method = { RequestMethod.GET, RequestMethod.POST })
@@ -4347,9 +4350,9 @@ public class BGLSNavigationController {
 			List<Object[]> results = LOAN_ACT_MST_REPO.getAllDetails();
 			md.addAttribute("loanvalues", results);
 			// Details List
-	        int offset = 0;
-	        int limit = 50;
-	        md.addAttribute("loanDetails", LOAN_ACT_MST_REPO.getLoanNo(offset, limit));
+			int offset = 0;
+			int limit = 50;
+			md.addAttribute("loanDetails", LOAN_ACT_MST_REPO.getLoanNo(offset, limit));
 
 		}
 
@@ -4369,6 +4372,7 @@ public class BGLSNavigationController {
 
 		return new FileSystemResource(repfile);
 	}
+
 	@RequestMapping(value = "Parameter", method = { RequestMethod.GET, RequestMethod.POST })
 	public String Parameters(@RequestParam(required = false) String formmode,
 			@RequestParam(required = false) String refnumber,
@@ -4391,6 +4395,7 @@ public class BGLSNavigationController {
 
 		return "BACP/PARAMETER";
 	}
+
 	@RequestMapping(value = "end_of_month", method = { RequestMethod.GET, RequestMethod.POST })
 	public String end_of_month(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
 		if (formmode == null || formmode.equals("list")) {
@@ -4398,7 +4403,7 @@ public class BGLSNavigationController {
 		}
 		return "End_Of_Month";
 	}
-	
+
 	@RequestMapping(value = "downloadDetailsPdf", method = RequestMethod.GET)
 	@ResponseBody
 	public FileSystemResource downloadDetailsPdf(HttpServletResponse response,

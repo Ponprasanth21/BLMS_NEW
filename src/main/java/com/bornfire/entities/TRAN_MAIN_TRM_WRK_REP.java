@@ -318,4 +318,18 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 			+ "WHERE TRAN_ID = :tranId AND PART_TRAN_ID = :partTranId", nativeQuery = true)
 	TRAN_MAIN_TRM_WRK_ENTITY getTransactionById(@Param("tranId") String tranId, @Param("partTranId") String partTranId);
 
+	@Query(value = "select * from bgls_trm_wrk_transactions where flow_code = 'DISBT' AND TRAN_PARTICULAR = 'Loan Disbursed'", nativeQuery = true)
+	List<TRAN_MAIN_TRM_WRK_ENTITY> getRepaymentDetailsvalue();
+	
+	@Query(value = "select * from bgls_trm_wrk_transactions where flow_code = 'INDEM' AND TRAN_PARTICULAR = 'Interest Applied'", nativeQuery = true)
+	List<TRAN_MAIN_TRM_WRK_ENTITY> getinterestDetailsvalue();
+	
+	@Query(value = "select * from bgls_trm_wrk_transactions where flow_code = 'FEEDEM' AND TRAN_PARTICULAR = 'Fee Charged'", nativeQuery = true)
+	List<TRAN_MAIN_TRM_WRK_ENTITY> getfeesDetailsvalue();
+	
+	@Query(value = "select * from bgls_trm_wrk_transactions where flow_code = 'PENDEM' AND TRAN_PARTICULAR = 'Penalty Charged'", nativeQuery = true)
+	List<TRAN_MAIN_TRM_WRK_ENTITY> getpenaltyDetailsvalue();
+	
+	@Query(value = "select * from bgls_trm_wrk_transactions where tran_particular in ('Principal Recovery','Interest Recovery','Fee Recovery','Penalty Recovery')", nativeQuery = true)
+	List<TRAN_MAIN_TRM_WRK_ENTITY> getrecoveryDetailsvalue();
 }
