@@ -853,21 +853,7 @@
 								<div class="float-right">
 									<!-- <button type="button" class="btn btn-xs btn-primary btns p-2"
 										onclick="Home(this)">DashBoard</button> -->
-									<select class="form-control-sm bg-white" id="approvedfilter"
-										onchange="handleFilterChange()"
-										style="background-color: #e3e3e4;margin-left: -13%;width: 150px !important;margin-left: auto;">
-										<option value="ALL">All</option>
-										<option value="NOTAPPROVED" selected>UnVerified</option>
-										<option value="APPROVED" selected>Verified</option>
-									</select>
-									<select class="form-control-sm bg-white  w-100" id="filterselect2"
-										onchange="handleStatus()"
-										style="background-color: #e3e3e4;width: 150px !important;">
-										<option value="STATUS">STATUS</option>
-										<option value="ACTIVE">ACTIVE</option>
-										<option value="ACTIVE_IN_ARREARS">ACTIVE IN ARREARS</option>
-										<option value="APPROVED">APPROVED</option>
-									</select>
+
 									<select class="form-control-sm bg-white " id="filterselect"
 										onchange="handleMultipleFilterChange()"
 										style="background-color: #e3e3e4;width: 156px !important;">
@@ -876,6 +862,24 @@
 										<option value="LOAN_TYPE">LOAN TYPE</option>
 										<option value="MOBILE_PHONE">MOBILE NUMBER</option>
 									</select>
+									
+									<select class="form-control-sm bg-white  w-100" id="filterselect2"
+										onchange="handleStatus()"
+										style="background-color: #e3e3e4;width: 150px !important;">
+										<option value="STATUS">Select Status</option>
+										<option value="ACTIVE">ACTIVE</option>
+										<option value="ACTIVE_IN_ARREARS">ACTIVE IN ARREARS</option>
+										<option value="APPROVED">APPROVED</option>
+									</select>
+
+									<select class="form-control-sm bg-white" id="approvedfilter"
+										onchange="handleFilterChange()"
+										style="background-color: #e3e3e4;margin-left: -13%;width: 150px !important;margin-left: auto;">
+										<option value="ALL">All</option>
+										<option value="NOTAPPROVED" selected>UnVerified</option>
+										<option value="APPROVED" selected>Verified</option>
+									</select>
+									
 									<!-- <button type="button" class="btn-primary big-btn btn-filter">Filter</button> -->
 								</div>
 							</div>

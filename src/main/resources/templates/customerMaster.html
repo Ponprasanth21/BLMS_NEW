@@ -2776,21 +2776,6 @@
 								<div class="mr-4"
 									th:style="${module == 'module1' || module =='module2'} ? 'display:block;' : 'display:none;'">
 
-									<select class="form-control-sm bg-white ml-2 w-100" id="filterselect2"
-										onchange="handleStatus()" style="background-color: #e3e3e4;">
-										<option>Status</option>
-										<option value="ACTIVE">ACTIVE</option>
-										<option value="INACTIVE">INACTIVE</option>
-										<option value="BLACKLISTED">BLACKLISTED</option>
-										<option value="EXITED">EXITED</option>
-										<option value="PENDING_APPROVAL">PENDING_APPROVAL</option>
-										<option value="REJECTED">REJECTED</option>
-									</select>
-								</div>
-
-								<div class="mr-4"
-									th:style="${module == 'module1' || module =='module2'} ? 'display:block;' : 'display:none;'">
-
 									<select class="form-control-sm bg-white ml-2 w-100" id="filterselect"
 										onchange="handleMultipleFilterChange()" style="background-color: #e3e3e4;">
 										<option>Select Filter</option>
@@ -2800,6 +2785,23 @@
 										<option value="Mobile_No">Mobile No</option>
 									</select>
 								</div>
+
+								<div class="mr-4"
+									th:style="${module == 'module1' || module =='module2'} ? 'display:block;' : 'display:none;'">
+
+									<select class="form-control-sm bg-white ml-2 w-100" id="filterselect2"
+										onchange="handleStatus()" style="background-color: #e3e3e4;">
+										<option>Select Status</option>
+										<option value="ACTIVE">ACTIVE</option>
+										<option value="INACTIVE">INACTIVE</option>
+										<option value="BLACKLISTED">BLACKLISTED</option>
+										<option value="EXITED">EXITED</option>
+										<option value="PENDING_APPROVAL">PENDING_APPROVAL</option>
+										<option value="REJECTED">REJECTED</option>
+									</select>
+								</div>
+
+								
 								<div class="mr-4"
 									th:style="${module == 'module2'} ? 'display:block;' : 'display:none;'">
 
@@ -2995,10 +2997,10 @@
 													id="branch" /> -->
 
 												<!-- Hidden input (holds the actual value for form submission) -->
-<input type="hidden" name="assigned_branch_key" th:value="${customer.assigned_branch_key}" />
+											<input type="hidden" name="assigned_branch_key" th:value="${customer.assigned_branch_key}" />
 
-<!-- Visible text input (shows branch name only for user view) -->
-<input type="text" id="branch" th:value="${branchName1}" />
+											<!-- Visible text input (shows branch name only for user view) -->
+											<input type="text" id="branch" th:value="${branchName1}" />
 
 
 											</div>

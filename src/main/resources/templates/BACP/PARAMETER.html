@@ -286,6 +286,107 @@
 		}
 
 
+		
+function RefCode(a) {
+	event.preventDefault();
+	var ref = document.getElementById("RefButton");
+	ref.classList.add("active");
+
+	var gl = document.getElementById("GLButton");
+	gl.classList.remove("active");
+
+	 var scheme = document.getElementById("param");
+	scheme.classList.remove("active"); 
+
+	var chart = document.getElementById("chartOfAccounts");
+	chart.classList.remove("active");
+
+	var act = document.getElementById("accountLedger");
+	act.classList.remove("active");
+
+	location.href = './refCodeMain?formmode=list';
+}
+
+function GLStruct(a) {
+	event.preventDefault();
+	var ref = document.getElementById("RefButton");
+	ref.classList.remove("active");
+
+	var gl = document.getElementById("GLButton");
+	gl.classList.add("active");
+
+	 var scheme = document.getElementById("param");
+	scheme.classList.remove("active"); 
+
+	var chart = document.getElementById("chartOfAccounts");
+	chart.classList.remove("active");
+
+	var act = document.getElementById("accountLedger");
+	act.classList.remove("active");
+
+	location.href = './glcode';
+}
+
+function SchemeCode(a) {
+	event.preventDefault();
+	var ref = document.getElementById("RefButton");
+	ref.classList.remove("active");
+
+	var gl = document.getElementById("GLButton");
+	gl.classList.remove("active");
+
+	var scheme = document.getElementById("param");
+	scheme.classList.add("active"); 
+
+	var chart = document.getElementById("chartOfAccounts");
+	chart.classList.remove("active");
+
+	var act = document.getElementById("accountLedger");
+	act.classList.remove("active");
+
+	location.href = './Parameter';
+}
+
+function Chart(a) {
+	event.preventDefault();
+	var ref = document.getElementById("RefButton");
+	ref.classList.remove("active");
+
+	var gl = document.getElementById("GLButton");
+	gl.classList.remove("active");
+
+	var scheme = document.getElementById("param");
+	scheme.classList.remove("active");
+
+	var chart = document.getElementById("chartOfAccounts");
+	chart.classList.add("active");
+
+	var act = document.getElementById("accountLedger");
+	act.classList.remove("active");
+
+	location.href = './chartOfAccounts';
+}
+
+function Account(a) {
+	event.preventDefault();
+	var ref = document.getElementById("RefButton");
+	ref.classList.remove("active");
+
+	var gl = document.getElementById("GLButton");
+	gl.classList.remove("active");
+
+	var scheme = document.getElementById("param");
+	scheme.classList.remove("active");
+
+	var chart = document.getElementById("chartOfAccounts");
+	chart.classList.remove("active");
+
+	var act = document.getElementById("accountLedger");
+	act.classList.add("active");
+
+	location.href = './accountLedger';
+}
+
 
 
 	</script>

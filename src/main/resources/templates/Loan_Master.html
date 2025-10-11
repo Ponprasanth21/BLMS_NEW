@@ -1103,7 +1103,7 @@
 
 										<select class="form-control-sm bg-white ml-2 w-100" id="filterselect2"
 											onchange="handleStatus()" style="background-color: #e3e3e4;">
-											<option value="STATUS">STATUS</option>
+											<option value="STATUS">Select Status</option>
 											<option value="ACTIVE">ACTIVE</option>
 											<option value="ACTIVE_IN_ARREARS">ACTIVE IN ARREARS</option>
 											<option value="APPROVED">APPROVED</option>
@@ -1118,6 +1118,7 @@
 										<option value="LOAN_TYPE">LOAN TYPE</option>
 										<option value="MOBILE_PHONE">MOBILE NO</option>
 									</select>
+
 									<button type="button" class="btn-primary big-btn"
 										onclick="downloadExcel('LOAN')">Download</button>
 								</div>
@@ -1139,7 +1140,7 @@
 														placeholder="MOBILE NO" disabled></th>
 												<!-- <th>RETAILER NAME</th> -->
 												<th>RETAILER BRANCH ID</th>
-												<th style="width: 10%;">Status</th>
+												<th style="width: 10%;">STATUS</th>
 											</tr>
 										</thead>
 										<tbody id="loanfilterbody">
