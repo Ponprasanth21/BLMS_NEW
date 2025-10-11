@@ -5685,7 +5685,7 @@ public class BGLSRestController {
 	}
 
 	@PostMapping("/verifyUserById")
-	public ResponseEntity<String> verifyUser(@RequestParam String UserId, @RequestParam String BranchKey) {
+	public ResponseEntity<String> verifyUser(@RequestParam String UserId) {
 		try {
 			// Fetch existing customer from the database using UserId
 			Optional<CLIENT_MASTER_ENTITY> existingCustomerOpt = clientMasterRepo.findById(UserId);

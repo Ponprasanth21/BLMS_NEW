@@ -2214,36 +2214,73 @@
     `);
 		}
 
+		// function updateTable(data, currentPage = 1, limit = 200) {
+		// 	if (!data || data.length === 0) {
+		// 		const tableSelector = dues === 'module1' ? '#usertable1' : '#usertable';
+		// 		$(tableSelector).empty().append(`
+		//             <tr style="font-size:14px">
+		//                 <td colspan="8" style="text-align:center; color: red;">No data available</td>
+		//             </tr>
+		//         `);
+		// 		return;
+		// 	}
+
+		// 	// ✅ Step 1: Collect all unique branch keys
+		// 	const branchKeys = [...new Set(data.map(item => item.assigned_branch_key).filter(Boolean))];
+		// 	const branchNameMap = {};
+
+		// 	// ✅ Step 2: Fetch branch names one by one (backend only supports single key)
+		// 	let completed = 0;
+
+		// 	branchKeys.forEach(branchKey => {
+		// 		$.post("./getBranchNameByKey", { branch_key: branchKey }, function (branchName) {
+		// 			branchNameMap[branchKey] = branchName || 'UNKNOWN';
+		// 		}).always(() => {
+		// 			completed++;
+		// 			if (completed === branchKeys.length) {
+		// 				// ✅ All names fetched — render table
+		// 				renderTableWithBranchNames(data, branchNameMap, currentPage, limit);
+		// 			}
+		// 		});
+		// 	});
+		// }
+
+
 		function updateTable(data, currentPage = 1, limit = 200) {
-			if (!data || data.length === 0) {
-				const tableSelector = dues === 'module1' ? '#usertable1' : '#usertable';
-				$(tableSelector).empty().append(`
-		            <tr style="font-size:14px">
-		                <td colspan="8" style="text-align:center; color: red;">No data available</td>
-		            </tr>
-		        `);
-				return;
+	if (!data || data.length === 0) {
+		const tableSelector = dues === 'module1' ? '#usertable1' : '#usertable';
+		$(tableSelector).empty().append(`
+			<tr style="font-size:14px">
+				<td colspan="8" style="text-align:center; color: red;">No data available</td>
+			</tr>
+		`);
+		return;
+	}
+
+	const branchKeys = [...new Set(data.map(item => item.assigned_branch_key).filter(Boolean))];
+	const branchNameMap = {};
+
+	// ✅ If no branch keys, render immediately
+	if (branchKeys.length === 0) {
+		renderTableWithBranchNames(data, branchNameMap, currentPage, limit);
+		return;
+	}
+
+	let completed = 0;
+	branchKeys.forEach(branchKey => {
+		$.post("./getBranchNameByKey", { branch_key: branchKey }, function (branchName) {
+			branchNameMap[branchKey] = branchName || 'UNKNOWN';
+		}).always(() => {
+			completed++;
+			if (completed === branchKeys.length) {
+				renderTableWithBranchNames(data, branchNameMap, currentPage, limit);
 			}
+		});
+	});
+}
 
-			// ✅ Step 1: Collect all unique branch keys
-			const branchKeys = [...new Set(data.map(item => item.assigned_branch_key).filter(Boolean))];
-			const branchNameMap = {};
 
-			// ✅ Step 2: Fetch branch names one by one (backend only supports single key)
-			let completed = 0;
 
-			branchKeys.forEach(branchKey => {
-				$.post("./getBranchNameByKey", { branch_key: branchKey }, function (branchName) {
-					branchNameMap[branchKey] = branchName || 'UNKNOWN';
-				}).always(() => {
-					completed++;
-					if (completed === branchKeys.length) {
-						// ✅ All names fetched — render table
-						renderTableWithBranchNames(data, branchNameMap, currentPage, limit);
-					}
-				});
-			});
-		}
 
 		function renderTableWithBranchNames(data, branchNameMap, currentPage, limit) {
 			const tableSelector = dues === 'module1' ? '#usertable1' : '#usertable';
@@ -2954,8 +2991,16 @@
 												<label>Branch</label>
 											</div>
 											<div class="col-sm-2">
-												<input type="text" name="assigned_branch_key" th:value="${branchName1}"
-													id="branch" />
+												<!-- <input type="text" name="assigned_branch_key" th:value="${customer.assigned_branch_key}"
+													id="branch" /> -->
+
+												<!-- Hidden input (holds the actual value for form submission) -->
+<input type="hidden" name="assigned_branch_key" th:value="${customer.assigned_branch_key}" />
+
+<!-- Visible text input (shows branch name only for user view) -->
+<input type="text" id="branch" th:value="${branchName1}" />
+
+
 											</div>
 											<div class="col-sm-2">
 												<label>Client Role Key</label>
