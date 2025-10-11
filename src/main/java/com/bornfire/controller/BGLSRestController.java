@@ -9539,7 +9539,7 @@ public class BGLSRestController {
 	@GetMapping("customers/mobilesearch")
 	public List<CLIENT_MASTER_ENTITY> searchMobileCustomers(@RequestParam String mobile,
 			@RequestParam(required = false) String status) {
-		if (((status == null || status.trim().isEmpty() || status.equals("Status")))) {
+		if (((status == null || status.trim().isEmpty() || status.equals("Select Status")))) {
 			return clientMasterRepo.searchByMobileLike(mobile); // default fetch first 2000
 		}
 		return clientMasterRepo.searchByMobileAndStatus(mobile, status);
@@ -9548,7 +9548,7 @@ public class BGLSRestController {
 	@GetMapping("customers/emailsearch")
 	public List<CLIENT_MASTER_ENTITY> searchEmailCustomers(@RequestParam String email,
 			@RequestParam(required = false) String status) {
-		if (((status == null || status.trim().isEmpty() || status.equals("Status")))) {
+		if (((status == null || status.trim().isEmpty() || status.equals("Select Status")))) {
 			return clientMasterRepo.searchByEmailLike(email);
 		}
 		return clientMasterRepo.searchByEmailAndStatus(email, status);
@@ -9557,7 +9557,7 @@ public class BGLSRestController {
 	@GetMapping("customers/search")
 	public List<CLIENT_MASTER_ENTITY> searchCustomers(@RequestParam String customerId,
 			@RequestParam(required = false) String status) {
-		if (((status == null || status.trim().isEmpty() || status.equals("Status")))) {
+		if (((status == null || status.trim().isEmpty() || status.equals("Select Status")))) {
 			return clientMasterRepo.searchByCustomerIdLike(customerId);
 		}
 		return clientMasterRepo.searchByCustomerIdAndStatus(customerId, status);
