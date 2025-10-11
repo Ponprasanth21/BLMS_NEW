@@ -2210,8 +2210,17 @@ public class BGLSRestController {
 		System.out.println("Formatted Month Start: " + monthStartStr);
 		System.out.println("Formatted Month End: " + monthEndStr);
 
+		String dbDateStr = null;
+
+		if (todate != null) {
+			// Format the Date object to DD-MMM-YYYY for DB
+			SimpleDateFormat sdfDB = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+			dbDateStr = sdfDB.format(todate);
+			System.out.println("Date string for DB: " + dbDateStr);
+		}
+		
 		// Fetch next pending flow
-		List<Object[]> defnList = lOAN_REPAYMENT_REPO.getNextPendingFlow(todate, actno1);
+		List<Object[]> defnList = lOAN_REPAYMENT_REPO.getNextPendingFlow(dbDateStr, actno1);
 
 		if (defnList == null || defnList.isEmpty()) {
 			System.out.println("No records found for account: " + actno1);
@@ -2267,6 +2276,7 @@ public class BGLSRestController {
 		System.out.println("Single Day Interest Amount: " + singledayamount);
 
 		BigDecimal betweendaysDecimal = new BigDecimal(daysBetween);
+		System.out.println("DAYS BETWEEN days in months: " + betweendaysDecimal);
 		BigDecimal finalamount = singledayamount.multiply(betweendaysDecimal);
 		System.out.println("Final Amount Before Rounding: " + finalamount);
 
@@ -2948,12 +2958,34 @@ public class BGLSRestController {
 	@GetMapping("loanflowDetails")
 	public List<Map<String, Object>> loanflowDetails(
 			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
-			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date todate,
+			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String todate,
 			@RequestParam(required = false) String accountNumber) {
 
-		System.out.println("THE GETTING ACCOUNT NUMBER IS HERE " + accountNumber);
+		System.out.println("THE GETTING ACCOUNT NUMBER IS HERE: " + accountNumber);
 
-		List<Object[]> loanFlowRecords = lOAN_REPAYMENT_REPO.getloanflowsdata(fromDate, todate, accountNumber);
+		System.out.println("Account Number: " + accountNumber);
+
+		String dbDateStr = null;
+
+		if (todate != null && !todate.isEmpty()) {
+			// Step 1: parse incoming date (yyyy-MM-dd)
+			SimpleDateFormat sdfInput = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+			try {
+				Date parsedDate = sdfInput.parse(todate); // parse input string
+				System.out.println("Parsed Date: " + parsedDate);
+
+				// Step 2: format date to DD-MMM-YYYY for DB
+				SimpleDateFormat sdfDB = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+				dbDateStr = sdfDB.format(parsedDate);
+				System.out.println("Date string for DB: " + dbDateStr);
+
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// Now send dbDateStr to your repository
+		List<Object[]> loanFlowRecords = lOAN_REPAYMENT_REPO.getLoanFlowsData(dbDateStr, accountNumber);
 
 		// Convert List<Object[]> to List<Map<String, Object>>
 		List<Map<String, Object>> formattedRecords = new ArrayList<>();
@@ -5813,8 +5845,17 @@ public class BGLSRestController {
 
 		System.out.println("THE GETTING ACCOUNT NUMBER IS HERE " + accountNumber);
 
-		List<Object[]> loanFlowRecords = lOAN_REPAYMENT_REPO.getloanflowsdatas(fromDate, todate, accountNumber);
+		String dbDateStr = null;
 
+		if (todate != null) {
+			// Format the Date object to DD-MMM-YYYY for DB
+			SimpleDateFormat sdfDB = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+			dbDateStr = sdfDB.format(todate);
+			System.out.println("Date string for DB: " + dbDateStr);
+		}
+
+		// Now send dbDateStr to your repository
+		List<Object[]> loanFlowRecords = lOAN_REPAYMENT_REPO.getFeeDemFlowsData(dbDateStr, accountNumber);
 		// Convert List<Object[]> to List<Map<String, Object>>
 		List<Map<String, Object>> formattedRecords = new ArrayList<>();
 		for (Object[] record : loanFlowRecords) {
@@ -5877,7 +5918,7 @@ public class BGLSRestController {
 		System.out.println("THE GETTING ACCOUNT NUMBER IS HERE: " + accountNumber);
 
 		// Fetch loan flow records
-		List<Object[]> loanFlowRecords = lOAN_REPAYMENT_REPO.getloanflowsvaluedats(todate, accountNumber);
+		List<Object[]> loanFlowRecords = lOAN_REPAYMENT_REPO.getLoanFlowsValueData(todate, accountNumber);
 
 		// Initialize total sum
 		double totalFlowAmount = 0.0;

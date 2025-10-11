@@ -328,12 +328,10 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
 	@Query(value = "SELECT * " + "FROM LOAN_ACCOUNT_MASTER_TBL " + "ORDER BY ID", nativeQuery = true)
 	List<LOAN_ACT_MST_ENTITY> getloanDetails();
 
-	@Query(value = "SELECT a.id, c.FIRST_NAME || ' ' || c.LAST_NAME AS accountHolderName " +
-            "FROM LOAN_ACCOUNT_MASTER_TBL a " +
-            "JOIN CLIENT_MASTER_TBL c ON a.account_holderkey = c.encoded_key " +
-            "ORDER BY a.id", nativeQuery = true)
-List<Object[]> getAllDetails();
-
+	@Query(value = "SELECT a.id, c.FIRST_NAME || ' ' || c.LAST_NAME AS accountHolderName "
+			+ "FROM LOAN_ACCOUNT_MASTER_TBL a " + "JOIN CLIENT_MASTER_TBL c ON a.account_holderkey = c.encoded_key "
+			+ "ORDER BY a.id", nativeQuery = true)
+	List<Object[]> getAllDetails();
 
 	@Query(value = "  SELECT l.ID,c.FIRST_NAME || ' ' || c.LAST_NAME AS accountHolderName , c.MOBILE_PHONE AS mobile_phone,c.FIRST_NAME AS first_name,c.LAST_NAME AS last_name   "
 			+ "  FROM LOAN_ACCOUNT_MASTER_TBL l  " + "  INNER JOIN CLIENT_MASTER_TBL c  "
@@ -360,8 +358,16 @@ List<Object[]> getAllDetails();
 			+ "  AND c.due_date = ?1", nativeQuery = true)
 	List<Object[]> getActNo31(String datas);
 
-    @Query(value = "SELECT a.id, b.FIRST_NAME || ' ' || b.LAST_NAME AS acct_name " + "FROM loan_account_master_tbl a "
-            + "JOIN client_master_tbl b ON a.account_holderkey = b.encoded_key " + "ORDER BY a.id", nativeQuery = true)
-    List<Object[]> getAccountWithClientName();
+	@Query(value = "SELECT a.id, b.FIRST_NAME || ' ' || b.LAST_NAME AS acct_name " + "FROM loan_account_master_tbl a "
+			+ "JOIN client_master_tbl b ON a.account_holderkey = b.encoded_key " + "ORDER BY a.id", nativeQuery = true)
+	List<Object[]> getAccountWithClientName();
+
+	@Query(value = "SELECT DISTINCT \r\n" + "    a.id,\r\n" + "    b.first_name || ' ' || b.last_name AS full_name\r\n"
+			+ "FROM loan_account_master_tbl a\r\n" + "JOIN client_master_tbl b \r\n"
+			+ "    ON b.encoded_key = a.account_holderkey\r\n" + "JOIN loan_repayment_tbl c\r\n"
+			+ "    ON a.encoded_key = c.parent_account_key\r\n" + "WHERE(c.interest_exp - c.interest_paid) != 0\r\n"
+			+ "  and a.encoded_key = c.parent_account_key\r\n"
+			+ "  AND c.due_date>= TO_DATE(?1, 'DD-MON-YYYY')", nativeQuery = true)
+	List<Object[]> getActNo41(String datas);
 
 }

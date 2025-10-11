@@ -3832,7 +3832,7 @@ public class BGLSNavigationController {
 			md.addAttribute("collection", LOAN_ACT_MST_REPO.getActNo1());
 			md.addAttribute("interest", LOAN_ACT_MST_REPO.getActNo21(formattedDate));
 			md.addAttribute("fees", LOAN_ACT_MST_REPO.getActNo31(formattedDate));
-			md.addAttribute("fees", LOAN_ACT_MST_REPO.getActNo31(formattedDate));
+			md.addAttribute("bookingaccounts", LOAN_ACT_MST_REPO.getActNo41(formattedDate));
 			md.addAttribute("booking1", depositRep.getexistingData());
 
 		} else if (formmode.equals("list1")) {
