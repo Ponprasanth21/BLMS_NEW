@@ -2859,5 +2859,10 @@ function updateFileName() {
 </div>
 
 </body>
-
+<script>
+  // Disable future dates
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('doj').setAttribute('max', today);
+  document.getElementById('dob').setAttribute('max', today);
+</script>
 </html>
