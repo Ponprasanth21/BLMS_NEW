@@ -1355,13 +1355,13 @@
 
 		function setAccountNo(idValue, acctNameValue) {
 			// Set account number
-			var input = document.getElementById("acctNo");
+			var input = document.getElementById("acctNo2");
 			if (input) {
 				input.value = idValue;
 			}
 
 			// Set account holder name
-			var acctNameInput = document.getElementById("acctName");
+			var acctNameInput = document.getElementById("acctName2");
 			if (acctNameInput) {
 				acctNameInput.value = acctNameValue;
 			}
@@ -1369,6 +1369,23 @@
 			console.log("Selected Account ID:", idValue);
 			console.log("Selected Account Name:", acctNameValue);
 		}
+		
+		function setAccountNo2(idValue, acctNameValue) {
+					// Set account number
+					var input = document.getElementById("acctNo");
+					if (input) {
+						input.value = idValue;
+					}
+
+					// Set account holder name
+					var acctNameInput = document.getElementById("acctName");
+					if (acctNameInput) {
+						acctNameInput.value = acctNameValue;
+					}
+
+					console.log("Selected Account ID:", idValue);
+					console.log("Selected Account Name:", acctNameValue);
+				}
 
 
 
@@ -1376,12 +1393,12 @@
 		function submitAccount() {
 
 			var filetype = 'pdf';
-			var acctNo = document.getElementById("acctNo").value;
+			var acctNo = document.getElementById("acctNo2").value;
 			location.href = './downloadShedulePdf?' + '&filetype=' + filetype
 				+ '&acctNo=' + acctNo;
 
-			document.getElementById("acctNo").value = '';
-			document.getElementById("acctName").value = '';
+			document.getElementById("acctNo2").value = '';
+			document.getElementById("acctName2").value = '';
 		}
 
 		function closemainModal() {
@@ -1409,6 +1426,8 @@
 			location.href = './downloadDetailsPdf?' + '&filetype=' + filetype
 				+ '&acctNo=' + acctNo;
 
+			document.getElementById("acctNo").value = '';
+			document.getElementById("acctName").value = '';
 		}
 
 		function openModal1() {
@@ -1520,8 +1539,8 @@
 								<div class="d-flex align-items-center mb-3" style="gap: 60px;">
 									<!-- Account No -->
 									<div class="d-flex align-items-center" style="gap:5px;">
-										<label for="acctNo" class="mb-0">Account No:</label>
-										<input type="text" id="acctNo" class="form-control" style="width: 150px;" readonly>
+										<label for="acctNo2" class="mb-0">Account No:</label>
+										<input type="text" id="acctNo2" class="form-control" style="width: 150px;" readonly>
 										<button type="button" onclick="openModal()" class="btn btn-light p-1"
 											style="border-radius: 5px;">
 											<img src="images/search.svg" alt="Search"
@@ -1531,8 +1550,8 @@
 
 									<!-- Account Name -->
 									<div class="d-flex align-items-center" style="gap: 8px;">
-										<label for="acctName" class="mb-0">Account Name:</label>
-										<input type="text" id="acctName" class="form-control" style="width: 300px;"
+										<label for="acctName2" class="mb-0">Account Name:</label>
+										<input type="text" id="acctName2" class="form-control" style="width: 300px;"
 											readonly>
 									</div>
 								</div>
@@ -1642,7 +1661,7 @@
 							<tbody>
 								<tr th:each="details, stat : ${loanDetails}" th:data-id="${details[0]}"
 									th:data-name="${details[1]}" style="cursor: pointer;"
-									onclick="setAccountNo(this.getAttribute('data-id'), this.getAttribute('data-name')); closeModal1();">
+									onclick="setAccountNo2(this.getAttribute('data-id'), this.getAttribute('data-name')); closeModal1();">
 
 									<td th:text="${stat.count}"></td>
 									<td th:text="${details[0]}"></td> <!-- ID -->
@@ -1651,7 +1670,7 @@
 									<td class="text-center">
 										<input type="radio" name="selectedLoan" th:value="${details[0]}"
 											th:data-name="${details[1]}"
-											onclick="event.stopPropagation(); setAccountNo(this.value, this.getAttribute('data-name')); closeModal1();">
+											onclick="event.stopPropagation(); setAccountNo2(this.value, this.getAttribute('data-name')); closeModal1();">
 									</td>
 								</tr>
 
