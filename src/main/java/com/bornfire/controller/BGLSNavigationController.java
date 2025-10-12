@@ -2584,12 +2584,7 @@ public class BGLSNavigationController {
 
 		model.addAttribute("Valuesforaccbalance", chart_Acc_Rep.getaccbalance());
 
-		model.addAttribute("custcheck1", tRAN_MAIN_TRM_WRK_REP.getcheck1());
-
-		model.addAttribute("custcheck2", chart_Acc_Rep.getcheck2());
-
-		model.addAttribute("custcheck3", dAB_Repo.getcheck3());
-
+	
 		// ACCOUNT BALANCE
 		model.addAttribute("Valuesforaccopen", chart_Acc_Rep.getacctbalcredit());
 		model.addAttribute("Valuesforacclose", chart_Acc_Rep.getacctbaldebit());
@@ -4058,31 +4053,46 @@ public class BGLSNavigationController {
 		return response;
 	}
 
-	@RequestMapping(value = "journalvalid", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "journalvalid", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public String journalvalid() {
+	public Map<String, Object> journalvalid(@RequestBody Map<String, String> request) {
 
-		System.out.println("Journal Valid is Updated");
+	    String trndate = request.get("trndate");
+	    System.out.println("Received trndate: " + trndate);
+	    System.out.println("Entered in Validation");
 
-		BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+	    // Update control table
+	    BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
 
-		if (existingRecord != null) {
+	    if (existingRecord != null) {
+	        System.out.println("Past Journal Cons: " + existingRecord.getJournal_cons());
+	        existingRecord.setJournal_cons("Completed");
+	        bGLS_CONTROL_TABLE_REP.save(existingRecord);
+	        System.out.println("Updated Journal Cons: " + existingRecord.getJournal_cons());
+	    } else {
+	        System.out.println("No record found in BGLS_Control_Table");
+	    }
 
-			// 2️⃣ Log past value
-			System.out.println("Past Journal Cons: " + existingRecord.getJournal_cons());
+	    // Fetch data from your repositories
+	    Object[] Valuesfornotransaction = tRAN_MAIN_TRM_WRK_REP.getTransactionValues();
+	    Object[] Valuesfordebit = tRAN_MAIN_TRM_WRK_REP.getwofordebitvalues();
+	    Object[] ValuesforCredit = tRAN_MAIN_TRM_WRK_REP.getwoforcreditvalues();
+	    Object ValuesforDel = tRAN_MAIN_TRM_WRK_REP.getdelvalues();
+	    Object Valuesforunpost = tRAN_MAIN_TRM_WRK_REP.getunpostedvalues();
 
-			// 3️⃣ Update current value
-			existingRecord.setJournal_cons("Completed");
-
-			// 4️⃣ Save updated record
-			bGLS_CONTROL_TABLE_REP.save(existingRecord);
-
-			System.out.println("Updated Journal Cons: " + existingRecord.getJournal_cons());
-			return "success";
-		} else {
-			System.out.println("No record found in BGLS_Control_Table");
-			return "failure";
-		}
+	    // Build response map
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("Valuesfornotransaction", Valuesfornotransaction);
+	    response.put("Valuesfordebit", Valuesfordebit);
+	    response.put("ValuesforCredit", ValuesforCredit);
+	    response.put("ValuesforDel", ValuesforDel);
+	    response.put("Valuesforunpost", Valuesforunpost);
+	    
+	    System.out.println(ValuesforDel);
+	    System.out.println(Valuesforunpost);
+	    System.out.println(response);
+	    
+	    return response;
 	}
 
 	@RequestMapping(value = "holidayCheck", method = RequestMethod.POST)
@@ -4146,28 +4156,29 @@ public class BGLSNavigationController {
 
 	}
 
-	@RequestMapping(value = "consistencyCheck", method = { RequestMethod.GET, RequestMethod.POST })
+	@PostMapping("consistencyCheck")
 	@ResponseBody
-	public String consistencyCheck() {
+	public Map<String, Object> consistencyCheck(@RequestParam("trndate") String trndate) {
+	    System.out.println("Received trndate from frontend: " + trndate);
 
-		System.out.println(" Consistency check is Updated");
+	    Object[] obj1 = tRAN_MAIN_TRM_WRK_REP.getcheck1();
+	    Object[] obj2 = chart_Acc_Rep.getcheck2();
+	    Object[] obj3 = dAB_Repo.getcheck3();
 
-		BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+	    BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+	    if (existingRecord != null) {
+	        existingRecord.setAcct_cons("Completed");
+	        bGLS_CONTROL_TABLE_REP.save(existingRecord);
+	    }
 
-		if (existingRecord != null) {
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("custcheck1", obj1);
+	    response.put("custcheck2", obj2);
+	    response.put("custcheck3", obj3);
 
-			// 2️⃣ Log past value
-			existingRecord.setAcct_cons("Completed");
-
-			// 4️⃣ Save updated record
-			bGLS_CONTROL_TABLE_REP.save(existingRecord);
-
-			return "success";
-		} else {
-			System.out.println("No record found in BGLS_Control_Table");
-			return "failure";
-		}
+	    return response;
 	}
+
 
 	@RequestMapping(value = "dateChageProcess", method = RequestMethod.POST)
 	@ResponseBody

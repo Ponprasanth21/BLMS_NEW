@@ -166,12 +166,12 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 	/* till this Barath */
 
 	@Query(value = "SELECT COUNT(TRAN_AMT) AS COUNTAMT, SUM(TRAN_AMT) AS TRANAMT " + "FROM BGLS_TRM_WRK_TRANSACTIONS "
-			+ "WHERE DEL_FLG <> 'Y' " + "AND PART_TRAN_TYPE = 'debit' "
+			+ "WHERE DEL_FLG <> 'Y' " + "AND UPPER(PART_TRAN_TYPE) = 'DEBIT' "
 			+ "AND TRAN_STATUS = 'POSTED'", nativeQuery = true)
 	Object[] getwofordebitvalues();
 
 	@Query(value = "SELECT COUNT(TRAN_AMT) AS COUNTAMT, SUM(TRAN_AMT) AS TRANAMT " + "FROM BGLS_TRM_WRK_TRANSACTIONS "
-			+ "WHERE DEL_FLG <> 'Y' " + "AND PART_TRAN_TYPE = 'credit' "
+			+ "WHERE DEL_FLG <> 'Y' " + "AND UPPER(PART_TRAN_TYPE) = 'CREDIT' "
 			+ "AND TRAN_STATUS = 'POSTED'", nativeQuery = true)
 	Object[] getwoforcreditvalues();
 
@@ -255,8 +255,8 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 
 	/* Thanveer Consistency check */
 
-	@Query(value = "SELECT " + "SUM(CASE WHEN PART_TRAN_TYPE = 'CREDIT' THEN TRAN_AMT ELSE 0 END) AS TRANAMT_CREDIT, "
-			+ "SUM(CASE WHEN PART_TRAN_TYPE = 'DEBIT' THEN TRAN_AMT ELSE 0 END) AS TRANAMT_DEBIT "
+	@Query(value = "SELECT " + "SUM(CASE WHEN PART_TRAN_TYPE = 'Credit' THEN TRAN_AMT ELSE 0 END) AS TRANAMT_CREDIT, "
+			+ "SUM(CASE WHEN PART_TRAN_TYPE = 'Debit' THEN TRAN_AMT ELSE 0 END) AS TRANAMT_DEBIT "
 			+ "FROM BGLS_TRM_WRK_TRANSACTIONS WHERE TRAN_STATUS= 'POSTED'", nativeQuery = true)
 	Object[] getcheck1();
 
@@ -320,16 +320,16 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 
 	@Query(value = "select * from bgls_trm_wrk_transactions where flow_code = 'DISBT' AND TRAN_PARTICULAR = 'Loan Disbursed'", nativeQuery = true)
 	List<TRAN_MAIN_TRM_WRK_ENTITY> getRepaymentDetailsvalue();
-	
+
 	@Query(value = "select * from bgls_trm_wrk_transactions where flow_code = 'INDEM' AND TRAN_PARTICULAR = 'Interest Applied'", nativeQuery = true)
 	List<TRAN_MAIN_TRM_WRK_ENTITY> getinterestDetailsvalue();
-	
+
 	@Query(value = "select * from bgls_trm_wrk_transactions where flow_code = 'FEEDEM' AND TRAN_PARTICULAR = 'Fee Charged'", nativeQuery = true)
 	List<TRAN_MAIN_TRM_WRK_ENTITY> getfeesDetailsvalue();
-	
+
 	@Query(value = "select * from bgls_trm_wrk_transactions where flow_code = 'PENDEM' AND TRAN_PARTICULAR = 'Penalty Charged'", nativeQuery = true)
 	List<TRAN_MAIN_TRM_WRK_ENTITY> getpenaltyDetailsvalue();
-	
+
 	@Query(value = "select * from bgls_trm_wrk_transactions where tran_particular in ('Principal Recovery','Interest Recovery','Fee Recovery','Penalty Recovery')", nativeQuery = true)
 	List<TRAN_MAIN_TRM_WRK_ENTITY> getrecoveryDetailsvalue();
 }
