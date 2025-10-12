@@ -318,18 +318,141 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 			+ "WHERE TRAN_ID = :tranId AND PART_TRAN_ID = :partTranId", nativeQuery = true)
 	TRAN_MAIN_TRM_WRK_ENTITY getTransactionById(@Param("tranId") String tranId, @Param("partTranId") String partTranId);
 
-	@Query(value = "select * from bgls_trm_wrk_transactions where flow_code = 'DISBT' AND TRAN_PARTICULAR = 'Loan Disbursed'", nativeQuery = true)
-	List<TRAN_MAIN_TRM_WRK_ENTITY> getRepaymentDetailsvalue();
+//	@Query(value = "select * from bgls_trm_wrk_transactions where flow_code = 'DISBT' AND TRAN_PARTICULAR = 'Loan Disbursed' fetch first 100 rows only", nativeQuery = true)
+//	List<TRAN_MAIN_TRM_WRK_ENTITY> getRepaymentDetailsvalue();
 
-	@Query(value = "select * from bgls_trm_wrk_transactions where flow_code = 'INDEM' AND TRAN_PARTICULAR = 'Interest Applied'", nativeQuery = true)
-	List<TRAN_MAIN_TRM_WRK_ENTITY> getinterestDetailsvalue();
+//	@Query(value = "select * from bgls_trm_wrk_transactions where flow_code = 'INDEM' AND TRAN_PARTICULAR = 'Interest Applied'", nativeQuery = true)
+//	List<TRAN_MAIN_TRM_WRK_ENTITY> getinterestDetailsvalue();
+//	
+//	@Query(value = "select * from bgls_trm_wrk_transactions where flow_code = 'FEEDEM' AND TRAN_PARTICULAR = 'Fee Charged'", nativeQuery = true)
+//	List<TRAN_MAIN_TRM_WRK_ENTITY> getfeesDetailsvalue();
+//	
+//	@Query(value = "select * from bgls_trm_wrk_transactions where flow_code = 'PENDEM' AND TRAN_PARTICULAR = 'Penalty Charged'", nativeQuery = true)
+//	List<TRAN_MAIN_TRM_WRK_ENTITY> getpenaltyDetailsvalue();
+//	
+//	@Query(value = "select * from bgls_trm_wrk_transactions where tran_particular in ('Principal Recovery','Interest Recovery','Fee Recovery','Penalty Recovery')", nativeQuery = true)
+//	List<TRAN_MAIN_TRM_WRK_ENTITY> getrecoveryDetailsvalue();
+	
+	
+			@Query(
+					  value = "SELECT * FROM bgls_trm_wrk_transactions " +
+					          "WHERE flow_code = 'DISBT' AND TRAN_PARTICULAR = 'Loan Disbursed' " +
+					          "FETCH FIRST 200 ROWS ONLY",
+					  nativeQuery = true
+					)
+					List<TRAN_MAIN_TRM_WRK_ENTITY> getRepaymentDetailsvalue();
+			
+			@Query(
+					  value = "SELECT * FROM ( " +
+					          "SELECT * FROM bgls_trm_wrk_transactions " +
+					          "WHERE flow_code = 'INDEM' AND TRAN_PARTICULAR = 'Interest Applied' " +
+					          ") WHERE ROWNUM <= 200",
+					  nativeQuery = true
+					)
+					List<TRAN_MAIN_TRM_WRK_ENTITY> getInterestDetailsValue();
 
-	@Query(value = "select * from bgls_trm_wrk_transactions where flow_code = 'FEEDEM' AND TRAN_PARTICULAR = 'Fee Charged'", nativeQuery = true)
-	List<TRAN_MAIN_TRM_WRK_ENTITY> getfeesDetailsvalue();
+					@Query(
+					  value = "SELECT * FROM ( " +
+					          "SELECT * FROM bgls_trm_wrk_transactions " +
+					          "WHERE flow_code = 'FEEDEM' AND TRAN_PARTICULAR = 'Fee Charged' " +
+					          ") WHERE ROWNUM <= 200",
+					  nativeQuery = true
+					)
+					List<TRAN_MAIN_TRM_WRK_ENTITY> getFeesDetailsValue();
 
-	@Query(value = "select * from bgls_trm_wrk_transactions where flow_code = 'PENDEM' AND TRAN_PARTICULAR = 'Penalty Charged'", nativeQuery = true)
-	List<TRAN_MAIN_TRM_WRK_ENTITY> getpenaltyDetailsvalue();
+					@Query(
+					  value = "SELECT * FROM ( " +
+					          "SELECT * FROM bgls_trm_wrk_transactions " +
+					          "WHERE flow_code = 'PENDEM' AND TRAN_PARTICULAR = 'Penalty Charged' " +
+					          ") WHERE ROWNUM <= 200",
+					  nativeQuery = true
+					)
+					List<TRAN_MAIN_TRM_WRK_ENTITY> getPenaltyDetailsValue();
 
-	@Query(value = "select * from bgls_trm_wrk_transactions where tran_particular in ('Principal Recovery','Interest Recovery','Fee Recovery','Penalty Recovery')", nativeQuery = true)
-	List<TRAN_MAIN_TRM_WRK_ENTITY> getrecoveryDetailsvalue();
+					@Query(
+					  value = "SELECT * FROM ( " +
+					          "SELECT * FROM bgls_trm_wrk_transactions " +
+					          "WHERE tran_particular IN ('Principal Recovery','Interest Recovery','Fee Recovery','Penalty Recovery') " +
+					          ") WHERE ROWNUM <= 200",
+					  nativeQuery = true
+					)
+					List<TRAN_MAIN_TRM_WRK_ENTITY> getRecoveryDetailsValue();
+					
+					
+//					// Search by Account Number
+//					@Query(value = "SELECT * FROM bgls_trm_wrk_transactions " +
+//					               "WHERE flow_code = :flowCode " +
+//					               "AND LOWER(acct_num) LIKE '%' || :keyword || '%'",
+//					       nativeQuery = true)
+//					List<TRAN_MAIN_TRM_WRK_ENTITY> searchByAccountNumber(@Param("keyword") String keyword,
+//					                                                     @Param("flowCode") String flowCode);
+//
+//					// Search by Account Name
+//					@Query(value = "SELECT * FROM bgls_trm_wrk_transactions " +
+//					               "WHERE flow_code = :flowCode " +
+//					               "AND LOWER(acct_name) LIKE '%' || :keyword || '%'",
+//					       nativeQuery = true)
+//					List<TRAN_MAIN_TRM_WRK_ENTITY> searchByAccountName(@Param("keyword") String keyword,
+//					                                                   @Param("flowCode") String flowCode);
+					
+					// Normal flow queries
+					@Query(value = "SELECT * FROM bgls_trm_wrk_transactions " +
+					               "WHERE flow_code = :flowCode AND LOWER(acct_num) LIKE '%' || :keyword || '%'", 
+					       nativeQuery = true)
+					List<TRAN_MAIN_TRM_WRK_ENTITY> searchByAccountNumber(@Param("keyword") String keyword, @Param("flowCode") String flowCode);
+
+					@Query(value = "SELECT * FROM bgls_trm_wrk_transactions " +
+					               "WHERE flow_code = :flowCode AND LOWER(acct_name) LIKE '%' || :keyword || '%'", 
+					       nativeQuery = true)
+					List<TRAN_MAIN_TRM_WRK_ENTITY> searchByAccountName(@Param("keyword") String keyword, @Param("flowCode") String flowCode);
+
+					// Recovery (COLL) tab search
+					@Query(value = "SELECT * FROM bgls_trm_wrk_transactions " +
+					               "WHERE tran_particular IN ('Principal Recovery','Interest Recovery','Fee Recovery','Penalty Recovery') " +
+					               "AND (:filterType = 'Account Number' AND LOWER(acct_num) LIKE '%' || :keyword || '%' OR " +
+					               "     :filterType = 'Account Name' AND LOWER(acct_name) LIKE '%' || :keyword || '%') ",
+					       nativeQuery = true)
+					List<TRAN_MAIN_TRM_WRK_ENTITY> searchRecovery(@Param("keyword") String keyword, @Param("filterType") String filterType);
+
+
+					// 🟩 Download all Disbursement (Loan Disbursed) records
+					@Query(
+					  value = "SELECT * FROM bgls_trm_wrk_transactions " +
+					          "WHERE flow_code = 'DISBT' AND TRAN_PARTICULAR = 'Loan Disbursed'",
+					  nativeQuery = true
+					)
+					List<TRAN_MAIN_TRM_WRK_ENTITY> downloadDisbursementDetails();
+
+					// 🟩 Download all Interest Applied records
+					@Query(
+					  value = "SELECT * FROM bgls_trm_wrk_transactions " +
+					          "WHERE flow_code = 'INDEM' AND TRAN_PARTICULAR = 'Interest Applied'",
+					  nativeQuery = true
+					)
+					List<TRAN_MAIN_TRM_WRK_ENTITY> downloadInterestDetails();
+
+					// 🟩 Download all Fee Charged records
+					@Query(
+					  value = "SELECT * FROM bgls_trm_wrk_transactions " +
+					          "WHERE flow_code = 'FEEDEM' AND TRAN_PARTICULAR = 'Fee Charged'",
+					  nativeQuery = true
+					)
+					List<TRAN_MAIN_TRM_WRK_ENTITY> downloadFeeDetails();
+
+					// 🟩 Download all Penalty Charged records
+					@Query(
+					  value = "SELECT * FROM bgls_trm_wrk_transactions " +
+					          "WHERE flow_code = 'PENDEM' AND TRAN_PARTICULAR = 'Penalty Charged'",
+					  nativeQuery = true
+					)
+					List<TRAN_MAIN_TRM_WRK_ENTITY> downloadPenaltyDetails();
+
+					// 🟩 Download all Recovery records (Principal, Interest, Fee, Penalty)
+					@Query(
+					  value = "SELECT * FROM bgls_trm_wrk_transactions " +
+					          "WHERE tran_particular IN ('Principal Recovery','Interest Recovery','Fee Recovery','Penalty Recovery')",
+					  nativeQuery = true
+					)
+					List<TRAN_MAIN_TRM_WRK_ENTITY> downloadRecoveryDetails();
+
 }

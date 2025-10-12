@@ -124,17 +124,18 @@ public class ASPIRAUploadController {
 		@GetMapping("/DisplayExcel1")
 		public void loanMasterListExcelDownload1(HttpServletRequest request,
 		                                         HttpServletResponse response,
-		                                         @RequestParam String type,
-		                                         @RequestParam("currentDate")
-		                                         @DateTimeFormat(pattern = "yyyy-MM-dd") Date currentDate) {
+		                                         @RequestParam String type
+//		                                         @RequestParam("currentDate")
+//		                                         @DateTimeFormat(pattern = "yyyy-MM-dd") Date currentDate
+		                                         ) {
 
-		    System.out.println("Type: " + type + ", Date: " + currentDate);
+//		    System.out.println("Type: " + type + ", Date: " + currentDate);
 
 		    String userID = (String) request.getSession().getAttribute("USERID");
 		    String userName = (String) request.getSession().getAttribute("USERNAME");
 		    String auditRefNo = sequence.generateRequestUUId();
 
-		    excelDownloadService.ExportExcel1(type, userID, userName, auditRefNo, response, currentDate);
+		    excelDownloadService.ExportExcel1(type, userID, userName, auditRefNo, response);
 		}
 		
 		private static final String UPLOAD_DIR = "C:/Temp/Files/";

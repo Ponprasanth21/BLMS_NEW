@@ -165,6 +165,9 @@ import com.bornfire.services.RepaymentScheduleServices;
 import com.bornfire.services.*;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
+
+import groovy.transform.Undefined;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 @RestController
@@ -8032,57 +8035,203 @@ public class BGLSRestController {
 
 	@RequestMapping(value = "/getBranchData", method = RequestMethod.GET)
 	@ResponseBody
-	public List<LOAN_ACT_MST_ENTITY> getBranchData(
+	public List<TRAN_MAIN_TRM_WRK_ENTITY> getBranchData(
 			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date currentDate) {
-
+			
 		if (currentDate != null) {
 			// Convert java.util.Date to java.sql.Date (removes time part)
 			java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
 			System.out.println("Formatted SQL Date for DB: " + sqlDate); // 2025-04-24
-			return lOAN_ACT_MST_REPO.getLoanActDetval();
+			return tRAN_MAIN_TRM_WRK_REP.getRepaymentDetailsvalue();
 		} else {
 			System.out.println("No date provided.");
 			return new ArrayList<>();
 		}
 	}
-
+	
 	@RequestMapping(value = "/getBranchData1", method = RequestMethod.GET)
 	@ResponseBody
-	public List<Object[]> getBranchData1(
+	public List<TRAN_MAIN_TRM_WRK_ENTITY> getBranchData1(
 			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date currentDate) {
-
-		if (currentDate == null) {
+			
+		if (currentDate != null) {
+			// Convert java.util.Date to java.sql.Date (removes time part)
+			java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
+			System.out.println("Formatted SQL Date for DB: " + sqlDate); // 2025-04-24
+			return tRAN_MAIN_TRM_WRK_REP.getInterestDetailsValue();
+		} else {
 			System.out.println("No date provided.");
 			return new ArrayList<>();
 		}
-
-		// Convert to SQL date (removes time)
-		java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
-		System.out.println("Formatted SQL Date for DB: " + sqlDate);
-
-		// Fetch loan account data
-		List<LOAN_ACT_MST_ENTITY> loanActList = lOAN_ACT_MST_REPO.getLoanActDetval1(sqlDate);
-
-		// Collect encoded keys
-		List<String> encodedKeyList = loanActList.stream().map(LOAN_ACT_MST_ENTITY::getEncoded_key)
-				.filter(Objects::nonNull).collect(Collectors.toList());
-
-		if (encodedKeyList.isEmpty()) {
-			System.out.println("No Encoded Keys Found.");
+	}
+	
+	@RequestMapping(value = "/getBranchData2", method = RequestMethod.GET)
+	@ResponseBody
+	public List<TRAN_MAIN_TRM_WRK_ENTITY> getBranchData2(
+			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date currentDate) {
+			
+		if (currentDate != null) {
+			// Convert java.util.Date to java.sql.Date (removes time part)
+			java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
+			System.out.println("Formatted SQL Date for DB: " + sqlDate); // 2025-04-24
+			return tRAN_MAIN_TRM_WRK_REP.getFeesDetailsValue();
+		} else {
+			System.out.println("No date provided.");
 			return new ArrayList<>();
 		}
-
-		// Split keys into batches of 1000 to avoid ORA-01795
-		List<Object[]> repaymentList = new ArrayList<>();
-		int batchSize = 1000;
-		for (int i = 0; i < encodedKeyList.size(); i += batchSize) {
-			List<String> batch = encodedKeyList.subList(i, Math.min(i + batchSize, encodedKeyList.size()));
-			repaymentList.addAll(lOAN_REPAYMENT_REPO.findByParentAccountKeyInAndDueDateLessThanEqual(batch, sqlDate));
-		}
-
-		System.out.println("Repayment Size: " + repaymentList.size());
-		return repaymentList;
 	}
+	
+
+	@RequestMapping(value = "/getBranchData3", method = RequestMethod.GET)
+	@ResponseBody
+	public List<TRAN_MAIN_TRM_WRK_ENTITY> getBranchData3(
+			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date currentDate) {
+			
+		if (currentDate != null) {
+			// Convert java.util.Date to java.sql.Date (removes time part)
+			java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
+			System.out.println("Formatted SQL Date for DB: " + sqlDate); // 2025-04-24
+			return tRAN_MAIN_TRM_WRK_REP.getPenaltyDetailsValue();
+		} else {
+			System.out.println("No date provided.");
+			return new ArrayList<>();
+		}
+	}
+	
+	
+	@RequestMapping(value = "/getBranchData4", method = RequestMethod.GET)
+	@ResponseBody
+	public List<TRAN_MAIN_TRM_WRK_ENTITY> getBranchData4(
+			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date currentDate) {
+			
+		if (currentDate != null) {
+			// Convert java.util.Date to java.sql.Date (removes time part)
+			java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
+			System.out.println("Formatted SQL Date for DB: " + sqlDate); // 2025-04-24
+			return tRAN_MAIN_TRM_WRK_REP.getRecoveryDetailsValue();
+		} else {
+			System.out.println("No date provided.");
+			return new ArrayList<>();
+		}
+	}
+	
+	
+//	@GetMapping("transactions/search")
+//	public ResponseEntity<List<TRAN_MAIN_TRM_WRK_ENTITY>> searchTransactions(
+//	        @RequestParam String keyword,
+//	        @RequestParam String flowCode,
+//	        @RequestParam String filterType) {
+//
+//	    System.out.println(keyword + " " + flowCode + " " + filterType);
+//
+//	    List<TRAN_MAIN_TRM_WRK_ENTITY> result;
+//
+//	    String keywordLower = keyword.toLowerCase(); // convert input to lowercase
+//
+//	    if ("Account Number".equalsIgnoreCase(filterType)) {
+//	    	System.out.println("Account Number search");
+//	        result = tRAN_MAIN_TRM_WRK_REP.searchByAccountNumber(keywordLower, flowCode);
+//	        System.out.println(result.size());
+//	    } else {
+//	    	System.out.println("Account Name search : " + keywordLower + "Flow Code : "+ flowCode);
+//	        result = tRAN_MAIN_TRM_WRK_REP.searchByAccountName(keywordLower, flowCode);
+//	        System.out.println(result.size());
+//	    }
+//
+//	    return ResponseEntity.ok(result);
+//	}
+	
+	@GetMapping("transactions/search")
+	public ResponseEntity<List<TRAN_MAIN_TRM_WRK_ENTITY>> searchTransactions(
+	        @RequestParam String keyword,
+	        @RequestParam String flowCode,
+	        @RequestParam String filterType) {
+
+	    String lowerKeyword = keyword.toLowerCase();
+	    List<TRAN_MAIN_TRM_WRK_ENTITY> result;
+
+	    switch (flowCode) {
+	        case "DISBT":
+	            result = "Account Number".equalsIgnoreCase(filterType) ?
+	                     tRAN_MAIN_TRM_WRK_REP.searchByAccountNumber(lowerKeyword, flowCode) :
+	                     tRAN_MAIN_TRM_WRK_REP.searchByAccountName(lowerKeyword, flowCode);
+	            break;
+
+	        case "INDEM":
+	            result = "Account Number".equalsIgnoreCase(filterType) ?
+	                     tRAN_MAIN_TRM_WRK_REP.searchByAccountNumber(lowerKeyword, flowCode) :
+	                     tRAN_MAIN_TRM_WRK_REP.searchByAccountName(lowerKeyword, flowCode);
+	            break;
+
+	        case "FEEDEM":
+	            result = "Account Number".equalsIgnoreCase(filterType) ?
+	                     tRAN_MAIN_TRM_WRK_REP.searchByAccountNumber(lowerKeyword, flowCode) :
+	                     tRAN_MAIN_TRM_WRK_REP.searchByAccountName(lowerKeyword, flowCode);
+	            break;
+
+	        case "PENDEM":
+	            result = "Account Number".equalsIgnoreCase(filterType) ?
+	                     tRAN_MAIN_TRM_WRK_REP.searchByAccountNumber(lowerKeyword, flowCode) :
+	                     tRAN_MAIN_TRM_WRK_REP.searchByAccountName(lowerKeyword, flowCode);
+	            break;
+
+	        case "COLL": // Recovery tab is different
+	            result = tRAN_MAIN_TRM_WRK_REP.searchRecovery(lowerKeyword, filterType);
+	            break;
+
+	        default:
+	            result = Collections.emptyList();
+	            break;
+	    }
+
+	    return ResponseEntity.ok(result);
+	}
+
+
+
+
+
+	
+	
+	
+
+//	@RequestMapping(value = "/getBranchData1", method = RequestMethod.GET)
+//	@ResponseBody
+//	public List<Object[]> getBranchData1(
+//			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date currentDate) {
+//
+//		if (currentDate == null) {
+//			System.out.println("No date provided.");
+//			return new ArrayList<>();
+//		}
+//
+//		// Convert to SQL date (removes time)
+//		java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
+//		System.out.println("Formatted SQL Date for DB: " + sqlDate);
+//
+//		// Fetch loan account data
+//		List<LOAN_ACT_MST_ENTITY> loanActList = lOAN_ACT_MST_REPO.getLoanActDetval1(sqlDate);
+//
+//		// Collect encoded keys
+//		List<String> encodedKeyList = loanActList.stream().map(LOAN_ACT_MST_ENTITY::getEncoded_key)
+//				.filter(Objects::nonNull).collect(Collectors.toList());
+//
+//		if (encodedKeyList.isEmpty()) {
+//			System.out.println("No Encoded Keys Found.");
+//			return new ArrayList<>();
+//		}
+//
+//		// Split keys into batches of 1000 to avoid ORA-01795
+//		List<Object[]> repaymentList = new ArrayList<>();
+//		int batchSize = 1000;
+//		for (int i = 0; i < encodedKeyList.size(); i += batchSize) {
+//			List<String> batch = encodedKeyList.subList(i, Math.min(i + batchSize, encodedKeyList.size()));
+//			repaymentList.addAll(lOAN_REPAYMENT_REPO.findByParentAccountKeyInAndDueDateLessThanEqual(batch, sqlDate));
+//		}
+//
+//		System.out.println("Repayment Size: " + repaymentList.size());
+//		return repaymentList;
+//	}
 
 	@PostMapping("/saveBranchData")
 	public ResponseEntity<Map<String, Object>> saveBranchData(@RequestBody List<Map<String, Object>> branchDataList,

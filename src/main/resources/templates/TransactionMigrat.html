@@ -467,25 +467,25 @@
 	</script>
 
 	<script>
-		function openTab(evt, tabName) {
-			// Hide all main tab content
-			let i, tabcontent, tablinks;
-			tabcontent = document.getElementsByClassName("tabcontent");
-			for (i = 0; i < tabcontent.length; i++) {
-				tabcontent[i].style.display = "none";
-			}
+		// function openTab(evt, tabName) {
+		// 	// Hide all main tab content
+		// 	let i, tabcontent, tablinks;
+		// 	tabcontent = document.getElementsByClassName("tabcontent");
+		// 	for (i = 0; i < tabcontent.length; i++) {
+		// 		tabcontent[i].style.display = "none";
+		// 	}
 
-			// Remove active class from main tabs
-			tablinks = document.getElementsByClassName("tablinks");
-			for (i = 0; i < tablinks.length; i++) {
-				tablinks[i].className = tablinks[i].className
-					.replace(" active", "");
-			}
+		// 	// Remove active class from main tabs
+		// 	tablinks = document.getElementsByClassName("tablinks");
+		// 	for (i = 0; i < tablinks.length; i++) {
+		// 		tablinks[i].className = tablinks[i].className
+		// 			.replace(" active", "");
+		// 	}
 
-			// Show selected main tab and set as active
-			document.getElementById(tabName).style.display = "block";
-			evt.currentTarget.className += " active";
-		}
+		// 	// Show selected main tab and set as active
+		// 	document.getElementById(tabName).style.display = "block";
+		// 	evt.currentTarget.className += " active";
+		// }
 
 		function openSubTab(evt, subTabName) {
 			// Hide all sub-tab content
@@ -636,139 +636,144 @@
 
 	<!-- AJAX Function to send selected date -->
 	<script>
-		function sendSelectedDate() {
-			var selectedDate = $("#currentvalue").val();
-			if (!selectedDate) {
-				alert("Please select a date.");
-				return;
-			}
+		// function sendSelectedDate() {
+		// 	var selectedDate = $("#currentvalue").val();
+		// 	if (!selectedDate) {
+		// 		alert("Please select a date.");
+		// 		return;
+		// 	}
 
-			var dateParts = selectedDate.split('-');
-			var formattedDate = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0];
+		// 	var dateParts = selectedDate.split('-');
+		// 	var formattedDate = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0];
 
-			function handleAjax(url, tableId, buildRowsFn) {
-				$.ajax({
-					url: url,
-					type: 'GET',
-					data: {currentDate: formattedDate},
-					success: function (response) {
-						var rows = "";
-						if (!response || response.length === 0) {
-							rows = "<tr><td colspan='7' style='text-align:center;'>No Data Found</td></tr>";
-						} else {
-							rows = buildRowsFn(response);
-						}
-						$('#' + tableId).html(rows);
-					},
-					error: function () {
-						$('#' + tableId).html("<tr><td colspan='7' style='text-align:center;color:red;'>Error fetching data</td></tr>");
-					}
-				});
-			}
+		// 	function handleAjax(url, tableId, buildRowsFn) {
+		// 		$.ajax({
+		// 			url: url,
+		// 			type: 'GET',
+		// 			data: {currentDate: formattedDate},
+		// 			success: function (response) {
+		// 				var rows = "";
+		// 				if (!response || response.length === 0) {
+		// 					rows = "<tr><td colspan='7' style='text-align:center;'>No Data Found</td></tr>";
+		// 				} else {
+		// 					rows = buildRowsFn(response);
+		// 				}
+		// 				$('#' + tableId).html(rows);
+		// 			},
+		// 			error: function () {
+		// 				$('#' + tableId).html("<tr><td colspan='7' style='text-align:center;color:red;'>Error fetching data</td></tr>");
+		// 			}
+		// 		});
+		// 	}
 
-			// === TAB 1 ===
-			handleAjax("./getBranchData", "placelist1", function (response) {
-				var rows = "";
-				for (var i = 0; i < response.length; i++) {
-					var data = response[i];
-					var formattedCreationDate = '';
-					if (data.creation_date) {
-						var rawDate = new Date(data.creation_date);
-						var day = String(rawDate.getDate()).padStart(2, '0');
-						var month = String(rawDate.getMonth() + 1).padStart(2, '0');
-						var year = rawDate.getFullYear();
-						formattedCreationDate = day + '-' + month + '-' + year;
-					}
-					var loanAmountFormatted = data.loan_amount && !isNaN(data.loan_amount)
-						? parseFloat(data.loan_amount).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})
-						: '';
+		// 	// === TAB 1 ===
+		// 	handleAjax("./getBranchData", "placelist1", function (response) {
+		// 		var rows = "";
+		// 		for (var i = 0; i < response.length; i++) {
+		// 			var data = response[i];
+		// 			var formattedCreationDate = '';
 
-					rows += "<tr>";
-					rows += "<td>" + (i + 1) + "</td>";
-					rows += "<td>1</td>";
-					rows += "<td>" + formattedCreationDate + "</td>";
-					rows += "<td title='DISRB'>DISRB</td>";
-					rows += "<td style='text-align:right;'>" + loanAmountFormatted + "</td>";
-					rows += "<td>" + (data.id || '') + "</td>";
-					rows += "<td>" + (data.loan_name || '') + "</td>";
-					rows += "</tr>";
-				}
-				return rows;
-			});
+		// 			if (data.flow_date) {
+		// 				var rawDate = new Date(data.flow_date);
+		// 				var day = String(rawDate.getDate()).padStart(2, '0');
+		// 				var month = String(rawDate.getMonth() + 1).padStart(2, '0');
+		// 				var year = rawDate.getFullYear();
+		// 				formattedCreationDate = day + '-' + month + '-' + year;
+		// 			}
+		// 			var loanAmountFormatted = data.tran_amt && !isNaN(data.tran_amt)
+		// 				? parseFloat(data.tran_amt).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})
+		// 				: '';
 
-			// === TAB 2 (INDEM) ===
-			handleAjax("./getBranchData1", "placelist2", function (response) {
-				var rows = "", serialNo = 1;
-				for (var i = 0; i < response.length; i++) {
-					var data = response[i];
-					var formattedCreationDate = data[6] ? new Date(data[6]).toLocaleDateString('en-GB').replace(/\//g, '-') : '';
-					var interest = data[10] && !isNaN(data[10]) ? parseFloat(data[10]).toLocaleString('en-IN', {minimumFractionDigits: 2}) : '';
+		// 			rows += "<tr>";
+		// 			rows += "<td>" + (i + 1) + "</td>";
+		// 			rows += "<td>1</td>";
+		// 			rows += "<td>" + formattedCreationDate + "</td>";
+		// 			rows += "<td title='DISRB'>DISRB</td>";
+		// 			rows += "<td style='text-align:right;'>" + loanAmountFormatted + "</td>";
+		// 			rows += "<td>" + (data.acct_num || '') + "</td>";
+		// 			rows += "<td>" + (data.acct_name || '') + "</td>";
+		// 			rows += "</tr>";
+		// 		}
+		// 		return rows;
+		// 	});
 
-					// INDEM row only for Tab 2
-					rows += `<tr>
-			                    <td>${serialNo++}</td>
-			                    <td>1</td>
-			                    <td>${formattedCreationDate}</td>
-			                    <td title='INDEM'>INDEM</td>
-			                    <td style='text-align:right;'>${interest}</td>
-			                    <td>${data[30] || ''}</td>
-			                    <td>${data[31] || ''}</td>
-			                 </tr>`;
-				}
-				return rows;
-			});
+			
 
-			// === TAB 3 ===
-			handleAjax("./getBranchData31", "placelist3", function (response) {
-				var rows = "", serialNo = 1;
-				for (var i = 0; i < response.length; i++) {
-					var data = response[i];
-					var formattedCreationDate = data[6] ? new Date(data[6]).toLocaleDateString('en-GB').replace(/\//g, '-') : '';
-					var principal = data[27] && !isNaN(data[27]) ? parseFloat(data[27]).toLocaleString('en-IN', {minimumFractionDigits: 2}) : '';
-					var interest = data[10] && !isNaN(data[10]) ? parseFloat(data[10]).toLocaleString('en-IN', {minimumFractionDigits: 2}) : '';
-					var fee = data[13] && !isNaN(data[13]) ? parseFloat(data[13]).toLocaleString('en-IN', {minimumFractionDigits: 2}) : '';
+		// 	// === TAB 2 (INDEM) ===
+		// 	handleAjax("./getBranchData1", "placelist2", function (response) {
+		// 		var rows = "", serialNo = 1;
+		// 		for (var i = 0; i < response.length; i++) {
+		// 			var data = response[i];
+		// 			var formattedCreationDate = data[6] ? new Date(data[6]).toLocaleDateString('en-GB').replace(/\//g, '-') : '';
+		// 			var interest = data[10] && !isNaN(data[10]) ? parseFloat(data[10]).toLocaleString('en-IN', {minimumFractionDigits: 2}) : '';
 
-					rows += `<tr><td>${serialNo++}</td><td>1</td><td>${formattedCreationDate}</td><td title='INDEM'>INDEM</td><td style='text-align:right;'>${interest}</td><td>${data[30] || ''}</td><td>${data[31] || ''}</td></tr>`;
-					rows += `<tr><td>${serialNo++}</td><td>2</td><td>${formattedCreationDate}</td><td title='FEEDM'>FEEDM</td><td style='text-align:right;'>${fee}</td><td>${data[30] || ''}</td><td>${data[31] || ''}</td></tr>`;
-					rows += `<tr><td>${serialNo++}</td><td>3</td><td>${formattedCreationDate}</td><td title='PRDEM'>PRDEM</td><td style='text-align:right;'>${principal}</td><td>${data[30] || ''}</td><td>${data[31] || ''}</td></tr>`;
-				}
-				return rows;
-			});
+		// 			// INDEM row only for Tab 2
+		// 			rows += `<tr>
+		// 	                    <td>${serialNo++}</td>
+		// 	                    <td>1</td>
+		// 	                    <td>${formattedCreationDate}</td>
+		// 	                    <td title='INDEM'>INDEM</td>
+		// 	                    <td style='text-align:right;'>${interest}</td>
+		// 	                    <td>${data[30] || ''}</td>
+		// 	                    <td>${data[31] || ''}</td>
+		// 	                 </tr>`;
+		// 		}
+		// 		return rows;
+		// 	});
 
-			// === TAB 4 ===
-			handleAjax("./getBranchData11", "placelist4", function (response) {
-				var rows = "";
-				for (var i = 0; i < response.length; i++) {
-					var data = response[i];
-					var formattedCreationDate = data[2] ? new Date(data[2]).toLocaleDateString('en-GB').replace(/\//g, '-') : '';
-					var loanAmountFormatted = data[10] && !isNaN(data[10]) ? parseFloat(data[10]).toLocaleString('en-IN', {minimumFractionDigits: 2}) : '';
-					rows += `<tr><td>${i + 1}</td><td>1</td><td>${formattedCreationDate}</td><td title='INDEM'>INDEM</td><td style='text-align:right;'>${loanAmountFormatted}</td><td>${data[30] || ''}</td><td>${data[31] || ''}</td></tr>`;
-				}
-				return rows;
-			});
+		// 	// === TAB 3 ===
+		// 	handleAjax("./getBranchData2", "placelist3", function (response) {
+		// 		var rows = "", serialNo = 1;
+		// 		for (var i = 0; i < response.length; i++) {
+		// 			var data = response[i];
+		// 			var formattedCreationDate = data[6] ? new Date(data[6]).toLocaleDateString('en-GB').replace(/\//g, '-') : '';
+		// 			var principal = data[27] && !isNaN(data[27]) ? parseFloat(data[27]).toLocaleString('en-IN', {minimumFractionDigits: 2}) : '';
+		// 			var interest = data[10] && !isNaN(data[10]) ? parseFloat(data[10]).toLocaleString('en-IN', {minimumFractionDigits: 2}) : '';
+		// 			var fee = data[13] && !isNaN(data[13]) ? parseFloat(data[13]).toLocaleString('en-IN', {minimumFractionDigits: 2}) : '';
 
-			// === TAB 5 (FEEDM) ===
-			handleAjax("./getBranchData21", "placelist5", function (response) {
-				var rows = "", serialNo = 1;
-				for (var i = 0; i < response.length; i++) {
-					var data = response[i];
-					var formattedCreationDate = data[6] ? new Date(data[6]).toLocaleDateString('en-GB').replace(/\//g, '-') : '';
-					var fee = data[13] && !isNaN(data[13]) ? parseFloat(data[13]).toLocaleString('en-IN', {minimumFractionDigits: 2}) : '';
+		// 			rows += `<tr><td>${serialNo++}</td><td>1</td><td>${formattedCreationDate}</td><td title='INDEM'>INDEM</td><td style='text-align:right;'>${interest}</td><td>${data[30] || ''}</td><td>${data[31] || ''}</td></tr>`;
+		// 			rows += `<tr><td>${serialNo++}</td><td>2</td><td>${formattedCreationDate}</td><td title='FEEDM'>FEEDM</td><td style='text-align:right;'>${fee}</td><td>${data[30] || ''}</td><td>${data[31] || ''}</td></tr>`;
+		// 			rows += `<tr><td>${serialNo++}</td><td>3</td><td>${formattedCreationDate}</td><td title='PRDEM'>PRDEM</td><td style='text-align:right;'>${principal}</td><td>${data[30] || ''}</td><td>${data[31] || ''}</td></tr>`;
+		// 		}
+		// 		return rows;
+		// 	});
 
-					// FEEDM row only for Tab 5
-					rows += `<tr>
-			                    <td>${serialNo++}</td>
-			                    <td>2</td>
-			                    <td>${formattedCreationDate}</td>
-			                    <td title='FEEDM'>FEEDM</td>
-			                    <td style='text-align:right;'>${fee}</td>
-			                    <td>${data[30] || ''}</td>
-			                    <td>${data[31] || ''}</td>
-			                 </tr>`;
-				}
-				return rows;
-			});
-		}
+		// 	// === TAB 4 ===
+		// 	handleAjax("./getBranchData3", "placelist4", function (response) {
+		// 		var rows = "";
+		// 		for (var i = 0; i < response.length; i++) {
+		// 			var data = response[i];
+		// 			var formattedCreationDate = data[2] ? new Date(data[2]).toLocaleDateString('en-GB').replace(/\//g, '-') : '';
+		// 			var loanAmountFormatted = data[10] && !isNaN(data[10]) ? parseFloat(data[10]).toLocaleString('en-IN', {minimumFractionDigits: 2}) : '';
+		// 			rows += `<tr><td>${i + 1}</td><td>1</td><td>${formattedCreationDate}</td><td title='INDEM'>INDEM</td><td style='text-align:right;'>${loanAmountFormatted}</td><td>${data[30] || ''}</td><td>${data[31] || ''}</td></tr>`;
+		// 		}
+		// 		return rows;
+		// 	});
+
+		// 	// === TAB 5 (FEEDM) ===
+		// 	handleAjax("./getBranchData4", "placelist5", function (response) {
+		// 		var rows = "", serialNo = 1;
+		// 		for (var i = 0; i < response.length; i++) {
+		// 			var data = response[i];
+		// 			var formattedCreationDate = data[6] ? new Date(data[6]).toLocaleDateString('en-GB').replace(/\//g, '-') : '';
+		// 			var fee = data[13] && !isNaN(data[13]) ? parseFloat(data[13]).toLocaleString('en-IN', {minimumFractionDigits: 2}) : '';
+
+		// 			// FEEDM row only for Tab 5
+		// 			rows += `<tr>
+		// 	                    <td>${serialNo++}</td>
+		// 	                    <td>2</td>
+		// 	                    <td>${formattedCreationDate}</td>
+		// 	                    <td title='FEEDM'>FEEDM</td>
+		// 	                    <td style='text-align:right;'>${fee}</td>
+		// 	                    <td>${data[30] || ''}</td>
+		// 	                    <td>${data[31] || ''}</td>
+		// 	                 </tr>`;
+		// 		}
+		// 		return rows;
+		// 	});
+		// }
+
+
 
 		function disbursementsubmit() {
 			var tableData = [];
@@ -1057,14 +1062,14 @@
 
 			const basePath = /*[[${#httpServletRequest.contextPath}]]*/ '';
 			const url = basePath + '/ASPIRA/DisplayExcel1?type=' + type;
-			var selectedDate = $("#currentvalue").val();
-			var dateParts = selectedDate.split('-');
-			var formattedDate = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0];
+			// var selectedDate = $("#currentvalue").val();
+			// var dateParts = selectedDate.split('-');
+			// var formattedDate = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0];
 
 			$.ajax({
 				url: url,
 				type: 'GET',
-				data: {currentDate: formattedDate},
+				// data: {currentDate: formattedDate},
 				xhrFields: {
 					responseType: 'blob' // Important to receive file as blob
 				},
@@ -1097,40 +1102,168 @@
 			});
 		}
 
-		function openTab(evt, tabName) {
-			let i, tabcontent, tablinks, downloadBtns;
+		// Tab switching
+function openTab(evt, tabName) {
+    let i, tabcontent, tablinks, downloadBtns;
 
-			// Hide all main tab content
-			tabcontent = document.getElementsByClassName("tabcontent");
-			for (i = 0; i < tabcontent.length; i++) {
-				tabcontent[i].style.display = "none";
-			}
+    // Hide all main tab content
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
 
-			// Remove active class from main tabs
-			tablinks = document.getElementsByClassName("tablinks");
-			for (i = 0; i < tablinks.length; i++) {
-				tablinks[i].className = tablinks[i].className.replace(" active", "");
-			}
+    // Remove active class from main tabs
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
 
-			// Hide all download buttons
-			downloadBtns = document.getElementsByClassName("download-btn");
-			for (i = 0; i < downloadBtns.length; i++) {
-				downloadBtns[i].style.display = "none";
-			}
+    // Hide all download buttons
+    downloadBtns = document.getElementsByClassName("download-btn");
+    for (i = 0; i < downloadBtns.length; i++) {
+        downloadBtns[i].style.display = "none";
+    }
 
-			// Show selected main tab and set as active
-			document.getElementById(tabName).style.display = "block";
-			evt.currentTarget.className += " active";
+    // Show selected main tab and set as active
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
 
-			// Show related download button only if currentvalue has value
-			const currentInput = document.getElementById("currentvalue");
-			const relatedBtn = document.getElementById("download-" + tabName);
-			if (relatedBtn && currentInput.value.trim() !== "") {
-				relatedBtn.style.display = "inline-block";
-			}
-		}
+    // Show related download button
+    const relatedBtn = document.getElementById("download-" + tabName);
+    if (relatedBtn) {
+        relatedBtn.style.display = "inline-block";
+    }
+
+    // ✅ Reset filter select and inputs
+    const filterSelect = document.getElementById("filterselect");
+    filterSelect.value = "Select Filter";  // reset to default
+
+    // Disable and clear input fields in this tab
+    const acctNumInput = document.querySelector(`#${tabName} .acctnumfilter`);
+    const acctNameInput = document.querySelector(`#${tabName} .acctnamefilter`);
+    if (acctNumInput) acctNumInput.value = "", acctNumInput.disabled = true;
+    if (acctNameInput) acctNameInput.value = "", acctNameInput.disabled = true;
+}
+
+
+// Filter dropdown handler
+function handleMultipleFilterChange() {
+    $(".acctnumfilter, .acctnamefilter").prop("disabled", true).val("");
+
+    const selected = $("#filterselect").val();
+
+    if (selected === "Account Number") {
+        $(".tabcontent:visible .acctnumfilter").prop("disabled", false).focus();
+    } else if (selected === "Account Name") {
+        $(".tabcontent:visible .acctnamefilter").prop("disabled", false).focus();
+    }
+}
+
+
+// Search on Enter
+$(document).ready(function () {
+    $(".acctnumfilter, .acctnamefilter").on("keydown", function (e) {
+        if (e.keyCode !== 13) return; // Only Enter
+
+        const keyword = $(this).val().trim();
+        let activeFlowCode = $(".tablinks.active").data("flow");
+        if (!activeFlowCode) activeFlowCode = "DISBT";
+
+        if (keyword === "") {
+            window.location.reload(); // Reload page if input is empty
+        } else {
+            const filterType = $(this).hasClass("acctnumfilter") ? "Account Number" : "Account Name";
+            searchByFlowCode(keyword, activeFlowCode, filterType);
+        }
+    });
+});
+
+// AJAX search
+function searchByFlowCode(keyword, flowCode, filterType) {
+    $.ajax({
+        url: 'transactions/search',
+        type: 'GET',
+        data: { keyword, flowCode, filterType },
+        success: function (data) {
+            const flowMap = {
+                "DISBT": "#placelist1",
+                "INDEM": "#placelist2",
+                "FEEDEM": "#placelist3",
+                "COLL": "#placelist4",
+                "PENDEM": "#placelist5"
+            };
+
+            const targetTable = flowMap[flowCode];
+            if (!targetTable) return;
+
+            let rows = "";
+            if (!data || data.length === 0) {
+                rows = `<tr><td colspan="7" style="text-align:center;color:red;">No data found</td></tr>`;
+            } else {
+                data.forEach((item, idx) => {
+                    const flowDate = formatDate(item.flow_date);
+                    rows += `<tr>
+                                <td>${idx + 1}</td>
+                                <td>${item.tran_id}</td>
+                                <td>${flowDate}</td>
+                                <td>${item.flow_code}</td>
+                                <td>${item.tran_amt}</td>
+                                <td>${item.acct_num}</td>
+                                <td>${item.acct_name}</td>
+                            </tr>`;
+                });
+            }
+            $(targetTable).html(rows);
+        },
+        error: function (xhr) {
+            console.error("Search failed", xhr);
+        }
+    });
+}
+
+// Date formatter
+function formatDate(dateString) {
+    const d = new Date(dateString);
+    return `${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`;
+}
+
+
+function initializeDefaultTab() {
+    // Trigger click on the Disbursement tab
+    const defaultTabButton = document.querySelector(".tablinks[data-flow='DISBT']");
+    if (defaultTabButton) {
+        defaultTabButton.click(); // This will call openTab() and show the tab
+    }
+
+    // Reset filter select to default
+    const filterSelect = document.getElementById("filterselect");
+    filterSelect.value = "Select Filter";
+
+    // Disable and clear inputs in Disbursement tab
+    const acctNumInput = document.querySelector("#tab1 .acctnumfilter");
+    const acctNameInput = document.querySelector("#tab1 .acctnamefilter");
+    if (acctNumInput) acctNumInput.value = "", acctNumInput.disabled = true;
+    if (acctNameInput) acctNameInput.value = "", acctNameInput.disabled = true;
+}
+
+$(document).ready(function () {
+    initializeDefaultTab(); // Set default tab and reset filter
+});
+
 
 	</script>
+
+	<style>
+		th > input::placeholder {
+    font-weight: bold !important;
+    font-size: 15px !important;
+}
+
+th > input {
+    border: none !important;
+}
+
+	</style>
 </head>
 
 <body>
@@ -1165,14 +1298,30 @@
 
 							<!-- Right side -->
 							<div class="d-flex align-items-center">
-								<div class="pr-2 mr-2">
+								<!-- <div class="pr-2 mr-2">
 									<span><b>MIGRATION DATE</b></span>
 								</div>
 								<div>
 									<input type="text" name="current" id="currentvalue"
 										class="form-control form-control-sm bg-white border border-dark"
 										placeholder="dd-mm-yyyy" autocomplete="off" />
+								</div> -->
+
+								<!-- <button class="btn-primary big-btn btn-filter float-right"style="margin-right: 5px;">Filter</button> -->
+
+
+								<div class="mr-4">
+
+									<select class="form-control-sm bg-white ml-2 w-100" id="filterselect"
+											onchange="handleMultipleFilterChange()" style="background-color: #e3e3e4;">
+										<option>Select Filter</option>
+										<option value="Account Number">Account Number</option>
+										<option value="Account Name">Account Name</option>
+									</select>
+
+
 								</div>
+
 
 								<div style="padding-left: 40px;">
 									<!-- Place all download buttons -->
@@ -1182,14 +1331,15 @@
 									<button id="download-tab2" class="download-btn btn-primary big-btn"
 										style="display:none;" onclick="downloadExcel('interest')">Download
 										Interest</button>
-									<button id="download-tab5" class="download-btn btn-primary big-btn"
-										style="display:none;" onclick="downloadExcel('fees')">Download Fees</button>
 									<button id="download-tab3" class="download-btn btn-primary big-btn"
+										style="display:none;" onclick="downloadExcel('fees')">Download 
+										Fees</button>
+									<button id="download-tab4" class="download-btn btn-primary big-btn"
 										style="display:none;" onclick="downloadExcel('recovery')">Download
 										Recovery</button>
-									<button id="download-tab4" class="download-btn btn-primary big-btn"
-										style="display:none;" onclick="downloadExcel('booking')">Download
-										Booking</button>
+									<button id="download-tab5" class="download-btn btn-primary big-btn"
+										style="display:none;" onclick="downloadExcel('penalty')">Download
+										Penalty</button>
 								</div>
 
 							</div>
@@ -1197,20 +1347,21 @@
 
 						<div class="tab mt-2"
 							style="padding: 4px 4px; position: relative; display: flex; justify-content: space-around; margin-top: 10px; width: 100%; height: 43px">
-							<button class="tablinks" onclick="openTab(event, 'tab1')"
+							<button class="tablinks" onclick="openTab(event, 'tab1')"  data-flow="DISBT" 
 								style="font-size: 16px; padding: 4px 8px; height: 32px;">Disbursement</button>
-							<button class="tablinks" onclick="openTab(event, 'tab2')"
+							<button class="tablinks" onclick="openTab(event, 'tab2')"  data-flow="INDEM" 
 								style="font-size: 16px; padding: 4px 8px; height: 32px;">Interest
 								Transaction</button>
-							<button class="tablinks" onclick="openTab(event, 'tab5')"
+							<button class="tablinks" onclick="openTab(event, 'tab3')"  data-flow="FEEDEM" 
 								style="font-size: 16px; padding: 4px 8px; height: 32px;">Fees
 								Transaction</button>
-							<button class="tablinks" onclick="openTab(event, 'tab3')"
+							<button class="tablinks" onclick="openTab(event, 'tab5')"  data-flow="PENDEM" 
+								style="font-size: 16px; padding: 4px 8px; height: 32px;">Penalty
+								Transaction</button>
+							<button class="tablinks" onclick="openTab(event, 'tab4')"  data-flow="COLL" 
 								style="font-size: 16px; padding: 4px 8px; height: 32px;">Recovery
 								Transaction</button>
-							<button class="tablinks" onclick="openTab(event, 'tab4')"
-								style="font-size: 16px; padding: 4px 8px; height: 32px;">Booking
-								Transaction</button>
+							
 						</div>
 
 						<div id="tab1" class="tabcontent" style="display: block">
@@ -1223,17 +1374,33 @@
 										<thead class="thead-light"
 											style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
 											<tr>
-												<th style="width: 9%">SRL NO</th>
+												<th style="width: 9%"><input type="text" class="form-control form-control-sm  " placeholder="S.No" disabled></th>
+												<th style="width: 9%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Id" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Date" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Code" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Amount" disabled></th>
+												<!-- <th style="width: 9%">SRL NO</th>
 												<th style="width: 9%">FLOW ID</th>
 												<th style="width: 12%">FLOW DATE</th>
 												<th style="width: 12%">FLOW CODE</th>
-												<th style="width: 12%; text-align: center;">FLOW AMOUNT</th>
-												<th style="width: 23%">ACCOUNT NUMBER</th>
-												<th style="width: 23%">ACCOUNT NAME</th>
+												<th style="width: 12%; text-align: center;">FLOW AMOUNT</th> -->
+												<!-- <th style="width: 23%">ACCOUNT NUMBER</th>
+												<th style="width: 23%">ACCOUNT NAME</th> -->
+												<th><input type="text" id="acctnumfilter1" class="form-control form-control-sm acctnumfilter " placeholder="Account Number" disabled></th>
+            									<th><input type="text" id="acctnamefilter1" class="form-control form-control-sm acctnamefilter " placeholder="Account Name" disabled></th>
 											</tr>
 										</thead>
 										<tbody id="placelist1">
 
+											<tr th:each="item, iterStat : ${disbursement}">
+												<td th:text="${iterStat.index + 1}"></td>
+												<td th:text="${item.tran_id}"></td>
+												<td th:text="${#dates.format(item.flow_date, 'dd-MM-yyyy')}"></td>
+												<td th:text="${item.flow_code}"></td>
+												<td th:text="${item.tran_amt}" ></td>
+												<td th:text="${item.acct_num}"></td>
+												<td th:text="${item.acct_name}"></td>
+											</tr>
 										</tbody>
 									</table>
 								</div>
@@ -1241,7 +1408,7 @@
 
 							<div class="card-footer text-center" style="background-color: #e9ecef">
 								<button class="btn-primary big-btn" onclick="Home();">Home</button>
-								<button class="btn-primary big-btn" onclick="disbursementsubmit(this);">Proceed</button>
+								<!-- <button class="btn-primary big-btn" onclick="disbursementsubmit(this);">Proceed</button> -->
 								<button class="btn-primary big-btn" onclick="Back();">Back</button>
 							</div>
 						</div>
@@ -1257,16 +1424,32 @@
 										<thead class="thead-light"
 											style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
 											<tr>
-												<th style="width: 9%">SRL NO</th>
+												<th style="width: 9%"><input type="text" class="form-control form-control-sm  " placeholder="S.No" disabled></th>
+												<th style="width: 9%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Id" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Date" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Code" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Amount" disabled></th>
+												<!-- <th style="width: 9%">SRL NO</th>
 												<th style="width: 9%">FLOW ID</th>
 												<th style="width: 12%">FLOW DATE</th>
 												<th style="width: 12%">FLOW CODE</th>
-												<th style="width: 12%; text-align: center;">FLOW AMOUNT</th>
-												<th style="width: 23%">ACCOUNT NUMBER</th>
-												<th style="width: 23%">ACCOUNT NAME</th>
+												<th style="width: 12%; text-align: center;">FLOW AMOUNT</th> -->
+												<!-- <th style="width: 23%">ACCOUNT NUMBER</th>
+												<th style="width: 23%">ACCOUNT NAME</th> -->
+												<th><input type="text" id="acctnumfilter2" class="form-control form-control-sm acctnumfilter " placeholder="Account Number" disabled></th>
+            									<th><input type="text" id="acctnamefilter2" class="form-control form-control-sm acctnamefilter " placeholder="Account Name" disabled></th>
 											</tr>
 										</thead>
 										<tbody id="placelist2">
+											<tr th:each="item, iterStat : ${interest}">
+												<td th:text="${iterStat.index + 1}"></td>
+												<td th:text="${item.tran_id}"></td>
+												<td th:text="${#dates.format(item.flow_date, 'dd-MM-yyyy')}"></td>
+												<td th:text="${item.flow_code}"></td>
+												<td th:text="${item.tran_amt}" ></td>
+												<td th:text="${item.acct_num}"></td>
+												<td th:text="${item.acct_name}"></td>
+											</tr>
 
 										</tbody>
 									</table>
@@ -1274,7 +1457,7 @@
 							</div>
 							<div class="card-footer text-center" style="background-color: #e9ecef;">
 								<button class="btn-primary big-btn" onclick="Home();">Home</button>
-								<button class="btn-primary big-btn" onclick="interestsubmit(this);">Proceed</button>
+								<!-- <button class="btn-primary big-btn" onclick="interestsubmit(this);">Proceed</button> -->
 								<button class="btn-primary big-btn" onclick="Back();">Back</button>
 							</div>
 						</div>
@@ -1288,17 +1471,33 @@
 										<thead class="thead-light"
 											style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
 											<tr>
-												<th style="width: 9%">SRL NO</th>
+												<th style="width: 9%"><input type="text" class="form-control form-control-sm  " placeholder="S.No" disabled></th>
+												<th style="width: 9%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Id" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Date" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Code" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Amount" disabled></th>
+												<!-- <th style="width: 9%">SRL NO</th>
 												<th style="width: 9%">FLOW ID</th>
 												<th style="width: 12%">FLOW DATE</th>
 												<th style="width: 12%">FLOW CODE</th>
-												<th style="width: 12%; text-align: center;">FLOW AMOUNT</th>
-												<th style="width: 23%">ACCOUNT NUMBER</th>
-												<th style="width: 23%">ACCOUNT NAME</th>
+												<th style="width: 12%; text-align: center;">FLOW AMOUNT</th> -->
+												<!-- <th style="width: 23%">ACCOUNT NUMBER</th>
+												<th style="width: 23%">ACCOUNT NAME</th> -->
+												<th><input type="text" id="acctnumfilter3" class="form-control form-control-sm acctnumfilter " placeholder="Account Number" disabled></th>
+            									<th><input type="text" id="acctnamefilter3" class="form-control form-control-sm acctnamefilter " placeholder="Account Name" disabled></th>
 											</tr>
 										</thead>
 
 										<tbody id="placelist3">
+											<tr th:each="item, iterStat : ${fees}">
+												<td th:text="${iterStat.index + 1}"></td>
+												<td th:text="${item.tran_id}"></td>
+												<td th:text="${#dates.format(item.flow_date, 'dd-MM-yyyy')}"></td>
+												<td th:text="${item.flow_code}"></td>
+												<td th:text="${item.tran_amt}" ></td>
+												<td th:text="${item.acct_num}"></td>
+												<td th:text="${item.acct_name}"></td>
+											</tr>
 
 										</tbody>
 									</table>
@@ -1306,7 +1505,7 @@
 							</div>
 							<div class="card-footer text-center" style="background-color: #e9ecef;">
 								<button class="btn-primary big-btn" onclick="Home();">Home</button>
-								<button class="btn-primary big-btn" onclick="recoverysubmit(this);">Proceed</button>
+								<!-- <button class="btn-primary big-btn" onclick="recoverysubmit(this);">Proceed</button> -->
 								<button class="btn-primary big-btn" onclick="Back();">Back</button>
 							</div>
 						</div>
@@ -1320,16 +1519,32 @@
 										<thead class="thead-light"
 											style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
 											<tr>
-												<th style="width: 9%">SRL NO</th>
+												<th style="width: 9%"><input type="text" class="form-control form-control-sm  " placeholder="S.No" disabled></th>
+												<th style="width: 9%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Id" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Date" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Code" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Amount" disabled></th>
+												<!-- <th style="width: 9%">SRL NO</th>
 												<th style="width: 9%">FLOW ID</th>
 												<th style="width: 12%">FLOW DATE</th>
 												<th style="width: 12%">FLOW CODE</th>
-												<th style="width: 12%; text-align: center;">FLOW AMOUNT</th>
-												<th style="width: 23%">ACCOUNT NUMBER</th>
-												<th style="width: 23%">ACCOUNT NAME</th>
+												<th style="width: 12%; text-align: center;">FLOW AMOUNT</th> -->
+												<!-- <th style="width: 23%">ACCOUNT NUMBER</th>
+												<th style="width: 23%">ACCOUNT NAME</th> -->
+												<th><input type="text" id="acctnumfilter4" class="form-control form-control-sm acctnumfilter " placeholder="Account Number" disabled></th>
+            									<th><input type="text" id="acctnamefilter4" class="form-control form-control-sm acctnamefilter " placeholder="Account Name" disabled></th>
 											</tr>
 										</thead>
 										<tbody id="placelist4">
+											<tr th:each="item, iterStat : ${recovery}">
+												<td th:text="${iterStat.index + 1}"></td>
+												<td th:text="${item.tran_id}"></td>
+												<td th:text="${#dates.format(item.flow_date, 'dd-MM-yyyy')}"></td>
+												<td th:text="${item.flow_code}"></td>
+												<td th:text="${item.tran_amt}" ></td>
+												<td th:text="${item.acct_num}"></td>
+												<td th:text="${item.acct_name}"></td>
+											</tr>
 
 										</tbody>
 									</table>
@@ -1337,7 +1552,7 @@
 							</div>
 							<div class="card-footer text-center" style="background-color: #e9ecef;">
 								<button class="btn-primary big-btn" onclick="Home();">Home</button>
-								<button class="btn-primary big-btn" onclick="bookingsubmit(this);">Proceed</button>
+								<!-- <button class="btn-primary big-btn" onclick="bookingsubmit(this);">Proceed</button> -->
 								<button class="btn-primary big-btn" onclick="Back();">Back</button>
 							</div>
 						</div>
@@ -1351,16 +1566,32 @@
 										<thead class="thead-light"
 											style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
 											<tr>
-												<th style="width: 9%">SRL NO</th>
+												<th style="width: 9%"><input type="text" class="form-control form-control-sm  " placeholder="S.No" disabled></th>
+												<th style="width: 9%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Id" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Date" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Code" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Amount" disabled></th>
+												<!-- <th style="width: 9%">SRL NO</th>
 												<th style="width: 9%">FLOW ID</th>
 												<th style="width: 12%">FLOW DATE</th>
 												<th style="width: 12%">FLOW CODE</th>
-												<th style="width: 12%; text-align: center;">FLOW AMOUNT</th>
-												<th style="width: 23%">ACCOUNT NUMBER</th>
-												<th style="width: 23%">ACCOUNT NAME</th>
+												<th style="width: 12%; text-align: center;">FLOW AMOUNT</th> -->
+												<!-- <th style="width: 23%">ACCOUNT NUMBER</th>
+												<th style="width: 23%">ACCOUNT NAME</th> -->
+												<th><input type="text" id="acctnumfilter5" class="form-control form-control-sm acctnumfilter " placeholder="Account Number" disabled></th>
+            									<th><input type="text" id="acctnamefilter5" class="form-control form-control-sm acctnamefilter " placeholder="Account Name" disabled></th>
 											</tr>
 										</thead>
 										<tbody id="placelist5">
+											<tr th:each="item, iterStat : ${penalty}">
+												<td th:text="${iterStat.index + 1}"></td>
+												<td th:text="${item.tran_id}"></td>
+												<td th:text="${#dates.format(item.flow_date, 'dd-MM-yyyy')}"></td>
+												<td th:text="${item.flow_code}"></td>
+												<td th:text="${item.tran_amt}" ></td>
+												<td th:text="${item.acct_num}"></td>
+												<td th:text="${item.acct_name}"></td>
+											</tr>
 
 										</tbody>
 									</table>
@@ -1368,7 +1599,7 @@
 							</div>
 							<div class="card-footer text-center" style="background-color: #e9ecef;">
 								<button class="btn-primary big-btn" onclick="Home();">Home</button>
-								<button class="btn-primary big-btn" onclick="feessubmit(this);">Proceed</button>
+								<!-- <button class="btn-primary big-btn" onclick="feessubmit(this);">Proceed</button> -->
 								<button class="btn-primary big-btn" onclick="Back();">Back</button>
 							</div>
 						</div>

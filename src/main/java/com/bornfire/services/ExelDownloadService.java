@@ -44,6 +44,8 @@ import com.bornfire.entities.LOAN_ACT_MST_ENTITY;
 import com.bornfire.entities.LOAN_ACT_MST_REPO;
 import com.bornfire.entities.LOAN_REPAYMENT_ENTITY;
 import com.bornfire.entities.LOAN_REPAYMENT_REPO;
+import com.bornfire.entities.TRAN_MAIN_TRM_WRK_ENTITY;
+import com.bornfire.entities.TRAN_MAIN_TRM_WRK_REP;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -62,6 +64,8 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+
+
 
 @Service
 @ConfigurationProperties("output")
@@ -89,6 +93,9 @@ public class ExelDownloadService {
 	
 	@Autowired
 	DataSource srcdataSource;
+	
+	@Autowired
+	TRAN_MAIN_TRM_WRK_REP tRAN_MAIN_TRM_WRK_REP;
 	
 
 //	public void ExportExcel(String type, String userID, String userName, String auditRefNo,
@@ -666,217 +673,336 @@ public class ExelDownloadService {
 		AuditTable_Rep.save(audit);
 	}
 	
+//	public void ExportExcel1(String type, String userID, String userName, String auditRefNo,
+//			HttpServletResponse response,Date currentDate) {
+//
+//		try (Workbook workbook = new XSSFWorkbook()) {
+//			Sheet sheet = workbook.createSheet("Data");
+//			int rowIdx = 0;
+//
+//			if ("disbursement".equalsIgnoreCase(type)) {
+//				List<LOAN_ACT_MST_ENTITY> dataList = loanMasterRepo.getDistval();
+//
+//				// Header
+//				Row header = sheet.createRow(rowIdx++);
+//				String[] headers = {
+//					    "SRL NO","FLOW ID","FLOW DATE","FLOW CODE","FLOW AMOUNT","ACCOUNT NUMBER","ACCOUNT NAME"
+//					};
+//
+//				for (int i = 0; i < headers.length; i++) {
+//					header.createCell(i).setCellValue(headers[i]);
+//				}
+//					System.out.println(dataList.size()+"   List Size");
+//					
+//				int srlNo = 1;
+//				
+//				for (LOAN_ACT_MST_ENTITY entity : dataList) {
+//					Row excelRow = sheet.createRow(rowIdx++);
+//
+//					// String values
+//					excelRow.createCell(0).setCellValue(srlNo++);
+//					excelRow.createCell(1).setCellValue("1");
+//					excelRow.createCell(2).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDisbursement_date()));
+//					excelRow.createCell(3).setCellValue("DISRB");
+//					excelRow.createCell(4).setCellValue(entity.getLoan_amount().doubleValue());
+//					excelRow.createCell(5).setCellValue(entity.getId());
+//					excelRow.createCell(6).setCellValue(entity.getLoan_name());
+//
+//				}
+//
+//				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
+//				response.setHeader("Content-Disposition", "inline; filename=disbursement.xlsx");
+//
+//			}   
+//			else if ("interest".equalsIgnoreCase(type)) {
+//				List<LOAN_ACT_MST_ENTITY> dataList = loanMasterRepo.getLoanActDetval1(currentDate);
+//
+//				// Header
+//				Row header = sheet.createRow(rowIdx++);
+//				String[] headers = {
+//					    "SRL NO","FLOW ID","FLOW DATE","FLOW CODE","FLOW AMOUNT","ACCOUNT NUMBER","ACCOUNT NAME"
+//					};
+//
+//				for (int i = 0; i < headers.length; i++) {
+//					header.createCell(i).setCellValue(headers[i]);
+//				}
+//					System.out.println(dataList.size()+"   List Size");
+//					
+//				int srlNo = 1;
+//				
+//				for (LOAN_ACT_MST_ENTITY entity : dataList) {
+//					Row excelRow = sheet.createRow(rowIdx++);
+//
+//					// String values
+//					excelRow.createCell(0).setCellValue(srlNo++);
+//					excelRow.createCell(1).setCellValue("1");
+//					excelRow.createCell(2).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDisbursement_date()));
+//					excelRow.createCell(3).setCellValue("INDEM");
+//					excelRow.createCell(4).setCellValue(entity.getLoan_amount().doubleValue());
+//					excelRow.createCell(5).setCellValue(entity.getId());
+//					excelRow.createCell(6).setCellValue(entity.getLoan_name());
+//
+//				}
+//
+//				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
+//				response.setHeader("Content-Disposition", "inline; filename=interest.xlsx");
+//				
+//				
+//				
+//			} 
+//			else if ("fees".equalsIgnoreCase(type)) {
+//				List<LOAN_ACT_MST_ENTITY> dataList = loanMasterRepo.getLoanActDetval31(currentDate);
+//
+//				// Header
+//				Row header = sheet.createRow(rowIdx++);
+//				String[] headers = {
+//					    "SRL NO","FLOW ID","FLOW DATE","FLOW CODE","FLOW AMOUNT","ACCOUNT NUMBER","ACCOUNT NAME"
+//					};
+//
+//				for (int i = 0; i < headers.length; i++) {
+//					header.createCell(i).setCellValue(headers[i]);
+//				}
+//					System.out.println(dataList.size()+"   List Size");
+//					
+//				int srlNo = 1;
+//				
+//				for (LOAN_ACT_MST_ENTITY entity : dataList) {
+//					Row excelRow = sheet.createRow(rowIdx++);
+//
+//					// String values
+//					excelRow.createCell(0).setCellValue(srlNo++);
+//					excelRow.createCell(1).setCellValue("1");
+//					excelRow.createCell(2).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDisbursement_date()));
+//					excelRow.createCell(3).setCellValue("FEEDM");
+//					excelRow.createCell(4).setCellValue(entity.getLoan_amount().doubleValue());
+//					excelRow.createCell(5).setCellValue(entity.getId());
+//					excelRow.createCell(6).setCellValue(entity.getLoan_name());
+//
+//				}
+//
+//
+//				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
+//				response.setHeader("Content-Disposition", "inline; filename=fees.xlsx");
+//				
+//				
+//				
+//				
+//			} 
+//			else if ("recovery".equalsIgnoreCase(type)) {
+//				
+//				List<LOAN_ACT_MST_ENTITY> dataList = loanMasterRepo.getLoanActDetval41(currentDate);
+//
+//				// Header
+//				Row header = sheet.createRow(rowIdx++);
+//				String[] headers = {
+//					    "SRL NO","FLOW ID","FLOW DATE","FLOW CODE","FLOW AMOUNT","ACCOUNT NUMBER","ACCOUNT NAME"
+//					}; 
+//
+//				for (int i = 0; i < headers.length; i++) {
+//					header.createCell(i).setCellValue(headers[i]);
+//				}
+//					System.out.println(dataList.size()+"   List Size");
+//					
+//				int srlNo = 1;
+//				
+//				for (LOAN_ACT_MST_ENTITY entity : dataList) {
+//					Row excelRow = sheet.createRow(rowIdx++);
+//
+//					// String values
+//					excelRow.createCell(0).setCellValue(srlNo++);
+//					excelRow.createCell(1).setCellValue("1");
+//					excelRow.createCell(2).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDisbursement_date()));
+//					excelRow.createCell(3).setCellValue("DISRB");
+//					excelRow.createCell(4).setCellValue(entity.getLoan_amount().doubleValue());
+//					excelRow.createCell(5).setCellValue(entity.getId());
+//					excelRow.createCell(6).setCellValue(entity.getLoan_name());
+//
+//				}
+//
+//				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
+//				response.setHeader("Content-Disposition", "inline; filename=recovery.xlsx");
+//	
+//	
+//	
+//	
+//} 
+//			else if ("booking".equalsIgnoreCase(type)) {
+//	
+//				List<LOAN_ACT_MST_ENTITY> dataList = loanMasterRepo.getLoanActDetval21(currentDate);
+//
+//				// Header
+//				Row header = sheet.createRow(rowIdx++);
+//				String[] headers = {
+//					    "SRL NO","FLOW ID","FLOW DATE","FLOW CODE","FLOW AMOUNT","ACCOUNT NUMBER","ACCOUNT NAME"
+//					};
+//
+//				for (int i = 0; i < headers.length; i++) {
+//					header.createCell(i).setCellValue(headers[i]);
+//				}
+//					System.out.println(dataList.size()+"   List Size");
+//					
+//				int srlNo = 1;
+//				
+//				for (LOAN_ACT_MST_ENTITY entity : dataList) {
+//					Row excelRow = sheet.createRow(rowIdx++);
+//
+//					// String values
+//					excelRow.createCell(0).setCellValue(srlNo++);
+//					excelRow.createCell(1).setCellValue("1");
+//					excelRow.createCell(2).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDisbursement_date()));
+//					excelRow.createCell(3).setCellValue("DISRB");
+//					excelRow.createCell(4).setCellValue(entity.getLoan_amount().doubleValue());
+//					excelRow.createCell(5).setCellValue(entity.getId());
+//					excelRow.createCell(6).setCellValue(entity.getLoan_name());
+//
+//				}
+//
+//				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
+//				response.setHeader("Content-Disposition", "inline; filename=booking.xlsx");
+//	
+//	
+//} 
+//			
+//			else {
+//				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid type parameter");
+//				return;
+//			}
+//
+//			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+//			workbook.write(response.getOutputStream());
+//
+//		} catch (Exception e) {
+//			try {
+//				if (!response.isCommitted()) {
+//					response.reset();
+//					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//					response.setContentType("text/plain");
+//					response.getWriter().write("Error generating Excel: " + e.getMessage());
+//				}
+//			} catch (IOException ex) {
+//				ex.printStackTrace();
+//			}
+//		}
+//	}
+	
+	
+	
 	public void ExportExcel1(String type, String userID, String userName, String auditRefNo,
-			HttpServletResponse response,Date currentDate) {
-
-		try (Workbook workbook = new XSSFWorkbook()) {
-			Sheet sheet = workbook.createSheet("Data");
-			int rowIdx = 0;
-
-			if ("disbursement".equalsIgnoreCase(type)) {
-				List<LOAN_ACT_MST_ENTITY> dataList = loanMasterRepo.getDistval();
-
-				// Header
-				Row header = sheet.createRow(rowIdx++);
+            HttpServletResponse response) {
+		
+			System.out.println("entered to download");
+				
+				try (Workbook workbook = new XSSFWorkbook()) {
+				Sheet sheet = workbook.createSheet("Data");
+				int rowIdx = 0;
+				
 				String[] headers = {
-					    "SRL NO","FLOW ID","FLOW DATE","FLOW CODE","FLOW AMOUNT","ACCOUNT NUMBER","ACCOUNT NAME"
-					};
-
-				for (int i = 0; i < headers.length; i++) {
-					header.createCell(i).setCellValue(headers[i]);
-				}
-					System.out.println(dataList.size()+"   List Size");
-					
-				int srlNo = 1;
+				"SRL NO", "FLOW ID", "FLOW DATE", "FLOW CODE",
+				"FLOW AMOUNT", "ACCOUNT NUMBER", "ACCOUNT NAME"
+				};
 				
-				for (LOAN_ACT_MST_ENTITY entity : dataList) {
-					Row excelRow = sheet.createRow(rowIdx++);
-
-					// String values
-					excelRow.createCell(0).setCellValue(srlNo++);
-					excelRow.createCell(1).setCellValue("1");
-					excelRow.createCell(2).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDisbursement_date()));
-					excelRow.createCell(3).setCellValue("DISRB");
-					excelRow.createCell(4).setCellValue(entity.getLoan_amount().doubleValue());
-					excelRow.createCell(5).setCellValue(entity.getId());
-					excelRow.createCell(6).setCellValue(entity.getLoan_name());
-
-				}
-
-				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
-				response.setHeader("Content-Disposition", "inline; filename=disbursement.xlsx");
-
-			}   
-			else if ("interest".equalsIgnoreCase(type)) {
-				List<LOAN_ACT_MST_ENTITY> dataList = loanMasterRepo.getLoanActDetval1(currentDate);
-
-				// Header
+				System.out.println("entered to header");
+				
 				Row header = sheet.createRow(rowIdx++);
-				String[] headers = {
-					    "SRL NO","FLOW ID","FLOW DATE","FLOW CODE","FLOW AMOUNT","ACCOUNT NUMBER","ACCOUNT NAME"
-					};
-
 				for (int i = 0; i < headers.length; i++) {
-					header.createCell(i).setCellValue(headers[i]);
+				header.createCell(i).setCellValue(headers[i]);
 				}
-					System.out.println(dataList.size()+"   List Size");
-					
+				
+				List<TRAN_MAIN_TRM_WRK_ENTITY> dataList = null;
+				String filename = "";
+				String flowCode = "";
+				
+				// ✅ Select data & setup parameters based on tab type
+				switch (type.toLowerCase()) {
+				case "disbursement":
+				   dataList = tRAN_MAIN_TRM_WRK_REP.downloadDisbursementDetails();
+				   filename = "disbursement.xlsx";
+				   flowCode = "DISBT";
+				   break;
+				
+				case "interest":
+				   dataList = tRAN_MAIN_TRM_WRK_REP.downloadInterestDetails();
+				   filename = "interest.xlsx";
+				   flowCode = "INDEM";
+				   break;
+				
+				case "fees":
+				   dataList = tRAN_MAIN_TRM_WRK_REP.downloadFeeDetails();
+				   filename = "fees.xlsx";
+				   flowCode = "FEEDEM";
+				   break;
+				
+				case "penalty":
+				   dataList = tRAN_MAIN_TRM_WRK_REP.downloadPenaltyDetails();
+				   filename = "penalty.xlsx";
+				   flowCode = "PENDEM";
+				   break;
+				
+				case "recovery":
+				   dataList = tRAN_MAIN_TRM_WRK_REP.downloadRecoveryDetails();
+				   filename = "recovery.xlsx";
+				   flowCode = "COLL";
+				   break;
+				
+				default:
+				   response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid type parameter");
+				   return;
+				}
+				
+				
+				System.out.println("Data Fetched for download");
+				
+				// ✅ Write data rows
 				int srlNo = 1;
+				for (TRAN_MAIN_TRM_WRK_ENTITY entity : dataList) {
+				Row excelRow = sheet.createRow(rowIdx++);
 				
-				for (LOAN_ACT_MST_ENTITY entity : dataList) {
-					Row excelRow = sheet.createRow(rowIdx++);
-
-					// String values
-					excelRow.createCell(0).setCellValue(srlNo++);
-					excelRow.createCell(1).setCellValue("1");
-					excelRow.createCell(2).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDisbursement_date()));
-					excelRow.createCell(3).setCellValue("INDEM");
-					excelRow.createCell(4).setCellValue(entity.getLoan_amount().doubleValue());
-					excelRow.createCell(5).setCellValue(entity.getId());
-					excelRow.createCell(6).setCellValue(entity.getLoan_name());
-
+				excelRow.createCell(0).setCellValue(srlNo++);
+				excelRow.createCell(1).setCellValue(entity.getTran_id()); // FLOW ID
+				excelRow.createCell(2).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getFlow_date())); // FLOW DATE
+				excelRow.createCell(3).setCellValue(entity.getFlow_code()); // FLOW CODE
+				excelRow.createCell(4).setCellValue(entity.getTran_amt().doubleValue()); // FLOW AMOUNT
+				excelRow.createCell(5).setCellValue(entity.getAcct_num()); // ACCOUNT NUMBER
+				excelRow.createCell(6).setCellValue(entity.getAcct_name()); // ACCOUNT NAME
 				}
-
-				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
-				response.setHeader("Content-Disposition", "inline; filename=interest.xlsx");
 				
+				System.out.println("ready download");
 				
+				// ✅ Save audit
+				saveAudit(userID, userName, type.toUpperCase() + " File Download!", 
+				     "BGLS_TRM_WRK_TRANSACTIONS", auditRefNo);
 				
-			} 
-			else if ("fees".equalsIgnoreCase(type)) {
-				List<LOAN_ACT_MST_ENTITY> dataList = loanMasterRepo.getLoanActDetval31(currentDate);
-
-				// Header
-				Row header = sheet.createRow(rowIdx++);
-				String[] headers = {
-					    "SRL NO","FLOW ID","FLOW DATE","FLOW CODE","FLOW AMOUNT","ACCOUNT NUMBER","ACCOUNT NAME"
-					};
-
-				for (int i = 0; i < headers.length; i++) {
-					header.createCell(i).setCellValue(headers[i]);
-				}
-					System.out.println(dataList.size()+"   List Size");
-					
-				int srlNo = 1;
+				// ✅ Setup response
+				response.setHeader("Content-Disposition", "inline; filename=" + filename);
+				response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 				
-				for (LOAN_ACT_MST_ENTITY entity : dataList) {
-					Row excelRow = sheet.createRow(rowIdx++);
-
-					// String values
-					excelRow.createCell(0).setCellValue(srlNo++);
-					excelRow.createCell(1).setCellValue("1");
-					excelRow.createCell(2).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDisbursement_date()));
-					excelRow.createCell(3).setCellValue("FEEDM");
-					excelRow.createCell(4).setCellValue(entity.getLoan_amount().doubleValue());
-					excelRow.createCell(5).setCellValue(entity.getId());
-					excelRow.createCell(6).setCellValue(entity.getLoan_name());
-
-				}
-
-
-				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
-				response.setHeader("Content-Disposition", "inline; filename=fees.xlsx");
+				workbook.write(response.getOutputStream());
 				
-				
-				
-				
-			} 
-			else if ("recovery".equalsIgnoreCase(type)) {
-				
-				List<LOAN_ACT_MST_ENTITY> dataList = loanMasterRepo.getLoanActDetval41(currentDate);
-
-				// Header
-				Row header = sheet.createRow(rowIdx++);
-				String[] headers = {
-					    "SRL NO","FLOW ID","FLOW DATE","FLOW CODE","FLOW AMOUNT","ACCOUNT NUMBER","ACCOUNT NAME"
-					}; 
-
-				for (int i = 0; i < headers.length; i++) {
-					header.createCell(i).setCellValue(headers[i]);
-				}
-					System.out.println(dataList.size()+"   List Size");
-					
-				int srlNo = 1;
-				
-				for (LOAN_ACT_MST_ENTITY entity : dataList) {
-					Row excelRow = sheet.createRow(rowIdx++);
-
-					// String values
-					excelRow.createCell(0).setCellValue(srlNo++);
-					excelRow.createCell(1).setCellValue("1");
-					excelRow.createCell(2).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDisbursement_date()));
-					excelRow.createCell(3).setCellValue("DISRB");
-					excelRow.createCell(4).setCellValue(entity.getLoan_amount().doubleValue());
-					excelRow.createCell(5).setCellValue(entity.getId());
-					excelRow.createCell(6).setCellValue(entity.getLoan_name());
-
-				}
-
-				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
-				response.setHeader("Content-Disposition", "inline; filename=recovery.xlsx");
-	
-	
-	
-	
-} 
-			else if ("booking".equalsIgnoreCase(type)) {
-	
-				List<LOAN_ACT_MST_ENTITY> dataList = loanMasterRepo.getLoanActDetval21(currentDate);
-
-				// Header
-				Row header = sheet.createRow(rowIdx++);
-				String[] headers = {
-					    "SRL NO","FLOW ID","FLOW DATE","FLOW CODE","FLOW AMOUNT","ACCOUNT NUMBER","ACCOUNT NAME"
-					};
-
-				for (int i = 0; i < headers.length; i++) {
-					header.createCell(i).setCellValue(headers[i]);
-				}
-					System.out.println(dataList.size()+"   List Size");
-					
-				int srlNo = 1;
-				
-				for (LOAN_ACT_MST_ENTITY entity : dataList) {
-					Row excelRow = sheet.createRow(rowIdx++);
-
-					// String values
-					excelRow.createCell(0).setCellValue(srlNo++);
-					excelRow.createCell(1).setCellValue("1");
-					excelRow.createCell(2).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getDisbursement_date()));
-					excelRow.createCell(3).setCellValue("DISRB");
-					excelRow.createCell(4).setCellValue(entity.getLoan_amount().doubleValue());
-					excelRow.createCell(5).setCellValue(entity.getId());
-					excelRow.createCell(6).setCellValue(entity.getLoan_name());
-
-				}
-
-				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
-				response.setHeader("Content-Disposition", "inline; filename=booking.xlsx");
-	
-	
-} 
-			
-			else {
-				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid type parameter");
-				return;
-			}
-
-			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-			workbook.write(response.getOutputStream());
-
-		} catch (Exception e) {
-			try {
+				} catch (Exception e) {
+				try {
 				if (!response.isCommitted()) {
-					response.reset();
-					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					response.setContentType("text/plain");
-					response.getWriter().write("Error generating Excel: " + e.getMessage());
+				   response.reset();
+				   response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				   response.setContentType("text/plain");
+				   response.getWriter().write("Error generating Excel: " + e.getMessage());
 				}
-			} catch (IOException ex) {
+				} catch (IOException ex) {
 				ex.printStackTrace();
-			}
-		}
-	}
+				}
+				}
+}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	private String exportpath1 = System.getProperty("user.home") + File.separator + "exports";
 	public File getSheduleDownload(String filetype, String acctNo) throws JRException, SQLException, IOException {
 	    System.out.println("Generating report for account: " + acctNo);

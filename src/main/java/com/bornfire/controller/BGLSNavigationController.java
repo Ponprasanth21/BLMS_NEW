@@ -3890,10 +3890,10 @@ public class BGLSNavigationController {
 			// md.addAttribute("organization", organization.get(0));
 			md.addAttribute("OrgBranch", organization_Branch_Rep.getbranchlist());
 			md.addAttribute("disbursement", TRAN_MAIN_TRM_WRK_REP.getRepaymentDetailsvalue());
-			md.addAttribute("interest", TRAN_MAIN_TRM_WRK_REP.getinterestDetailsvalue());
-			md.addAttribute("fees", TRAN_MAIN_TRM_WRK_REP.getfeesDetailsvalue());
-			md.addAttribute("penalty", TRAN_MAIN_TRM_WRK_REP.getpenaltyDetailsvalue());
-			md.addAttribute("recovery", TRAN_MAIN_TRM_WRK_REP.getrecoveryDetailsvalue());
+			md.addAttribute("interest", TRAN_MAIN_TRM_WRK_REP.getInterestDetailsValue());
+			md.addAttribute("fees", TRAN_MAIN_TRM_WRK_REP.getFeesDetailsValue());
+			md.addAttribute("penalty", TRAN_MAIN_TRM_WRK_REP.getPenaltyDetailsValue());
+			md.addAttribute("recovery", TRAN_MAIN_TRM_WRK_REP.getRecoveryDetailsValue());
 			md.addAttribute("OrgBranch", organization_Branch_Rep.getOrgBranch(branch_name));
 
 		} else if (formmode.equals("ModifyHead")) {
@@ -4094,6 +4094,8 @@ public class BGLSNavigationController {
 	    
 	    return response;
 	}
+	
+	
 
 	@RequestMapping(value = "holidayCheck", method = RequestMethod.POST)
 	@ResponseBody
