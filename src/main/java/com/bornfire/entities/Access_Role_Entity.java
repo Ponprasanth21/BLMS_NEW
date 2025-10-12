@@ -101,13 +101,34 @@ public class Access_Role_Entity {
 	private String batch_job_execution;
 	private String batch_job;
 	private String balance_sheets;
-	@DateTimeFormat(pattern = "dd-MM-yyyy")
+
+    private String end_of_month_report;
+    private String credit_facility_report;
+
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date entry_time;
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date modify_time;
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date auth_time;
-	public String getUser_id() {
+
+    public String getEnd_of_month_report() {
+        return end_of_month_report;
+    }
+
+    public void setEnd_of_month_report(String end_of_month_report) {
+        this.end_of_month_report = end_of_month_report;
+    }
+
+    public String getCredit_facility_report() {
+        return credit_facility_report;
+    }
+
+    public void setCredit_facility_report(String credit_facility_report) {
+        this.credit_facility_report = credit_facility_report;
+    }
+
+    public String getUser_id() {
 		return user_id;
 	}
 	public void setUser_id(String user_id) {

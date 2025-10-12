@@ -3,9 +3,9 @@ package com.bornfire.entities;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.persistence.SequenceGenerator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -13,12 +13,20 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name = "HOLIDAY_MASTER")
 public class HolidayMaster_Entity {
 
-	@Id
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hol_master_seq_gen")
+    @SequenceGenerator(
+            name = "hol_master_seq_gen",   // Generator name
+            sequenceName = "HOL_MASTER_SEQ", // Oracle sequence name
+            allocationSize = 1            // Increment size (should match DB sequence INCREMENT BY)
+    )
+    private Long id;
 	private BigDecimal record_srl;
 	private String orgn;
 	private String location;
 	private String cal_year;
 	private String cal_month;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date record_date;
 	private String holiday_desc;
@@ -34,7 +42,16 @@ public class HolidayMaster_Entity {
 	private String entity_flg;
 	private String modify_flg;
 	private String record_status;
-	public BigDecimal getRecord_srl() {
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public BigDecimal getRecord_srl() {
 		return record_srl;
 	}
 	public void setRecord_srl(BigDecimal record_srl) {
@@ -177,6 +194,6 @@ public class HolidayMaster_Entity {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
-	
+
+
 }

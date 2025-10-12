@@ -294,7 +294,9 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
 				request.getSession().setAttribute("SCREEN_ACCESS_PROFIT_AND_LOSS_ACCOUNT_I", (access_role != null && access_role.getProfit_and_loss_account_i() != null ) ? access_role.getProfit_and_loss_account_i() : 'N' );
 				request.getSession().setAttribute("SCREEN_ACCESS_BALANCE_SHEET", (access_role != null && access_role.getBalance_sheet() != null ) ? access_role.getBalance_sheet() : 'N' );
 				request.getSession().setAttribute("SCREEN_ACCESS_BALANCE_SHEETS", (access_role != null && access_role.getBalance_sheets() != null ) ? access_role.getBalance_sheets() : 'N' );
-				
+                request.getSession().setAttribute("SCREEN_ACCESS_CREDIT_FACILITY_REPORT", (access_role != null && access_role.getCredit_facility_report() != null ) ? access_role.getCredit_facility_report() : 'N' );
+                request.getSession().setAttribute("SCREEN_ACCESS_END_OF_MONTH_REPORT", (access_role != null && access_role.getEnd_of_month_report() != null ) ? access_role.getEnd_of_month_report() : 'N' );
+
 				
 				BGLSAuditTable audit = new BGLSAuditTable();
 				LocalDateTime currentDateTime = LocalDateTime.now();
