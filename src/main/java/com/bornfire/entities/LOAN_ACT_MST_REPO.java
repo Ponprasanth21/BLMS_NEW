@@ -370,4 +370,11 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
 			+ "  AND c.due_date>= TO_DATE(?1, 'DD-MON-YYYY')", nativeQuery = true)
 	List<Object[]> getActNo41(String datas);
 
+	@Query(value = "SELECT DISTINCT a.id, " + "b.first_name || ' ' || b.last_name AS full_name "
+			+ "FROM loan_account_master_tbl a " + "JOIN client_master_tbl b "
+			+ "   ON b.encoded_key = a.account_holderkey " + "JOIN loan_repayment_tbl c "
+			+ "   ON a.encoded_key = c.parent_account_key " + "WHERE (c.penalty_exp - c.penalty_paid) != 0 "
+			+ "  AND c.due_date = TO_DATE(?1, 'DD-MON-YYYY')", nativeQuery = true)
+	List<Object[]> getPenaltyAccounts(String dueDate);
+
 }

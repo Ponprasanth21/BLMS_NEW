@@ -3742,52 +3742,51 @@ public class BGLSNavigationController {
     }
 
     @RequestMapping(value = "loanOperation", method = { RequestMethod.GET, RequestMethod.POST })
-    public String loanOperation(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
+	public String loanOperation(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
 
-        Date tranDateObj = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy"); // e.g., 21-SEP-2025
-        String formattedDate = sdf.format(tranDateObj);
+		Date tranDateObj = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy"); // e.g., 21-SEP-2025
+		String formattedDate = sdf.format(tranDateObj);
 
-        Date TRANDATE = (Date) req.getSession().getAttribute("TRANDATE");
-        if (formmode == null || formmode.equals("list")) {
-            md.addAttribute("formmode", "list");
-            md.addAttribute("TRANDATE", TRANDATE);
-            md.addAttribute("booking", LOAN_ACT_MST_REPO.getActNo());
-            md.addAttribute("booking1", depositRep.getexistingData());
-            md.addAttribute("collection", LOAN_ACT_MST_REPO.getActNo1());
-            md.addAttribute("interest", LOAN_ACT_MST_REPO.getActNo21(formattedDate));
-            md.addAttribute("fees", LOAN_ACT_MST_REPO.getActNo31(formattedDate));
-            md.addAttribute("bookingaccounts", LOAN_ACT_MST_REPO.getActNo41(formattedDate));
-            md.addAttribute("booking1", depositRep.getexistingData());
+		Date TRANDATE = (Date) req.getSession().getAttribute("TRANDATE");
+		if (formmode == null || formmode.equals("list")) {
+			md.addAttribute("formmode", "list");
+			md.addAttribute("TRANDATE", TRANDATE);
+			md.addAttribute("booking", LOAN_ACT_MST_REPO.getActNo());
+			md.addAttribute("collection", LOAN_ACT_MST_REPO.getActNo1());
+			md.addAttribute("interest", LOAN_ACT_MST_REPO.getActNo21(formattedDate));
+			md.addAttribute("fees", LOAN_ACT_MST_REPO.getActNo31(formattedDate));
+			md.addAttribute("penalty", LOAN_ACT_MST_REPO.getPenaltyAccounts(formattedDate));
+			md.addAttribute("bookingaccounts", LOAN_ACT_MST_REPO.getActNo41(formattedDate));
 
-        } else if (formmode.equals("list1")) {
-            md.addAttribute("formmode", "list1");
-            md.addAttribute("getlist", MULTIPLE_TRANSACTION_REPO.getdata());
+		} else if (formmode.equals("list1")) {
+			md.addAttribute("formmode", "list1");
+			md.addAttribute("getlist", MULTIPLE_TRANSACTION_REPO.getdata());
 
-        } else if (formmode.equals("view")) {
-            md.addAttribute("formmode", "view");
+		} else if (formmode.equals("view")) {
+			md.addAttribute("formmode", "view");
 
-        } else if (formmode.equals("view2")) {
-            md.addAttribute("formmode", "view2");
+		} else if (formmode.equals("view2")) {
+			md.addAttribute("formmode", "view2");
 
-            List<MULTIPLE_TRANSACTION_ENTITY> tranData = MULTIPLE_TRANSACTION_REPO.getDataValue();
-            if (tranData == null) {
-                tranData = new ArrayList<>();
-            }
-            md.addAttribute("tranData", tranData);
+			List<MULTIPLE_TRANSACTION_ENTITY> tranData = MULTIPLE_TRANSACTION_REPO.getDataValue();
+			if (tranData == null) {
+				tranData = new ArrayList<>();
+			}
+			md.addAttribute("tranData", tranData);
 
-            int refNo = Integer.parseInt(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1()); // convert String → int
-            String tranId = "TR" + String.format("%05d", refNo);
+			int refNo = Integer.parseInt(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1()); // convert String → int
+			String tranId = "TR" + String.format("%05d", refNo);
 
-            Date trandates = (Date) req.getSession().getAttribute("TRANDATE");
-            md.addAttribute("TRANDATE", trandates);
+			Date trandates = (Date) req.getSession().getAttribute("TRANDATE");
+			md.addAttribute("TRANDATE", trandates);
 
-            md.addAttribute("tranId", tranId);
-        }
+			md.addAttribute("tranId", tranId);
+		}
 
-        return "LoanOperation";
-    }
-
+		return "LoanOperation";
+	}
+    
     @RequestMapping(value = "loanClosure", method = { RequestMethod.GET, RequestMethod.POST })
     public String loanClosure(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
 
