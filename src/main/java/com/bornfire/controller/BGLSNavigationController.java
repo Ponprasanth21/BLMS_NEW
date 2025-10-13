@@ -2558,6 +2558,8 @@ public class BGLSNavigationController {
         model.addAttribute("DAB",bGLS_CONTROL_TABLE_REP.getDAB());
         model.addAttribute("ConsistencyCheck",bGLS_CONTROL_TABLE_REP.getConsistencyCheck());
         model.addAttribute("MovementofTransaction",bGLS_CONTROL_TABLE_REP.getMovementofTransaction());
+        model.addAttribute("GlConsolidation",bGLS_CONTROL_TABLE_REP.getGlConsolidation());
+        model.addAttribute("InterestDemand",bGLS_CONTROL_TABLE_REP.getInterestDemand());
         return "Day_end_Operation.html";
     }
 

@@ -34,9 +34,31 @@ public class BGLS_Control_Table {
 	private String	dcp_user;
 	private String	dcp_flg;
 	private String	dcp_status;
+	private String gl_con;
+	private String interest_demand_gen;
 	public String getOrg_name() {
 		return org_name;
 	}
+	
+	
+	public String getInterest_demand_gen() {
+		return interest_demand_gen;
+	}
+
+
+	public void setInterest_demand_gen(String interest_demand_gen) {
+		this.interest_demand_gen = interest_demand_gen;
+	}
+
+
+	public String getGl_con() {
+		return gl_con;
+	}
+
+	public void setGl_con(String gl_con) {
+		this.gl_con = gl_con;
+	}
+
 	public void setOrg_name(String org_name) {
 		this.org_name = org_name;
 	}

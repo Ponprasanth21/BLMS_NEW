@@ -362,6 +362,8 @@ $(document).ready(function () {
 	var Dab= /*[[${DAB}]]*/ '';
 	var ConsistencyCheck= /*[[${ConsistencyCheck}]]*/ '';
 	var MovementofTransaction= /*[[${MovementofTransaction}]]*/ '';
+	var GlConsolidation= /*[[${GlConsolidation}]]*/ '';
+	var InterestDemand= /*[[${InterestDemand}]]*/ '';
 	
 	
     console.log("Journal Status: " + journalStatus);
@@ -389,7 +391,15 @@ $(document).ready(function () {
 	
 	if (MovementofTransaction && MovementofTransaction.toString().toUpperCase() === "COMPLETED") {
 			   	   	       $('#td10').html('<span style="font-size: 20px; text-align:center;">&#9989;</span>');
-		}
+	}
+
+	if (GlConsolidation && GlConsolidation.toString().toUpperCase() === "COMPLETED") {
+			   	   	       $('#td9').html('<span style="font-size: 20px; text-align:center;">&#9989;</span>');
+	}
+
+	if (InterestDemand && InterestDemand.toString().toUpperCase() === "COMPLETED") {
+			   	   	       $('#td2').html('<span style="font-size: 20px; text-align:center;">&#9989;</span>');
+	}
 });
 </script>
 
@@ -450,53 +460,53 @@ $(document).ready(function () {
 								});
 						});
 
-				$("#play2")
-					.click(
-						function () {
-							// Hide the start button
-							$("#play2").hide();
+				// $("#play2")
+				// 	.click(
+				// 		function () {
+				// 			// Hide the start button
+				// 			$("#play2").hide();
 
-							// Remove any existing loader
-							$('#td2').remove();
+				// 			// Remove any existing loader
+				// 			$('#td2').remove();
 
-							// Append the custom CSS loader while waiting for the AJAX response
-							$('#tr2')
-								.append(
-									'<td width="205px;" id="td2" style="text-align: center;padding-left:80px;"><div class="loader"></div></td>');
+				// 			// Append the custom CSS loader while waiting for the AJAX response
+				// 			$('#tr2')
+				// 				.append(
+				// 					'<td width="205px;" id="td2" style="text-align: center;padding-left:80px;"><div class="loader"></div></td>');
 
-							setTimeout(
-								function () {
-									$('#td2')
-										.html(
-											'<td style="text-align: center;font-size: 20px;padding:0px;margin:0px">&#10060</td>'); // Append the tick character
-								}, 2000);
+				// 			setTimeout(
+				// 				function () {
+				// 					$('#td2')
+				// 						.html(
+				// 							'<td style="text-align: center;font-size: 20px;padding:0px;margin:0px">&#10060</td>'); // Append the tick character
+				// 				}, 2000);
 
-							var values = {
-								"trndate": $("#crdate").val()
-							};
-							$
-								.ajax({
-									url: "ledgervalid",
-									data: values,
-									dataType: 'json',
-									type: 'POST',
-									async: true,
-									success: function (res) {
+				// 			var values = {
+				// 				"trndate": $("#crdate").val()
+				// 			};
+				// 			$
+				// 				.ajax({
+				// 					url: "ledgervalid",
+				// 					data: values,
+				// 					dataType: 'json',
+				// 					type: 'POST',
+				// 					async: true,
+				// 					success: function (res) {
 
-										$('#td2').remove();
-										if (res.tranval == "Valid") {
-											$('#tr2')
-												.append(
-													'<td style="text-align: center;" id="td2"><img class="img-thumbnail" src="../image/check.png" width="35" height="10" alt="User Pic"></td>');
-										} else {
-											$('#tr2')
-												.append(
-													'<td style="text-align: center;" id="td2"><img  class="img-thumbnail" src="../image/uncheck.png" width="35" height="10" alt="User Pic"></td>');
-										}
-									}
-								});
+				// 						$('#td2').remove();
+				// 						if (res.tranval == "Valid") {
+				// 							$('#tr2')
+				// 								.append(
+				// 									'<td style="text-align: center;" id="td2"><img class="img-thumbnail" src="../image/check.png" width="35" height="10" alt="User Pic"></td>');
+				// 						} else {
+				// 							$('#tr2')
+				// 								.append(
+				// 									'<td style="text-align: center;" id="td2"><img  class="img-thumbnail" src="../image/uncheck.png" width="35" height="10" alt="User Pic"></td>');
+				// 						}
+				// 					}
+				// 				});
 
-						});
+				// 		});
 
 				$("#play3")
 					.click(
@@ -840,9 +850,7 @@ $(document).ready(function () {
 								});
 						});
 				
-			});
-
-
+			
 
 	function DateChangeProcess() {
 		alert("Play11");
@@ -1304,6 +1312,49 @@ error: function (xhr, status, error) {
 	}
 
 
+	function InterestDemandgeneration() {
+    // Open modal
+    $('#interestDemandModal').modal('show');
+
+    // Show loader initially
+    $('#interestDemandBody').html('<div class="loader"></div><p>Processing, please wait...</p>');
+
+    var values = {
+        "MIG_DATE": $("#current_date").val()
+    };
+
+    $.ajax({
+        url: "intrestDemandgeneration",
+        data: values,
+        dataType: 'json',
+        type: 'POST',
+        async: true,
+        success: function (res) {
+            // Remove loader after response
+            $('#interestDemandBody').empty();
+
+            if (res.tranval === "Valid") {
+                $('#interestDemandBody').html(`
+                    <img src="../image/check.png" width="50" alt="Success" class="img-thumbnail">
+                    <h5 class="mt-3 text-success">Interest demand generated successfully!</h5>
+                `);
+            } else {
+                $('#interestDemandBody').html(`
+                    <img src="../image/uncheck.png" width="50" alt="Failed" class="img-thumbnail">
+                    <h5 class="mt-3 text-danger">Interest demand generation failed.</h5>
+                `);
+            }
+        },
+        error: function () {
+            $('#interestDemandBody').html(`
+                <img src="../image/uncheck.png" width="50" alt="Error" class="img-thumbnail">
+                <h5 class="mt-3 text-danger">An error occurred while processing your request.</h5>
+            `);
+        }
+    });
+}
+
+
 </script>
 <script>
 
@@ -1590,7 +1641,7 @@ function runControlCheckAndDCPUpdate() {
 							<td style="padding-left: 5px;">Interest Demand Generation</td>
 							<td width="205px;" id="td2"
 								style="text-align: center; vertical-align: middle; padding: 2px;"><button type="button"
-									class="btn-primary big-btn" value="Start" id="play2">Start</button>
+									class="btn-primary big-btn" value="Start" id="play2" onclick="InterestDemandgeneration()">Start</button>
 							</td>
 						</tr>
 						<tr id="tr3">
@@ -1783,6 +1834,37 @@ function runControlCheckAndDCPUpdate() {
     </div>
   </div>
 </div>
+
+<!-- Interest Demand Generation Modal -->
+<div id="interestDemandModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" style="text-align: center;">Interest Demand Generation</h5>
+      </div>
+
+      <div class="modal-body">
+        <table class="table table-bordered text-center" style="margin: auto; width: 80%;">
+          <tbody>
+            <tr id="tr2">
+              <td style="width: 70%;">Interest Demand Generation Process</td>
+              <td id="td2" style="width: 30%; text-align: center;">
+                <!-- Loader / Icons will appear here -->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer" style="justify-content: center;">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 
 
 

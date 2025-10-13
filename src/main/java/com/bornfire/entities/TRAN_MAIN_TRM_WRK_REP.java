@@ -455,4 +455,9 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 					)
 					List<TRAN_MAIN_TRM_WRK_ENTITY> downloadRecoveryDetails();
 
+					
+					@Modifying
+					@Transactional
+					@Query(value = "CALL DAYEND_INTEREST_DEMAND_1(:MIG_DATE, :ENTRY_USER)", nativeQuery = true)
+					void runInterestDemand(@Param("MIG_DATE") String MIG_DATE, @Param("ENTRY_USER") String ENTRY_USER);
 }

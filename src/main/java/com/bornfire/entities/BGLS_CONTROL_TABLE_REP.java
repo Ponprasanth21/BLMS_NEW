@@ -54,6 +54,12 @@ public interface BGLS_CONTROL_TABLE_REP extends JpaRepository<BGLS_Control_Table
 	  
 	  @Query(value = "SELECT MOV_JOURNAL FROM BGLS_CONTROL_TABLE", nativeQuery = true)
 	  String getMovementofTransaction();
+	 
+	  @Query(value = "SELECT GL_CON FROM BGLS_CONTROL_TABLE", nativeQuery = true)
+	  String getGlConsolidation();
+	  
+	  @Query(value = "SELECT INTEREST_DEMAND_GEN FROM BGLS_CONTROL_TABLE", nativeQuery = true)
+	  String getInterestDemand();
 	  
 	
 	  

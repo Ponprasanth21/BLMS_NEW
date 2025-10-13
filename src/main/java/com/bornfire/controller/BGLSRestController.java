@@ -4382,8 +4382,45 @@ public class BGLSRestController {
 		generalLedgerRep.getupdateglwork();
 		generalLedgerRep.updateNoAcctOpened();
 		generalLedgerRep.updateNoAcctClosed();
+		
+		BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+
+        if (existingRecord != null) {
+            System.out.println("Past gl consolidate : " + existingRecord.getGl_con());
+            existingRecord.setGl_con("Completed");
+            bGLS_CONTROL_TABLE_REP.save(existingRecord);
+            System.out.println("Updated gl consolidate: " + existingRecord.getGl_con());
+        } else {
+            System.out.println("No record found in BGLS_Control_Table");
+        }
 
 		return "GL Consolidation Successful";
+	}
+	
+	@RequestMapping(value = "intrestDemandgeneration", method = { RequestMethod.GET, RequestMethod.POST })
+	public String intrestDemandgeneration(@RequestParam(required = false) String MIG_DATE, Model model,
+			HttpServletRequest request) {
+
+		String user = (String) request.getSession().getAttribute("USERID");
+		
+		
+		BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+
+        if (existingRecord != null) {
+        	try {
+    			tranMainRep.runInterestDemand(MIG_DATE, user);
+    		}catch(Exception e) {
+    			System.out.println(e);
+    		}
+            System.out.println("Past intrest demand generation : " + existingRecord.getInterest_demand_gen());
+            existingRecord.setInterest_demand_gen("Completed");
+            bGLS_CONTROL_TABLE_REP.save(existingRecord);
+            System.out.println("Updated intrest demand generation: " + existingRecord.getInterest_demand_gen());
+        } else {
+            System.out.println("No record found in BGLS_Control_Table");
+        }
+
+		return "Intrest Demand Generation Successful";
 	}
 
 	@GetMapping("getAccountName")
