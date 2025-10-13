@@ -11,13 +11,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BglsHolidayMasterRep extends CrudRepository<BglsHolidayMaster,Integer> {
 
-	@Query("SELECT COUNT(h) FROM BglsHolidayMaster h " +
-		       "WHERE FUNCTION('TRUNC', h.recordDate) = FUNCTION('TRUNC', :recordDate) " +
-		       "AND h.delFlg = :delFlg")
-		int countByRecordDateAndDelFlg(@Param("recordDate") Date recordDate,
-		                               @Param("delFlg") String delFlg);
+	@Query(value = "SELECT COUNT(HOLIDAY_DESC) FROM BGLS_HOLIDAY_MASTER WHERE RECORD_DATE = :recordDate AND DEL_FLG = 'N'", nativeQuery = true)
+	int countByRecordDateAndDelFlg(@Param("recordDate") java.util.Date tRANDATE);
 
-	int countByRecordDateAndDelFlg(java.util.Date tRANDATE, String delFlg);
+	
 
 
 

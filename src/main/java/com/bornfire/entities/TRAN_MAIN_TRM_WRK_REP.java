@@ -263,11 +263,11 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 	@Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS WHERE TRUNC(TRAN_DATE)=TRUNC(?1) AND ENTRY_USER=?2 AND ACCT_NUM LIKE '%LA%' ORDER BY TRAN_ID", nativeQuery = true)
 	List<TRAN_MAIN_TRM_WRK_ENTITY> getTransactionRecords(Date con_date, String user);
 
-	@Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS WHERE TRUNC(TRAN_DATE)=TRUNC(?1)", nativeQuery = true)
-	List<TRAN_MAIN_TRM_WRK_ENTITY> getvalueusingdate(Date date);
+	@Query(value = "SELECT count(TRAN_ID) as TRAN_ID FROM BGLS_TRM_WRK_TRANSACTIONS where TRAN_DATE=?1 and TRAN_STATUS='ENTERED' and DEL_FLG='N'", nativeQuery = true)
+	Object[] getvalueusingdate(String date);
 
 	@Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS WHERE TRUNC(TRAN_DATE)=TRUNC(?1) AND tran_status='POSTED'", nativeQuery = true)
-	List<TRAN_MAIN_TRM_WRK_ENTITY> getswiftvalues(Date date);
+	List<TRAN_MAIN_TRM_WRK_ENTITY> getswiftvalues(String date);
 
 	@Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS WHERE TRUNC(TRAN_DATE)=TRUNC(?1)", nativeQuery = true)
 	List<TRAN_MAIN_TRM_WRK_ENTITY> getbalance(Date selectedDate);

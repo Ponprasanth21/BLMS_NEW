@@ -3137,6 +3137,7 @@ public class BGLSNavigationController {
         if (formmode == null || formmode.equals("Lease")) {
             model.addAttribute("formmode", "Lease");
 //			model.addAttribute("leaseaccount", lease_Loan_Master_Repo.getLeaseBalTran(TRANDATE));
+
             model.addAttribute("leaseaccount", lease_Loan_Master_Repo.getLeaseBalTran());
             model.addAttribute("TRANDATE", TRANDATE);
         } else if (formmode.equals("Deposit")) {
@@ -3148,99 +3149,10 @@ public class BGLSNavigationController {
         return "Account_Balances.html";
     }
 
-    @RequestMapping(value = "trialBalanceReports2", method = { RequestMethod.GET, RequestMethod.POST })
-    public String trialBalanceReports2(@RequestParam(required = false) String formmode,
-                                       @RequestParam(required = false) String tran, Model md, HttpServletRequest rq,
-                                       @RequestParam(required = false) String glshCode, HttpServletRequest request) {
+   
+  
+    
 
-        Date TRANDATE = (Date) request.getSession().getAttribute("TRANDATE");
-        System.out.println(TRANDATE);
-        if (formmode == null || formmode.equals("list")) {
-            md.addAttribute("formmode", "list");
-
-            System.out.println("balance");
-            md.addAttribute("trialbal", chart_Acc_Rep.getglcode());
-            md.addAttribute("trialbalance", chart_Acc_Rep.getList());
-            // Date TRANDATE = new Date(); // Replace with your actual date
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-            String formattedDate = dateFormat.format(TRANDATE);
-            md.addAttribute("TRANDATE", TRANDATE);
-
-        }
-
-        return "TrailBalanceReports2";
-    }
-
-    @RequestMapping(value = "trialBalance", method = { RequestMethod.GET, RequestMethod.POST })
-    public String trialBalance(@RequestParam(required = false) String formmode,
-                               @RequestParam(required = false) String tran, Model md, HttpServletRequest rq,
-                               @RequestParam(required = false) String glshCode, HttpServletRequest request) {
-
-        Date TRANDATE = (Date) request.getSession().getAttribute("TRANDATE");
-        System.out.println(TRANDATE);
-        if (formmode == null || formmode.equals("list")) {
-            md.addAttribute("formmode", "list");
-
-            System.out.println("balance");
-            md.addAttribute("trialbal", chart_Acc_Rep.getglcode());
-            md.addAttribute("trialbalance", chart_Acc_Rep.getList());
-            // Date TRANDATE = new Date(); // Replace with your actual date
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-            String formattedDate = dateFormat.format(TRANDATE);
-            md.addAttribute("TRANDATE", TRANDATE);
-
-        }
-
-        return "TrailBalanceReports2";
-    }
-
-    @RequestMapping(value = "BGLS/ghlslistdata", method = { RequestMethod.GET, RequestMethod.POST })
-    @ResponseBody
-    public List<Chart_Acc_Entity> ghlslistdata(@RequestParam(required = false) String glshCode) {
-        System.out.println("gld");
-        System.out.println(glshCode);
-        List<Chart_Acc_Entity> GLSHValue = chart_Acc_Rep.getglsh(glshCode);
-        System.out.println("THE GLSH RECORD IS" + glshCode);
-        return GLSHValue;
-    }
-
-    /* THANVEER */
-    @RequestMapping(value = "BGLS/ghlslistdataDAB", method = { RequestMethod.GET, RequestMethod.POST })
-    @ResponseBody
-    public List<Map<String, Object>> ghlslistdataDAB(HttpServletRequest rq,
-                                                     @RequestParam(required = false) String glshCode, @RequestParam(required = false) String reportdate) {
-        Date TRANDATE1 = (Date) rq.getSession().getAttribute("TRANDATE");
-        if (TRANDATE1 == null) {
-            System.out.println("TRANDATE not found in session.");
-            return Collections.emptyList(); // or handle as needed
-        }
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = dateFormat.format(TRANDATE1);
-
-        // Print to check the format
-        System.out.println("Formatted TRANDATE1: " + formattedDate);
-        System.out.println("GLSH Code: " + glshCode);
-
-        String formattedDateStr = dateFormat.format(TRANDATE1);
-
-        List<Object[]> balances = dAB_Repo.getAccountBalancesByGlshCode(reportdate, glshCode);
-
-        System.out.println(balances.size());
-        // Convert List<Object[]> to List<Map<String, Object>>
-        List<Map<String, Object>> result = new ArrayList<>();
-        for (Object[] row : balances) {
-            Map<String, Object> rowMap = new HashMap<>();
-            rowMap.put("glsh_code", row[2]); // glsh_code
-            rowMap.put("acct_num", row[0]); // acct_num
-            rowMap.put("acct_name", row[1]); // acct_name
-            rowMap.put("total_credit", row[3]); // totalCredit
-            rowMap.put("total_debit", row[4]); // totalDebit
-            result.add(rowMap);
-        }
-        System.out.println(result.size());
-        return result;
-    }
 
     /* Praveen */
     @RequestMapping(value = "LeaseOperaions", method = { RequestMethod.GET, RequestMethod.POST })
@@ -3256,296 +3168,378 @@ public class BGLSNavigationController {
         return "LeaseOperations";
     }
 
-    @RequestMapping(value = "accountLedgerdayend", method = RequestMethod.POST)
-    @ResponseBody
-    public String accountLedgerdayend(Model md, HttpServletRequest rq) {
-        Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
-        System.out.println(TRANDATE + " TRANDATE");
+    
 
-        List<TRAN_MAIN_TRM_WRK_ENTITY> listofrecord = tRAN_MAIN_TRM_WRK_REP.getvalueusingdate(TRANDATE);
-        boolean flag = true; // Assume success unless we find a record with values
+    
+	@RequestMapping(value = "trialBalanceReports2", method = { RequestMethod.GET, RequestMethod.POST })
+	public String trialBalanceReports2(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String tran, Model md, HttpServletRequest rq,
+			@RequestParam(required = false) String glshCode, HttpServletRequest request) {
 
-        for (TRAN_MAIN_TRM_WRK_ENTITY records : listofrecord) {
-            String acc_num = records.getAcct_num();
-            System.out.println("acc_num: " + acc_num);
+		Date TRANDATE = (Date) request.getSession().getAttribute("TRANDATE");
+		System.out.println(TRANDATE);
+		if (formmode == null || formmode.equals("list")) {
+			md.addAttribute("formmode", "list");
 
-            Object listofvalues = chart_Acc_Rep.getaccnum(acc_num, TRANDATE);
+			System.out.println("balance");
+			md.addAttribute("trialbal", chart_Acc_Rep.getglcode());
+			md.addAttribute("trialbalance", chart_Acc_Rep.getList());
+			// Date TRANDATE = new Date(); // Replace with your actual date
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			String formattedDate = dateFormat.format(TRANDATE);
+			md.addAttribute("TRANDATE", TRANDATE);
 
-            // If listofvalues is not null and not empty, we found at least one valid record
-            if (listofvalues != null) {
-                flag = false; // Set flag to false as we found a valid entry
-                System.out.println("flag value is false");
-                // Exit loop early as we only need one valid record to change flag
+		}
 
-            } else {
-                System.out.println("flag value is true"); // Still true if this record has no values
-            }
-        }
+		return "TrailBalanceReports2";
+	}
 
-        // Return a message based on the flag
-        if (flag) {
-            System.out.println("Unsuccessful Updation");
-            BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+	@RequestMapping(value = "trialBalance", method = { RequestMethod.GET, RequestMethod.POST })
+	public String trialBalance(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String tran, Model md, HttpServletRequest rq,
+			@RequestParam(required = false) String glshCode, HttpServletRequest request) {
 
-            if (existingRecord != null) {
+		Date TRANDATE = (Date) request.getSession().getAttribute("TRANDATE");
+		System.out.println(TRANDATE);
+		if (formmode == null || formmode.equals("list")) {
+			md.addAttribute("formmode", "list");
 
-                // 2️⃣ Log past value
-                System.out.println("Past Journal Cons: " + existingRecord.getJournal_cons());
+			System.out.println("balance");
+			md.addAttribute("trialbal", chart_Acc_Rep.getglcode());
+			md.addAttribute("trialbalance", chart_Acc_Rep.getList());
+			// Date TRANDATE = new Date(); // Replace with your actual date
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			String formattedDate = dateFormat.format(TRANDATE);
+			md.addAttribute("TRANDATE", TRANDATE);
 
-                // 3️⃣ Update current value
-                existingRecord.setLedger_cons("Completed");
+		}
 
-                // 4️⃣ Save updated record
-                bGLS_CONTROL_TABLE_REP.save(existingRecord);
+		return "TrailBalanceReports2";
+	}
 
-                System.out.println("Updated Journal Cons: " + existingRecord.getJournal_cons());
+	@RequestMapping(value = "BGLS/ghlslistdata", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody
+	public List<Chart_Acc_Entity> ghlslistdata(@RequestParam(required = false) String glshCode) {
+		System.out.println("gld");
+		System.out.println(glshCode);
+		List<Chart_Acc_Entity> GLSHValue = chart_Acc_Rep.getglsh(glshCode);
+		System.out.println("THE GLSH RECORD IS" + glshCode);
+		return GLSHValue;
+	}
 
-            } else {
-                System.out.println("No record found in BGLS_Control_Table");
+	/* THANVEER */
+	@RequestMapping(value = "BGLS/ghlslistdataDAB", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody
+	public List<Map<String, Object>> ghlslistdataDAB(HttpServletRequest rq,
+			@RequestParam(required = false) String glshCode, @RequestParam(required = false) String reportdate) {
+		Date TRANDATE1 = (Date) rq.getSession().getAttribute("TRANDATE");
+		if (TRANDATE1 == null) {
+			System.out.println("TRANDATE not found in session.");
+			return Collections.emptyList(); // or handle as needed
+		}
 
-            }
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		String formattedDate = dateFormat.format(TRANDATE1);
 
-            return "Successful Updation"; // No valid records found
-        } else {
-            return "Successful Updation"; // At least one valid record found
-        }
+		// Print to check the format
+		System.out.println("Formatted TRANDATE1: " + formattedDate);
+		System.out.println("GLSH Code: " + glshCode);
 
-    }
+		String formattedDateStr = dateFormat.format(TRANDATE1);
 
-    @RequestMapping(value = "movementoftransaction", method = RequestMethod.POST)
-    @ResponseBody
-    public String movementoftransaction(Model md, HttpServletRequest rq) {
-        Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
-        List<TRAN_MAIN_TRM_WRK_ENTITY> listofrecord = tRAN_MAIN_TRM_WRK_REP.getswiftvalues(TRANDATE);
+		List<Object[]> balances = dAB_Repo.getAccountBalancesByGlshCode(reportdate, glshCode);
 
-        if (listofrecord != null && !listofrecord.isEmpty()) {
-            for (TRAN_MAIN_TRM_WRK_ENTITY records : listofrecord) {
-                BGLS_Journal_History bGLS_Journal_History = new BGLS_Journal_History();
+		System.out.println(balances.size());
+		// Convert List<Object[]> to List<Map<String, Object>>
+		List<Map<String, Object>> result = new ArrayList<>();
+		for (Object[] row : balances) {
+			Map<String, Object> rowMap = new HashMap<>();
+			rowMap.put("glsh_code", row[2]); // glsh_code
+			rowMap.put("acct_num", row[0]); // acct_num
+			rowMap.put("acct_name", row[1]); // acct_name
+			rowMap.put("total_credit", row[3]); // totalCredit
+			rowMap.put("total_debit", row[4]); // totalDebit
+			result.add(rowMap);
+		}
+		System.out.println(result.size());
+		return result;
+	}
 
-                bGLS_Journal_History.setSrl_no(records.getSrl_no());
-                bGLS_Journal_History.setBranch_id(records.getBranch_id());
-                bGLS_Journal_History.setAcid(records.getAcid());
-                bGLS_Journal_History.setCust_id(records.getCust_id());
-                bGLS_Journal_History.setTran_id(records.getTran_id());
-                bGLS_Journal_History.setPart_tran_id(records.getPart_tran_id());
-                bGLS_Journal_History.setAcct_num(records.getAcct_num());
-                bGLS_Journal_History.setAcct_name(records.getAcct_name());
-                bGLS_Journal_History.setTran_type(records.getTran_type());
-                bGLS_Journal_History.setPart_tran_type(records.getPart_tran_type());
-                bGLS_Journal_History.setAcct_crncy(records.getAcct_crncy());
-                bGLS_Journal_History.setTran_amt(records.getTran_amt());
-                bGLS_Journal_History.setTran_particular(records.getTran_particular());
-                bGLS_Journal_History.setTran_remarks(records.getTran_remarks());
-                bGLS_Journal_History.setTran_date(records.getTran_date());
-                bGLS_Journal_History.setValue_date(records.getValue_date());
-                bGLS_Journal_History.setTran_ref_no(records.getTran_ref_no());
-                bGLS_Journal_History.setAdd_details(records.getAdd_details());
-                bGLS_Journal_History.setPartition_type(records.getPartition_type());
-                bGLS_Journal_History.setPartition_det(records.getPartition_det());
-                bGLS_Journal_History.setInstr_num(records.getInstr_num());
-                bGLS_Journal_History.setRef_crncy(records.getRef_crncy());
-                bGLS_Journal_History.setRef_crncy_amt(records.getRef_crncy_amt());
-                bGLS_Journal_History.setRate_code(records.getRate_code());
-                bGLS_Journal_History.setRate(records.getRate());
-                bGLS_Journal_History.setEntry_user(records.getEntry_user());
-                bGLS_Journal_History.setPost_user(records.getPost_user());
-                bGLS_Journal_History.setEntry_time(records.getEntry_time());
-                bGLS_Journal_History.setPost_time(records.getPost_time());
-                bGLS_Journal_History.setTran_status(records.getTran_status());
-                bGLS_Journal_History.setDel_flg(records.getDel_flg());
-                bGLS_Journal_History.setInstr_date(records.getInstr_date());
-                bGLS_Journal_History.setTran_code(records.getTran_code());
-                bGLS_Journal_History.setTran_rpt_code(records.getTran_rpt_code());
-                bGLS_Journal_History.setModify_user(records.getModify_user());
-                bGLS_Journal_History.setModify_time(records.getModify_time());
-                bGLS_Journal_History.setFlow_code(records.getFlow_code());
-                bGLS_Journal_History.setFlow_date(records.getFlow_date());
 
-                bGLS_Journal_History_Rep.save(bGLS_Journal_History);
+	@RequestMapping(value = "accountLedgerdayend", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> accountLedgerdayend(@RequestParam("trndate") String trndate) {
+	    System.out.println(trndate + " trndate");
 
-            }
-        }
-        BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+	    // Fetch count from repository
+	    Object result = tRAN_MAIN_TRM_WRK_REP.getvalueusingdate(trndate);
 
-        if (existingRecord != null) {
+	    Long count = 0L;
+	    if (result != null) {
+	        if (result instanceof Number) {
+	            count = ((Number) result).longValue();
+	        } else if (result instanceof Object[]) {
+	            Object[] arr = (Object[]) result;
+	            if (arr.length > 0 && arr[0] != null) {
+	                count = Long.parseLong(arr[0].toString());
+	            }
+	        }
+	    }
 
-            // 2️⃣ Log past value
-            existingRecord.setMov_journal("Completed");
+	    // Update ledger_cons
+	    BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+	    if (existingRecord != null) {
+	        existingRecord.setLedger_cons("Completed");
+	        bGLS_CONTROL_TABLE_REP.save(existingRecord);
+	        System.out.println("Ledger updated successfully.");
+	    }
 
-            // 4️⃣ Save updated record
-            bGLS_CONTROL_TABLE_REP.save(existingRecord);
+	    // Prepare JSON response
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("table", "TRM");
+	    response.put("count", count);
+	    response.put("message", "Successful Updation");
 
-        } else {
-            System.out.println("No record found in BGLS_Control_Table");
+	    return response;
+	}
 
-        }
 
-        return "Successfully Updated";
-    }
+	@RequestMapping(value = "movementoftransaction", method = RequestMethod.POST)
+	@ResponseBody
+	public String movementoftransaction(Model md, HttpServletRequest rq,
+			@RequestParam("trndate") String trndate) {
+		Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
+		List<TRAN_MAIN_TRM_WRK_ENTITY> listofrecord = tRAN_MAIN_TRM_WRK_REP.getswiftvalues(trndate);
 
-    @RequestMapping(value = "journalbook", method = { RequestMethod.GET, RequestMethod.POST })
-    public String journalbook(@RequestParam(required = false) String formmode, Model md, HttpServletRequest rq) {
-        Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
+		if (listofrecord != null && !listofrecord.isEmpty()) {
+			for (TRAN_MAIN_TRM_WRK_ENTITY records : listofrecord) {
+				BGLS_Journal_History bGLS_Journal_History = new BGLS_Journal_History();
 
-        if (formmode == null || formmode.equals("list1")) {
-            md.addAttribute("formmode", "list1");
-            md.addAttribute("jour", tRAN_MAIN_TRM_WRK_REP.findByjournal1(TRANDATE));
-            // md.addAttribute("jour", tRAN_MAIN_TRM_WRK_REP.findByjournal());
+				bGLS_Journal_History.setSrl_no(records.getSrl_no());
+				bGLS_Journal_History.setBranch_id(records.getBranch_id());
+				bGLS_Journal_History.setAcid(records.getAcid());
+				bGLS_Journal_History.setCust_id(records.getCust_id());
+				bGLS_Journal_History.setTran_id(records.getTran_id());
+				bGLS_Journal_History.setPart_tran_id(records.getPart_tran_id());
+				bGLS_Journal_History.setAcct_num(records.getAcct_num());
+				bGLS_Journal_History.setAcct_name(records.getAcct_name());
+				bGLS_Journal_History.setTran_type(records.getTran_type());
+				bGLS_Journal_History.setPart_tran_type(records.getPart_tran_type());
+				bGLS_Journal_History.setAcct_crncy(records.getAcct_crncy());
+				bGLS_Journal_History.setTran_amt(records.getTran_amt());
+				bGLS_Journal_History.setTran_particular(records.getTran_particular());
+				bGLS_Journal_History.setTran_remarks(records.getTran_remarks());
+				bGLS_Journal_History.setTran_date(records.getTran_date());
+				bGLS_Journal_History.setValue_date(records.getValue_date());
+				bGLS_Journal_History.setTran_ref_no(records.getTran_ref_no());
+				bGLS_Journal_History.setAdd_details(records.getAdd_details());
+				bGLS_Journal_History.setPartition_type(records.getPartition_type());
+				bGLS_Journal_History.setPartition_det(records.getPartition_det());
+				bGLS_Journal_History.setInstr_num(records.getInstr_num());
+				bGLS_Journal_History.setRef_crncy(records.getRef_crncy());
+				bGLS_Journal_History.setRef_crncy_amt(records.getRef_crncy_amt());
+				bGLS_Journal_History.setRate_code(records.getRate_code());
+				bGLS_Journal_History.setRate(records.getRate());
+				bGLS_Journal_History.setEntry_user(records.getEntry_user());
+				bGLS_Journal_History.setPost_user(records.getPost_user());
+				bGLS_Journal_History.setEntry_time(records.getEntry_time());
+				bGLS_Journal_History.setPost_time(records.getPost_time());
+				bGLS_Journal_History.setTran_status(records.getTran_status());
+				bGLS_Journal_History.setDel_flg(records.getDel_flg());
+				bGLS_Journal_History.setInstr_date(records.getInstr_date());
+				bGLS_Journal_History.setTran_code(records.getTran_code());
+				bGLS_Journal_History.setTran_rpt_code(records.getTran_rpt_code());
+				bGLS_Journal_History.setModify_user(records.getModify_user());
+				bGLS_Journal_History.setModify_time(records.getModify_time());
+				bGLS_Journal_History.setFlow_code(records.getFlow_code());
+				bGLS_Journal_History.setFlow_date(records.getFlow_date());
 
-        } else if (formmode.equals("view")) {
-        }
-        return "JournalBook.html";
-    }
+				bGLS_Journal_History_Rep.save(bGLS_Journal_History);
 
-    @RequestMapping(value = "journalbook2", method = { RequestMethod.GET, RequestMethod.POST })
-    @ResponseBody
-    public List<TRAN_MAIN_TRM_WRK_ENTITY> journalbook2(@RequestParam(required = false) String formmode,
-                                                       @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date selectedDate, Model md,
-                                                       HttpServletRequest rq) {
+			}
+		}
+		BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
 
-        List<TRAN_MAIN_TRM_WRK_ENTITY> msg = tRAN_MAIN_TRM_WRK_REP.getbalance(selectedDate);
+		if (existingRecord != null) {
 
-        return msg;
-    }
+			// 2️⃣ Log past value
+			existingRecord.setMov_journal("Completed");
 
-    @RequestMapping(value = "calendermaintenance", method = { RequestMethod.GET, RequestMethod.POST })
-    public String calendermaintenance(@RequestParam(required = false) String formmode, Model md,
-                                      HttpServletRequest req) {
+			// 4️⃣ Save updated record
+			bGLS_CONTROL_TABLE_REP.save(existingRecord);
 
-        if (formmode == null || formmode.equals("add")) {
-            md.addAttribute("formmode", "add");
-            List<Organization_Entity> organization = organization_Repo.getAllList();
-            md.addAttribute("organization", organization.get(0));
+		} else {
+			System.out.println("No record found in BGLS_Control_Table");
 
-            md.addAttribute("OrgBranch", organization_Branch_Rep.getbranchlist());
+		}
 
-        } else if (formmode.equals("ModifyHoliday")) {
-            md.addAttribute("formmode", "ModifyHoliday");
+		return "Successfully Updated";
+	}
 
-        } else if (formmode.equals("addholiday")) {
-            md.addAttribute("formmode", "addholiday");
+	@RequestMapping(value = "journalbook", method = { RequestMethod.GET, RequestMethod.POST })
+	public String journalbook(@RequestParam(required = false) String formmode, Model md, HttpServletRequest rq) {
+		Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
 
-        } else if (formmode.equals("listholiday")) {
-            md.addAttribute("formmode", "listholiday");
+		if (formmode == null || formmode.equals("list1")) {
+			md.addAttribute("formmode", "list1");
+			md.addAttribute("jour", tRAN_MAIN_TRM_WRK_REP.findByjournal1(TRANDATE));
+			// md.addAttribute("jour", tRAN_MAIN_TRM_WRK_REP.findByjournal());
 
-        } else if (formmode.equals("UploadHoliday")) {
-            md.addAttribute("formmode", "UploadHoliday");
+		} else if (formmode.equals("view")) {
+		}
+		return "JournalBook.html";
+	}
 
-        }
+	@RequestMapping(value = "journalbook2", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody
+	public List<TRAN_MAIN_TRM_WRK_ENTITY> journalbook2(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date selectedDate, Model md,
+			HttpServletRequest rq) {
 
-        return "Calender_Maintenance";
-    }
+		List<TRAN_MAIN_TRM_WRK_ENTITY> msg = tRAN_MAIN_TRM_WRK_REP.getbalance(selectedDate);
 
-    @PostMapping(value = "calenderuploadexcel")
-    @ResponseBody
-    public String calenderuploadexcel(@RequestParam("file") MultipartFile file, String screenId,
-                                      @ModelAttribute HolidayMaster_Entity HolidayMaster_Entity, Model md, HttpServletRequest rq)
-            throws FileNotFoundException, SQLException, IOException, NullPointerException {
+		return msg;
+	}
 
-        System.out.println("the testing   GST EXCEL UPLOAD");
+	@RequestMapping(value = "calendermaintenance", method = { RequestMethod.GET, RequestMethod.POST })
+	public String calendermaintenance(@RequestParam(required = false) String formmode, Model md,
+			HttpServletRequest req) {
 
-        System.out.println("fileSize" + file.getSize());
+		if (formmode == null || formmode.equals("add")) {
+			md.addAttribute("formmode", "add");
+			List<Organization_Entity> organization = organization_Repo.getAllList();
+			md.addAttribute("organization", organization.get(0));
 
-        if (file.getSize() < 50000000) {
-            String userid = (String) rq.getSession().getAttribute("USERID");
-            String msg = CustomerRequestService.Uploadholidaymaster(screenId, file, userid, HolidayMaster_Entity);
-            return msg;
-        } else {
-            return "File has not been successfully uploaded. Requires less than 128 KB size.";
-        }
+			md.addAttribute("OrgBranch", organization_Branch_Rep.getbranchlist());
 
-    }
+		} else if (formmode.equals("ModifyHoliday")) {
+			md.addAttribute("formmode", "ModifyHoliday");
 
-    @RequestMapping(value = "interest_summary", method = { RequestMethod.GET, RequestMethod.POST })
-    public String interest_summary(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
-        if (formmode == null || formmode.equals("list")) {
-            md.addAttribute("formmode", "list");
-            md.addAttribute("fewvalues", lease_Loan_Master_Repo.getfewvalue());
-        }
+		} else if (formmode.equals("addholiday")) {
+			md.addAttribute("formmode", "addholiday");
 
-        List<Lease_Loan_Master_Entity> listvalues = lease_Loan_Master_Repo.getfewvalue();
-        List<Object> allAccBalances = new ArrayList<>(); // Initialize list to store all account balances
+		} else if (formmode.equals("listholiday")) {
+			md.addAttribute("formmode", "listholiday");
 
-        if (listvalues != null && !listvalues.isEmpty()) {
-            for (Lease_Loan_Master_Entity records : listvalues) {
-                String acc_num = records.getLoan_accountno();
-                Object accBalance = chart_Acc_Rep.getaccbal(acc_num);
-                allAccBalances.add(accBalance); // Add each balance to the list
+		} else if (formmode.equals("UploadHoliday")) {
+			md.addAttribute("formmode", "UploadHoliday");
 
-            }
-        }
+		}
 
-        md.addAttribute("allAccBalances", allAccBalances);
+		return "Calender_Maintenance";
+	}
 
-        return "Interest_Summary";
-    }
+	@PostMapping(value = "calenderuploadexcel")
+	@ResponseBody
+	public String calenderuploadexcel(@RequestParam("file") MultipartFile file, String screenId,
+			@ModelAttribute HolidayMaster_Entity HolidayMaster_Entity, Model md, HttpServletRequest rq)
+			throws FileNotFoundException, SQLException, IOException, NullPointerException {
 
-    /* Aishu */
-    @RequestMapping(value = "aspiraLoanMaintanace", method = { RequestMethod.GET, RequestMethod.POST })
-    public String aspiraLoanMaintanace(@RequestParam(required = false) String formmode, Model md,
-                                       HttpServletRequest req, @RequestParam(required = false) String id,
-                                       @RequestParam(required = false) String holder_key) {
+		System.out.println("the testing   GST EXCEL UPLOAD");
 
-        if (formmode == null || formmode.equals("list")) {
-            md.addAttribute("formmode", "list");
-            md.addAttribute("list", LOAN_ACT_MST_REPO.getLoanActDet1());
-        } else if (formmode.equals("view")) {
-            md.addAttribute("formmode", "view");
-            System.out.println(holder_key);
-            md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
-            md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
-        }
-        return "Aspira_Loan_Maintanace";
-    }
+		System.out.println("fileSize" + file.getSize());
 
-    @Autowired
-    private CLIENT_MASTER_REPO clientMasterRepo;
+		if (file.getSize() < 50000000) {
+			String userid = (String) rq.getSession().getAttribute("USERID");
+			String msg = CustomerRequestService.Uploadholidaymaster(screenId, file, userid, HolidayMaster_Entity);
+			return msg;
+		} else {
+			return "File has not been successfully uploaded. Requires less than 128 KB size.";
+		}
 
-    @RequestMapping(value = "customerMaster", method = { RequestMethod.GET, RequestMethod.POST })
-    public String customerMaster(@RequestParam(required = false) String formmode,
-                                 @RequestParam(required = false) String module, @RequestParam(required = false) String id, Model md,
-                                 String branch_key, HttpServletRequest req) {
+	}
 
-        String user = (String) req.getSession().getAttribute("USERID");
-        Date TRANDATE = (Date) req.getSession().getAttribute("TRANDATE");
+	@RequestMapping(value = "interest_summary", method = { RequestMethod.GET, RequestMethod.POST })
+	public String interest_summary(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
+		if (formmode == null || formmode.equals("list")) {
+			md.addAttribute("formmode", "list");
+			md.addAttribute("fewvalues", lease_Loan_Master_Repo.getfewvalue());
+		}
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = dateFormat.format(TRANDATE);
+		List<Lease_Loan_Master_Entity> listvalues = lease_Loan_Master_Repo.getfewvalue();
+		List<Object> allAccBalances = new ArrayList<>(); // Initialize list to store all account balances
 
-        if (formmode == null) {
-            md.addAttribute("formmode", "home");
-        } else if (formmode.equals("list")) {
-            md.addAttribute("formmode", "list");
-            Long limit = 100L;
-            md.addAttribute("list", clientMasterRepo.getLoanActDet(limit));
-        } else if (formmode.equals("view")) {
-            Integer unverifiedStatus = clientMasterRepo.getUnverifiedStatus(id);
-            Boolean isUnverified = unverifiedStatus != null && unverifiedStatus == 1;
-            md.addAttribute("Boolean", isUnverified);
-            md.addAttribute("formmode", "view");
-            CLIENT_MASTER_ENTITY client = clientMasterRepo.getClientView(id);
-            md.addAttribute("customer", client);
-            md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
-        } else if (formmode.equals("modify") && "module2".equals(module)) {
-            md.addAttribute("formmode", "modify");
-            CLIENT_MASTER_ENTITY client = clientMasterRepo.getClientView(id);
-            md.addAttribute("customer", client);
-            md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
-        } else if (formmode.equals("verify") && "module2".equals(module)) {
-            // Allow verify only for module2
-            md.addAttribute("formmode", "verify");
-            CLIENT_MASTER_ENTITY client = clientMasterRepo.getClientView(id);
-            md.addAttribute("customer", client);
-            md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
-        }
-        md.addAttribute("currentDate", TRANDATE);
-        md.addAttribute("ConDate", formattedDate);
-        md.addAttribute("user", user);
-        md.addAttribute("module", module);
+		if (listvalues != null && !listvalues.isEmpty()) {
+			for (Lease_Loan_Master_Entity records : listvalues) {
+				String acc_num = records.getLoan_accountno();
+				Object accBalance = chart_Acc_Rep.getaccbal(acc_num);
+				allAccBalances.add(accBalance); // Add each balance to the list
 
-        return "customerMaster";
+			}
+		}
 
-    }
+		md.addAttribute("allAccBalances", allAccBalances);
+
+		return "Interest_Summary";
+	}
+
+	/* Aishu */
+	@RequestMapping(value = "aspiraLoanMaintanace", method = { RequestMethod.GET, RequestMethod.POST })
+	public String aspiraLoanMaintanace(@RequestParam(required = false) String formmode, Model md,
+			HttpServletRequest req, @RequestParam(required = false) String id,
+			@RequestParam(required = false) String holder_key) {
+
+		if (formmode == null || formmode.equals("list")) {
+			md.addAttribute("formmode", "list");
+			md.addAttribute("list", LOAN_ACT_MST_REPO.getLoanActDet1());
+		} else if (formmode.equals("view")) {
+			md.addAttribute("formmode", "view");
+			System.out.println(holder_key);
+			md.addAttribute("view", LOAN_ACT_MST_REPO.getLoanView(id));
+			md.addAttribute("loan", LOAN_ACT_MST_REPO.getLoanValue(holder_key));
+		}
+		return "Aspira_Loan_Maintanace";
+	}
+
+	@Autowired
+	private CLIENT_MASTER_REPO clientMasterRepo;
+
+	@RequestMapping(value = "customerMaster", method = { RequestMethod.GET, RequestMethod.POST })
+	public String customerMaster(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String module, @RequestParam(required = false) String id, Model md,
+			String branch_key, HttpServletRequest req) {
+
+		String user = (String) req.getSession().getAttribute("USERID");
+		Date TRANDATE = (Date) req.getSession().getAttribute("TRANDATE");
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		String formattedDate = dateFormat.format(TRANDATE);
+
+		if (formmode == null) {
+			md.addAttribute("formmode", "home");
+		} else if (formmode.equals("list")) {
+			md.addAttribute("formmode", "list");
+			Long limit = 100L;
+			md.addAttribute("list", clientMasterRepo.getLoanActDet(limit));
+		} else if (formmode.equals("view")) {
+			Integer unverifiedStatus = clientMasterRepo.getUnverifiedStatus(id);
+			Boolean isUnverified = unverifiedStatus != null && unverifiedStatus == 1;
+			md.addAttribute("Boolean", isUnverified);
+			md.addAttribute("formmode", "view");
+			CLIENT_MASTER_ENTITY client = clientMasterRepo.getClientView(id);
+			md.addAttribute("customer", client);
+			md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
+		} else if (formmode.equals("modify") && "module2".equals(module)) {
+			md.addAttribute("formmode", "modify");
+			CLIENT_MASTER_ENTITY client = clientMasterRepo.getClientView(id);
+			md.addAttribute("customer", client);
+			md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
+		} else if (formmode.equals("verify") && "module2".equals(module)) {
+			// Allow verify only for module2
+			md.addAttribute("formmode", "verify");
+			CLIENT_MASTER_ENTITY client = clientMasterRepo.getClientView(id);
+			md.addAttribute("customer", client);
+			md.addAttribute("branchName1", BGLS_ORG_BRANCH_REPO.getBranchName(branch_key));
+		}
+		md.addAttribute("currentDate", TRANDATE);
+		md.addAttribute("ConDate", formattedDate);
+		md.addAttribute("user", user);
+		md.addAttribute("module", module);
+
+		return "customerMaster";
+
+	}
+
 
 //	@RequestMapping(value = "loanMaster", method = { RequestMethod.GET, RequestMethod.POST })
 //	public String loanMaster(@RequestParam(required = false) String formmode,
@@ -3938,6 +3932,7 @@ public class BGLSNavigationController {
 
         BGLS_Control_Table control = list.get(0);
 
+
         boolean allCompleted = "COMPLETED".equalsIgnoreCase(control.getJournal_cons())
                 && "COMPLETED".equalsIgnoreCase(control.getLedger_cons())
                 && "COMPLETED".equalsIgnoreCase(control.getAcct_cons())
@@ -3949,38 +3944,7 @@ public class BGLSNavigationController {
         return response;
     }
 
-    @PostMapping("/dcpupdate")
-    @ResponseBody
-    public Map<String, String> dcpupdate(@RequestBody Map<String, String> payload) {
-
-        String user = payload.get("user");
-        String trndate = payload.get("trndate");
-        String nxtdate = payload.get("nxtdate");
-
-        Map<String, String> response = new HashMap<>();
-        System.out.println("User: " + user + ", Current Date: " + trndate + ", Next Date: " + nxtdate);
-
-        List<BGLS_Control_Table> list = bGLS_CONTROL_TABLE_REP.findAll();
-        if (list.isEmpty()) {
-            response.put("status", "failure");
-            return response;
-        }
-
-        BGLS_Control_Table controlTable = list.get(0);
-
-        // Update fields
-        controlTable.setJournal_cons("PENDING");
-        controlTable.setLedger_cons("PENDING");
-        controlTable.setAcct_cons("PENDING");
-        controlTable.setHol_check("PENDING");
-        controlTable.setMov_dac("PENDING");
-        controlTable.setMov_journal("PENDING");
-
-        bGLS_CONTROL_TABLE_REP.save(controlTable);
-
-        response.put("status", "success");
-        return response;
-    }
+    
 
     @RequestMapping(value = "journalvalid", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     @ResponseBody
@@ -4025,68 +3989,6 @@ public class BGLSNavigationController {
     }
 
 
-
-    @RequestMapping(value = "holidayCheck", method = RequestMethod.POST)
-    @ResponseBody
-    public String holidayCheck(Model md, HttpServletRequest rq) {
-        Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
-
-        System.out.println("incomeing Holiday Check");
-        System.out.println(TRANDATE + " TRANDATE");
-
-        BGLS_Control_Table existingRecord1 = bGLS_CONTROL_TABLE_REP.findAll().get(0);
-
-        if (existingRecord1 != null) {
-
-            // 3️⃣ Update current value
-            existingRecord1.setHol_check("Completed");
-
-            // 4️⃣ Save updated record
-            bGLS_CONTROL_TABLE_REP.save(existingRecord1);
-
-            System.out.println("Updated Journal Cons: " + existingRecord1.getJournal_cons());
-
-        } else {
-            System.out.println("No record found in BGLS_Control_Table");
-        }
-
-        // Step 1: Check if holiday exists in HMT
-        int holidayCount = bglsHolidayMasterRep.countByRecordDateAndDelFlg(TRANDATE, "N"); // JPA query method
-        System.out.println("holidayCount" + holidayCount);
-        int cnt = holidayCount;
-        if (cnt == 0) {
-            // Step 2: If not found, check if weekend
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(TRANDATE);
-            int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-
-            if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
-                cnt = 1; // weekend = holiday
-            }
-        }
-
-        // Step 3: Business logic based on cnt
-        if (cnt > 0) {
-            // Means it is a holiday or weekend
-            System.out.println("Holiday/Weekend detected");
-
-            // Update control table (your existing logic)
-            BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
-            if (existingRecord != null) {
-                System.out.println("Past Journal Cons: " + existingRecord.getJournal_cons());
-                existingRecord.setLedger_cons("Completed");
-                bGLS_CONTROL_TABLE_REP.save(existingRecord);
-                System.out.println("Updated Journal Cons: " + existingRecord.getJournal_cons());
-            }
-            return "Holiday/Weekend - Updation Done";
-        } else {
-            // Not a holiday
-            return "Working Day";
-
-        }
-
-    }
-
     @PostMapping("consistencyCheck")
     @ResponseBody
     public Map<String, Object> consistencyCheck(@RequestParam("trndate") String trndate) {
@@ -4122,8 +4024,123 @@ public class BGLSNavigationController {
         return DateChangeService.dateChange(TRANDATE);
     }
 
-    @RequestMapping(value = "Parameteradd", method = { RequestMethod.GET, RequestMethod.POST })
-    public String redirectschemeadd() {
+
+	@PostMapping("/dcpupdate")
+	@ResponseBody
+	public Map<String, String> dcpupdate(@RequestBody Map<String, String> payload) throws java.text.ParseException {
+
+		String user = payload.get("user");
+		String trndate = payload.get("trndate");
+		String nxtdate = payload.get("nxtdate");
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		Date trnDateObj = null;
+		Date nxtDateObj = null;
+
+		try {
+		    trnDateObj = sdf.parse(trndate);
+		    nxtDateObj = sdf.parse(nxtdate);
+		} catch (ParseException e) {
+		    e.printStackTrace();
+		    // Handle invalid date format
+		    throw new RuntimeException("Invalid date format. Expected dd-MM-yyyy");
+		}
+
+		System.out.println("Transaction Date: " + trnDateObj);
+		System.out.println("Next Date: " + nxtDateObj);
+
+
+		Map<String, String> response = new HashMap<>();
+		System.out.println("User: " + user + ", Current Date: " + trndate + ", Next Date: " + nxtdate);
+
+		List<BGLS_Control_Table> list = bGLS_CONTROL_TABLE_REP.findAll();
+		if (list.isEmpty()) {
+			response.put("status", "failure");
+			return response;
+		}
+
+		BGLS_Control_Table controlTable = list.get(0);
+
+		// Update fields
+		controlTable.setDcp_user(user);
+		controlTable.setTran_date(trnDateObj);
+		controlTable.setNext_work_date(nxtDateObj);
+		controlTable.setJournal_cons("PENDING");
+		controlTable.setLedger_cons("PENDING");
+		controlTable.setAcct_cons("PENDING");
+		controlTable.setHol_check("PENDING");
+		controlTable.setMov_dac("PENDING");
+		controlTable.setMov_journal("PENDING");
+		
+
+		bGLS_CONTROL_TABLE_REP.save(controlTable);
+
+		response.put("status", "success");
+		return response;
+	}
+
+	
+
+	@RequestMapping(value = "holidayCheck", method = RequestMethod.POST)
+	@ResponseBody
+	public String holidayCheck(Model md,
+	                           @RequestParam("trndate") String trndate) throws java.text.ParseException {
+
+	    System.out.println("Incoming Holiday Check");
+	    System.out.println(trndate + " trndate");
+
+	    // ✅ Convert trndate string to java.util.Date
+	    Date TRANDATE = null;
+	    try {
+	        // Match the input format "dd-MM-yyyy"
+	        TRANDATE = new SimpleDateFormat("dd-MM-yyyy").parse(trndate);
+	    } catch (ParseException e) {
+	        e.printStackTrace();
+	        return "Invalid Date Format";
+	    }
+
+	    // Fetch first record from control table
+	    BGLS_Control_Table existingRecord1 = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+	    if (existingRecord1 != null) {
+	        existingRecord1.setHol_check("Completed");
+	        bGLS_CONTROL_TABLE_REP.save(existingRecord1);
+	        System.out.println("Updated Journal Cons: " + existingRecord1.getJournal_cons());
+	    } else {
+	        System.out.println("No record found in BGLS_Control_Table");
+	    }
+
+	    // Step 1: Check if holiday exists in HMT
+	    int holidayCount = bglsHolidayMasterRep.countByRecordDateAndDelFlg(TRANDATE);
+	    System.out.println("holidayCount: " + holidayCount);
+
+	    int cnt = holidayCount;
+
+	    // Step 2: If not found, check if weekend
+	    if (cnt == 0) {
+	        Calendar cal = Calendar.getInstance();
+	        cal.setTime(TRANDATE);
+	        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+
+	        if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+	            cnt = 1; // weekend = holiday
+	        }
+	        System.out.println("dayOfWeek"+dayOfWeek);
+	    }
+
+	    // Step 3: Return based on holiday/weekend
+	    if (cnt > 0) {
+	        System.out.println("Holiday/Weekend detected");
+	        return "Holiday/Weekend - Updation Done";
+	    } else {
+	        return "Working Day";
+	    }
+	}
+
+
+
+	@RequestMapping(value = "Parameteradd", method = { RequestMethod.GET, RequestMethod.POST })
+	public String redirectschemeadd1() {
+
 
 //		md.addAttribute("refdetails",reference_code_Rep.getRefById(id) );
 //		md.addAttribute("refType", reference_code_Rep.getReferenceType());
