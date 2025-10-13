@@ -2550,6 +2550,14 @@ public class BGLSNavigationController {
         model.addAttribute("getTotalCredit", tRAN_MAIN_TRM_WRK_REP.getTotalCredit(formattedDate));
         model.addAttribute("getTotalDebit", tRAN_MAIN_TRM_WRK_REP.getTotalDebit(formattedDate));
 
+        
+        model.addAttribute("Journal",bGLS_CONTROL_TABLE_REP.getJournal());
+       System.out.println("Journal"+bGLS_CONTROL_TABLE_REP.getJournal());
+        model.addAttribute("AccountLedger",bGLS_CONTROL_TABLE_REP.getAccountLedger());
+        model.addAttribute("HolidayCheck",bGLS_CONTROL_TABLE_REP.getHolidayCheck());
+        model.addAttribute("DAB",bGLS_CONTROL_TABLE_REP.getDAB());
+        model.addAttribute("ConsistencyCheck",bGLS_CONTROL_TABLE_REP.getConsistencyCheck());
+        model.addAttribute("MovementofTransaction",bGLS_CONTROL_TABLE_REP.getMovementofTransaction());
         return "Day_end_Operation.html";
     }
 

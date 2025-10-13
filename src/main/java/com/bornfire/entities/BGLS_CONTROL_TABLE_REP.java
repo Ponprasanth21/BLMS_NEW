@@ -36,4 +36,25 @@ public interface BGLS_CONTROL_TABLE_REP extends JpaRepository<BGLS_Control_Table
 	  // ✅ Get EndDate (previous date)
 	  @Query(value = "SELECT TO_CHAR(TO_DATE(:trandate, 'YYYY-MM-DD') - 1, 'DD-MM-YYYY') FROM DUAL", nativeQuery = true)
 	  String selectEndDate(@Param("trandate") Date trandate);
+	  
+	  @Query(value = "SELECT JOURNAL_CONS FROM BGLS_CONTROL_TABLE", nativeQuery = true)
+	  String getJournal();
+	  
+	  @Query(value = "SELECT LEDGER_CONS FROM BGLS_CONTROL_TABLE", nativeQuery = true)
+	  String getAccountLedger();
+	  
+	  @Query(value = "SELECT HOL_CHECK FROM BGLS_CONTROL_TABLE", nativeQuery = true)
+	  String getHolidayCheck();
+	  
+	  @Query(value = "SELECT MOV_DAC FROM BGLS_CONTROL_TABLE", nativeQuery = true)
+	  String getDAB();
+	  
+	  @Query(value = "SELECT ACCT_CONS FROM BGLS_CONTROL_TABLE", nativeQuery = true)
+	  String getConsistencyCheck();
+	  
+	  @Query(value = "SELECT MOV_JOURNAL FROM BGLS_CONTROL_TABLE", nativeQuery = true)
+	  String getMovementofTransaction();
+	  
+	
+	  
 }

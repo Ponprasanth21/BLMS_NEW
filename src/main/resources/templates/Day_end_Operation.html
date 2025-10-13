@@ -354,104 +354,48 @@
 	window.onload = setNextDate;
 </script>
 
+<script th:inline="javascript">
+$(document).ready(function () {
+    var journalStatus = /*[[${Journal}]]*/ '';
+    var accountLedger= /*[[${AccountLedger}]]*/ '';
+	var HolidayCheck= /*[[${HolidayCheck}]]*/ '';
+	var Dab= /*[[${DAB}]]*/ '';
+	var ConsistencyCheck= /*[[${ConsistencyCheck}]]*/ '';
+	var MovementofTransaction= /*[[${MovementofTransaction}]]*/ '';
+	
+	
+    console.log("Journal Status: " + journalStatus);
+
+    // If Journal status is COMPLETED, replace the Start button with a ✅ tick
+    if (journalStatus && journalStatus.toString().toUpperCase() === "COMPLETED") {
+        $('#td4').html('<span style="font-size: 20px; text-align:center;">&#9989;</span>');
+    }
+	
+	if (accountLedger && accountLedger.toString().toUpperCase() === "COMPLETED") {
+	       $('#td5').html('<span style="font-size: 20px; text-align:center;">&#9989;</span>');
+	   }
+	   
+	if (HolidayCheck && HolidayCheck.toString().toUpperCase() === "COMPLETED") {
+	   	       $('#td6').html('<span style="font-size: 20px; text-align:center;">&#9989;</span>');
+	 }
+		   
+     if (Dab && Dab.toString().toUpperCase() === "COMPLETED") {
+		   	   	       $('#td7').html('<span style="font-size: 20px; text-align:center;">&#9989;</span>');
+	}
+	
+	if (ConsistencyCheck && ConsistencyCheck.toString().toUpperCase() === "COMPLETED") {
+		   	   	       $('#td8').html('<span style="font-size: 20px; text-align:center;">&#9989;</span>');
+	}
+	
+	if (MovementofTransaction && MovementofTransaction.toString().toUpperCase() === "COMPLETED") {
+			   	   	       $('#td10').html('<span style="font-size: 20px; text-align:center;">&#9989;</span>');
+		}
+});
+</script>
+
+
 <script>
-	$(document)
-		.ready(
-			function () {
-
-				if ('<%=arl.get(0).toUpperCase()%>' == "COMPLETED"
-					&& '<%=arl.get(6).toUpperCase()%>' != "OPEN") {
-					$('#td1').remove();
-					$('#tr1')
-						.append(
-							'<td style="text-align: center;" id="td11">'
-							+ '<img class="img-thumbnail" src="/images/check.png" width="35" height="10" alt="User Pic">'
-							+ '</td>');
-				}
-
-				if ('<%=arl.get(1).toUpperCase()%>' == "COMPLETED"
-					&& '<%=arl.get(6).toUpperCase()%>' != "OPEN") {
-					$('#td2').remove();
-					$('#tr2')
-						.append(
-							'<td style="text-align: center;" id="td21"><img class="img-thumbnail" th:src="@{/images/check.png}" width="35" height="10" alt="User Pic"></td>');
-
-				}
-				if ('<%=arl.get(2).toUpperCase()%>' == "COMPLETED"
-					&& '<%=arl.get(6).toUpperCase()%>' != "OPEN") {
-					$('#td3').remove();
-					$('#tr3')
-						.append(
-							'<td style="text-align: center;" id="td31"><img class="img-thumbnail" th:src="@{/images/check.png}" width="35" height="10" alt="User Pic"></td>');
-
-				}
-				if ('<%=arl.get(3).toUpperCase()%>' == "COMPLETED"
-					&& '<%=arl.get(6).toUpperCase()%>' != "OPEN") {
-					$('#td4').remove();
-					$('#tr4')
-						.append(
-							'<td style="text-align: center;" id="td41"><img class="img-thumbnail" th:src="@{/images/check.png}" width="35" height="10" alt="User Pic"></td>');
-
-				}
-				if ('<%=arl.get(4).toUpperCase()%>' == "COMPLETED"
-					&& '<%=arl.get(6).toUpperCase()%>' != "OPEN") {
-					$('#td5').remove();
-					$('#tr5')
-						.append(
-							'<td style="text-align: center;" id="td51"><img class="img-thumbnail" th:src="@{/images/check.png}" width="35" height="10" alt="User Pic"></td>');
-
-				}
-				if ('<%=arl.get(5).toUpperCase()%>' == "COMPLETED"
-					&& '<%=arl.get(6).toUpperCase()%>' != "OPEN") {
-					$('#td6').remove();
-					$('#tr6')
-						.append(
-							'<td style="text-align: center;" id="td61"><img class="img-thumbnail" th:src="@{/images/check.png}" width="35" height="10" alt="User Pic"></td>');
-
-				}
-
-
-
-
-				$("#play4,#play5,#play6,#play7,#play8,#play9,#play10,#play11").click(function () {
-
-					$.ajax({
-						url: "/ASPIRA/checkControlStatus",
-						type: "GET",
-						dataType: "json",
-						success: function (statusRes) {
-							if (statusRes.allCompleted) {
-								// Prepare data
-								var currentDate = $("#current_date").val();
-								var nextDate = $("#nxtdate").val();
-								var user = $("#userid").val();
-
-								var values = {
-									"user": user,
-									"trndate": currentDate,
-									"nxtdate": nextDate
-								};
-
-								// Update all columns to PENDING
-								$.ajax({
-									url: "/ASPIRA/dcpupdate",
-									type: 'POST',
-									contentType: 'application/json',
-									data: JSON.stringify(values),
-									dataType: 'json',
-									success: function (res) {
-										console.log("All columns set to PENDING:", res);
-									}
-								});
-
-							} else {
-								console.log("Not all columns are COMPLETED");
-							}
-						}
-					});
-
-				});
-
+	
 
 
 
