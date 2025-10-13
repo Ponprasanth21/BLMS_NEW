@@ -337,6 +337,7 @@ public class BGLSRestController {
 
 			existingValue.setModify_user(user);
 			existingValue.setModify_flg("N");
+            existingValue.setDel_flg("N");
 			existingValue.setModify_time(new Date());
 
 			holidayMaster_Rep.save(existingValue);
@@ -346,6 +347,28 @@ public class BGLSRestController {
 		}
 
 	}
+
+    @RequestMapping(value = "delete_holiday_record", method = RequestMethod.POST)
+    @ResponseBody
+    public String deleteHoliday(HttpServletRequest rq, @RequestBody String id) {
+        String user = (String) rq.getSession().getAttribute("USERID");
+
+        Long list_id = Long.valueOf((String) id);
+        HolidayMaster_Entity existingValue = holidayMaster_Rep.findById(list_id).orElse(null);
+        if (existingValue != null) {
+
+            existingValue.setModify_user(user);
+            existingValue.setDel_flg("Y");
+            existingValue.setModify_flg("N");
+            existingValue.setModify_time(new Date());
+
+            holidayMaster_Rep.save(existingValue);
+            return "Deleted";
+        } else {
+            return "ID Not Found";
+        }
+
+    }
 
 	@RequestMapping(value = "employeeAdddemo", method = RequestMethod.POST)
 	@ResponseBody

@@ -874,13 +874,34 @@ p {
 		}
 
 		function getdata(a) {
-			var record_srl = a.getAttribute("data-attr");
-			location.href = 'organizationDetails?formmode=viewrecord&record_srl='+record_srl;
+			var id = a.getAttribute("data-attr");
+			location.href = 'organizationDetails?formmode=viewrecord&record_srl='+id;
 		}
 
 		function getmodifydata(a) {
-			var record_srl = a.getAttribute("data-attr");
-			location.href = 'organizationDetails?formmode=modifyholidayrecord&record_srl='+record_srl;
+			var id = a.getAttribute("data-attr");
+			location.href = 'organizationDetails?formmode=modifyholidayrecord&record_srl='+id;
+		}
+
+		function deleteFuntion(a){
+			if(confirm("Are Sure To Delete")){
+				var id = a.getAttribute("data-attr");
+				$.ajax({
+					url: './delete_holiday_record',
+					data: id,
+					type: 'POST',
+					contentType: false,
+					processData: false,
+					cache: false,
+					success: function (data) {
+						alert('Holiday Deleted Successfully');
+						ListHoliday();
+					},
+					error: function (xhr, status, error) {
+						alert('Error occurred : ' + error);
+					}
+				});
+			}
 		}
 	</script>
 
@@ -1360,16 +1381,16 @@ p {
 									<div class="col-sm-12 d-flex justify-content-end">
 										<!-- <button type="button" id="cal_filter_btn" class="btn-primary big-btn m-1">Filter</button> -->
 									</div>
-									<div class="col-sm-12">
-										<form class="p-0 border border-secondary calender_form col-sm-12" action="#" method="post" id="assosiateForm"
+									<div class="col-sm-12 p-0 pt-3">
+										<form class="p-0 border calender_form col-sm-12" action="#" method="post" id="assosiateForm"
 											autocomplete="off" style="overflow: auto;">
 											<table class="table table-bordered  table-hover table-sm"
 										style="margin-bottom: 0px; font-size: initial;" id="calendar_table">
 										<thead class="thead-light" style="top: 0px;position: sticky;">
 
 											<tr>
-												<th><input type="text" class="form-control font-weight-bold" id="year_th" placeholder="Year" disabled></th>
-												<th><input type="text" class="form-control font-weight-bold" id="month_th" placeholder="Month" disabled></th>
+												<th><input type="text" class="form-control font-weight-bold p-0" id="year_th" style="height: fit-content;" placeholder="Year" disabled></th>
+												<th><input type="text" class="form-control font-weight-bold p-0 " id="month_th" style="height: fit-content;" placeholder="Month" disabled></th>
 												<th style="text-align: center;" >Select</th>
 											</tr>
 										</thead>
@@ -1406,7 +1427,7 @@ p {
 											<div class="col-sm-1"></div>
 											<div class="col-sm-2">Location</div>
 											<div class="col-sm-2">
-												<input type="text" name="" id="" readonly value="MAURITIUS"
+												<input type="text" name="" id="" readonly value="KENYA"
 													class="form-control form-control-sm bg-white border border-dark" />
 											</div>
 										</div>
@@ -1570,7 +1591,7 @@ p {
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2">Location</div>
 									<div class="col-sm-2">
-										<input type="text" name="" id="calc_location" readonly value="MAURITIUS"
+										<input type="text" name="" id="calc_location" readonly value="KENYA"
 											class="form-control form-control-sm bg-white border border-dark" />
 									</div>
 								</div>
@@ -1859,14 +1880,14 @@ p {
 											<thead class="thead-light" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
 
 												<tr class="filters">
-													<th style="text-align: center;" ><input type="text" class="form-control font-weight-bold" placeholder="SRL NO" disabled></th>
+													<th style="text-align: center;" ><input type="text" class="form-control font-weight-bold"  style="text-align: center;" placeholder="SRL NO" disabled></th>
 													<th><input type="text" class="form-control font-weight-bold" placeholder="YEAR" disabled></th>
 													<th><input type="text" class="form-control font-weight-bold" placeholder="MONTH" disabled></th>
 													<th style="align-content: center;color: #6c757d;" >DATE</th>
 													<th style="text-align: center;" ><input type="text" style="text-align: center;" class="form-control font-weight-bold" placeholder="DAY" disabled></th>
 													<th><input type="text" class="form-control font-weight-bold" placeholder="DESCRIPTION" disabled></th>
 													<th style="align-content: center;color: #6c757d;" >REMARKS</th>
-													<th style="align-content: center;color: #6c757d;text-align: center;" >Select</th>
+													<!-- <th style="align-content: center;color: #6c757d;text-align: center;" >Select</th> -->
 												</tr>
 											</thead>
 											<tbody id="placelist">
@@ -1881,7 +1902,7 @@ p {
 													<td style="text-align: center;" th:text="${#dates.format(chartacc?.record_date, 'dd')}"></td>
 													<td th:text="${chartacc?.holiday_desc}"></td>
 													<td th:text="${chartacc?.holiday_remarks}"></td>
-													<td style="text-align: center;" ><input type="radio" class="holidya_view" onclick="getmodifydata(this)" th:attr="data-attr=${chartacc?.id}" ></td>
+													<!-- <td style="text-align: center;" ><input type="radio" class="holidya_view" onclick="getmodifydata(this)" th:attr="data-attr=${chartacc?.id}" ></td> -->
 
 
 												</tr>
@@ -2036,7 +2057,10 @@ p {
 						</div>
 						<div class="card-footer text-center " style="background-color: #e9ecef">
 							<button class="btn-primary big-btn" onclick="Home();">Home</button>
+							
 							<button class="btn-primary big-btn" th:if="${formmode == 'modifyholidayrecord'}"  type="button" onclick="addHolidaySubmit();">Submit</button>
+							<button class="btn-primary big-btn" th:if="${formmode == 'viewrecord'}"  type="button" onclick="getmodifydata(this)" th:attr="data-attr=${singlerecord?.id}" >Modify</button>
+							<button class="btn-primary big-btn" th:if="${formmode == 'viewrecord'}"  type="button" onclick="deleteFuntion(this)" th:attr="data-attr=${singlerecord?.id}" >Delete</button>
 							<button class="btn-primary big-btn" onclick="Back();">Back</button>
 						</div>
 					</div>
