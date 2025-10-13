@@ -4383,7 +4383,7 @@ public class BGLSRestController {
 		generalLedgerRep.updateNoAcctOpened();
 		generalLedgerRep.updateNoAcctClosed();
 
-		return "Successful";
+		return "GL Consolidation Successful";
 	}
 
 	@GetMapping("getAccountName")
