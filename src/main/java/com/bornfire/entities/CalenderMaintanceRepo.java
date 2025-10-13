@@ -8,7 +8,7 @@ import java.util.List;
 @Repository
 public interface CalenderMaintanceRepo extends JpaRepository<CalenderMaintanceEntity, Integer> {
 
-    @Query(value = "SELECT * FROM cal_master ORDER BY year DESC, TO_DATE(month, 'Mon') ASC", nativeQuery = true)
+    @Query(value = "SELECT * FROM cal_master WHERE YEAR = to_char(sysdate, 'YYYY') ORDER BY year DESC, TO_DATE(month, 'Mon') ASC", nativeQuery = true)
     List<CalenderMaintanceEntity> getAllCalenderMaintanceList();
 
 }

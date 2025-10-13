@@ -1344,19 +1344,21 @@ p {
 							<div class="tab mt-2"
 								style="padding: 4px 4px; position: relative; display: flex; justify-content: space-around; margin-top: 10px; width: 100%; height: 43px">
 								<!-- Submodule Tab buttons for Calendar Maintenance -->
-								<button class="subtablinks" onclick="openSubTab(event, 'tabCalendarMaster')"
-									style="font-size: 16px; padding: 4px 8px; height: 32px;">Calendar
+								<button class="subtablinks tab_active active" data-tab="calendar_master" onclick="openSubTab(event, 'tabCalendarMaster')"
+									style="font-size: 16px; padding: 4px 8px; height: 32px;margin: auto;">Calendar
 									Master</button>
-								<button class="subtablinks" onclick="openSubTab(event, 'tabHolidayMaster')"
-									style="font-size: 16px; padding: 4px 8px; height: 32px;">Holiday
+								<button class="subtablinks tab_active" data-tab="holiday_master" onclick="openSubTab(event, 'tabHolidayMaster')"
+									style="font-size: 16px; padding: 4px 8px; height: 32px;margin: auto;">Holiday
 									Master</button>
+								<button type="button" id="cal_filter_btn" class="p-0" 
+								style="color: white;width: 50px;background: #007bff;margin-left: auto;">Filter</button>
 							</div>
 
 
 							<div id="tabCalendarMaster" class="subtabcontent" style="display: block;">
 								<div class="col-sm-12">
 									<div class="col-sm-12 d-flex justify-content-end">
-										<button type="button" id="cal_filter_btn" class="btn-primary big-btn m-1">Filter</button>
+										<!-- <button type="button" id="cal_filter_btn" class="btn-primary big-btn m-1">Filter</button> -->
 									</div>
 									<div class="col-sm-12">
 										<form class="p-0 border border-secondary calender_form col-sm-12" action="#" method="post" id="assosiateForm"
@@ -1368,14 +1370,14 @@ p {
 											<tr>
 												<th><input type="text" class="form-control font-weight-bold" id="year_th" placeholder="Year" disabled></th>
 												<th><input type="text" class="form-control font-weight-bold" id="month_th" placeholder="Month" disabled></th>
-												<th>Select</th>
+												<th style="text-align: center;" >Select</th>
 											</tr>
 										</thead>
 										<tbody>
 											<tr th:each="calender_list : ${calender_list}" >
 												<td class="year_tr" th:text="${calender_list.year}" ></td>
 												<td class="month_tr" th:text="${calender_list.month}" ></td>
-												<td> <input type="radio" th:attr="data-year=${calender_list.year}, data-month=${calender_list.month}" class="calender_view"> </td>
+												<td style="text-align: center;" > <input type="radio" th:attr="data-year=${calender_list.year}, data-month=${calender_list.month}" class="calender_view" > </td>
 											</tr>
 										</tbody>
 									</table>
@@ -1413,7 +1415,7 @@ p {
 											<div class="col-sm-1"></div>
 											<div class="col-sm-2">Calendar Year</div>
 											<div class="col-sm-2">
-												<input type="text" name="" id="" readonly
+												<input type="text" name="" id="" readonly th:value="${#dates.year(#dates.createNow())}"
 													class="form-control form-control-sm bg-white border border-dark" />
 											</div>
 											<div class="col-sm-1"></div>
@@ -1482,7 +1484,7 @@ p {
 									<button class="btn-primary big-btn" onclick="Home();">Home</button>
 									<button class="btn-primary big-btn" onclick="addHoliday()">Add</button>
 									<!-- <button class="btn-primary big-btn" onclick="UploadHoliday()">Upload</button> -->
-									<button class="btn-primary big-btn" onclick="ModifyHoliday();">Modify</button>
+									<!-- <button class="btn-primary big-btn" onclick="ModifyHoliday();">Modify</button> -->
 									<button class="btn-primary big-btn" onclick="ListHoliday()">List</button>
 									<button class="btn-primary big-btn" onclick="Back();">Back</button>
 
@@ -1578,20 +1580,20 @@ p {
 									<div class="col-sm-2">Calendar Year</div>
 									<div class="col-sm-2">
 										<select class="form-control form-control-sm bg-white border border-dark" id="calc_year">
-											<option value="2017">2017</option>
-											<option value="2018">2018</option>
-											<option value="2019">2019</option>
-											<option value="2020">2020</option>
-											<option value="2021">2021</option>
-											<option value="2022">2022</option>
-											<option value="2023">2023</option>
-											<option value="2024">2024</option>
-											<option value="2025">2025</option>
-											<option value="2026">2026</option>
-											<option value="2027">2027</option>
-											<option value="2028">2028</option>
-											<option value="2029">2029</option>
-											<option value="2030">2030</option>
+											<option th:selected="${#dates.year(#dates.createNow()) == 2017}" value="2017">2017</option>
+											<option th:selected="${#dates.year(#dates.createNow()) == 2018}" value="2018">2018</option>
+											<option th:selected="${#dates.year(#dates.createNow()) == 2019}" value="2019">2019</option>
+											<option th:selected="${#dates.year(#dates.createNow()) == 2020}" value="2020">2020</option>
+											<option th:selected="${#dates.year(#dates.createNow()) == 2021}" value="2021">2021</option>
+											<option th:selected="${#dates.year(#dates.createNow()) == 2022}" value="2022">2022</option>
+											<option th:selected="${#dates.year(#dates.createNow()) == 2023}" value="2023">2023</option>
+											<option th:selected="${#dates.year(#dates.createNow()) == 2024}" value="2024">2024</option>
+											<option th:selected="${#dates.year(#dates.createNow()) == 2025}" value="2025">2025</option>
+											<option th:selected="${#dates.year(#dates.createNow()) == 2026}" value="2026">2026</option>
+											<option th:selected="${#dates.year(#dates.createNow()) == 2027}" value="2027">2027</option>
+											<option th:selected="${#dates.year(#dates.createNow()) == 2028}" value="2028">2028</option>
+											<option th:selected="${#dates.year(#dates.createNow()) == 2029}" value="2029">2029</option>
+											<option th:selected="${#dates.year(#dates.createNow()) == 2030}" value="2030">2030</option>
 										</select>
 									</div>
 									<div class="col-sm-1"></div>
@@ -1857,30 +1859,29 @@ p {
 											<thead class="thead-light" style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
 
 												<tr class="filters">
-													<th><input type="text" class="form-control font-weight-bold" placeholder="SRL NO" disabled></th>
+													<th style="text-align: center;" ><input type="text" class="form-control font-weight-bold" placeholder="SRL NO" disabled></th>
 													<th><input type="text" class="form-control font-weight-bold" placeholder="YEAR" disabled></th>
 													<th><input type="text" class="form-control font-weight-bold" placeholder="MONTH" disabled></th>
 													<th style="align-content: center;color: #6c757d;" >DATE</th>
-													<th><input type="text" class="form-control font-weight-bold" placeholder="DAY" disabled></th>
+													<th style="text-align: center;" ><input type="text" style="text-align: center;" class="form-control font-weight-bold" placeholder="DAY" disabled></th>
 													<th><input type="text" class="form-control font-weight-bold" placeholder="DESCRIPTION" disabled></th>
 													<th style="align-content: center;color: #6c757d;" >REMARKS</th>
-													<th style="align-content: center;color: #6c757d;" >Select</th>
+													<th style="align-content: center;color: #6c757d;text-align: center;" >Select</th>
 												</tr>
 											</thead>
 											<tbody id="placelist">
 												<tr th:each="chartacc : ${Listofvalues}">
 
 													<td class="hover-underline" onclick="getdata(this)"
-														style="color: #007bff;" th:attr="data-attr=${chartacc?.id}"
+														style="color: #007bff;text-align: center;" th:attr="data-attr=${chartacc?.id}"
 														th:text="${chartacc?.id}"></td>
 													<td th:text="${chartacc?.cal_year}"></td>
 													<td th:text="${chartacc?.cal_month}"></td>
-													<td th:text="${#dates.format(chartacc?.record_date, 'dd-MM-yyyy')}">
-													</td>
-													<td th:text="${#dates.format(chartacc?.record_date, 'dd')}"></td>
+													<td th:text="${#dates.format(chartacc?.record_date, 'dd-MM-yyyy')}"></td>
+													<td style="text-align: center;" th:text="${#dates.format(chartacc?.record_date, 'dd')}"></td>
 													<td th:text="${chartacc?.holiday_desc}"></td>
 													<td th:text="${chartacc?.holiday_remarks}"></td>
-													<td><input type="radio" class="holidya_view" onclick="getmodifydata(this)" th:attr="data-attr=${chartacc?.id}" ></td>
+													<td style="text-align: center;" ><input type="radio" class="holidya_view" onclick="getmodifydata(this)" th:attr="data-attr=${chartacc?.id}" ></td>
 
 
 												</tr>
@@ -3248,6 +3249,16 @@ p {
 	</div>
 </body>
 <script>
+
+	$(document).on("click",".tab_active",function(){
+		var value = $(this).data('tab') 
+		if(value == 'calendar_master'){
+			$("#cal_filter_btn").show();
+		}else{
+			$("#cal_filter_btn").hide();
+		}
+	})
+
 
 	function initDatepicker() {
 		var year = parseInt($("#calc_year").val());
