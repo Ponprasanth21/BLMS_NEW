@@ -219,42 +219,23 @@ input:hover+.password-info {
 </style>
 </head>
 <script>
-var trandate = /*[[${TRANDATE}]]*/'1970-01-01'; // Default if null
-document.addEventListener('DOMContentLoaded', function() {
-    var dateOfLoanInput = document.getElementById('date_of_loan');
-    var depositInput = document.getElementById('deposit_periods');
-
-    // Get today's date in yyyy-MM-dd format
-    var today = new Date();
-    var yyyy = today.getFullYear();
-    var mm = ('0' + (today.getMonth() + 1)).slice(-2);
-    var dd = ('0' + today.getDate()).slice(-2);
-    var todayStr = `${yyyy}-${mm}-${dd}`;
-
-    // Apply max date = today
-    if (dateOfLoanInput) {
-        dateOfLoanInput.setAttribute('max', todayStr);
-        dateOfLoanInput.value = todayStr; // optional: prefill with today
-    }
-
-    if (depositInput) {
-        depositInput.setAttribute('max', todayStr);
-    }
-
-    // Prevent manually entering future dates
-    function blockFutureDate(input) {
-        input.addEventListener('change', function() {
-            var selectedDate = new Date(this.value);
-            var currentDate = new Date(todayStr);
-            if (selectedDate > currentDate) {
-                alert('Future dates are not allowed!');
-                this.value = ''; // clear invalid date
+$(function() {
+    $("#Fromdate").datepicker({
+        dateFormat: 'dd/mm/yy',   // Display format
+        maxDate: new Date(),       // Prevent future dates
+        changeMonth: true,         // Month dropdown
+        changeYear: true,          // Year dropdown
+        showAnim: 'fadeIn',        // Optional: animation effect
+        showOn: 'focus',           // Open datepicker when input is focused
+        onSelect: function(selectedDate) {
+            if (!selectedDate) {
+                alert("Enter From date");
+                return;
             }
-        });
-    }
-
-    if (dateOfLoanInput) blockFutureDate(dateOfLoanInput);
-    if (depositInput) blockFutureDate(depositInput);
+            // Redirect immediately when a date is selected
+            location.href = './serviceactivities?Fromdate=' + selectedDate + '&ListFlg=Y';
+        }
+    });
 });
 function home() {
 	location.href = 'Dashboard'
@@ -280,12 +261,14 @@ function back() {
                      id="modheadtitle"
                      style="height: 50px; background-color: #e9ecef; font-size: 1.1rem;">
                     <h6 style="font-size: 1.2rem;">Business Activity Details - List</h6>
-                    <div class="d-flex align-items-center" style="white-space: nowrap;">
-                   <input type="date" id="date_of_loan" onchange="leasedate()"
-							class="form-control form-control-sm bg-white border border-dark pl-2 mr-2"
-							autocomplete="off" />
-							</div>
-                </div>
+						<div class="d-flex justify-content-end align-items-center"
+							style="white-space: nowrap;">
+							<input type="text" id="Fromdate" th:value="${Fromdate}"
+								class="form-control form-control-sm bg-white border border-dark me-2"
+								style="width: 100px;" autocomplete="off"
+								placeholder="Select Date" />
+						</div>
+					</div>
 
                 <!-- Table -->
                <div class="card-body"
@@ -336,6 +319,11 @@ function back() {
 									<td
 										th:text="${auditdata?.remarks != null ? auditdata?.remarks.toUpperCase() : ''}"></td>
 								</tr>
+									<!-- ⚠️ Show this row if list is empty -->
+										<tr th:if="${AuditList == null or #lists.isEmpty(AuditList)}">
+											<td colspan="11" class="text-center text-danger fw-bold">
+												No Data Available</td>
+										</tr>
                         </tbody>
                     </table>
                 </div>
