@@ -421,7 +421,7 @@ public class BGLSNavigationController {
 
             md.addAttribute("formmode", formmode);
 
-            // md.addAttribute("currentDate", new Date());
+             md.addAttribute("currentDate", new Date());
             md.addAttribute("user", user);
             md.addAttribute("getEmployeeDetails", employee_Profile_Rep.getEmployeeVeifiedList());
 
@@ -2560,6 +2560,8 @@ public class BGLSNavigationController {
         model.addAttribute("MovementofTransaction",bGLS_CONTROL_TABLE_REP.getMovementofTransaction());
         model.addAttribute("GlConsolidation",bGLS_CONTROL_TABLE_REP.getGlConsolidation());
         model.addAttribute("InterestDemand",bGLS_CONTROL_TABLE_REP.getInterestDemand());
+        model.addAttribute("FeeDemand",bGLS_CONTROL_TABLE_REP.getFeeDemand());
+        model.addAttribute("Penalty",bGLS_CONTROL_TABLE_REP.getPenalty());
         model.addAttribute("dcpstatus",bGLS_CONTROL_TABLE_REP.getDcpStatus());
         System.out.println("dcpstatus"+bGLS_CONTROL_TABLE_REP.getDcpStatus());
         return "Day_end_Operation.html";

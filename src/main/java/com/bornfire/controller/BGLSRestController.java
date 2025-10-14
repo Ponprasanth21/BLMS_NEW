@@ -4404,13 +4404,12 @@ public class BGLSRestController {
 			HttpServletRequest request) {
 
 		String user = (String) request.getSession().getAttribute("USERID");
-		
-		
 		BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
 
         if (existingRecord != null) {
         	try {
-    			tranMainRep.runInterestDemand(MIG_DATE, user);
+        		System.out.println("Procedure Run for interest demand");
+//    			tranMainRep.runInterestDemand(MIG_DATE, user);
     		}catch(Exception e) {
     			System.out.println(e);
     		}
@@ -4420,10 +4419,64 @@ public class BGLSRestController {
             System.out.println("Updated intrest demand generation: " + existingRecord.getInterest_demand_gen());
         } else {
             System.out.println("No record found in BGLS_Control_Table");
+            return "Intrest Demand Generation Failed";
         }
 
 		return "Intrest Demand Generation Successful";
 	}
+
+	@RequestMapping(value = "feedemandgeneration", method = { RequestMethod.GET, RequestMethod.POST })
+	public String feedemandgeneration(@RequestParam(required = false) String MIG_DATE, Model model,
+			HttpServletRequest request) {
+
+		String user = (String) request.getSession().getAttribute("USERID");
+		BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+
+        if (existingRecord != null) {
+        	try {
+        		System.out.println("Procedure Run for fee demand");
+//    			tranMainRep.runFeeDemand(MIG_DATE, user);
+    		}catch(Exception e) {
+    			System.out.println(e);
+    		}
+            System.out.println("Past fee demand generation : " + existingRecord.getFee_demand_gen());
+            existingRecord.setFee_demand_gen("Completed");
+            bGLS_CONTROL_TABLE_REP.save(existingRecord);
+            System.out.println("Updated fee demand generation: " + existingRecord.getFee_demand_gen());
+        } else {
+            System.out.println("No record found in BGLS_Control_Table");
+            return "fee Demand Generation Failed";
+        }
+
+		return "fee Demand Generation Successful";
+	}
+
+	@RequestMapping(value = "penaltycheck", method = { RequestMethod.GET, RequestMethod.POST })
+	public String penaltycheck(@RequestParam(required = false) String MIG_DATE, Model model,
+			HttpServletRequest request) {
+
+		String user = (String) request.getSession().getAttribute("USERID");
+		BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+
+        if (existingRecord != null) {
+        	try {
+        		System.out.println("Procedure Run for penalty check");
+//    			tranMainRep.runPenalty(MIG_DATE, user);
+    		}catch(Exception e) {
+    			System.out.println(e);
+    		}
+            System.out.println("Past intrest demand generation : " + existingRecord.getPenalty());
+            existingRecord.setPenalty("Completed");
+            bGLS_CONTROL_TABLE_REP.save(existingRecord);
+            System.out.println("Updated Penalty : " + existingRecord.getPenalty());
+        } else {
+            System.out.println("No record found in BGLS_Control_Table");
+            return "Penalty check Failed";
+        }
+
+		return "Penalty check Successful";
+	}
+
 
 	@GetMapping("getAccountName")
 	public List<Lease_Loan_Master_Entity> getAccountName(@RequestParam(required = false) String accountNum) {

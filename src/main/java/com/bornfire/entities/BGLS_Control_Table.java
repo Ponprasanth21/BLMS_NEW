@@ -37,11 +37,33 @@ public class BGLS_Control_Table {
 	private String	dcp_status;
 	private String gl_con;
 	private String interest_demand_gen;
+	private String fee_demand_gen;
+	private String penalty;
 	public String getOrg_name() {
 		return org_name;
 	}
 	
 	
+	public String getFee_demand_gen() {
+		return fee_demand_gen;
+	}
+
+
+	public void setFee_demand_gen(String fee_demand_gen) {
+		this.fee_demand_gen = fee_demand_gen;
+	}
+
+
+	public String getPenalty() {
+		return penalty;
+	}
+
+
+	public void setPenalty(String penalty) {
+		this.penalty = penalty;
+	}
+
+
 	public String getInterest_demand_gen() {
 		return interest_demand_gen;
 	}
