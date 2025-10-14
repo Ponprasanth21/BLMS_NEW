@@ -99,6 +99,7 @@ import com.bornfire.entities.Td_defn_Repo;
 import com.bornfire.entities.Td_defn_table;
 import com.bornfire.entities.UserProfile;
 import com.bornfire.entities.UserProfileRep;
+import com.bornfire.services.AuditConfigure;
 import com.bornfire.services.CustomerDetailsService;
 import com.bornfire.services.CustomerRequestService;
 import com.bornfire.services.LeaseLoanService;
@@ -185,6 +186,9 @@ public class CustOnboardinController {
 	
 	@Autowired
 	CLIENT_MASTER_REPO client_master_repo;
+	
+	@Autowired
+	AuditConfigure audit;
 
 	// Start API
 	/// for get session
@@ -4304,7 +4308,6 @@ public class CustOnboardinController {
 			} else {
 				System.out.println("No signature file provided for row " + i);
 			}
-			BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
 			String recno = request.getRec_no().toString();
  
 			CustomerRequest up = bACP_CUS_PROFILE_REPO.findByref_norec(request.getAppl_ref_no(), recno);
@@ -4321,31 +4324,9 @@ public class CustOnboardinController {
 			 
 		    	bacp_Signature_masterRepo.save(valueget);
 			//for audit
-		    Long auditID = bglsBusinessTable_Rep.getAuditRefUUID();
 			Optional<UserProfile> up1 = userProfileRep.findById(userId);
 			UserProfile user = up1.get();
-
-			LocalDateTime currentDateTime = LocalDateTime.now();
-			Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-			audit.setAudit_date(new Date());
-			audit.setEntry_time(dateValue);
-			audit.setEntry_user(user.getUserid());
-
-			audit.setRemarks("Customer Added Successfully");
-			audit.setAudit_table("BACP_CUS_PROFILE");
-			audit.setAudit_screen("CUSTOMER ONBOARDING");
-			audit.setEvent_id(user.getUserid());
-			audit.setEvent_name(user.getUsername());
-			// audit.setModi_details("Login Successfully");
-			UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-			String auth_user_val = auth_user.getAuth_user();
-			Date auth_user_date = auth_user.getAuth_time();
-			audit.setAuth_user(auth_user_val);
-			audit.setAuth_time(auth_user_date);
-			audit.setAudit_ref_no(auditID.toString());
-			audit.setField_name("-");
-
-			// bglsBusinessTable_Rep.save(audit);
+			audit.insertServiceAudit(user.getUserid(), user.getUsername(), "CUSTOMER ONBOARDING ADD", "ADDED SUCCESSFULLY","BACP_CUS_PROFILE", "CUSTOMER ONBOARDING");
 		}
 
 		return ResponseEntity.ok("Form submitted successfully.");

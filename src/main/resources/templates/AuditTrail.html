@@ -1,242 +1,224 @@
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	th:fragment="summary">
-
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="/ASPIRA/js/jquery.min.js"></script>
 <script src="/ASPIRA/js/jquery-ui.min.js"></script>
 <style>
+	
+	.filterable .filters input[disabled]::-webkit-input-placeholder {
+		color: #333;
+	}
 
+	.filterable .filters input[disabled]::-moz-placeholder {
+		color: #333;
+	}
 
-.h2, h2 {
-	font-size: 2rem;
-	background-color: #555;
-	color: white;
+	.filterable .filters input[disabled]:-ms-input-placeholder {
+		color: #333;
+	}
+body {
+	font-size: 0.8rem;
 }
+
 .btn {
 	line-height: 0.5rem;
 }
 
-.tag-btn {
-	font-size: 10px;
-	text-transform: uppercase;
-	font-weight: bold;
-	color: #fff;
-	cursor: pointer;
-	z-index: 5;
-	position: relative;
-	padding: 10px;
-	margin: 0;
-	line-height: 5px;
-	-webkit-transition: all 0.2s ease-in-out;
-	-moz-transition: all 0.2s ease-in-out;
-	-o-transition: all 0.2s ease-in-out;
-	-ms-transition: all 0.2s ease-in-out;
-	transition: all 0.2s ease-in-out;
-	background-color: #F08080;
+.table-bordered td, .table-bordered th {
+	font-size: smaller;
+}
+.filterable .filters input[disabled] {
+	background-color: transparent;
 	border: none;
-	color: #fff;
+	cursor: auto;
 	box-shadow: none;
+	padding: 0;
+	height: auto;
 }
-
-.pagebut {
-	margin-top: 1%;
-	/*  width: 58%;  */
-	padding: 1% 1%;
-	background-color: #2e455d;
-	color: white;
-}
-
-select {
-	width: 150px;
-	margin: 10px;
-}
-
-td {
-	background-color: #f8f7ff;
-}
-
-select:focus {
-	min-width: 150px;
-	width: auto;
-}
-
-#hidden_div {
-	display: none;
-}
-
-table th {
-	color: white;
-	background-color: #2e455deb;
-	font-size: small;
-}
-
-table td {
-	font-size: small;
-}
-
 .container-manager {
-	padding-right: 43px;
+	width: 83.5%;
+	padding-right: 15px;
 	padding-left: 15px;
 	margin-right: auto;
-	margin-left: 18.3%;
-	margin-top: 90px;
+	margin-left: 17.3%;
+	margin-top: 80px;
+	margin-top: 80px;
 }
 
-input[type="text"] {
-	line-height: 15px;
-	font-size: x-small;
-	height: 25px;
+.table .thead-light th {
+	color: #495057;
+	background-color: #e9ecef;
+	border-color: #dee2e6;
+	width: 23px;
 }
 
-.dataTables_empty {
-	color: #be3232;
+.scroll {
+	max-height: 60vh;
+	overflow-y: scroll;
+	overflow-x: hidden;
 }
 
-#overlay {
-	position: fixed;
-	top: 0;
-	z-index: 100;
-	width: 100%;
-	height: 100%;
+.tablinks {
+	background-color: #f1f1f1;
+	/* Default background color */
+	border: none;
+	color: black;
+	padding: 10px 20px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	transition: background-color 0.3s;
+}
+
+.tablinks.active {
+	background-color: #2084a9;
+	color: white;
+}
+
+.tab {
+	overflow: hidden;
+	border: 1px solid #ccc;
+	background-color: #f2f2f2;
+}
+
+.tab button {
+	background-color: inherit;
+	float: left;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 14px 56px;
+	transition: 0.3s;
+	font-size: 17px;
+}
+
+.tab button:hover {
+	background-color: #ddd;
+}
+
+.tabcontent {
 	display: none;
-	background: rgba(0, 0, 0, 0.6);
+	padding: 0px;
+	border-top: 1px solid #ccc;
 }
 
-.cv-spinner {
+.active {
+	background-color: #2084a9;
+}
+
+#myPieChart {
+	width: 100px;
+	height: 100px;
+}
+</style>
+<style>
+.modal {
+	display: none;
+	/* Hidden by default */
+	position: absolute;
+	/* Stay in place */
+	z-index: 1;
+	/* Location of the box */
+	left: 0;
+	top: 0;
+	width: 100%;
+	/* Full width */
 	height: 100%;
+	/* Full height */
+	overflow: auto;
+	/* Enable scroll if needed */
+	background-color: rgb(0, 0, 0);
+	/* Fallback color */
+	background-color: rgba(0, 0, 0, 0.4);
+	/* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+	background-color: #fefefe;
+	margin: auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 100%;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0
+		rgba(0, 0, 0, 0.19);
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 0.4s;
+	animation-name: animatetop;
+	animation-duration: 0.4s
+}
+
+.modal-pass {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 40%;
+	height: 25%;
+	margin-left: 400PX;
+	margin-right: auto;
+	border-radius: 10px;
+	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+	font-family: Arial, sans-serif;
+}
+
+.close {
+	color: red;
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.close:hover, .close:focus {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.table-responsive {
+	max-height: 650px;
+	overflow-y: auto;
+	font-size: 15px;
+}
+</style>
+<style>
+.password-info {
+	visibility: hidden;
+	width: 320px;
+	background-color: #333;
+	color: #fff;
+	text-align: left;
+	border-radius: 10px;
+	padding: 10px;
+	position: absolute;
+	z-index: 1;
+	top: calc(100% + 10px);
+	left: 50%;
+	transform: translateX(-50%);
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+input:hover+.password-info {
+	visibility: visible;
+	opacity: 0.8;
+}
+
+.radio-container {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	height: 8vh; /* Keeps the radio buttons centered vertically */
 }
-
-.spinner {
-	/* width: 40px;
-	height: 40px;
-	border: 4px #00343d solid;
-	border-top: 4px #181818 solid;
-	border-radius: 50%;
-	animation: sp-anime 0.8s infinite linear; */
-	
-}
-
-table.dataTable thead th, table.dataTable tfoot th {
-	font-weight: normal;
-}
-
-table.table .thead-light th {
-	font-size: 13px;
-	border-color: #d4d7da;
-}
-
-@
-keyframes sp-anime { 100% {
-	transform: rotate(360deg);
-}
-
-}
-
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
-	-webkit-appearance: none;
-	margin: 0;
-}
-
-.dataTables_scrollBody {
-	overflow: unset !important;
+.big-btn {
+  font-size: 16px;
 }
 </style>
 </head>
-
-
 <script>
-	$(function() {
-		// Initialize datepickers
-		$("#Fromdate").datepicker({
-			dateFormat : 'dd/mm/yy',
-			maxDate : new Date(), // Set max date to current date
-			onClose : function(selectedDate) {
-				// Set the min date of to_date to the selected from_date
-				//$("#Todate").datepicker("option", "minDate", selectedDate);
-
-				var Fromdate = document.getElementById("Fromdate").value;
-				//var Todate = document.getElementById("Todate").value;
-				if (Fromdate == "") {
-					alert("Enter From date");
-				} else {
-					location.href = 'IPSAuditInquiry?Fromdate=' + Fromdate;
-				}
-			}
-		});
-		/*$("#Todate").datepicker({
-			dateFormat: 'dd/mm/yy',
-			maxDate: new Date(), // Set max date to current date
-			onClose: function (selectedDate) {
-				// Set the max date of from_date to the selected to_date
-				$("#Fromdate").datepicker("option", "maxDate", selectedDate);
-
-				var Fromdate = document
-					.getElementById("Fromdate").value;
-				var Todate = document.getElementById("Todate").value;
-				if (Fromdate == "") {
-					alert("Enter From date");
-				} else {
-					location.href = 'IPSAuditInquiry?Fromdate='
-						+ Fromdate + '&Todate=' + Todate;
-				}
-			}
-		});*/
-	});
-
-	function formatDate1(dateString) {
-		var dateParts = dateString.split("/");
-		var day = dateParts[0];
-		var month = parseInt(dateParts[1], 10); // Convert month to integer
-		var year = dateParts[2];
-		var monthNames = [ "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL",
-				"AUG", "SEP", "OCT", "NOV", "DEC" ];
-		var monthName = monthNames[month - 1];
-		return day + "-" + monthName + "-" + year;
-	}
-
-	function getUserlist(mode, num, maxpage) {
-
-		var n = parseInt(num);
-		var max = parseInt(maxpage);
-		var Fromdate = document.getElementById("Fromdate").value;
-		var Todate = document.getElementById("Todate").value;
-
-		var Callurl = 'IPSAudit?Fromdate=' + Fromdate + '&Todate=' + Todate;
-
-		switch (mode) {
-		case "nextpage":
-			n = n + 1;
-			if (n > max) {
-				break;
-			}
-			Callurl = Callurl + "&page=" + n;
-
-			break;
-		case "prevpage":
-			n = n - 1;
-			if (n < 0) {
-				break;
-			}
-			Callurl = Callurl + "&page=" + n;
-
-			break;
-		case "givenpage":
-			n = parseInt($("#pageno").val()) - 1;
-			if (n > max || n < 0) {
-				break;
-			}
-			Callurl = Callurl + "&page=" + n;
-
-		}
-
-		location.href = Callurl;
-	}
 	function home() {
 		location.href = 'Dashboard'
 	}
@@ -244,120 +226,12 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 	function back() {
 		window.history.back();
 	}
-	/* 	function running(){
-	 var Fromdate = document.getElementById("Fromdate").value;
-	 var Todate = document.getElementById("Todate").value;
-	 if (Fromdate == "") {
-	 alert("Enter From date");
-	 }else if (Todate == "") {
-	 alert("Enter To date");
-	 }else {
-	 location.href = 'BAMLAuditInquiry?Fromdate='
-	 + Fromdate + '&Todate=' + Todate;
-	 }
-	 } */
-
-	$(document).ready(function() {
-		$('#usertable').DataTable({
-			"destroy" : true,
-			"scrollCollapse" : true,
-			"paging" : true,
-			"autoWidth" : false,
-			"ordering" : true,
-			"searching" : false,
-			"pageLength" : 10,
-			"lengthChange" : false,
-		});
-	});
-
-	/*function downloadPdfExcel(a) {
-	var filetype = a.getAttribute("data-fileType");
-	var from_date=document.getElementById("Fromdate").value;
-	var to_date=document.getElementById("Todate").value;
-	location.href = './AuditDownload?' + '&filetype=' + filetype+'&from_date='+formatDate(from_date)+'&to_date='+formatDate(to_date);
-	}*/
-
-	function downloadPdfExcel(a) {
-		var from_date = document.getElementById("Fromdate").value;
-		var to_date = document.getElementById("Todate").value;
-		if (!from_date || !to_date) {
-			alert("Please fill the From Date and To Date");
-			return;
-		}
-		var formatted_from_date = formatDate1(from_date);
-		var formatted_to_date = formatDate1(to_date);
-		var filetype = a.getAttribute("data-fileType");
-		var count = null;
-		$.ajax({
-			url : 'DownloadAuditDateChecking',
-			type : 'GET',
-			data : {
-				from_date : formatted_from_date,
-				to_date : formatted_to_date
-			},
-			success : function(response) {
-				console.log(response);
-				count = response;
-				if (count > 0) {
-					var url = './AuditDownload?filetype=' + filetype
-							+ '&from_date=' + formatted_from_date + '&to_date='
-							+ formatted_to_date;
-					window.location.href = url;
-				} else {
-					alert("There is no Transaction in these between Dates.");
-				}
-			},
-			error : function(xhr, status, error) {
-				alert("An error occurred while processing the request.");
-				console.error(xhr, status, error);
-			}
-		});
-	}
-
-	function toggleTab(tab) {
-		const depositContent = document.getElementById('deposit');
-		const loanContent = document.getElementById('loan');
-
-		if (tab === 'deposit') {
-			// Toggle the User Activity tab
-			if (depositContent.style.display === 'block') {
-				depositContent.style.display = 'none'; // Close if already open
-				document.getElementById('depositaccountflows').classList
-						.remove('active');
-			} else {
-				depositContent.style.display = 'block'; // Open
-				loanContent.style.display = 'none'; // Close the other tab
-				document.getElementById('loanaccountflows').classList
-						.remove('active');
-				document.getElementById('depositaccountflows').classList
-						.add('active');
-			}
-		} else if (tab === 'loan') {
-			// Toggle the Business Activity tab
-			if (loanContent.style.display === 'block') {
-				loanContent.style.display = 'none'; // Close if already open
-				document.getElementById('loanaccountflows').classList
-						.remove('active');
-			} else {
-				loanContent.style.display = 'block'; // Open
-				depositContent.style.display = 'none'; // Close the other tab
-				document.getElementById('depositaccountflows').classList
-						.remove('active');
-				document.getElementById('loanaccountflows').classList
-						.add('active');
-			}
-		}
-	}
-	
 	function activityvalue() {
 		location.href = 'useractivities?formmode=list';
 	}
-
 	function businessvalue() {
-		location.href = 'OperationLogsval?formmode=list';
+		location.href = 'serviceactivities?formmode=list';
 	}
-
-
 </script>
 <title>BGLS</title>
 
@@ -369,13 +243,15 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 	</div>
 
 	<div class="container-manager">
+	<div class="row">
+			<div class="col-sm-11 ml-5 mt-2">
 	
 		<div th:if="${formmode}=='list'">
 			<div class="card">
 
 				<div class="card-header" id="modheadtitle ml-4"
 					style="font-size: 1.2rem; color: black;"  >
-					<h4>AUDIT TRAIL - DETAILS</h4>
+					<h6 style="font-size: 1.2rem;">AUDIT TRAIL - DETAILS</h6>
 				</div>
 
 				<label></label>
@@ -467,16 +343,16 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 				    </nav>
 				</div>
 
-				<div class="card-footer text-center" style="background-color: #e9ecef">
-					<button type="button" class="btn btn-xs btn-primary" id="btnHome"
-						onclick="home();">Home</button>
-					<button type="button" class="btn btn-xs btn-primary" id="btnBack"
-						onclick="back();">Back</button>
+				<div class="card-footer text-center"
+					style="background-color: #e9ecef">
+					<button class="btn-primary big-btn" id="btnHome" onclick="home();">Home</button>
+					<button class="btn-primary big-btn" id="btnBack" onclick="back();">Back</button>
 				</div>
 
 			</div>
 		</div>
-
+</div>
+</div>
 	</div>
 </body>
 

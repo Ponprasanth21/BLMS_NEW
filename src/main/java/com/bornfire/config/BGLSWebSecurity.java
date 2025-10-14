@@ -53,6 +53,7 @@ import com.bornfire.entities.BGLS_CONTROL_TABLE_REP;
 import com.bornfire.entities.BGLS_Control_Table;
 import com.bornfire.entities.UserProfile;
 import com.bornfire.entities.UserProfileRep;
+import com.bornfire.services.AuditConfigure;
 import com.bornfire.services.LoginServices;
 
 @Configuration
@@ -85,6 +86,9 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	BGLS_CONTROL_TABLE_REP bGLS_CONTROL_TABLE_REP;
+	
+	@Autowired
+	AuditConfigure audit;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -296,29 +300,8 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
 				request.getSession().setAttribute("SCREEN_ACCESS_BALANCE_SHEETS", (access_role != null && access_role.getBalance_sheets() != null ) ? access_role.getBalance_sheets() : 'N' );
                 request.getSession().setAttribute("SCREEN_ACCESS_CREDIT_FACILITY_REPORT", (access_role != null && access_role.getCredit_facility_report() != null ) ? access_role.getCredit_facility_report() : 'N' );
                 request.getSession().setAttribute("SCREEN_ACCESS_END_OF_MONTH_REPORT", (access_role != null && access_role.getEnd_of_month_report() != null ) ? access_role.getEnd_of_month_report() : 'N' );
-
 				
-				BGLSAuditTable audit = new BGLSAuditTable();
-				LocalDateTime currentDateTime = LocalDateTime.now();
-				Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-				audit.setAudit_date(new Date());
-				audit.setEntry_time(dateValue);
-				audit.setEntry_user(user.getUserid());
-				audit.setFunc_code("LOGIN");
-				audit.setRemarks("Login Successfully");
-				audit.setAudit_table("BGLSUSERPROFILE");
-				audit.setAudit_screen("LOGIN");
-				audit.setEvent_id(user.getUserid());
-				audit.setEvent_name(user.getUsername());
-				audit.setModi_details("Login Successfully");
-				UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-				String auth_user_val = auth_user.getAuth_user();
-				Date auth_user_date = auth_user.getAuth_time();
-				audit.setAuth_user(auth_user_val);
-				audit.setAuth_time(auth_user_date);
-				audit.setAudit_ref_no(auditID.toString());
-				bGLSAuditTable_Rep.save(audit);
-
+				audit.insertUserAudit(user.getUserid(), user.getUsername(), "LOGIN", "LOGGED IN SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "LOGIN ");
 				response.sendRedirect("Dashboard");
 			}
 
@@ -336,26 +319,8 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
 					Authentication authentication) throws IOException, ServletException {
 				Optional<UserProfile> up = userProfileRep.findById(authentication.getName());
 
-				UserProfile user = up.get();
-				BGLSAuditTable audit = new BGLSAuditTable();
-				String Number1 = sequence.generateRequestUUId();
-				audit.setAudit_date(new Date());
-				audit.setEntry_time(new Date());
-				audit.setEntry_user(user.getUserid());
-				audit.setFunc_code("LOGOUT");
-				audit.setRemarks("Logout Successfully");
-				audit.setAudit_table("BGLSUSERPROFILE");
-				audit.setAudit_screen("LOGOUT");
-				audit.setEvent_id(user.getUserid());
-				audit.setEvent_name(user.getUsername());
-				UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-				String auth_user_val = auth_user.getAuth_user();
-				Date auth_user_date = auth_user.getAuth_time();
-				audit.setAuth_user(auth_user_val);
-				audit.setAuth_time(auth_user_date);
-				audit.setModi_details("Logout Successfully");
-				audit.setAudit_ref_no(Number1.toString());
-				bGLSAuditTable_Rep.save(audit);
+				UserProfile user = up.get();	
+				audit.insertUserAudit(user.getUserid(), user.getUsername(), "LOGOUT", "LOGGED OUT SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "LOGOUT ");
 				response.sendRedirect("login?logout");
 			}
 		};

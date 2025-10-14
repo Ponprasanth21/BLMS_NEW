@@ -1,13 +1,14 @@
 package com.bornfire.controller;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -27,14 +28,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import javax.transaction.Transactional;
 
-import com.bornfire.entities.*;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,16 +55,95 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bornfire.services.AdminOperServices;
-import com.bornfire.services.BGLS_Inventeryservice;
-import com.bornfire.services.DateChangeService;
-import com.bornfire.services.LoginServices;
-import com.bornfire.services.MultipleTransactionService;
-import com.ibm.icu.text.SimpleDateFormat;
+import com.bornfire.entities.Access_Role_Repo;
+import com.bornfire.entities.Account_Ledger_Entity;
+import com.bornfire.entities.Account_Ledger_Rep;
+import com.bornfire.entities.Assosiate_Profile_Entity;
+import com.bornfire.entities.Assosiate_Profile_Repo;
+import com.bornfire.entities.BACP_CUS_PROFILE_REPO;
+import com.bornfire.entities.BGLSAuditTable_Rep;
+import com.bornfire.entities.BGLSBusinessTable_Entity;
+import com.bornfire.entities.BGLSBusinessTable_Rep;
+import com.bornfire.entities.BGLS_BAMAssetFlows_Entity;
+import com.bornfire.entities.BGLS_BAMAssetFlows_Rep;
+import com.bornfire.entities.BGLS_BAMInventorymaster;
+import com.bornfire.entities.BGLS_BAMInventryMastRep;
+import com.bornfire.entities.BGLS_Bamcatcodemaintainrep;
+import com.bornfire.entities.BGLS_Bamcategorycodemain_entity;
+import com.bornfire.entities.BGLS_CONTROL_TABLE_REP;
+import com.bornfire.entities.BGLS_Control_Table;
+import com.bornfire.entities.BGLS_Journal_History;
+import com.bornfire.entities.BGLS_Journal_History_Rep;
+import com.bornfire.entities.BGLS_LMS_SCHEMES_TABLE_ENTITY;
+import com.bornfire.entities.BGLS_LMS_SCHEMES_TABLE_REPO;
+import com.bornfire.entities.BGLS_ORG_BRANCH_ENTITY;
+import com.bornfire.entities.BGLS_ORG_BRANCH_REPO;
+import com.bornfire.entities.Baj_Work_Repo;
+import com.bornfire.entities.BamDocumentMasRep;
+import com.bornfire.entities.Bamdocumentmanager;
+import com.bornfire.entities.BglsLmsSchemesRepo;
+import com.bornfire.entities.Budget_Maintanance_Repo;
+import com.bornfire.entities.CLIENT_MASTER_ENTITY;
+import com.bornfire.entities.CLIENT_MASTER_REPO;
+import com.bornfire.entities.COAGL_Rep;
+import com.bornfire.entities.CalenderMaintanceEntity;
+import com.bornfire.entities.CalenderMaintanceRepo;
+import com.bornfire.entities.CandEvalFormEntity;
+import com.bornfire.entities.CandEvalFormRep;
+import com.bornfire.entities.Chart_Acc_Entity;
+import com.bornfire.entities.Chart_Acc_Rep;
+import com.bornfire.entities.Collateral_management_Entity;
+import com.bornfire.entities.Collateral_management_Repo;
+import com.bornfire.entities.Collection_Process_Repo;
+import com.bornfire.entities.CustomerRequest;
+import com.bornfire.entities.DAB_Entity;
+import com.bornfire.entities.DAB_Repo;
+import com.bornfire.entities.DMD_TABLE;
+import com.bornfire.entities.DMD_TABLE_REPO;
+import com.bornfire.entities.DepositEntity;
+import com.bornfire.entities.DepositRep;
+import com.bornfire.entities.Employee_Profile;
+import com.bornfire.entities.Employee_Profile_Rep;
+import com.bornfire.entities.GeneralLedgerEntity;
+import com.bornfire.entities.GeneralLedgerRep;
+import com.bornfire.entities.GeneralLedgerWork_Entity;
+import com.bornfire.entities.GeneralLedgerWork_Rep;
+import com.bornfire.entities.HolidayMaster_Entity;
+import com.bornfire.entities.HolidayMaster_Rep;
+import com.bornfire.entities.LOAN_ACT_MST_ENTITY;
+import com.bornfire.entities.LOAN_ACT_MST_REPO;
+import com.bornfire.entities.LOAN_REPAYMENT_REPO;
+import com.bornfire.entities.Lease_Loan_Master_Entity;
+import com.bornfire.entities.Lease_Loan_Master_Repo;
+import com.bornfire.entities.Lease_Loan_Work_Repo;
+import com.bornfire.entities.MULTIPLE_TRANSACTION_ENTITY;
+import com.bornfire.entities.MULTIPLE_TRANSACTION_REPO;
+import com.bornfire.entities.NoticeDetailsGeneral0Rep;
+import com.bornfire.entities.NoticeDetailsPayment0Rep;
+import com.bornfire.entities.NoticeDetailsSlabDetails0Rep;
+import com.bornfire.entities.Organization_Branch_Rep;
+import com.bornfire.entities.Organization_Entity;
+import com.bornfire.entities.Organization_Repo;
+import com.bornfire.entities.ParticipatingBanks_Repo;
+import com.bornfire.entities.PerdiemMasterRep;
+import com.bornfire.entities.Principle_and_intrest_shedule_Entity;
+import com.bornfire.entities.Principle_and_intrest_shedule_Rep;
+import com.bornfire.entities.ProfileManagerRep1;
+import com.bornfire.entities.Reference_code_Rep;
+import com.bornfire.entities.SL_TRAN_ENTITY_REP;
+import com.bornfire.entities.Salary_Pay_Rep;
+import com.bornfire.entities.TRAN_MAIN_TRM_WRK_ENTITY;
+import com.bornfire.entities.TRAN_MAIN_TRM_WRK_REP;
+import com.bornfire.entities.Td_defn_Repo;
+import com.bornfire.entities.Test_Collection_Entity;
+import com.bornfire.entities.UserProfile;
+import com.bornfire.entities.UserProfileRep;
+import com.bornfire.entities.paystructureentity;
+import com.bornfire.entities.paystructurerep;
+import com.bornfire.services.*;
 import com.monitorjbl.xlsx.exceptions.ParseException;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.repo.InputStreamResource;
 
 @Controller
 @ConfigurationProperties("default")
@@ -157,6 +235,9 @@ public class BGLSNavigationController {
 
     @Autowired
     AdminOperServices adminOperServices;
+    
+    @Autowired
+    AuditConfigure AuidtConfigure;
 
     @Autowired
     BamDocumentMasRep BAMDocmastrep;
@@ -272,6 +353,9 @@ public class BGLSNavigationController {
 
     @Autowired
     TRAN_MAIN_TRM_WRK_REP TRAN_MAIN_TRM_WRK_REP;
+    
+    @Autowired
+	AuditConfigure audit;
 
     public String getPagesize() {
         return pagesize;
@@ -2158,31 +2242,102 @@ public class BGLSNavigationController {
     }
 
     /* pon prasanth */
+	@RequestMapping(value = "useractivities", method = { RequestMethod.GET, RequestMethod.POST })
+	public String useractivities(@RequestParam(required = false) String formmode,
+			@RequestParam(required = false) String Fromdate, @RequestParam(required = false) String Todate,
+			@RequestParam(required = false) String ListFlg, Model md, HttpServletRequest req)
+			throws java.text.ParseException {
 
-    @RequestMapping(value = "useractivities", method = { RequestMethod.GET, RequestMethod.POST })
-    public String useractivities(@RequestParam(required = false) String formmode, Model model, String cust_id,
-                                 @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") Date Fromdate,
-                                 HttpServletRequest request) {
+		String role_id = (String) req.getSession().getAttribute("ROLEID");
+		md.addAttribute("IPSRoleMenu", adminOperServices.getRoleMenu(role_id));
+		md.addAttribute("PdfViewer", "UserAudit");
 
-        // Get today's date
-        LocalDate today = LocalDate.now();
+		SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat dbFormat = new SimpleDateFormat("dd-MMM-yyyy");
 
-        // Determine the date to use: either Fromdate or today
-        Date fromDateToUse = (Fromdate != null) ? Fromdate
-                : Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
+		Calendar cal = Calendar.getInstance();
+		String currentDateDisplay = inputFormat.format(cal.getTime());
+		String currentDateDB = dbFormat.format(cal.getTime());
 
-        // Pass the date to the view
-        model.addAttribute("Fromdate", new SimpleDateFormat("dd-MM-yyyy").format(fromDateToUse));
+		if (formmode == null || formmode.equals("list")) {
+			md.addAttribute("formmode", "list");
+			try {
+				if ("Y".equalsIgnoreCase(ListFlg) && Fromdate != null && !Fromdate.isEmpty()) {
+					Date fromDateParsed = inputFormat.parse(Fromdate);
+					String formattedFromDate = dbFormat.format(fromDateParsed);
 
-        if (formmode == null || formmode.equals("list")) {
-            model.addAttribute("formmode", "list");
+					md.addAttribute("Fromdate", Fromdate);
+					md.addAttribute("AuditList", AuidtConfigure.getauditListLocal(dbFormat.parse(formattedFromDate)));
+				} else {
+					md.addAttribute("Fromdate", currentDateDisplay);
+					md.addAttribute("AuditList", AuidtConfigure.getauditListLocal(dbFormat.parse(currentDateDB)));
+				}
+			} catch (ParseException e) {
+				md.addAttribute("error", "Invalid date format. Please use dd/MM/yyyy.");
+				return "IPSAudit";
+			}
+		}
 
-            // Fetch the audit list based on the determined date
-            model.addAttribute("AuditList", bGLSAuditTable_Rep.getauditListLocalvals(fromDateToUse));
-        }
+		md.addAttribute("menuname", "User Activity Audits");
+		md.addAttribute("auditflag", "auditflag");
+		md.addAttribute("formmode", "list");
 
-        return "AuditTrailValues";
-    }
+		return "AuditTrailValues";
+	}
+
+	/* pon prasanth */
+	@RequestMapping(value = "serviceactivities", method = { RequestMethod.GET, RequestMethod.POST })
+	public String serviceactivities(@RequestParam(required = false) String Fromdate,
+			@RequestParam(required = false) String formmode, @RequestParam(required = false) String userid,
+			@RequestParam(required = false) Optional<Integer> page,
+			@RequestParam(value = "size", required = false) Optional<Integer> size,
+			@RequestParam(required = false) String ListFlg, Model md, HttpServletRequest req)
+			throws java.text.ParseException {
+
+		String roleId = (String) req.getSession().getAttribute("ROLEID");
+		md.addAttribute("IPSRoleMenu", adminOperServices.getRoleMenu(roleId));
+		md.addAttribute("PdfViewer", "ServiceAudit");
+
+		DateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
+		DateFormat displayFormat = new SimpleDateFormat("dd-MMM-yyyy");
+
+		Calendar cal = Calendar.getInstance();
+		String currentDateStr = inputFormat.format(cal.getTime());
+		String currentFormattedDateStr = displayFormat.format(cal.getTime());
+
+		Date targetDate;
+
+		// ✅ Handle formmode and ListFlg safely
+		if (formmode == null || formmode.equalsIgnoreCase("list")) {
+			if ("Y".equalsIgnoreCase(ListFlg) && Fromdate != null && !Fromdate.trim().isEmpty()) {
+				try {
+					Date fromDateParsed = inputFormat.parse(Fromdate);
+					String formattedFromDate = displayFormat.format(fromDateParsed);
+					targetDate = displayFormat.parse(formattedFromDate);
+
+					md.addAttribute("Fromdate", Fromdate);
+					md.addAttribute("AuditList", AuidtConfigure.getAuditInquries(targetDate));
+
+				} catch (ParseException e) {
+					md.addAttribute("error", "Invalid From Date format. Please use dd/MM/yyyy.");
+					md.addAttribute("Fromdate", currentDateStr);
+					md.addAttribute("AuditList",
+							AuidtConfigure.getAuditInquries(displayFormat.parse(currentFormattedDateStr)));
+				}
+			} else {
+				// Default to current date if no ListFlg or Fromdate provided
+				md.addAttribute("Fromdate", currentDateStr);
+				md.addAttribute("AuditList",
+						AuidtConfigure.getAuditInquries(displayFormat.parse(currentFormattedDateStr)));
+			}
+		}
+		md.addAttribute("menuname", "Service Audits");
+		md.addAttribute("auditflag", "auditflag");
+		md.addAttribute("formmode", "list");
+
+		return "BusinessTrail";
+	}
+
 
     //suriya
     @RequestMapping(value = "dscr", method = { RequestMethod.GET, RequestMethod.POST })
@@ -2304,38 +2459,6 @@ public class BGLSNavigationController {
         collateral_management_Repo.save(collateral_management_Entity);
         System.out.println(customer_id); // Changed to user_id
         return "Added Successfully";
-    }
-
-    /* pon prasanth */
-    @RequestMapping(value = "OperationLogsval", method = { RequestMethod.GET, RequestMethod.POST })
-    public String OperationLogsval(@RequestParam(required = false) String formmode, Model model, String cust_id,
-                                   @RequestParam(required = false) @DateTimeFormat(pattern = "dd-MM-yyyy") Date Fromdate,
-                                   HttpServletRequest request) {
-
-        // LocalDate today = LocalDate.now(); // Get today's date
-        // Date fromDateToUse; // Declare a variable for the date to use
-
-        LocalDate today = LocalDate.now();
-        Date fromDateToUse = (Fromdate != null) ? Fromdate
-                : Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-        model.addAttribute("Fromdate", new SimpleDateFormat("dd-MM-yyyy").format(fromDateToUse));
-
-        // if (Fromdate != null) {
-        // If Fromdate has a value, use it
-        // fromDateToUse = Fromdate;
-        // } else {
-        // If Fromdate has no value, use today's date
-        // fromDateToUse =
-        // Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        // }
-        if (formmode == null || formmode.equals("list")) {
-            model.addAttribute("formmode", "list");
-            model.addAttribute("AuditList", AdminOperServices.getauditListLocal(fromDateToUse));
-
-        }
-
-        return "BusinessTrail";
     }
 
     /* pon prasanth */
@@ -3011,31 +3134,10 @@ public class BGLSNavigationController {
             // Add to the list of saved records
             savedRecords.add(newLedgerEntity);
         }
-        BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-
-        Long auditID = bglsBusinessTable_Rep.getAuditRefUUID();
         Optional<UserProfile> up1 = userProfileRep.findById(userid);
         UserProfile user = up1.get();
-
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-        audit.setAudit_date(new Date());
-        audit.setEntry_time(dateValue);
-        audit.setEntry_user(user.getUserid());
-        audit.setFunc_code("GL CODE");
-        audit.setRemarks("Records uploaded and saved successfully");
-        audit.setAudit_table("BGLS_GL_WORK");
-        audit.setAudit_screen("GENERAL LEDGER");
-        audit.setEvent_id(user.getUserid());
-        audit.setEvent_name(user.getUsername());
-        // audit.setModi_details("Login Successfully");
-        UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-        String auth_user_val = auth_user.getAuth_user();
-        Date auth_user_date = auth_user.getAuth_time();
-        audit.setAuth_user(auth_user_val);
-        audit.setAuth_time(auth_user_date);
-        audit.setAudit_ref_no(auditID.toString());
-        audit.setField_name("-");
+        
+		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "GENERAL LEDGER UPLOAD", "UPLOADED SUCCESSFULLY","BGLS_GL_WORK", "GENERAL LEDGER");
         // Return a response message or the list of saved records
         return "Records uploaded and saved successfully.";
 

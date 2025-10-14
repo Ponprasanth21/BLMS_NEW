@@ -75,6 +75,9 @@ public class CustomerRequestService {
 
 	@Autowired
 	BGLSBusinessTable_Rep bglsBusinessTable_Rep;
+	
+	@Autowired
+	AuditConfigure audit1;
 
 	private static final Logger logger = LoggerFactory.getLogger(LoginServices.class);
 
@@ -250,31 +253,9 @@ public class CustomerRequestService {
 			// Save minimal data
 			minimalDataRepository.save(as);
 			// FOR AUIDT
-			Long auditID = bglsBusinessTable_Rep.getAuditRefUUID();
 			Optional<UserProfile> up1 = userProfileRep.findById(userId);
 			UserProfile user = up1.get();
-
-			LocalDateTime currentDateTime = LocalDateTime.now();
-			Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-			audit.setAudit_date(new Date());
-			audit.setEntry_time(dateValue);
-			audit.setEntry_user(user.getUserid());
-
-			audit.setRemarks("Customer Added Successfully");
-			audit.setAudit_table("BACP_CUS_PROFILE");
-			audit.setAudit_screen("CUSTOMER ONBOARDING");
-			audit.setEvent_id(user.getUserid());
-			audit.setEvent_name(user.getUsername());
-			// audit.setModi_details("Login Successfully");
-			UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-			String auth_user_val = auth_user.getAuth_user();
-			Date auth_user_date = auth_user.getAuth_time();
-			audit.setAuth_user(auth_user_val);
-			audit.setAuth_time(auth_user_date);
-			audit.setAudit_ref_no(auditID.toString());
-			audit.setField_name("-");
-
-			// bglsBusinessTable_Rep.save(audit);
+			audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "CUSTOMER ONBOARDING ADD", "ADDED SUCCESSFULLY","BACP_CUS_PROFILE", "CUSTOMER ONBOARDING");
 
 			msg = "Personal Detail Uploaded Successfully";
 
@@ -350,31 +331,9 @@ public class CustomerRequestService {
 			// Save minimal data
 			minimalDataRepository.save(as);
 			// FOR AUIDT
-			Long auditID = bglsBusinessTable_Rep.getAuditRefUUID();
 			Optional<UserProfile> up1 = userProfileRep.findById(userId);
 			UserProfile user = up1.get();
-
-			LocalDateTime currentDateTime = LocalDateTime.now();
-			Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-			audit.setAudit_date(new Date());
-			audit.setEntry_time(dateValue);
-			audit.setEntry_user(user.getUserid());
-
-			audit.setRemarks("Customer Added Successfully");
-			audit.setAudit_table("BACP_CUS_PROFILE");
-			audit.setAudit_screen("CUSTOMER ONBOARDING");
-			audit.setEvent_id(user.getUserid());
-			audit.setEvent_name(user.getUsername());
-			// audit.setModi_details("Login Successfully");
-			UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-			String auth_user_val = auth_user.getAuth_user();
-			Date auth_user_date = auth_user.getAuth_time();
-			audit.setAuth_user(auth_user_val);
-			audit.setAuth_time(auth_user_date);
-			audit.setAudit_ref_no(auditID.toString());
-			audit.setField_name("-");
-
-			// bglsBusinessTable_Rep.save(audit);
+			audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "BACP_CUS_PROFILE ADD", "ADDED SUCCESSFULLY","BACP_CUS_PROFILE", "BACP_CUS_PROFILE");
 
 			msg = "Personal Detail Uploaded Successfully";
 
@@ -597,6 +556,10 @@ public class CustomerRequestService {
 					PO.setTotal_balance(total_balance);
 
 					generalLedgerWork_Rep.save(PO);
+					
+					Optional<UserProfile> up1 = userProfileRep.findById(userid);
+					UserProfile user = up1.get();
+					audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "GENERAL LEDGER UPLOAD", "UPLOADED SUCCESSFULLY","BGLS_GL_WORK", "GENERAL LEDGER");
 
 					msg = "Excel Data Uploaded Successfully";
 				}
@@ -718,6 +681,10 @@ public class CustomerRequestService {
 					PO.setNic_number(nic_no);
 
 					collection_Process_Repo.save(PO);
+					
+					Optional<UserProfile> up1 = userProfileRep.findById(userid);
+					UserProfile user = up1.get();
+					audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "COLLECTION PROCESS UPLOAD", "UPLOADED SUCCESSFULLY","COLLECTION_PROCESS", "COLLECTION PROCESS");
 
 					msg = "Excel Data Uploaded Successfully";
 				}
@@ -844,6 +811,10 @@ public class CustomerRequestService {
 					PO.setRecord_status(record_status);
 
 					holidayMaster_Rep.save(PO);
+					
+					Optional<UserProfile> up1 = userProfileRep.findById(userid);
+					UserProfile user = up1.get();
+					audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "HOLIDAY MASTER UPLOAD", "UPLOADED SUCCESSFULLY","HOLIDAY_MASTER", "HOLIDAY MASTER");
 
 					msg = "Excel Data Uploaded Successfully";
 				}

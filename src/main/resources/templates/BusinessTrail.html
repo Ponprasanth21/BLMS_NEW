@@ -1,498 +1,354 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org" th:fragment="summary">
-
+	xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css"
-	th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/jquery-ui/1.12.1/jquery-ui.min.css"
-	th:href="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.css}">
-<link rel="stylesheet" type="text/css"
-	href="/webjars/datatables/1.10.19/css/jquery.dataTables.min.css"
-	th:href="@{/webjars/datatables/1.10.19/css/jquery.dataTables.min.css}">
-
-<script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
-	th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
-<script src="/webjars/popper.js/1.14.7/umd/popper.min.js"
-	th:src="@{/webjars/popper.js/1.14.7/umd/popper.min.js}"></script>
-<script src="/webjars/jquery/3.4.1/jquery.min.js"
-	th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
-<script src="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"
-	th:src="@{/webjars/jquery-ui/1.12.1/jquery-ui.min.js}"></script>
-
-<script src="/webjars/jquery-form/4.2.2/jquery.form.min.js"
-	th:src="@{/webjars/jquery-form/4.2.2/jquery.form.min.js}"></script>
-
-<script src="/webjars/jquery-validation/1.19.0/jquery.validate.min.js"
-	th:src="@{/webjars/jquery-validation/1.19.0/jquery.validate.min.js}"></script>
-
-<script src="/webjars/datatables/1.10.19/js/jquery.dataTables.min.js"
-	th:src="@{/webjars/datatables/1.10.19/js/jquery.dataTables.min.js}"></script>
-<script
-	src="/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js"
-	th:src="@{/webjars/datatables/1.10.19/js/dataTables.bootstrap4.min.js}"></script>
-
-
-<script src="js/bootstrap411.js"></script>
-
-
+<script src="/ASPIRA/js/jquery.min.js"></script>
+<script src="/ASPIRA/js/jquery-ui.min.js"></script>
 <style>
+	
+	.filterable .filters input[disabled]::-webkit-input-placeholder {
+		color: #333;
+	}
 
+	.filterable .filters input[disabled]::-moz-placeholder {
+		color: #333;
+	}
 
-.h2, h2 {
-	font-size: 2rem;
-	background-color: #555;
-	color: white;
+	.filterable .filters input[disabled]:-ms-input-placeholder {
+		color: #333;
+	}
+body {
+	font-size: 0.8rem;
 }
 
-.tag-btn {
-	font-size: 10px;
-	text-transform: uppercase;
-	font-weight: bold;
-	color: #fff;
-	cursor: pointer;
-	z-index: 5;
-	position: relative;
-	padding: 10px;
-	margin: 0;
-	line-height: 5px;
-	-webkit-transition: all 0.2s ease-in-out;
-	-moz-transition: all 0.2s ease-in-out;
-	-o-transition: all 0.2s ease-in-out;
-	-ms-transition: all 0.2s ease-in-out;
-	transition: all 0.2s ease-in-out;
-	background-color: #F08080;
-	border: none;
-	color: #fff;
-	box-shadow: none;
-}
-
-.pagebut {
-	margin-top: 1%;
-	/*  width: 58%;  */
-	padding: 1% 1%;
-	background-color: #2e455d;
-	color: white;
-}
-
-select {
-	width: 150px;
-	margin: 10px;
-}
-
-td {
-	background-color: #f8f7ff;
-}
-
-select:focus {
-	min-width: 150px;
-	width: auto;
-}
-
-#hidden_div {
-	display: none;
-}
-
- 
-
-table td {
-	font-size: small;
-}
-
-table.dataTable thead th, table.dataTable tfoot th {
-	font-weight: normal;
-}
-
-table.table .thead-light th {
-	font-size: 13px;
-	border-color: #d4d7da;
-}
 .btn {
 	line-height: 0.5rem;
 }
 
+.table-bordered td, .table-bordered th {
+	font-size: smaller;
+}
+.filterable .filters input[disabled] {
+	background-color: transparent;
+	border: none;
+	cursor: auto;
+	box-shadow: none;
+	padding: 0;
+	height: auto;
+}
 .container-manager {
-	padding-right: 43px;
+	width: 83.5%;
+	padding-right: 15px;
 	padding-left: 15px;
 	margin-right: auto;
-	margin-left: 18.3%;
-	margin-top: 90px;
+	margin-left: 17.3%;
+	margin-top: 80px;
+	margin-top: 80px;
 }
 
-input[type="text"] {
-	line-height: 15px;
-	font-size: x-small;
-	height: 25px;
+.table .thead-light th {
+	color: #495057;
+	background-color: #e9ecef;
+	border-color: #dee2e6;
+	width: 23px;
 }
 
-.dataTables_empty {
-	color: #be3232;
+.scroll {
+	max-height: 60vh;
+	overflow-y: scroll;
+	overflow-x: hidden;
 }
 
-#overlay {
-	position: fixed;
-	top: 0;
-	z-index: 100;
-	width: 100%;
-	height: 100%;
+.tablinks {
+	background-color: #f1f1f1;
+	/* Default background color */
+	border: none;
+	color: black;
+	padding: 10px 20px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	transition: background-color 0.3s;
+}
+
+.tablinks.active {
+	background-color: #2084a9;
+	color: white;
+}
+
+.tab {
+	overflow: hidden;
+	border: 1px solid #ccc;
+	background-color: #f2f2f2;
+}
+
+.tab button {
+	background-color: inherit;
+	float: left;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 14px 56px;
+	transition: 0.3s;
+	font-size: 17px;
+}
+
+.tab button:hover {
+	background-color: #ddd;
+}
+
+.tabcontent {
 	display: none;
-	background: rgba(0, 0, 0, 0.6);
+	padding: 0px;
+	border-top: 1px solid #ccc;
 }
 
-.cv-spinner {
+.active {
+	background-color: #2084a9;
+}
+
+#myPieChart {
+	width: 100px;
+	height: 100px;
+}
+</style>
+<style>
+.modal {
+	display: none;
+	/* Hidden by default */
+	position: absolute;
+	/* Stay in place */
+	z-index: 1;
+	/* Location of the box */
+	left: 0;
+	top: 0;
+	width: 100%;
+	/* Full width */
 	height: 100%;
+	/* Full height */
+	overflow: auto;
+	/* Enable scroll if needed */
+	background-color: rgb(0, 0, 0);
+	/* Fallback color */
+	background-color: rgba(0, 0, 0, 0.4);
+	/* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+	background-color: #fefefe;
+	margin: auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 100%;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0
+		rgba(0, 0, 0, 0.19);
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 0.4s;
+	animation-name: animatetop;
+	animation-duration: 0.4s
+}
+
+.modal-pass {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 40%;
+	height: 25%;
+	margin-left: 400PX;
+	margin-right: auto;
+	border-radius: 10px;
+	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+	font-family: Arial, sans-serif;
+}
+
+.close {
+	color: red;
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.close:hover, .close:focus {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.table-responsive {
+	max-height: 650px;
+	overflow-y: auto;
+	font-size: 15px;
+}
+</style>
+<style>
+.password-info {
+	visibility: hidden;
+	width: 320px;
+	background-color: #333;
+	color: #fff;
+	text-align: left;
+	border-radius: 10px;
+	padding: 10px;
+	position: absolute;
+	z-index: 1;
+	top: calc(100% + 10px);
+	left: 50%;
+	transform: translateX(-50%);
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+input:hover+.password-info {
+	visibility: visible;
+	opacity: 0.8;
+}
+
+.radio-container {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	height: 8vh; /* Keeps the radio buttons centered vertically */
 }
-
-.spinner {
-	/* width: 40px;
-	height: 40px;
-	border: 4px #00343d solid;
-	border-top: 4px #181818 solid;
-	border-radius: 50%;
-	animation: sp-anime 0.8s infinite linear; */
-	
+.big-btn {
+  font-size: 16px;
 }
-
-
-
-
-
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
-	-webkit-appearance: none;
-	margin: 0;
-}
-
-/*.dataTables_scrollBody {
- overflow: unset !important;
-}*/
 </style>
 </head>
-
-
 <script>
-$(function() {
-	// Initialize datepickers
-	$("#Fromdate").datepicker({
-		dateFormat : 'dd-mm-yy',
-		maxDate : new Date(), // Set max date to current date
-		onClose : function(selectedDate) {
-			// Set the min date of to_date to the selected from_date
-			//$("#Todate").datepicker("option", "minDate", selectedDate);
+var trandate = /*[[${TRANDATE}]]*/'1970-01-01'; // Default if null
+document.addEventListener('DOMContentLoaded', function() {
+    var dateOfLoanInput = document.getElementById('date_of_loan');
+    var depositInput = document.getElementById('deposit_periods');
 
-			var Fromdate = document.getElementById("Fromdate").value;
-			
-			if (Fromdate == "") {
-				
-			} else {
-				location.href = 'OperationLogsval?Fromdate=' + Fromdate;
-			}
-		}
-	});
-		/*$("#Todate").datepicker({
-			dateFormat: 'dd/mm/yy',
-			maxDate: new Date(), // Set max date to current date
-			onClose: function (selectedDate) {
-				// Set the max date of from_date to the selected to_date
-				$("#Fromdate").datepicker("option", "maxDate", selectedDate);
+    // Get today's date in yyyy-MM-dd format
+    var today = new Date();
+    var yyyy = today.getFullYear();
+    var mm = ('0' + (today.getMonth() + 1)).slice(-2);
+    var dd = ('0' + today.getDate()).slice(-2);
+    var todayStr = `${yyyy}-${mm}-${dd}`;
 
-				var Fromdate = document
-					.getElementById("Fromdate").value;
-				var Todate = document.getElementById("Todate").value;
-				if (Fromdate == "") {
-					alert("Enter From date");
-				} else {
-					location.href = 'IPSAuditOperation?Fromdate='
-						+ Fromdate + '&Todate=' + Todate;
-				}
-			}
-		});*/
-	});
+    // Apply max date = today
+    if (dateOfLoanInput) {
+        dateOfLoanInput.setAttribute('max', todayStr);
+        dateOfLoanInput.value = todayStr; // optional: prefill with today
+    }
 
-	function formatDate1(dateString) {
-		var dateParts = dateString.split("/");
-		var day = dateParts[0];
-		var month = parseInt(dateParts[1], 10); // Convert month to integer
-		var year = dateParts[2];
-		var monthNames = [ "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL",
-				"AUG", "SEP", "OCT", "NOV", "DEC" ];
-		var monthName = monthNames[month - 1];
-		return day + "-" + monthName + "-" + year;
-	}
+    if (depositInput) {
+        depositInput.setAttribute('max', todayStr);
+    }
 
-	function getUserlist(mode, num, maxpage) {
+    // Prevent manually entering future dates
+    function blockFutureDate(input) {
+        input.addEventListener('change', function() {
+            var selectedDate = new Date(this.value);
+            var currentDate = new Date(todayStr);
+            if (selectedDate > currentDate) {
+                alert('Future dates are not allowed!');
+                this.value = ''; // clear invalid date
+            }
+        });
+    }
 
-		var n = parseInt(num);
-		var max = parseInt(maxpage);
-		var Fromdate = document.getElementById("Fromdate").value;
-		var Todate = document.getElementById("Todate").value;
+    if (dateOfLoanInput) blockFutureDate(dateOfLoanInput);
+    if (depositInput) blockFutureDate(depositInput);
+});
+function home() {
+	location.href = 'Dashboard'
+}
 
-		var Callurl = 'IPSAuditOperation?Fromdate=' + Fromdate + '&Todate='
-				+ Todate;
-
-		switch (mode) {
-		case "nextpage":
-			n = n + 1;
-			if (n > max) {
-				break;
-			}
-			Callurl = Callurl + "&page=" + n;
-
-			break;
-		case "prevpage":
-			n = n - 1;
-			if (n < 0) {
-				break;
-			}
-			Callurl = Callurl + "&page=" + n;
-
-			break;
-		case "givenpage":
-			n = parseInt($("#pageno").val()) - 1;
-			if (n > max || n < 0) {
-				break;
-			}
-			Callurl = Callurl + "&page=" + n;
-
-		}
-
-		location.href = Callurl;
-	}
-	function home() {
-		location.href = 'Dashboard'
-	}
-
-	function back() {
-		window.history.back();
-	}
-
-	/* 	function running(){
-	 var Fromdate = document.getElementById("Fromdate").value;
-	 var Todate = document.getElementById("Todate").value;
-	 if (Fromdate == "") {
-	 alert("Enter From date");
-	 }else if (Todate == "") {
-	 alert("Enter To date");
-	 }else {
-	 location.href = 'BAMLAuditInquiry?Fromdate='
-	 + Fromdate + '&Todate=' + Todate;
-	 }
-	 } */
-
-	$(document).ready(function() {
-		$('#usertable').DataTable({
-			"destroy" : true,
-			"scrollCollapse" : true,
-			"paging" : false,
-			"autoWidth" : false,
-			"ordering" : true,
-			"searching" : false,
-			"pageLength" : 5,
-			"lengthChange" : false,
-			"info": false   //  hides "Showing X to Y of Z entries"
-		});
-	});
-
-	function downloadPdfExcel(a) {
-		var from_date = document.getElementById("Fromdate").value;
-		var to_date = document.getElementById("Todate").value;
-		if (!from_date || !to_date) {
-			alert("Please fill the From Date and To Date");
-			return;
-		}
-		var formatted_from_date = formatDate1(from_date);
-		var formatted_to_date = formatDate1(to_date);
-		var filetype = a.getAttribute("data-fileType");
-		var count = null;
-		$.ajax({
-			url : 'DownloadAuditOperationDateChecking',
-			type : 'GET',
-			data : {
-				from_date : formatted_from_date,
-				to_date : formatted_to_date
-			},
-			success : function(response) {
-				console.log(response);
-				count = response;
-				if (count > 0) {
-					var url = './AuditOperationDownload?filetype=' + filetype
-							+ '&from_date=' + formatted_from_date + '&to_date='
-							+ formatted_to_date;
-					window.location.href = url;
-				} else {
-					alert("There is no Transaction in these between Dates.");
-				}
-			},
-			error : function(xhr, status, error) {
-				alert("An error occurred while processing the request.");
-				console.error(xhr, status, error);
-			}
-		});
-	}
-</script>
-<script>
-	function adjustHeight() {
-		const cardBody = document.getElementById("cardBody");
-		const viewportHeight = window.innerHeight;
-		cardBody.style.maxHeight = `${viewportHeight * 0.95}px`; // Adjust 80% of the viewport height
-	}
-
-	window.addEventListener("resize", adjustHeight);
-	document.addEventListener("DOMContentLoaded", adjustHeight);
+function back() {
+	window.history.back();
+}
 </script>
 <title>BGLS</title>
-
 <body>
 	<!-- <div th:replace="MMenupage :: header"></div> -->
-
 	<div class="col-sm-2">
 		<div th:insert="BGLSHeaderMenu :: header"></div>
 	</div>
+<!--------------------------------------------------------------- Start -------------------------------------->
 	<div class="container-manager">
-		<div th:if="${formmode}=='list'">
-			<div class="card">
+    <div class="row">
+      <div class="col-sm-11 ml-5 mt-2">
+            <div th:if="${formmode}=='list'" class="card shadow-sm">
+                <!-- Card Header -->
+                <div class="card-header d-flex justify-content-between align-items-center"
+                     id="modheadtitle"
+                     style="height: 50px; background-color: #e9ecef; font-size: 1.1rem;">
+                    <h6 style="font-size: 1.2rem;">Business Activity Details - List</h6>
+                    <div class="d-flex align-items-center" style="white-space: nowrap;">
+                   <input type="date" id="date_of_loan" onchange="leasedate()"
+							class="form-control form-control-sm bg-white border border-dark pl-2 mr-2"
+							autocomplete="off" />
+							</div>
+                </div>
 
-
-			<!--	<div class="card-header" id="modheadtitle"
-					style="height: 47px;background-color: #e9ecef; font-size: 1.2rem;">
-					<h4>Business Activity Details -List</h4>
-				</div>
-				<label></label>
-			<div class="row formline mt-3">
-
-					<div class="col-sm-6"></div>
-
-					<div class="col-sm-2">
-						<label for="CUSTID">Search records By Date :</label>
-					</div>
-
-					<div class="col-sm-2">
-						<input type="text" id="Fromdate" th:value="${Fromdate}"
-							class="form-control form-control-sm bg-white border border-dark" name="cust_id"
-							autocomplete="off" readonly />
-					</div>-->
-					<div class="card-header d-flex justify-content-between align-items-center"
-										      id="modheadtitle"  style="height: 47px; background-color: #e9ecef; font-size: 1.2rem;">
-										        
-										        <!-- Left side -->
-										       	<h4>Business Activity Details -List</h4>
-												<div class="d-flex align-items-center" style="white-space: nowrap;">
-												    <label for="Fromdate" class="me-2 mb-0" style="font-size: 0.9rem; white-space: nowrap;">
-												        Search records By Date :
-												    </label>
-												    <!--<input type="text" id="Fromdate" th:value="${Fromdate}"
-												        class="form-control form-control-sm bg-white border border-dark"
-												        name="cust_id" autocomplete="off" readonly />-->
-														
-														
-														<input type="text" id="Fromdate" th:value="${Fromdate}" 
-														       class="form-control form-control-sm bg-white border border-dark" 
-														       name="Fromdate" autocomplete="off" readonly />
-
-
-												</div>
-
-										    </div>
-				<!-- <div class="col-sm-1">
-					<label for="custName">To Date</label>
-				</div>
-
-				<div class="col-sm-2">
-					<input type="text" id="Todate" name="cust_name" onblur="running()" th:value="${Todate}"
-						class="form-control form-control-sm" autocomplete="false" required />
-				</div> -->
-
-
-
-
-				</div> 
-				<label></label>
-
-				<div class="table-responsive" id="cardBody">
-					<table class="table table-striped table-bordered table-hover"
-						id="usertable">
-						<thead class="thead-light">
-							<tr>
-								<th>Audit Date</th>
-								<th>Table Name</th>
-								<th>Function</th>
-								<th>Enterer</th>
-								<th>Entry Time</th>
-								<th>Authorizer</th>
-								<th>Field Name</th>
-								<th>Old Value</th>
-								<th>New Value</th>
-								<th>Remarks</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr th:each="auditdata : ${AuditList}" class="userlist">
-								<!-- <td th:text="${auditdata?.audit_ref_no}"></td> -->
-
-								<td
-									th:text="${#dates.format(auditdata.audit_date, 'dd/MM/yyyy')}"></td>
-								<td th:text="${auditdata.audit_table}"></td>
-								<td th:text="${auditdata.func_code}"></td>
-								<td th:text="${auditdata.entry_user}"></td>
-								<td
-									th:text="${#dates.format(auditdata.entry_time, 'dd-MM-yyyy')}"></td>
-								<td th:text="${auditdata?.auth_user}"></td>
-								<td>
-    <p th:each="message : ${auditdata?.fieldName}" th:text="${#strings.isEmpty(message) ? '-' : message}"></p>
-                               </td>
-
-
-						<td>
-							<p th:each="message:${auditdata?.oldvalue}" th:text="${message}"></p>
-						</td>
-
-						<td>
-							<p th:each="message:${auditdata?.newvalue}" th:text="${message}"></p>
-						</td>
-								<td th:text="${auditdata.remarks}"></td>
-							</tr>
-						</tbody>
-					</table>
-
-
-				</div>
-				<div class="card-footer text-center" style="background-color: #e9ecef">
-					<button type="button" class="btn btn-xs btn-primary" id="btnHome"
-						onclick="home();">Home</button>
-					<button type="button" class="btn btn-xs btn-primary" id="btnBack"
-						onclick="back();">Back</button>
-				</div>
-				<!------------------------------ Report Details pagination - shown if paginated -------------------------------------------------->
-				<!-- 	<div th:if="${formmode}=='list1'">
-				<div class="float-right" th:if="${AuditList.totalPages} gt 1">
-					<a href="#"><i class="fas fa-caret-left fa-2x"
-						th:onclick="|getUserlist('prevpage',${AuditList.number},${AuditList.totalPages});|"></i></a>
-					<input type="text" id="pageno" style="width: 30px"
-						th:value="${AuditList.number+1}"
-						th:onchange="|getUserlist('givenpage',${AuditList.number},${AuditList.totalPages});|"></input>
-					of <font th:text="${AuditList.totalPages}"></font> <a href="#"><i
-						class="fas fa-caret-right fa-2x"
-						th:onclick="|getUserlist('nextpage',${AuditList.number},${AuditList.totalPages});|"></i></a>
-				</div>
-			</div> -->
-
-
-			</div>
-		</div>
-	</div>
-
-	<!------------------------list Ends--------------------------------->
-
-	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
-
-
+                <!-- Table -->
+               <div class="card-body"
+					style="overflow-y: auto; border: 1px solid #ddd;">
+					<div class="table-responsive" id="cardBody">
+						<table class=" table  table-bordered  table-hover table-sm"
+							style="margin-bottom: 0px; font-size: initial;">
+							<thead class="thead-light"
+								style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+								<tr class="filters">
+                                <th>Audit Date</th>
+                                <th>Table Name</th>
+                                <th>Function</th>
+                                <th>Entry User</th>
+                                <th>Entry Time</th>
+                                <th>Authorizer</th>
+                                <th>Auth Time</th>
+                                <th>Field Name</th>
+                                <th>Old Value</th>
+                                <th>New Value</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          	<tr th:each="auditdata : ${AuditList}" class="userlist">
+									<td
+										th:text="${#dates.format(auditdata?.audit_date, 'dd-MM-yyyy')}"></td>
+									<td
+										th:text="${auditdata?.audit_table != null ? auditdata?.audit_table.toUpperCase() : ''}"></td>
+									<td
+										th:text="${auditdata?.func_code != null ? auditdata?.func_code.toUpperCase() : ''}"></td>
+									<td
+										th:text="${auditdata?.entry_user != null ? auditdata?.entry_user.toUpperCase() : ''}"></td>
+									<td
+										th:text="${#dates.format(auditdata?.entry_time, 'HH:mm a')}"></td>
+									<td><span th:if="${auditdata?.auth_user} != ''"
+										th:text="${auditdata?.auth_user}"></span> <span
+										th:if="${auditdata?.auth_user} == null" style="color: red"></span>
+									</td>
+									<td
+										th:text="${#dates.format(auditdata?.auth_time, 'HH:mm a')}"></td>
+									<td><p th:each="message : ${auditdata?.fieldName}"
+											th:text="${message}"></p></td>
+									<td><p th:each="message : ${auditdata?.oldvalue}"
+											th:text="${message}"></p></td>
+									<td><p th:each="message : ${auditdata?.newvalue}"
+											th:text="${message}"></p></td>
+									<td
+										th:text="${auditdata?.remarks != null ? auditdata?.remarks.toUpperCase() : ''}"></td>
+								</tr>
+                        </tbody>
+                    </table>
+                </div>
+</div>
+                <!-- Card Footer -->
+                <div class="card-footer text-center" style="background-color: #e9ecef;">
+                    <button class="btn-primary big-btn" id="btnHome" onclick="home();">Home</button>
+                    <button class="btn-primary big-btn" id="btnBack" onclick="back();">Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--------------------------------------------------------------- End-------------------------------->
 </body>
-
 </html>

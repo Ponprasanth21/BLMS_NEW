@@ -17,13 +17,17 @@ public interface BGLSBusinessTable_Rep extends JpaRepository<BGLSBusinessTable_E
 	@Query(value = "select * from BGLS_BUSINESS_TABLE", nativeQuery = true)
 	List<BGLSBusinessTable_Entity> getauditListLocalvalues();
 	
-	@Query(value = "select * from BGLS_BUSINESS_TABLE where audit_date = ?1", nativeQuery = true)
-	List<BGLSBusinessTable_Entity> getauditListOpeartion(Date audit_date);
+	/*
+	 * @Query(value = "select * from BGLS_BUSINESS_TABLE where audit_date = ?1",
+	 * nativeQuery = true) List<BGLSBusinessTable_Entity> getauditListOpeartion(Date
+	 * audit_date);
+	 */
 	
 	@Query(value = "SELECT BGLS_BUSINESS_SEQ.NEXTVAL FROM dual", nativeQuery = true)
 	Long getAuditRefUUID();
 
-	
+	@Query(value = "select * from BGLS_BUSINESS_TABLE where trunc(audit_date)= ?1  AND audit_table not in ('BGLS_USER_PROFILE_TABLE') order by audit_date desc", nativeQuery = true)
+	List<BGLSBusinessTable_Entity> getauditListOpeartion(Date Fromdate);
 	/*
 	 * @Query(value = "select * from BGLS_BUSINESS_TABLE where audit_date = ?1",
 	 * nativeQuery = true) List<BGLSBusinessTable_Entity>

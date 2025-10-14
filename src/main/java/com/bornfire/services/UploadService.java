@@ -78,6 +78,9 @@ public class UploadService {
 	Chart_Acc_Rep chart_Acc_Rep;
 	
 	@Autowired
+	AuditConfigure audit;
+	
+	@Autowired
 	private SequenceGenerator sequence;
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -616,7 +619,7 @@ public class UploadService {
 			resultMap.put("message", "File upload failed: " + e.getMessage());
 		}
 		logger.info("Start 9");	
-		saveAudit(userID, userName, "GL File Upload!", " BGLS_GENERAL_LED", auditRefNo);
+		audit.insertServiceAudit(userID, userName, "GENERAL LEDGER UPLOAD", "UPLOADED SUCCESSFULLY","BGLS_GENERAL_LED", "GENERAL LEDGER");
 		logger.info("Start 10");
 		resultMap.put("status", "success");
 		resultMap.put("TotalSucceeded", successCount);
@@ -691,7 +694,7 @@ public class UploadService {
 			resultMap.put("message", "File upload failed: " + e.getMessage());
 		}
 		logger.info("Start 9");	
-		saveAudit(userID, userName, "GL File Upload!", " BGLS_GENERAL_LED", auditRefNo);
+		audit.insertServiceAudit(userID, userName, "GENERAL LEDGER UPLOAD", "UPLOADED SUCCESSFULLY","BGLS_GENERAL_LED", "GENERAL LEDGER");
 		logger.info("Start 10");
 		resultMap.put("status", "success");
 		resultMap.put("TotalSucceeded", successCount);
@@ -714,24 +717,6 @@ public class UploadService {
 			}
 		}
 		return isEmpty;
-	}
-
-	 
-
-	private void saveAudit(String userID, String userName, String remarks, String table, String refNo) {
-		BGLSAuditTable audit = new BGLSAuditTable();
-		audit.setAudit_date(new Date());
-		audit.setEntry_time(new Date());
-		audit.setEntry_user(userID);
-		audit.setFunc_code("DOWNLOAD");
-		audit.setRemarks(remarks);
-		audit.setAudit_table(table);
-		audit.setAudit_screen("UPLOAD");
-		audit.setEvent_id(userID);
-		audit.setEvent_name(userName);
-		audit.setModi_details("-");
-		audit.setAudit_ref_no(refNo);
-		AuditTable_Rep.save(audit);
 	}
 
 }

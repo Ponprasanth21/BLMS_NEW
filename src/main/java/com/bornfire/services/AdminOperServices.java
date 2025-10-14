@@ -4,17 +4,19 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 
-import com.bornfire.entities.AuditTablePojo;
+import com.bornfire.entities.Access_Role_Entity;
 import com.bornfire.entities.BGLSBusinessTable_Entity;
 import com.bornfire.entities.BGLSBusinessTable_Rep;
 import com.bornfire.entities.BamDocumentMasRep;
@@ -29,41 +31,41 @@ import com.ibm.icu.text.SimpleDateFormat;
 
 @Service
 public class AdminOperServices {
-	
+
 	@Autowired
 	GeneralLedgerRep generalLedgerRep;
-	
+
 	@Autowired
 	BamDocumentMasRep BamDocmasRep;
-	
+
 	@Autowired
 	Chart_Acc_Rep chart_Acc_Rep;
-	
+
 	@Autowired
 	BGLSBusinessTable_Rep bGLSBusinessTable_Rep;
-	
+
 	@Autowired
 	UserProfileRep userProfileRep;
-	
 
+	@Autowired
+	AuditConfigure audit1;
 
 	public Chart_Acc_Entity getGeneralLedger(String acct_num) {
 
-		/*if (generalLedgerRep.existsById(id)) {
-			GeneralLedgerEntity up = generalLedgerRep.findById(id).get();
-			return up;
-		} else {
-			return new GeneralLedgerEntity();
-		}*/
+		/*
+		 * if (generalLedgerRep.existsById(id)) { GeneralLedgerEntity up =
+		 * generalLedgerRep.findById(id).get(); return up; } else { return new
+		 * GeneralLedgerEntity(); }
+		 */
 		return chart_Acc_Rep.getaedit(acct_num);
 	}
-	
-	public String addGeneralLedger(GeneralLedgerEntity getGeneralLedger, String formmode , String GL_CODE ,
-			 String glsh_code ,String userid ) {
+
+	public String addGeneralLedger(GeneralLedgerEntity getGeneralLedger, String formmode, String GL_CODE,
+			String glsh_code, String userid) {
 
 		String msg = "";
-		 BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-		 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd ");
+		BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd ");
 		if (formmode.equals("add")) {
 
 			GeneralLedgerEntity up = getGeneralLedger;
@@ -71,226 +73,127 @@ public class AdminOperServices {
 			up.setDelFlg("N");
 			up.setModifyFlg("N");
 			up.setEntry_user(userid);
-			//up.setEntry_time(sdf.format(new Date()));
-			 up.setEntry_time(new Date());
+			// up.setEntry_time(sdf.format(new Date()));
+			up.setEntry_time(new Date());
 			generalLedgerRep.save(up);
 
 			msg = "Added Successfully";
-			
-			 //FOR AUIDT
-	        Long auditID = bGLSBusinessTable_Rep.getAuditRefUUID();
-	        Optional<UserProfile> up1 = userProfileRep.findById(userid);
-			UserProfile user = up1.get();
-			LocalDateTime currentDateTime = LocalDateTime.now();
-			Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-			audit.setAudit_date(new Date());
-			audit.setEntry_time(dateValue);
-			audit.setEntry_user(user.getUserid());
-			 audit.setFunc_code("Branch Id");
-			audit.setRemarks("Added Successfully");
-			audit.setAudit_table("BGLS_GENERAL_LED");
-			audit.setAudit_screen("GENERAL LEDGER - ADD");
-			audit.setEvent_id(user.getUserid());
-			audit.setEvent_name(user.getUsername());
-			//audit.setModi_details("Login Successfully");
-			UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-			String auth_user_val = auth_user.getAuth_user();
-			Date auth_user_date = auth_user.getAuth_time();
-			audit.setAuth_user(auth_user_val);
-			audit.setAuth_time(auth_user_date);
-			audit.setAudit_ref_no(auditID.toString());
-			audit.setField_name("-");
-			
-			bGLSBusinessTable_Rep.save(audit);
 
-		}else if (formmode.equals("edit")) {
+			// FOR AUIDT
+			Optional<UserProfile> up1 = userProfileRep.findById(userid);
+			UserProfile user = up1.get();
+
+			audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "GENERAL LEDGER ADD", "ADDED SUCCESSFULLY",
+					"BGLS_GENERAL_LED", "GENERAL LEDGER");
+
+		} else if (formmode.equals("edit")) {
 			System.out.println("the getting  glsh code is " + getGeneralLedger.getGlsh_code());
-			
+
 			GeneralLedgerEntity up = getGeneralLedger;
-			 
-				up.setGlCode(getGeneralLedger.getGlCode());
-				up.setGlDescription(getGeneralLedger.getGlDescription());
-				up.setModifyFlg("Y");
-				up.setDelFlg("N");
-				up.setModify_user(userid);
-				//up.setModify_time(sdf.format(new Date()));
-				 up.setModify_time(new Date());
-				generalLedgerRep.save(up);
-				msg = "Modify Successfully";
-			 
+
+			up.setGlCode(getGeneralLedger.getGlCode());
+			up.setGlDescription(getGeneralLedger.getGlDescription());
+			up.setModifyFlg("Y");
+			up.setDelFlg("N");
+			up.setModify_user(userid);
+			// up.setModify_time(sdf.format(new Date()));
+			up.setModify_time(new Date());
+			generalLedgerRep.save(up);
+
+			// FOR AUIDT
+			Optional<UserProfile> up1 = userProfileRep.findById(userid);
+			UserProfile user = up1.get();
+			audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "GENERAL LEDGER EDIT",
+					"EDITED SUCCESSFULLY", "BGLS_GENERAL_LED", "GENERAL LEDGER");
+			msg = "Modify Successfully";
+
 			return msg;
-		}
-		else if (formmode.equals("delete")) {
-			System.out.println("the getting gl code is "+GL_CODE);
-			GeneralLedgerEntity up =generalLedgerRep.getRefMaster(getGeneralLedger.getGlsh_code());
+		} else if (formmode.equals("delete")) {
+			System.out.println("the getting gl code is " + GL_CODE);
+			GeneralLedgerEntity up = generalLedgerRep.getRefMaster(getGeneralLedger.getGlsh_code());
 			up.setDelFlg("Y");
+			Optional<UserProfile> up1 = userProfileRep.findById(userid);
+			UserProfile user = up1.get();
+			audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "GENERAL LEDGER DELETE",
+					"DELETED SUCCESSFULLY", "BGLS_GENERAL_LED", "GENERAL LEDGER");
 			generalLedgerRep.save(up);
 			msg = "Deleted Successfully";
 		}
-		
+
 		return msg;
 	}
-	
-	//@Value("${document.folder.path}")
+
+	// @Value("${document.folder.path}")
 	private String documentFolderPath;
 
 	public String DocManaaddedit(Bamdocumentmanager Bamdocumentmanager, String formmode, MultipartFile file) {
-	    String msg = "";
+		String msg = "";
 
-	    try {
-	        if (formmode.equals("edit")) {
-	            Optional<Bamdocumentmanager> up = BamDocmasRep.findById(Bamdocumentmanager.getDoc_id());
+		try {
+			if (formmode.equals("edit")) {
+				Optional<Bamdocumentmanager> up = BamDocmasRep.findById(Bamdocumentmanager.getDoc_id());
 
-	            if (up.isPresent()) {
-	                Bamdocumentmanager bamcat = up.get();
-	                if(file!=null) {
-	                String filePath = saveFile(file, bamcat.getDoc_id());
-	                bamcat.setDoc_location(filePath);
-	                }
-	                bamcat.setModify_time(new Date());
-	                bamcat.setDel_flg("N");
-	                BamDocmasRep.save(bamcat);
-	                msg = "Modified Successfully";
-	            }
-	        } else if (formmode.equals("add")) {
-	        	if(file!=null) {
-	            String filePath = saveFile(file, Bamdocumentmanager.getDoc_id());
-	            System.out.println(filePath);
-	            Bamdocumentmanager.setDoc_location(filePath);
-	        	}
-	        	Bamdocumentmanager.setDel_flg("N");
-	            BamDocmasRep.save(Bamdocumentmanager);
-	            msg = "Added Successfully";
-	        } else if (formmode.equals("verify")) {
-	            Optional<Bamdocumentmanager> up = BamDocmasRep.findById(Bamdocumentmanager.getDoc_id());
+				if (up.isPresent()) {
+					Bamdocumentmanager bamcat = up.get();
+					if (file != null) {
+						String filePath = saveFile(file, bamcat.getDoc_id());
+						bamcat.setDoc_location(filePath);
+					}
+					bamcat.setModify_time(new Date());
+					bamcat.setDel_flg("N");
+					BamDocmasRep.save(bamcat);
+					msg = "Modified Successfully";
+				}
+			} else if (formmode.equals("add")) {
+				if (file != null) {
+					String filePath = saveFile(file, Bamdocumentmanager.getDoc_id());
+					System.out.println(filePath);
+					Bamdocumentmanager.setDoc_location(filePath);
+				}
+				Bamdocumentmanager.setDel_flg("N");
+				BamDocmasRep.save(Bamdocumentmanager);
+				msg = "Added Successfully";
+			} else if (formmode.equals("verify")) {
+				Optional<Bamdocumentmanager> up = BamDocmasRep.findById(Bamdocumentmanager.getDoc_id());
 
-	            if (up.isPresent()) {
-	                Bamdocumentmanager bamcat = up.get();
-	                bamcat.setDel_flg("Y");
-	                BamDocmasRep.save(bamcat);
-	                msg = "Verified Successfully";
-	            }
-	        }
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        msg = "Document Upload Unsuccessful";
-	    }
+				if (up.isPresent()) {
+					Bamdocumentmanager bamcat = up.get();
+					bamcat.setDel_flg("Y");
+					BamDocmasRep.save(bamcat);
+					msg = "Verified Successfully";
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			msg = "Document Upload Unsuccessful";
+		}
 
-	    return msg;
+		return msg;
 	}
-	
+
 	private String saveFile(MultipartFile file, String docId) throws IOException {
-	    String fileName = docId + "_" + file.getOriginalFilename();
-	    String filePath = documentFolderPath + File.separator + fileName;
-	    File destinationFile = new File(filePath);
-	    file.transferTo(destinationFile);
-	    return filePath;
+		String fileName = docId + "_" + file.getOriginalFilename();
+		String filePath = documentFolderPath + File.separator + fileName;
+		File destinationFile = new File(filePath);
+		file.transferTo(destinationFile);
+		return filePath;
 	}
-//for audit services
 
-	public List<AuditTablePojo> getauditListLocal(Date fromDateToUse) {
-		  List<BGLSBusinessTable_Entity> auditList = bGLSBusinessTable_Rep.getauditListLocalvaluesbusiness(fromDateToUse);
-		  List<AuditTablePojo> auditPojoList = new ArrayList<>();
+	@Autowired
+	SessionFactory sessionFactory;
 
-		  for (BGLSBusinessTable_Entity ipsAudit : auditList) {
-		      boolean isUpdated = false;
-		      
-		      // Check if an entry with the same ID already exists
-		      for (AuditTablePojo existingPojo : auditPojoList) {
-		        String auditRefNo = existingPojo.getAudit_ref_no();
-		           String remarks = existingPojo.getRemarks();
-		           String ipsAuditno = ipsAudit.getAudit_ref_no();
-		       
-		          if (auditRefNo != null && ipsAuditno!= null && existingPojo.getAudit_ref_no().equals(ipsAudit.getAudit_ref_no()) &&   remarks != null &&  
-		                  ("Login Successfully".equals(existingPojo.getRemarks())
-		                    || "Logout Successfully".equals(existingPojo.getRemarks()))) {              // Update the existing entry
-		              existingPojo.setAudit_date(ipsAudit.getAudit_date());
-		              existingPojo.setAudit_table(ipsAudit.getAudit_table());
-		              existingPojo.setFunc_code(ipsAudit.getFunc_code());
-		              existingPojo.setEntry_user(ipsAudit.getEntry_user());
-		              existingPojo.setEntry_time(ipsAudit.getEntry_time());
-		              existingPojo.setAuth_user(ipsAudit.getAuth_user());
-		              existingPojo.setAuth_time(ipsAudit.getAuth_time());
-		              existingPojo.setRemarks(ipsAudit.getRemarks());
+	public Access_Role_Entity getRoleMenu(String id) {
+		Session session = sessionFactory.getCurrentSession();
+		Query<Access_Role_Entity> query = session.createQuery("from Access_Role_Entity where role_id = :role_id",
+				Access_Role_Entity.class);
+		query.setParameter("role_id", id);
 
-		              List<String> fieldName = new ArrayList<>();
-		              List<String> oldvalue = new ArrayList<>();
-		              List<String> newvalue = new ArrayList<>();
-		              String[] dd = ipsAudit.getModi_details().split("\\|\\|");
-
-		              for (String str : dd) {
-		                  String[] str1 = str.split("\\+");
-		                  if (str1.length > 0) {
-		                      fieldName.add(str1[0]);
-		                  }
-
-		                  if (str1.length > 1) {
-		                      oldvalue.add(str1[1]);
-		                  }
-
-		                  if (str1.length > 2) {
-		                      newvalue.add(str1[2]);
-		                  }
-		              }
-
-		              existingPojo.setFieldName(fieldName);
-		              existingPojo.setOldvalue(oldvalue);
-		              existingPojo.setNewvalue(newvalue);
-
-		              isUpdated = true;
-		              break;
-		          }
-		      }
-
-		      // If no existing entry was updated, create a new one
-		      if (!isUpdated) {
-		          AuditTablePojo auditTablePojo = new AuditTablePojo();
-		          auditTablePojo.setAudit_date(ipsAudit.getAudit_date());
-		          auditTablePojo.setAudit_table(ipsAudit.getAudit_table());
-		          auditTablePojo.setFunc_code(ipsAudit.getFunc_code());
-		          auditTablePojo.setEntry_user(ipsAudit.getEntry_user());
-		          auditTablePojo.setEntry_time(ipsAudit.getEntry_time());
-		          auditTablePojo.setAuth_user(ipsAudit.getAuth_user());
-		          auditTablePojo.setRemarks(ipsAudit.getRemarks());
-
-		          List<String> fieldName = new ArrayList<>();
-		          List<String> oldvalue = new ArrayList<>();
-		          List<String> newvalue = new ArrayList<>();
-		          if (ipsAudit != null && ipsAudit.getModi_details() != null) {
-		        	   String[] dd = ipsAudit.getModi_details().split("\\|\\|");
-
-				          for (String str : dd) {
-				              String[] str1 = str.split("\\+");
-				              if (str1.length > 0) {
-				                  fieldName.add(str1[0]);
-				              }
-
-				              if (str1.length > 1) {
-				                  oldvalue.add(str1[1]);
-				              }
-
-				              if (str1.length > 2) {
-				                  newvalue.add(str1[2]);
-				              }
-				          }
-		        	    // Continue with your logic
-		        	} else {
-		        	    // Handle the case where ipsAudit or ipsAudit.getModi_details() is null
-		        	    System.out.println("No message available");
-		        	}
-		       
-
-		          auditTablePojo.setFieldName(fieldName);
-		          auditTablePojo.setOldvalue(oldvalue);
-		          auditTablePojo.setNewvalue(newvalue);
-
-		          auditPojoList.add(auditTablePojo);
-		      }
-		  }
-
-		  
-
-		  return auditPojoList;
-		 }
+		List<Access_Role_Entity> result = query.getResultList();
+		if (!result.isEmpty()) {
+			return result.get(0);
+		} else {
+			return new Access_Role_Entity();
+		}
+	}
 
 }

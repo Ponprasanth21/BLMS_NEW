@@ -243,6 +243,9 @@ public class BGLSRestController {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
+	@Autowired
+	AuditConfigure audit;
 
 	@Autowired
 	HolidayMaster_Rep holidayMaster_Rep;
@@ -266,32 +269,10 @@ public class BGLSRestController {
 			employee_Profile.setDel_flg("N");
 
 			// FOR AUIDT
-			BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-			Long auditID = bGLSBusinessTable_Rep.getAuditRefUUID();
 			Optional<UserProfile> up1 = userProfileRep.findById(userid);
 			UserProfile user = up1.get();
-
-			LocalDateTime currentDateTime = LocalDateTime.now();
-			Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-			audit.setAudit_date(new Date());
-			audit.setEntry_time(dateValue);
-			audit.setEntry_user(user.getUserid());
-			audit.setFunc_code("Employee Id");
-			audit.setRemarks("Sucessfully Saved");
-			audit.setAudit_table("BGLS_EMPLOYEE_PROFILE");
-			audit.setAudit_screen("EMPLOYEE PROFILE - ADD");
-			audit.setEvent_id(user.getUserid());
-			audit.setEvent_name(user.getUsername());
-			// audit.setModi_details("Login Successfully");
-			UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-			String auth_user_val = auth_user.getAuth_user();
-			Date auth_user_date = auth_user.getAuth_time();
-			audit.setAuth_user(auth_user_val);
-			audit.setAuth_time(auth_user_date);
-			audit.setAudit_ref_no(auditID.toString());
-			audit.setField_name("-");
-			employee_Profile_Rep.save(employee_Profile);
-			bGLSBusinessTable_Rep.save(audit);
+			
+			audit.insertServiceAudit(user.getUserid(), user.getUsername(), "EMPLOYEE PROFILE ADD", "ADDED SUCCESSFULLY","BGLS_EMPLOYEE_PROFILE", "EMPLOYEE PROFILE");
 			return "Sucessfully Saved";
 		}
 
@@ -493,31 +474,9 @@ public class BGLSRestController {
 		System.out.println("Sucessfully Verified");
 
 		// FOR AUIDT
-		BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-		Long auditID = bGLSBusinessTable_Rep.getAuditRefUUID();
 		Optional<UserProfile> up1 = userProfileRep.findById(userid);
 		UserProfile user = up1.get();
-		LocalDateTime currentDateTime = LocalDateTime.now();
-		Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-		audit.setAudit_date(new Date());
-		audit.setEntry_time(dateValue);
-		audit.setEntry_user(user.getUserid());
-		audit.setFunc_code("Employee Id");
-		audit.setRemarks("Sucessfully Verified");
-		audit.setAudit_table("BGLS_EMPLOYEE_PROFILE");
-		audit.setAudit_screen("EMPLOYEE PROFILE - VERIFY");
-		audit.setEvent_id(user.getUserid());
-		audit.setEvent_name(user.getUsername());
-		// audit.setModi_details("Login Successfully");
-		UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-		String auth_user_val = auth_user.getAuth_user();
-		Date auth_user_date = auth_user.getAuth_time();
-		audit.setAuth_user(auth_user_val);
-		audit.setAuth_time(auth_user_date);
-		audit.setAudit_ref_no(auditID.toString());
-		audit.setField_name("-");
-
-		bGLSBusinessTable_Rep.save(audit);
+		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "EMPLOYEE PROFILE VERIFY", "VERIFIED SUCCESSFULLY","BGLS_EMPLOYEE_PROFILE", "EMPLOYEE PROFILE");
 		return "Sucessfully Verified";
 
 	}
@@ -568,31 +527,10 @@ public class BGLSRestController {
 		employee_Profile_Rep.delete(data);
 		String userid = (String) rq.getSession().getAttribute("USERID");
 		// FOR AUIDT
-		BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-		Long auditID = bGLSBusinessTable_Rep.getAuditRefUUID();
 		Optional<UserProfile> up1 = userProfileRep.findById(userid);
 		UserProfile user = up1.get();
-		LocalDateTime currentDateTime = LocalDateTime.now();
-		Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-		audit.setAudit_date(new Date());
-		audit.setEntry_time(dateValue);
-		audit.setEntry_user(user.getUserid());
-		audit.setFunc_code("Employee Id");
-		audit.setRemarks("Sucessfully Deleted");
-		audit.setAudit_table("BGLS_EMPLOYEE_PROFILE");
-		audit.setAudit_screen("EMPLOYEE PROFILE - DELETE");
-		audit.setEvent_id(user.getUserid());
-		audit.setEvent_name(user.getUsername());
-		// audit.setModi_details("Login Successfully");
-		UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-		String auth_user_val = auth_user.getAuth_user();
-		Date auth_user_date = auth_user.getAuth_time();
-		audit.setAuth_user(auth_user_val);
-		audit.setAuth_time(auth_user_date);
-		audit.setAudit_ref_no(auditID.toString());
-		audit.setField_name("-");
 
-		bGLSBusinessTable_Rep.save(audit);
+		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "EMPLOYEE PROFILE DELETE", "DELETED SUCCESSFULLY","BGLS_EMPLOYEE_PROFILE", "EMPLOYEE PROFILE");
 		return "Sucessfully Deleted";
 
 	}
@@ -684,32 +622,10 @@ public class BGLSRestController {
 			up.setDel_flg("N");
 			chart_Acc_Rep.save(up);
 			// FOR AUIDT
-			Long auditID = bglsBusinessTable_Rep.getAuditRefUUID();
 			Optional<UserProfile> up1 = userProfileRep.findById(userid);
 			UserProfile user = up1.get();
 
-			BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-			LocalDateTime currentDateTime = LocalDateTime.now();
-			Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-			audit.setAudit_date(new Date());
-			audit.setEntry_time(dateValue);
-			audit.setEntry_user(user.getUserid());
-
-			audit.setRemarks("Saved Successfully");
-			audit.setAudit_table("BGLS_CHART_OF_ACCOUNTS");
-			audit.setAudit_screen("CHART OF ACCOUNTS - ADD");
-			audit.setEvent_id(user.getUserid());
-			audit.setEvent_name(user.getUsername());
-			// audit.setModi_details("Login Successfully");
-			UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-			String auth_user_val = auth_user.getAuth_user();
-			Date auth_user_date = auth_user.getAuth_time();
-			audit.setAuth_user(auth_user_val);
-			audit.setAuth_time(auth_user_date);
-			audit.setAudit_ref_no(auditID.toString());
-			audit.setField_name("-");
-
-			bglsBusinessTable_Rep.save(audit);
+			audit.insertServiceAudit(user.getUserid(), user.getUsername(), "CHART OF ACCOUNTS ADD", "ADDED SUCCESSFULLY","BGLS_CHART_OF_ACCOUNTS", "CHART OF ACCOUNTS");
 
 			return "Saved Successfully";
 		}
@@ -737,33 +653,9 @@ public class BGLSRestController {
 			msg = "Data Not Found";
 		}
 		// FOR AUIDT
-		Long auditID = bglsBusinessTable_Rep.getAuditRefUUID();
 		Optional<UserProfile> up1 = userProfileRep.findById(userid);
 		UserProfile user = up1.get();
-
-		BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-		LocalDateTime currentDateTime = LocalDateTime.now();
-		Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-		audit.setAudit_date(new Date());
-		audit.setEntry_time(dateValue);
-		audit.setEntry_user(user.getUserid());
-
-		audit.setRemarks("Modify Successfully");
-		audit.setAudit_table("BGLS_CHART_OF_ACCOUNTS");
-		audit.setAudit_screen("CHART OF ACCOUNTS - MODIFY");
-		audit.setEvent_id(user.getUserid());
-		audit.setEvent_name(user.getUsername());
-		// audit.setModi_details("Login Successfully");
-		UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-		String auth_user_val = auth_user.getAuth_user();
-		Date auth_user_date = auth_user.getAuth_time();
-		audit.setAuth_user(auth_user_val);
-		audit.setAuth_time(auth_user_date);
-		audit.setAudit_ref_no(auditID.toString());
-		audit.setField_name("-");
-
-		bglsBusinessTable_Rep.save(audit);
-
+		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "CHART OF ACCOUNTS EDIT", "EDITED SUCCESSFULLY","BGLS_CHART_OF_ACCOUNTS", "CHART OF ACCOUNTS");
 		return msg;
 	}
 
@@ -778,32 +670,10 @@ public class BGLSRestController {
 		chart_Acc_Rep.save(up);
 		String userid = (String) rq.getSession().getAttribute("USERID");
 		// FOR AUIDT
-		Long auditID = bglsBusinessTable_Rep.getAuditRefUUID();
 		Optional<UserProfile> up1 = userProfileRep.findById(userid);
 		UserProfile user = up1.get();
+		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "CHART OF ACCOUNTS VERIFY", "VERIFIED SUCCESSFULLY","BGLS_CHART_OF_ACCOUNTS", "CHART OF ACCOUNTS");
 
-		BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-		LocalDateTime currentDateTime = LocalDateTime.now();
-		Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-		audit.setAudit_date(new Date());
-		audit.setEntry_time(dateValue);
-		audit.setEntry_user(user.getUserid());
-
-		audit.setRemarks("Verified Successfully");
-		audit.setAudit_table("BGLS_CHART_OF_ACCOUNTS");
-		audit.setAudit_screen("CHART OF ACCOUNTS - VERIFY");
-		audit.setEvent_id(user.getUserid());
-		audit.setEvent_name(user.getUsername());
-		// audit.setModi_details("Login Successfully");
-		UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-		String auth_user_val = auth_user.getAuth_user();
-		Date auth_user_date = auth_user.getAuth_time();
-		audit.setAuth_user(auth_user_val);
-		audit.setAuth_time(auth_user_date);
-		audit.setAudit_ref_no(auditID.toString());
-		audit.setField_name("-");
-
-		bglsBusinessTable_Rep.save(audit);
 		return "Verified Successfully";
 
 	}
@@ -827,32 +697,11 @@ public class BGLSRestController {
 		}
 		String userid = (String) rq.getSession().getAttribute("USERID");
 		// FOR AUIDT
-		Long auditID = bglsBusinessTable_Rep.getAuditRefUUID();
 		Optional<UserProfile> up1 = userProfileRep.findById(userid);
 		UserProfile user = up1.get();
 
-		BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-		LocalDateTime currentDateTime = LocalDateTime.now();
-		Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-		audit.setAudit_date(new Date());
-		audit.setEntry_time(dateValue);
-		audit.setEntry_user(user.getUserid());
+		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "CHART OF ACCOUNTS DELETE", "DELETED SUCCESSFULLY","BGLS_CHART_OF_ACCOUNTS", "CHART OF ACCOUNTS");
 
-		audit.setRemarks("Deleted Successfully");
-		audit.setAudit_table("BGLS_CHART_OF_ACCOUNTS");
-		audit.setAudit_screen("CHART OF ACCOUNTS - DELETE");
-		audit.setEvent_id(user.getUserid());
-		audit.setEvent_name(user.getUsername());
-		// audit.setModi_details("Login Successfully");
-		UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-		String auth_user_val = auth_user.getAuth_user();
-		Date auth_user_date = auth_user.getAuth_time();
-		audit.setAuth_user(auth_user_val);
-		audit.setAuth_time(auth_user_date);
-		audit.setAudit_ref_no(auditID.toString());
-		audit.setField_name("-");
-
-		bglsBusinessTable_Rep.save(audit);
 		return msg;
 
 	}
@@ -884,32 +733,9 @@ public class BGLSRestController {
 				organization_Branch_Rep.save(up);
 
 				// --- Audit Logging ---
-				BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-				audit.setFunc_code("BRANCH");
-				Long auditID = bglsBusinessTable_Rep.getAuditRefUUID();
 				Optional<UserProfile> up1 = userProfileRep.findById(userid);
 				UserProfile user = up1.get();
-
-				LocalDateTime currentDateTime = LocalDateTime.now();
-				Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-				audit.setAudit_date(new Date());
-				audit.setEntry_time(dateValue);
-				audit.setEntry_user(user.getUserid());
-
-				audit.setRemarks("Branch Added Successfully");
-				audit.setAudit_table("BGLS_ORG_BRANCH");
-				audit.setAudit_screen("Organization Details");
-				audit.setEvent_id(user.getUserid());
-				audit.setEvent_name(user.getUsername());
-
-				UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-				audit.setAuth_user(auth_user.getAuth_user());
-				audit.setAuth_time(auth_user.getAuth_time());
-				audit.setAudit_ref_no(auditID.toString());
-				audit.setField_name("-");
-
-				bglsBusinessTable_Rep.save(audit);
-
+				audit.insertServiceAudit(user.getUserid(), user.getUsername(), "ORGANIZATION ADD", "ADDED SUCCESSFULLY","BGLS_ORG_BRANCH", "ORGANIZATION DETAILS");
 				return "Added successfully.";
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -934,34 +760,9 @@ public class BGLSRestController {
 		up.setEntry_time(new Date());
 		organization_Branch_Rep.save(up);
 
-		BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-		audit.setFunc_code("BRANCH-DELETE");
-		Long auditID = bglsBusinessTable_Rep.getAuditRefUUID();
 		Optional<UserProfile> up1 = userProfileRep.findById(userid);
 		UserProfile user = up1.get();
-
-		LocalDateTime currentDateTime = LocalDateTime.now();
-		Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-		audit.setAudit_date(new Date());
-		audit.setEntry_time(dateValue);
-		audit.setEntry_user(user.getUserid());
-
-		audit.setRemarks("Branch Added Successfully");
-		audit.setAudit_table("BGLS_ORG_BRANCH");
-		audit.setAudit_screen("Organization Details");
-		audit.setEvent_id(user.getUserid());
-		audit.setEvent_name(user.getUsername());
-		// audit.setModi_details("Login Successfully");
-		UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-		String auth_user_val = auth_user.getAuth_user();
-		Date auth_user_date = auth_user.getAuth_time();
-		audit.setAuth_user(auth_user_val);
-		audit.setAuth_time(auth_user_date);
-		audit.setAudit_ref_no(auditID.toString());
-		audit.setField_name("-");
-
-		bglsBusinessTable_Rep.save(audit);
-
+		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "ORGANIZATION DELETE", "DELETED SUCCESSFULLY","BGLS_ORG_BRANCH", "ORGANIZATION DETAILS");
 		return "Deleted Successfully";
 
 	}
@@ -972,9 +773,7 @@ public class BGLSRestController {
 	public String tab1modify(Model md, HttpServletRequest rq, @ModelAttribute Organization_Entity organization_Entity) {
 
 		Optional<Organization_Entity> up = organization_Repo.findById(organization_Entity.getOrg_name());
-		BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
 		String userid = (String) rq.getSession().getAttribute("USERID");
-		Long auditID = bglsBusinessTable_Rep.getAuditRefUUID();
 
 		// ✅ Handle null safely
 		Date asOn = organization_Entity.getAs_on();
@@ -1070,30 +869,10 @@ public class BGLSRestController {
 				}
 
 				// audit
-				audit.setAudit_date(new Date());
-				audit.setEntry_time(new Date());
-				audit.setEntry_user(userid);
-				audit.setFunc_code("HEAD OFFICE MODIFICATION");
-				audit.setRemarks(userid + " : User Modified Successfully");
-				audit.setAudit_table("BGLS_ORG_MASTER");
-				audit.setAudit_screen("HEAD OFFICE - MODIFY");
-
 				Optional<UserProfile> up1 = userProfileRep.findById(userid);
-				up1.ifPresent(user -> {
-					audit.setEvent_name(user.getUsername());
-					audit.setEvent_id(user.getUserid());
-				});
+				UserProfile user = up1.get();
+				audit.insertServiceAudit(user.getUserid(), user.getUsername(), "HEAD OFFICE EDIT", "EDITED SUCCESSFULLY","BGLS_ORG_BRANCH", "ORGANIZATION DETAILS");
 
-				audit.setModi_details(sb.toString());
-				audit.setAudit_ref_no(auditID.toString());
-
-				UserProfile auth_user = userProfileRep.getRole(userid);
-				if (auth_user != null) {
-					audit.setAuth_user(auth_user.getAuth_user());
-					audit.setAuth_time(auth_user.getAuth_time());
-				}
-
-				bglsBusinessTable_Rep.save(audit);
 				organization_Repo.save(organization_Entity);
 
 				msg = "User Modified Successfully";
@@ -1117,9 +896,7 @@ public class BGLSRestController {
 
 		Optional<Organization_Branch_Entity> up = organization_Branch_Rep
 				.findById(organization_Branch_Entity.getBranch_code());
-		BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
 		String userid = (String) rq.getSession().getAttribute("USERID");
-		Long auditID = bglsBusinessTable_Rep.getAuditRefUUID();
 
 		// organization_Branch_Entity up = organization_Branch_Entity;
 		String msg = "";
@@ -1253,27 +1030,9 @@ public class BGLSRestController {
 //							"Zip Code+" + us1.getZip_code() + "+" + organization_Branch_Entity.getZip_code() + "||");
 //				}
 
-				audit.setAudit_date(new Date());
-				audit.setEntry_time(new Date());
-				audit.setEntry_user(userid);
-				audit.setFunc_code("BRANCH MODIFICATION");
-				audit.setRemarks(userid + " : Modified Successfully");
-				audit.setAudit_table("BGLS_ORG_BRANCH");
-				audit.setAudit_screen("BRANCH - MODIFY");
 				Optional<UserProfile> up1 = userProfileRep.findById(userid);
 				UserProfile user = up1.get();
-				audit.setEvent_name(user.getUsername());
-				audit.setEvent_id(user.getUserid());
-				// audit.setEvent_name(up.getUsername());
-//				String modiDetails = stringBuilder.toString();
-				audit.setModi_details("Modify Successfully In Branch Screen");
-				audit.setAudit_ref_no(auditID.toString());
-				UserProfile auth_user = userProfileRep.getRole(userid);
-				String auth_user_val = auth_user.getAuth_user();
-				Date auth_user_date = auth_user.getAuth_time();
-				audit.setAuth_user(auth_user_val);
-				audit.setAuth_time(auth_user_date);
-				bglsBusinessTable_Rep.save(audit);
+				audit.insertServiceAudit(user.getUserid(), user.getUsername(), "ORGANIZATION EDIT", "EDITED SUCCESSFULLY","BGLS_ORG_BRANCH", "ORGANIZATION DETAILS");
 				organization_Branch_Rep.save(organization_Branch_Entity);
 				msg = "User Modified Successfully";
 
@@ -1338,34 +1097,10 @@ public class BGLSRestController {
 		reference_Code_Entity.setEntry_user(userid);
 		reference_Code_Entity.setEntry_time(new Date());
 		reference_code_Rep.save(reference_Code_Entity);
-
-		BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-
-		Long auditID = bglsBusinessTable_Rep.getAuditRefUUID();
+		
 		Optional<UserProfile> up1 = userProfileRep.findById(userid);
 		UserProfile user = up1.get();
-
-		LocalDateTime currentDateTime = LocalDateTime.now();
-		Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-		audit.setAudit_date(new Date());
-		audit.setEntry_time(dateValue);
-		audit.setEntry_user(user.getUserid());
-		audit.setFunc_code("REFERENCE CODE");
-		audit.setRemarks("Sucessfully Saved");
-		audit.setAudit_table("BGLS_REF_MASTER");
-		audit.setAudit_screen("REFERENCE CODE MAINTENANCE - ADD");
-		audit.setEvent_id(user.getUserid());
-		audit.setEvent_name(user.getUsername());
-		// audit.setModi_details("Login Successfully");
-		UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-		String auth_user_val = auth_user.getAuth_user();
-		Date auth_user_date = auth_user.getAuth_time();
-		audit.setAuth_user(auth_user_val);
-		audit.setAuth_time(auth_user_date);
-		audit.setAudit_ref_no(auditID.toString());
-		audit.setField_name("-");
-
-		bglsBusinessTable_Rep.save(audit);
+		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "REFERENCE CODE MAINTENANCE ADD", "ADDED SUCCESSFULLY","BGLS_REF_MASTER", "REFERENCE CODE MAINTENANCE");
 		return "Sucessfully Saved";
 	}
 
@@ -1792,23 +1527,9 @@ public class BGLSRestController {
 			}
 
 			// --- Step 4: Save audit and posted transactions ---
-			BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-			audit.setAudit_date(new Date());
-			audit.setEntry_time(new Date());
-			audit.setEntry_user(user);
-			audit.setFunc_code("VERIFIED");
-			audit.setAudit_table("BGLSBUSINESSTABLE");
-			audit.setAudit_screen("VERIFIED");
-			audit.setEvent_id(user);
-			audit.setEvent_name((String) request.getSession().getAttribute("USERNAME"));
-			audit.setModi_details("Verified Successfully");
-			audit.setAudit_ref_no(sequence.generateRequestUUId());
-
-			UserProfile userProfile = userProfileRep.getRole(user);
-			audit.setAuth_user(userProfile.getAuth_user());
-			audit.setAuth_time(userProfile.getAuth_time());
-
-			bGLSBusinessTable_Rep.save(audit);
+			Optional<UserProfile> up1 = userProfileRep.findById(user);
+			UserProfile user1 = up1.get();
+			audit.insertServiceAudit(user1.getUserid(), user1.getUsername(), "TRANSACTION MAINTENANCE ADD", "ADDED SUCCESSFULLY","BGLS_TRM_WRK_TRANSACTIONS", "TRANSACTION MAINTENANCE");
 			tRAN_MAIN_TRM_WRK_REP.saveAll(savedTransactions);
 
 			return "Posted Successfully";

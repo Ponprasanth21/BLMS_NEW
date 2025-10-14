@@ -82,7 +82,8 @@ public class LoginServices {
 	@Autowired
 	BGLSBusinessTable_Rep bGLSBusinessTable_Rep;
 
-
+	@Autowired
+	AuditConfigure audit;
 	
 	@NotNull
 	private String exportpath;
@@ -166,31 +167,9 @@ public class LoginServices {
 			userProfileRep.save(userProfile);
 			
 			 //FOR AUIDT
-			 BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-	        Long auditID = bGLSBusinessTable_Rep.getAuditRefUUID();
 	        Optional<UserProfile> up1 = userProfileRep.findById(inputUser);
-		     UserProfile user = up1.get();   
-			LocalDateTime currentDateTime = LocalDateTime.now();
-			Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-			audit.setAudit_date(new Date());
-			audit.setEntry_time(dateValue);
-			audit.setEntry_user(user.getUserid());
-			 audit.setFunc_code("User Id");
-			audit.setRemarks("User Created Successfully");
-			audit.setAudit_table("BGLS_USER_PROFILE_TABLE");
-			audit.setAudit_screen("USER PROFILE - ADD");
-			audit.setEvent_id(user.getUserid());
-			audit.setEvent_name(user.getUsername());
-			//audit.setModi_details("Login Successfully");
-			UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-			String auth_user_val = auth_user.getAuth_user();
-			Date auth_user_date = auth_user.getAuth_time();
-			audit.setAuth_user(auth_user_val);
-			audit.setAuth_time(auth_user_date);
-			audit.setAudit_ref_no(auditID.toString());
-			audit.setField_name("-");
-			
-			bGLSBusinessTable_Rep.save(audit);
+		    UserProfile user = up1.get();
+			audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE ADD", "ADDED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE");
 
 			msg = "User Created Successfully";
 
@@ -236,6 +215,11 @@ public class LoginServices {
 			up.setPassword(encryptedPassword);
 
 			userProfileRep.save(up);
+			
+			Optional<UserProfile> up1 = userProfileRep.findById(inputUser);
+		    UserProfile user = up1.get();
+			audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE EDIT", "EDITED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE");
+			
 			msg = "User Modified Successfully";
 
 		}
@@ -267,31 +251,9 @@ public class LoginServices {
 			msg = "User Verified Successfully";
 			
 			 //FOR AUIDT
-			 BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-	        Long auditID = bGLSBusinessTable_Rep.getAuditRefUUID();
 	        Optional<UserProfile> up1 = userProfileRep.findById(inputUser);
-		     UserProfile user = up1.get();   
-			LocalDateTime currentDateTime = LocalDateTime.now();
-			Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-			audit.setAudit_date(new Date());
-			audit.setEntry_time(dateValue);
-			audit.setEntry_user(user.getUserid());
-			audit.setFunc_code("User Id");
-			audit.setRemarks("User Verified Successfully");
-			audit.setAudit_table("BGLS_USER_PROFILE_TABLE");
-			audit.setAudit_screen("USER PROFILE - VERIFY");
-			audit.setEvent_id(user.getUserid());
-			audit.setEvent_name(user.getUsername());
-			//audit.setModi_details("Login Successfully");
-			UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-			String auth_user_val = auth_user.getAuth_user();
-			Date auth_user_date = auth_user.getAuth_time();
-			audit.setAuth_user(auth_user_val);
-			audit.setAuth_time(auth_user_date);
-			audit.setAudit_ref_no(auditID.toString());
-			audit.setField_name("-");
-			
-			bGLSBusinessTable_Rep.save(audit);
+		    UserProfile user = up1.get();
+		    audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE VERIFY", "VERIFIED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE");
 
 		} else {
 			msg = "User Not Found";
@@ -313,31 +275,10 @@ public class LoginServices {
 			msg = "User Deleted Successfully";
 			
 			 //FOR AUIDT
-			 BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-	        Long auditID = bGLSBusinessTable_Rep.getAuditRefUUID();
 	        Optional<UserProfile> up1 = userProfileRep.findById(userid1);
-		     UserProfile user = up1.get();   
-			LocalDateTime currentDateTime = LocalDateTime.now();
-			Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-			audit.setAudit_date(new Date());
-			audit.setEntry_time(dateValue);
-			audit.setEntry_user(user.getUserid());
-			audit.setFunc_code("User Id");
-			audit.setRemarks("User Deleted Successfully");
-			audit.setAudit_table("BGLS_USER_PROFILE_TABLE");
-			audit.setAudit_screen("USER PROFILE - DELETE");
-			audit.setEvent_id(user.getUserid());
-			audit.setEvent_name(user.getUsername());
-			//audit.setModi_details("Login Successfully");
-			UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-			String auth_user_val = auth_user.getAuth_user();
-			Date auth_user_date = auth_user.getAuth_time();
-			audit.setAuth_user(auth_user_val);
-			audit.setAuth_time(auth_user_date);
-			audit.setAudit_ref_no(auditID.toString());
-			audit.setField_name("-");
-			
-			bGLSBusinessTable_Rep.save(audit);
+		    UserProfile user = up1.get(); 
+		    audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE DELETE", "DELETED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE");
+		    
 
 		} else {
 
@@ -345,44 +286,17 @@ public class LoginServices {
 			userProfileRep.deleteById(userId);
 			msg = "User Deleted Successfully";
 			 //FOR AUIDT
-			 BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-	        Long auditID = bGLSBusinessTable_Rep.getAuditRefUUID();
 	        Optional<UserProfile> up1 = userProfileRep.findById(userid1);
-		     UserProfile user = up1.get();   
-			LocalDateTime currentDateTime = LocalDateTime.now();
-			Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-			audit.setAudit_date(new Date());
-			audit.setEntry_time(dateValue);
-			audit.setEntry_user(user.getUserid());
-			audit.setFunc_code("User Id");
-			audit.setRemarks("User Deleted Successfully");
-			audit.setAudit_table("BGLS_USER_PROFILE_TABLE");
-			audit.setAudit_screen("USER PROFILE - DELETE");
-			audit.setEvent_id(user.getUserid());
-			audit.setEvent_name(user.getUsername());
-			//audit.setModi_details("Login Successfully");
-			UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-			String auth_user_val = auth_user.getAuth_user();
-			Date auth_user_date = auth_user.getAuth_time();
-			audit.setAuth_user(auth_user_val);
-			audit.setAuth_time(auth_user_date);
-			audit.setAudit_ref_no(auditID.toString());
-			audit.setField_name("-");
-			
-			bGLSBusinessTable_Rep.save(audit);
-
-
+		    UserProfile user = up1.get();
+		    audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE DELETE", "DELETED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE");
+		  
 		}
-
 		return msg;
 	}
 
 	public Iterable<UserProfile> getUsersList() {
-
 		Iterable<UserProfile> users = userProfileRep.findAll();
-
 		return users;
-
 	}
 
 	public UserProfile getUser(String id) {
@@ -428,31 +342,10 @@ public class LoginServices {
 
 				userProfileRep.save(userProfile);
 				 //FOR AUIDT
-				 BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
-		        Long auditID = bGLSBusinessTable_Rep.getAuditRefUUID();
-		        Optional<UserProfile> up1 = userProfileRep.findById(inputUser);
+		         Optional<UserProfile> up1 = userProfileRep.findById(inputUser);
 			     UserProfile user = up1.get();   
-				LocalDateTime currentDateTime = LocalDateTime.now();
-				Date dateValue = Date.from(currentDateTime.atZone(ZoneId.systemDefault()).toInstant());
-				audit.setAudit_date(new Date());
-				audit.setEntry_time(dateValue);
-				audit.setEntry_user(user.getUserid());
-				 audit.setFunc_code("User Id");
-				audit.setRemarks("User Verified Successfully");
-				audit.setAudit_table("BGLS_USER_PROFILE_TABLE");
-				audit.setAudit_screen("USER PROFILE - VERIFY");
-				audit.setEvent_id(user.getUserid());
-				audit.setEvent_name(user.getUsername());
-				//audit.setModi_details("Login Successfully");
-				UserProfile auth_user = userProfileRep.getRole(user.getUserid());
-				String auth_user_val = auth_user.getAuth_user();
-				Date auth_user_date = auth_user.getAuth_time();
-				audit.setAuth_user(auth_user_val);
-				audit.setAuth_time(auth_user_date);
-				audit.setAudit_ref_no(auditID.toString());
-				audit.setField_name("-");
-				
-				bGLSBusinessTable_Rep.save(audit);
+			     audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE VERIFY", "VERIFIED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE");
+
 			}
 
 			msg = "User Verified Successfully";

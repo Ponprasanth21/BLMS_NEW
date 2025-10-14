@@ -97,6 +97,9 @@ public class ExelDownloadService {
 	@Autowired
 	TRAN_MAIN_TRM_WRK_REP tRAN_MAIN_TRM_WRK_REP;
 	
+	@Autowired
+	AuditConfigure audit;
+	
 
 //	public void ExportExcel(String type, String userID, String userName, String auditRefNo,
 //			HttpServletResponse response) {
@@ -190,7 +193,7 @@ public class ExelDownloadService {
 //
 //				}
 //
-//				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
+//				audit.insertServiceAudit(userID, userName, "REPAYMENT FILE DOWNLOAD!", "DOWNLOADED SUCCESSFULLY","ASPIRA_LOAN_REPAYMENT_TABLE", "LOAN REPAYMENT");
 //				response.setHeader("Content-Disposition", "inline; filename=source_data.xlsx");
 //
 //			}   else if ("CUSTOMER".equalsIgnoreCase(type)) {
@@ -243,7 +246,7 @@ public class ExelDownloadService {
 //							.setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getAsondate()));
 //				}
 //
-//				saveAudit(userID, userName, "Customer File Download!", "CLIENT_MASTER_TBL", auditRefNo);
+//				audit.insertServiceAudit(userID, userName, "CUSTOMER FILE DOWNLOAD!", "DOWNLOADED SUCCESSFULLY","CLIENT_MASTER_TBL", "CUSTOMER MASTRER");
 //				response.setHeader("Content-Disposition", "inline; filename=source_data.xlsx");
 //
 //			} else if ("LOAN".equalsIgnoreCase(type)) {
@@ -366,7 +369,7 @@ public class ExelDownloadService {
 //
 //				}
 //
-//				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
+//				audit.insertServiceAudit(userID, userName, "REPAYMENT FILE DOWNLOAD!", "DOWNLOADED SUCCESSFULLY","ASPIRA_LOAN_REPAYMENT_TABLE", "LOAN REPAYMENT");
 //				response.setHeader("Content-Disposition", "inline; filename=Loan_Master_Data.xlsx");
 //				
 //			}
@@ -464,7 +467,7 @@ public class ExelDownloadService {
 
 	            }
 
-	            saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
+	            audit.insertServiceAudit(userID, userName, "REPAYMENT FILE DOWNLOAD!", "DOWNLOADED SUCCESSFULLY","ASPIRA_LOAN_REPAYMENT_TABLE", "LOAN REPAYMENT");
 	            response.setHeader("Content-Disposition", "inline; filename=Repayment_Data.xlsx");
 
 	        } else if ("CUSTOMER".equalsIgnoreCase(type)) {
@@ -530,8 +533,7 @@ public class ExelDownloadService {
 	                excelRow.createCell(22).setCellValue(DateParser.getCurrentDateWithoutTimePass(entity.getAsondate()));
 
 	            }
-
-	            saveAudit(userID, userName, "Customer File Download!", "CLIENT_MASTER_TBL", auditRefNo);
+	            audit.insertServiceAudit(userID, userName, "CUSTOMER FILE DOWNLOAD!", "DOWNLOADED SUCCESSFULLY","CLIENT_MASTER_TBL", "CUSTOMER MASTER");
 	            response.setHeader("Content-Disposition", "inline; filename=Customer_Data.xlsx");
 
 	        } else if ("LOAN".equalsIgnoreCase(type)) {
@@ -622,8 +624,7 @@ public class ExelDownloadService {
 
 	            }
 	            System.out.println("download ready");
-
-	            saveAudit(userID, userName, "Loan File Download!", "LOAN_ACT_MST_ENTITY", auditRefNo);
+	            audit.insertServiceAudit(userID, userName, "LOAN FILE DOWNLOAD!", "DOWNLOADED SUCCESSFULLY","LOAN_ACT_MST_ENTITY", "LOAN ACCOUNT MASTER");
 	            response.setHeader("Content-Disposition", "inline; filename=Loan_Data.xlsx");
 
 	        } else {
@@ -647,30 +648,6 @@ public class ExelDownloadService {
 	            ex.printStackTrace();
 	        }
 	    }
-	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	private void saveAudit(String userID, String userName, String remarks, String table, String refNo) {
-		BGLSAuditTable audit = new BGLSAuditTable();
-		audit.setAudit_date(new Date());
-		audit.setEntry_time(new Date());
-		audit.setEntry_user(userID);
-		audit.setFunc_code("DOWNLOAD");
-		audit.setRemarks(remarks);
-		audit.setAudit_table(table);
-		audit.setAudit_screen("UPLOAD");
-		audit.setEvent_id(userID);
-		audit.setEvent_name(userName);
-		audit.setModi_details("-");
-		audit.setAudit_ref_no(refNo);
-		AuditTable_Rep.save(audit);
 	}
 	
 //	public void ExportExcel1(String type, String userID, String userName, String auditRefNo,
@@ -710,7 +687,7 @@ public class ExelDownloadService {
 //
 //				}
 //
-//				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
+//				audit.insertServiceAudit(userID, userName, "REPAYMENT FILE DOWNLOAD!", "DOWNLOADED SUCCESSFULLY","ASPIRA_LOAN_REPAYMENT_TABLE", "LOAN REPAYMENT");
 //				response.setHeader("Content-Disposition", "inline; filename=disbursement.xlsx");
 //
 //			}   
@@ -744,7 +721,7 @@ public class ExelDownloadService {
 //
 //				}
 //
-//				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
+//				audit.insertServiceAudit(userID, userName, "REPAYMENT FILE DOWNLOAD!", "DOWNLOADED SUCCESSFULLY","ASPIRA_LOAN_REPAYMENT_TABLE", "LOAN REPAYMENT");
 //				response.setHeader("Content-Disposition", "inline; filename=interest.xlsx");
 //				
 //				
@@ -781,7 +758,7 @@ public class ExelDownloadService {
 //				}
 //
 //
-//				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
+//				audit.insertServiceAudit(userID, userName, "REPAYMENT FILE DOWNLOAD!", "DOWNLOADED SUCCESSFULLY","ASPIRA_LOAN_REPAYMENT_TABLE", "LOAN REPAYMENT");
 //				response.setHeader("Content-Disposition", "inline; filename=fees.xlsx");
 //				
 //				
@@ -819,7 +796,7 @@ public class ExelDownloadService {
 //
 //				}
 //
-//				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
+//				audit.insertServiceAudit(userID, userName, "REPAYMENT FILE DOWNLOAD!", "DOWNLOADED SUCCESSFULLY","ASPIRA_LOAN_REPAYMENT_TABLE", "LOAN REPAYMENT");
 //				response.setHeader("Content-Disposition", "inline; filename=recovery.xlsx");
 //	
 //	
@@ -857,7 +834,7 @@ public class ExelDownloadService {
 //
 //				}
 //
-//				saveAudit(userID, userName, "Repayment File Download!", "ASPIRA_LOAN_REPAYMENT_TABLE", auditRefNo);
+//				audit.insertServiceAudit(userID, userName, "REPAYMENT FILE DOWNLOAD!", "DOWNLOADED SUCCESSFULLY","ASPIRA_LOAN_REPAYMENT_TABLE", "LOAN REPAYMENT");
 //				response.setHeader("Content-Disposition", "inline; filename=booking.xlsx");
 //	
 //	
@@ -969,8 +946,7 @@ public class ExelDownloadService {
 				System.out.println("ready download");
 				
 				// ✅ Save audit
-				saveAudit(userID, userName, type.toUpperCase() + " File Download!", 
-				     "BGLS_TRM_WRK_TRANSACTIONS", auditRefNo);
+				audit.insertServiceAudit(userID, userName, "FILE DOWNLOAD!", "DOWNLOADED SUCCESSFULLY","BGLS_TRM_WRK_TRANSACTIONS", "TRANSACTION MAINTENANCE");
 				
 				// ✅ Setup response
 				response.setHeader("Content-Disposition", "inline; filename=" + filename);
