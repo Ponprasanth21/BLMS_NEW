@@ -2789,7 +2789,14 @@ public class BGLSRestController {
 	                                 HttpServletRequest rq) throws ParseException {
 
 	    String user = (String) rq.getSession().getAttribute("USERID");
-	    String tranId = "TR" + tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1();
+	    String seqStr = tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1(); // e.g., "1", "50", "123"
+
+		// Convert to long (or int)
+		long seq = Long.parseLong(seqStr);
+
+		// Format with leading zeros
+		String tranId = String.format("TR%05d", seq);
+		
 	    BigDecimal partTranId1 = BigDecimal.valueOf(1);
 	    BigDecimal partTranId2 = BigDecimal.valueOf(2);
 	    String ActNo = "";
@@ -2838,7 +2845,7 @@ public class BGLSRestController {
 	                Lease_Loan_Work_Entity dep = lease_Loan_Work_Repo.getLeaseAccount(loanAcctNo);
 	                BigDecimal intrate = dep != null ? dep.getEffective_interest_rate() : BigDecimal.ZERO;
 
-	                String acct_num = "1200001220"; // Debit account
+	                String acct_num = "1291700001"; // Debit account
 	                String tranParticulars = "Booking: " + loanAcctNo + " for " + days + " days @ " + interestPercentage + "%";
 
 	                Chart_Acc_Entity depositevalue = chart_Acc_Rep.getaedit(acct_num);
@@ -2867,7 +2874,7 @@ public class BGLSRestController {
 
 	                tRAN_MAIN_TRM_WRK_REP.save(debitTrm);
 
-	                String acct_num1 = "4100004110"; // Credit account
+	                String acct_num1 = "5061100001"; // Credit account
 	                Chart_Acc_Entity termdeposite = chart_Acc_Rep.getaedit(acct_num1);
 
 	                TRAN_MAIN_TRM_WRK_ENTITY creditTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
@@ -5907,7 +5914,7 @@ public class BGLSRestController {
 			demandRecordsList1.setPrincipal_due(principleExp.subtract(newPrincipalPaid).max(BigDecimal.ZERO));
 
 			// Update transaction remarks
-			creditTrm.setTran_particular(accountNo + " " + "Principal Recovered");
+			creditTrm.setTran_particular("Principal Recovered");
 			creditTrm.setTran_remarks("Principal amount recovered for loan account: " + accountNo);
 		} else if (flowCode.equals("INDEM")) {
 			BigDecimal newInterestPaid = interestPaid.add(tranAmt);
@@ -5919,7 +5926,7 @@ public class BGLSRestController {
 			demandRecordsList1.setInterest_due(interestExp.subtract(newInterestPaid).max(BigDecimal.ZERO));
 
 			// Update transaction remarks
-			creditTrm.setTran_particular(accountNo + " " + "Interest Recovered");
+			creditTrm.setTran_particular("Interest Recovered");
 			creditTrm.setTran_remarks("Interest amount recovered for loan account: " + accountNo);
 		} else if (flowCode.equals("FEEDEM")) {
 			BigDecimal newFeePaid = feePaid.add(tranAmt);
@@ -5931,7 +5938,7 @@ public class BGLSRestController {
 			demandRecordsList1.setFee_due(feeExp.subtract(newFeePaid).max(BigDecimal.ZERO));
 
 			// Update transaction remarks
-			creditTrm.setTran_particular(accountNo + " " + "Fees Recovered");
+			creditTrm.setTran_particular("Fees Recovered");
 			creditTrm.setTran_remarks("Fee amount recovered for loan account: " + accountNo);
 		}
 
@@ -5961,7 +5968,7 @@ public class BGLSRestController {
 		tRAN_MAIN_TRM_WRK_REP.save(creditTrm);
 
 		// Office Loan Account Debit (second transaction)
-		String acct_num = "2700002750";
+		String acct_num = "1290700001";
 		Chart_Acc_Entity leasydebit = chart_Acc_Rep.getaedit(acct_num);
 		LOAN_ACT_MST_ENTITY loanDetails1 = lOAN_ACT_MST_REPO.getLoanView(accountNo);
 
@@ -5976,8 +5983,8 @@ public class BGLSRestController {
 		debitTrm.setPart_tran_type("Debit");
 		debitTrm.setAcct_crncy(leasydebit.getAcct_crncy());
 		debitTrm.setTran_amt(tranAmt);
-		debitTrm.setTran_particular(loanDetails1.getId() + " " + "Recovery Amount");
-		debitTrm.setTran_remarks(loanDetails1.getId() + " " + "Recovery Amount");
+		debitTrm.setTran_particular("Recovery Amount");
+		debitTrm.setTran_remarks("Recovery Amount");
 		debitTrm.setTran_date(Transaction_date);
 		debitTrm.setValue_date(flowDate);
 		debitTrm.setFlow_code("RECOVERY");
@@ -6048,22 +6055,22 @@ public class BGLSRestController {
 			switch (flowCode) {
 			case "PRDEM":
 				totalPrdem.merge(flowDateKey, tranAmt, BigDecimal::add);
-				creditTrm.setTran_particular(loanDetails.getId() + " Principal Recovery");
+				creditTrm.setTran_particular(" Principal Recovery");
 				creditTrm.setTran_remarks("Principal amount recovered on " + flowDateKey);
 				break;
 			case "INDEM":
 				totalIndem.merge(flowDateKey, tranAmt, BigDecimal::add);
-				creditTrm.setTran_particular(loanDetails.getId() + " Interest Recovery");
+				creditTrm.setTran_particular(" Interest Recovery");
 				creditTrm.setTran_remarks("Interest amount recovered on " + flowDateKey);
 				break;
 			case "FEEDEM":
 				totalFeedem.merge(flowDateKey, tranAmt, BigDecimal::add);
-				creditTrm.setTran_particular(loanDetails.getId() + " Fees Recovery");
+				creditTrm.setTran_particular(" Fee Recovery");
 				creditTrm.setTran_remarks("Fees amount recovered on " + flowDateKey);
 				break;
 			case "PENDEM":
 				totalPendem.merge(flowDateKey, tranAmt, BigDecimal::add);
-				creditTrm.setTran_particular(loanDetails.getId() + " Penalty Recovery");
+				creditTrm.setTran_particular(" Penalty Recovery");
 				creditTrm.setTran_remarks("Penalty amount recovered on " + flowDateKey);
 				break;
 			default:
@@ -6074,7 +6081,7 @@ public class BGLSRestController {
 			transactionList.add(creditTrm);
 
 			// --- DEBIT ENTRY FOR THE SAME TRANSACTION ---
-			String debitAcctNum = "2700002750"; // Example debit account
+			String debitAcctNum = "1290700001"; // Example debit account
 			Chart_Acc_Entity debitAccount = chart_Acc_Rep.getaedit(debitAcctNum);
 
 			TRAN_MAIN_TRM_WRK_ENTITY debitTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
@@ -7513,7 +7520,13 @@ public class BGLSRestController {
 		}
 
 		// Generate transaction ID
-		String tranId = "TR" + tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1();
+		String seqStr = tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1(); // e.g., "1", "50", "123"
+
+		// Convert to long (or int)
+		long seq = Long.parseLong(seqStr);
+
+		// Format with leading zeros
+		String tranId = String.format("TR%05d", seq);
 		System.out.println("Generated TranId: " + tranId);
 
 		for (Map<String, String> row : selectedData) {
@@ -7561,7 +7574,7 @@ public class BGLSRestController {
 
 				LOAN_ACT_MST_ENTITY loanDetails = lOAN_ACT_MST_REPO.getLoanView(account_no);
 
-				String tranParticulars = "PRDEM".equals(flow_code) ? "Principle Debited" : "Interest Debited";
+				String tranParticulars = "PRDEM".equals(flow_code) ? "Principle Debited" : "Interest Applied";
 
 				// --- First Transaction - Debit ---
 				TRAN_MAIN_TRM_WRK_ENTITY debitTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
@@ -7574,8 +7587,8 @@ public class BGLSRestController {
 				debitTrm.setPart_tran_type("Debit");
 				debitTrm.setAcct_crncy(loanDetails.getCurrency_code());
 				debitTrm.setTran_amt(debitAmount);
-				debitTrm.setTran_particular(loanDetails.getId() + " " + tranParticulars);
-				debitTrm.setTran_remarks(loanDetails.getId() + " " + tranParticulars);
+				debitTrm.setTran_particular(tranParticulars);
+				debitTrm.setTran_remarks(tranParticulars);
 				debitTrm.setTran_date(Transaction_date);
 				debitTrm.setValue_date(flow_date);
 				debitTrm.setFlow_code(flow_code);
@@ -7587,7 +7600,7 @@ public class BGLSRestController {
 				tRAN_MAIN_TRM_WRK_REP.save(debitTrm);
 
 				// --- Second Transaction - Office Loan Interest Credit ---
-				Chart_Acc_Entity leaseDebit = chart_Acc_Rep.getaedit("4100004110");
+				Chart_Acc_Entity leaseDebit = chart_Acc_Rep.getaedit("5061100001");
 				TRAN_MAIN_TRM_WRK_ENTITY creditTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
 				creditTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
 				creditTrm.setTran_id(tranId);
@@ -7598,8 +7611,8 @@ public class BGLSRestController {
 				creditTrm.setPart_tran_type("Credit");
 				creditTrm.setAcct_crncy(leaseDebit.getAcct_crncy());
 				creditTrm.setTran_amt(creditAmount);
-				creditTrm.setTran_particular(loanDetails.getId() + " " + tranParticulars);
-				creditTrm.setTran_remarks(loanDetails.getId() + " " + tranParticulars);
+				creditTrm.setTran_particular(tranParticulars);
+				creditTrm.setTran_remarks(tranParticulars);
 				creditTrm.setTran_date(Transaction_date);
 				creditTrm.setValue_date(flow_date);
 				creditTrm.setFlow_code(flow_code);
@@ -7611,7 +7624,7 @@ public class BGLSRestController {
 				tRAN_MAIN_TRM_WRK_REP.save(creditTrm);
 
 				// --- Third Transaction - Interest Receivable Credit ---
-				Chart_Acc_Entity leaseDebit1 = chart_Acc_Rep.getaedit("1200001220");
+				Chart_Acc_Entity leaseDebit1 = chart_Acc_Rep.getaedit("1291700001");
 				TRAN_MAIN_TRM_WRK_ENTITY creditTrm1 = new TRAN_MAIN_TRM_WRK_ENTITY();
 				creditTrm1.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
 				creditTrm1.setTran_id(tranId);
@@ -7622,8 +7635,8 @@ public class BGLSRestController {
 				creditTrm1.setPart_tran_type("Credit");
 				creditTrm1.setAcct_crncy(leaseDebit1.getAcct_crncy());
 				creditTrm1.setTran_amt(receivableCreditAmount);
-				creditTrm1.setTran_particular(loanDetails.getId() + " Reversal of Booking");
-				creditTrm1.setTran_remarks(loanDetails.getId() + " Reversal of Booking");
+				creditTrm1.setTran_particular(" Reversal of Booking");
+				creditTrm1.setTran_remarks(" Reversal of Booking");
 				creditTrm1.setTran_date(Transaction_date);
 				creditTrm1.setValue_date(flow_date);
 				creditTrm1.setFlow_code(flow_code);
@@ -10231,9 +10244,9 @@ public class BGLSRestController {
 		return formattedRecords;
 	}
 
-	@PostMapping("/transactionfees11")
+	@PostMapping("/transactionfees111")
 	@ResponseBody
-	public String transactionfees11(@RequestBody List<Map<String, String>> selectedData, HttpServletRequest rq) {
+	public String transactionfees111(@RequestBody List<Map<String, String>> selectedData, HttpServletRequest rq) {
 
 		String user = (String) rq.getSession().getAttribute("USERID");
 		System.out.println("USERID: " + user);
@@ -10243,7 +10256,13 @@ public class BGLSRestController {
 		}
 
 		// Generate transaction ID
-		String tranId = "TR" + tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1();
+		String seqStr = tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1(); // e.g., "1", "50", "123"
+
+		// Convert to long (or int)
+		long seq = Long.parseLong(seqStr);
+
+		// Format with leading zeros
+		String tranId = String.format("TR%05d", seq);
 		System.out.println("Generated TranId: " + tranId);
 
 		Date tranDateObj = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
@@ -10290,7 +10309,7 @@ public class BGLSRestController {
 					BigDecimal flowAmt = (flow_amount_str != null) ? new BigDecimal(String.valueOf(flow_amount_str))
 							: BigDecimal.ZERO;
 
-					String tranParticularsvalues1 = "Fees Debited";
+					String tranParticularsvalues1 = "Fee Charged";
 
 					TRAN_MAIN_TRM_WRK_ENTITY creditTrm2 = new TRAN_MAIN_TRM_WRK_ENTITY();
 					creditTrm2.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
@@ -10302,8 +10321,8 @@ public class BGLSRestController {
 					creditTrm2.setPart_tran_type("Debit");
 					creditTrm2.setAcct_crncy(loandetails.getCurrency_code());
 					creditTrm2.setTran_amt(flowAmt);
-					creditTrm2.setTran_particular(loandetails.getId() + " " + tranParticularsvalues1);
-					creditTrm2.setTran_remarks(loandetails.getId() + " " + tranParticularsvalues1);
+					creditTrm2.setTran_particular(tranParticularsvalues1);
+					creditTrm2.setTran_remarks(tranParticularsvalues1);
 					creditTrm2.setTran_date(Transaction_date);
 					creditTrm2.setValue_date(flow_date);
 					creditTrm2.setFlow_code(flow_code);
@@ -10316,7 +10335,7 @@ public class BGLSRestController {
 
 					/* Second Transaction - office Loan Account Debit */
 					/* this account already existed in COA */
-					String acct_num = "4200004210";
+					String acct_num = "1701100001";
 					Chart_Acc_Entity leasydebit = chart_Acc_Rep.getaedit(acct_num);
 
 					TRAN_MAIN_TRM_WRK_ENTITY debitTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
@@ -10330,8 +10349,8 @@ public class BGLSRestController {
 					debitTrm.setPart_tran_type("Credit");
 					debitTrm.setAcct_crncy(leasydebit.getAcct_crncy());
 					debitTrm.setTran_amt(flowAmt);
-					debitTrm.setTran_particular(loandetails.getId() + " " + tranParticularsvalues1);
-					debitTrm.setTran_remarks(loandetails.getId() + " " + tranParticularsvalues1);
+					debitTrm.setTran_particular(tranParticularsvalues1);
+					debitTrm.setTran_remarks(tranParticularsvalues1);
 					debitTrm.setTran_date(Transaction_date);
 					debitTrm.setValue_date(flow_date);
 					debitTrm.setFlow_code(flow_code);
@@ -10364,7 +10383,13 @@ public class BGLSRestController {
 		}
 
 		// Generate transaction ID
-		String tranId = "TR" + tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1();
+		String seqStr = tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1(); // e.g., "1", "50", "123"
+
+		// Convert to long (or int)
+		long seq = Long.parseLong(seqStr);
+
+		// Format with leading zeros
+		String tranId = String.format("TR%05d", seq);
 		System.out.println("Generated TranId: " + tranId);
 
 		Date tranDateObj = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
@@ -10411,7 +10436,7 @@ public class BGLSRestController {
 					BigDecimal flowAmt = (flow_amount_str != null) ? new BigDecimal(String.valueOf(flow_amount_str))
 							: BigDecimal.ZERO;
 
-					String tranParticularsvalues1 = "Penalty Debited";
+					String tranParticularsvalues1 = "Penalty Charged";
 
 					TRAN_MAIN_TRM_WRK_ENTITY creditTrm2 = new TRAN_MAIN_TRM_WRK_ENTITY();
 					creditTrm2.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
@@ -10423,8 +10448,8 @@ public class BGLSRestController {
 					creditTrm2.setPart_tran_type("Debit");
 					creditTrm2.setAcct_crncy(loandetails.getCurrency_code());
 					creditTrm2.setTran_amt(flowAmt);
-					creditTrm2.setTran_particular(loandetails.getId() + " " + tranParticularsvalues1);
-					creditTrm2.setTran_remarks(loandetails.getId() + " " + tranParticularsvalues1);
+					creditTrm2.setTran_particular(tranParticularsvalues1);
+					creditTrm2.setTran_remarks(tranParticularsvalues1);
 					creditTrm2.setTran_date(Transaction_date);
 					creditTrm2.setValue_date(flow_date);
 					creditTrm2.setFlow_code(flow_code);
@@ -10451,8 +10476,8 @@ public class BGLSRestController {
 					debitTrm.setPart_tran_type("Credit");
 					debitTrm.setAcct_crncy(leasydebit.getAcct_crncy());
 					debitTrm.setTran_amt(flowAmt);
-					debitTrm.setTran_particular(loandetails.getId() + " " + tranParticularsvalues1);
-					debitTrm.setTran_remarks(loandetails.getId() + " " + tranParticularsvalues1);
+					debitTrm.setTran_particular(tranParticularsvalues1);
+					debitTrm.setTran_remarks(tranParticularsvalues1);
 					debitTrm.setTran_date(Transaction_date);
 					debitTrm.setValue_date(flow_date);
 					debitTrm.setFlow_code(flow_code);

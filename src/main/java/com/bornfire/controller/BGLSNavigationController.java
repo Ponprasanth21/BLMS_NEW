@@ -3920,7 +3920,10 @@ public class BGLSNavigationController {
     
     @RequestMapping(value = "loanClosure", method = { RequestMethod.GET, RequestMethod.POST })
     public String loanClosure(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
-
+    	Date tranDateObj = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy"); // e.g., 21-SEP-2025
+		String formattedDate = sdf.format(tranDateObj);
+		
         Date TRANDATE = (Date) req.getSession().getAttribute("TRANDATE");
         if (formmode == null || formmode.equals("list")) {
             md.addAttribute("formmode", "list");
@@ -3928,7 +3931,8 @@ public class BGLSNavigationController {
             md.addAttribute("booking", LOAN_ACT_MST_REPO.getActNo());
             md.addAttribute("booking1", depositRep.getexistingData());
             md.addAttribute("chartaccount", chart_Acc_Rep.getListoffice());
-            md.addAttribute("preclosure", LOAN_ACT_MST_REPO.getAccountWithClientName());
+            md.addAttribute("preclosure", LOAN_ACT_MST_REPO.getAccountDetails(formattedDate));
+            md.addAttribute("closure", LOAN_ACT_MST_REPO.getAccountDetailsBeforeDueDate(formattedDate));
         } else if (formmode.equals("view")) {
             md.addAttribute("formmode", "view");
 

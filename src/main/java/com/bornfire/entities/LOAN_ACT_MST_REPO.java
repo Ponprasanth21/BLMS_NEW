@@ -378,5 +378,17 @@ List<Object[]> getLoanNo();
 			+ "   ON a.encoded_key = c.parent_account_key " + "WHERE (c.penalty_exp - c.penalty_paid) != 0 "
 			+ "  AND c.due_date = TO_DATE(?1, 'DD-MON-YYYY')", nativeQuery = true)
 	List<Object[]> getPenaltyAccounts(String dueDate);
+	
+	@Query(value = "SELECT DISTINCT " + "A.ID, " + "B.FIRST_NAME || ' ' || B.LAST_NAME AS ACCT_NAME "
+			+ "FROM LOAN_ACCOUNT_MASTER_TBL A " + "JOIN CLIENT_MASTER_TBL B ON A.ACCOUNT_HOLDERKEY = B.ENCODED_KEY "
+			+ "JOIN LOAN_REPAYMENT_TBL C ON A.ENCODED_KEY = C.PARENT_ACCOUNT_KEY "
+			+ "WHERE C.DUE_DATE > TO_DATE(:dueDate, 'DD-MM-YYYY') " + "ORDER BY A.ID", nativeQuery = true)
+	List<Object[]> getAccountDetails(@Param("dueDate") String dueDate);
+
+	@Query(value = "SELECT DISTINCT " + "A.ID, " + "B.FIRST_NAME || ' ' || B.LAST_NAME AS ACCT_NAME "
+			+ "FROM LOAN_ACCOUNT_MASTER_TBL A " + "JOIN CLIENT_MASTER_TBL B ON A.ACCOUNT_HOLDERKEY = B.ENCODED_KEY "
+			+ "JOIN LOAN_REPAYMENT_TBL C ON A.ENCODED_KEY = C.PARENT_ACCOUNT_KEY "
+			+ "WHERE C.DUE_DATE < TO_DATE(:dueDate, 'DD-MM-YYYY') " + "ORDER BY A.ID", nativeQuery = true)
+	List<Object[]> getAccountDetailsBeforeDueDate(@Param("dueDate") String dueDate);
 
 }
