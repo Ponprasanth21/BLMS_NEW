@@ -2560,6 +2560,8 @@ public class BGLSNavigationController {
         model.addAttribute("MovementofTransaction",bGLS_CONTROL_TABLE_REP.getMovementofTransaction());
         model.addAttribute("GlConsolidation",bGLS_CONTROL_TABLE_REP.getGlConsolidation());
         model.addAttribute("InterestDemand",bGLS_CONTROL_TABLE_REP.getInterestDemand());
+        model.addAttribute("dcpstatus",bGLS_CONTROL_TABLE_REP.getDcpStatus());
+        System.out.println("dcpstatus"+bGLS_CONTROL_TABLE_REP.getDcpStatus());
         return "Day_end_Operation.html";
     }
 
@@ -2629,13 +2631,16 @@ public class BGLSNavigationController {
 
     @RequestMapping(value = "Doatransactionpush", method = RequestMethod.POST)
     @ResponseBody
-    public String VerifyScreens(Model md, HttpServletRequest rq, @ModelAttribute DAB_Entity DAB_Entity) {
+    public String VerifyScreens(Model md, HttpServletRequest rq, @ModelAttribute DAB_Entity DAB_Entity,
+    		  @RequestParam("trndate") String trndate) {
         // Get TRANDATE from session as a String
+    	
         Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
         System.out.println("TRANDATE: " + TRANDATE);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String formattedDate = dateFormat.format(TRANDATE);
 
+        System.out.println("formattedDate"+formattedDate);
         List<Object[]> debitCreditData = tRAN_MAIN_TRM_WRK_REP.getNetDebitCreditWithCountForCurrentDate(formattedDate);
         // List<Object[]> debitCreditData =
         // tRAN_MAIN_TRM_WRK_REP.getNetDebitCreditWithCountForCurrentDatedemo(formattedDate);
@@ -2835,7 +2840,7 @@ public class BGLSNavigationController {
 
             // 2️⃣ Log past value
             existingRecord.setMov_dac("Completed");
-
+            existingRecord.setDcp_status("DCP-1");
             // 4️⃣ Save updated record
             bGLS_CONTROL_TABLE_REP.save(existingRecord);
 
@@ -3300,7 +3305,9 @@ public class BGLSNavigationController {
 	    BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
 	    if (existingRecord != null) {
 	        existingRecord.setLedger_cons("Completed");
+	        existingRecord.setDcp_status("PRE-DCP-2");
 	        bGLS_CONTROL_TABLE_REP.save(existingRecord);
+	        
 	        System.out.println("Ledger updated successfully.");
 	    }
 
@@ -3317,10 +3324,26 @@ public class BGLSNavigationController {
 	@RequestMapping(value = "movementoftransaction", method = RequestMethod.POST)
 	@ResponseBody
 	public String movementoftransaction(Model md, HttpServletRequest rq,
-			@RequestParam("trndate") String trndate) {
+			@RequestParam("trndate") String trndate) throws java.text.ParseException {
 		Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
-		List<TRAN_MAIN_TRM_WRK_ENTITY> listofrecord = tRAN_MAIN_TRM_WRK_REP.getswiftvalues(trndate);
+		Date tranDate;
+		try {
+		    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		    sdf.setLenient(false);
 
+		    // Parse the string to Date
+		    tranDate = sdf.parse(trndate);
+
+		    // Format it back to string for display
+		    String formattedDate = sdf.format(tranDate);
+		    System.out.println("Movement of Transaction: " + formattedDate); // 30-09-2025
+
+		} catch (ParseException e) {
+		    e.printStackTrace();
+		    return "error: invalid date format";
+		}
+		
+		List<TRAN_MAIN_TRM_WRK_ENTITY> listofrecord = tRAN_MAIN_TRM_WRK_REP.getswiftvalues(tranDate);
 		if (listofrecord != null && !listofrecord.isEmpty()) {
 			for (TRAN_MAIN_TRM_WRK_ENTITY records : listofrecord) {
 				BGLS_Journal_History bGLS_Journal_History = new BGLS_Journal_History();
@@ -3374,7 +3397,7 @@ public class BGLSNavigationController {
 
 			// 2️⃣ Log past value
 			existingRecord.setMov_journal("Completed");
-
+			existingRecord.setDcp_status("PRE-DCP-6");
 			// 4️⃣ Save updated record
 			bGLS_CONTROL_TABLE_REP.save(existingRecord);
 
@@ -3970,6 +3993,7 @@ public class BGLSNavigationController {
         if (existingRecord != null) {
             System.out.println("Past Journal Cons: " + existingRecord.getJournal_cons());
             existingRecord.setJournal_cons("Completed");
+            existingRecord.setDcp_status("PRE-DCP-1");
             bGLS_CONTROL_TABLE_REP.save(existingRecord);
             System.out.println("Updated Journal Cons: " + existingRecord.getJournal_cons());
         } else {
@@ -4011,6 +4035,7 @@ public class BGLSNavigationController {
         BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
         if (existingRecord != null) {
             existingRecord.setAcct_cons("Completed");
+            existingRecord.setDcp_status("PRE-DCP-4");
             bGLS_CONTROL_TABLE_REP.save(existingRecord);
         }
 
@@ -4025,69 +4050,108 @@ public class BGLSNavigationController {
 
     @RequestMapping(value = "dateChageProcess", method = RequestMethod.POST)
     @ResponseBody
-    public String dateChageProcess(Model md, HttpServletRequest rq) {
+    public String dateChageProcess(Model md, HttpServletRequest rq,
+            @RequestParam("trndate") String trndate) throws java.text.ParseException {
+
+        // Get session date (already a Date object)
         Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
 
-        System.out.println("Incoming Date Change Process");
-        System.out.println(TRANDATE + " TRANDATE");
+        try {
+            // Define date format matching your input (dd-MM-yyyy)
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+            sdf.setLenient(false); // makes parsing strict
 
-        return DateChangeService.dateChange(TRANDATE);
+            // Convert string to java.util.Date
+            Date tranDate = sdf.parse(trndate);
+
+            System.out.println("Parsed trndate: " + tranDate);
+
+            // Now you can call your service method with Date
+            return DateChangeService.dateChange(tranDate);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "error"; // Or return a message like "Invalid date format"
+        }
     }
 
 
-	@PostMapping("/dcpupdate")
-	@ResponseBody
-	public Map<String, String> dcpupdate(@RequestBody Map<String, String> payload) throws java.text.ParseException {
 
-		String user = payload.get("user");
-		String trndate = payload.get("trndate");
-		String nxtdate = payload.get("nxtdate");
+    @PostMapping("/dcpupdate")
+    @ResponseBody
+    public Map<String, String> dcpupdate(@RequestBody Map<String, String> payload,
+                                         HttpServletRequest req) throws ParseException, java.text.ParseException {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-		Date trnDateObj = null;
-		Date nxtDateObj = null;
+        String userid = (String) req.getSession().getAttribute("USERID");
+        if (userid == null) userid = "BFI001"; // default user
 
-		try {
-		    trnDateObj = sdf.parse(trndate);
-		    nxtDateObj = sdf.parse(nxtdate);
-		} catch (ParseException e) {
-		    e.printStackTrace();
-		    // Handle invalid date format
-		    throw new RuntimeException("Invalid date format. Expected dd-MM-yyyy");
-		}
+        System.out.println("✅ Started dcpupdate...");
 
-		System.out.println("Transaction Date: " + trnDateObj);
-		System.out.println("Next Date: " + nxtDateObj);
+        String trndate = payload.get("trndate");
+        String nxtdate = payload.get("nxtdate");
 
+        Map<String, String> response = new HashMap<>();
 
-		Map<String, String> response = new HashMap<>();
-		System.out.println("User: " + user + ", Current Date: " + trndate + ", Next Date: " + nxtdate);
+        if (trndate == null || nxtdate == null) {
+            response.put("status", "error");
+            response.put("message", "Transaction date or Next date missing");
+            return response;
+        }
 
-		List<BGLS_Control_Table> list = bGLS_CONTROL_TABLE_REP.findAll();
-		if (list.isEmpty()) {
-			response.put("status", "failure");
-			return response;
-		}
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        Date trnDateObj = sdf.parse(trndate);
+        Date nxtDateObj = sdf.parse(nxtdate);
 
-		BGLS_Control_Table controlTable = list.get(0);
+        // ✅ Get DCP_STATUS from DB
+        String dcpStatus = bGLS_CONTROL_TABLE_REP.getDcpstatus();
+        System.out.println("🔍 Current DCP_STATUS: " + dcpStatus);
 
-		// Update fields
-		controlTable.setDcp_user(user);
-		controlTable.setTran_date(trnDateObj);
-		controlTable.setNext_work_date(nxtDateObj);
-		controlTable.setJournal_cons("PENDING");
-		controlTable.setLedger_cons("PENDING");
-		controlTable.setAcct_cons("PENDING");
-		controlTable.setHol_check("PENDING");
-		controlTable.setMov_dac("PENDING");
-		controlTable.setMov_journal("PENDING");
-		
+        // ✅ Proceed only if DCP_STATUS = OPEN
+        if (!"OPEN".equalsIgnoreCase(dcpStatus)) {
+            System.out.println("⚠️ DCP_STATUS is not OPEN. Update skipped.");
+            response.put("status", "not_open");
+            response.put("message", "DCP_STATUS is not OPEN, cannot update.");
+            return response;
+        }
 
-		bGLS_CONTROL_TABLE_REP.save(controlTable);
+        // ✅ Fetch table data
+        List<BGLS_Control_Table> list = bGLS_CONTROL_TABLE_REP.findAll();
+        if (list == null || list.isEmpty()) {
+            System.out.println("⚠️ No rows found in BGLS_CONTROL_TABLE");
+            response.put("status", "failure");
+            return response;
+        }
 
-		response.put("status", "success");
-		return response;
-	}
+        BGLS_Control_Table controlTable = list.get(0);
+        if (controlTable == null) {
+            response.put("status", "failure");
+            return response;
+        }
+
+        // ✅ Perform update if OPEN
+        controlTable.setDcp_user(userid);
+        controlTable.setTran_date(trnDateObj);
+        controlTable.setNext_work_date(nxtDateObj);
+        controlTable.setJournal_cons("PENDING");
+        controlTable.setLedger_cons("PENDING");
+        controlTable.setAcct_cons("PENDING");
+        controlTable.setHol_check("PENDING");
+        controlTable.setMov_dac("PENDING");
+        controlTable.setMov_journal("PENDING");
+        controlTable.setGl_con("PENDING");
+        controlTable.setInterest_demand_gen("PENDING");
+        controlTable.setDcp_start_time(new Date());
+        controlTable.setDcp_flg("N");
+        controlTable.setDcp_status("CLOSE");
+
+        bGLS_CONTROL_TABLE_REP.save(controlTable);
+
+        System.out.println("✅ DCP update completed successfully");
+        response.put("status", "success");
+
+        return response;
+    }
+
 
 	
 
@@ -4104,6 +4168,8 @@ public class BGLSNavigationController {
 	    try {
 	        // Match the input format "dd-MM-yyyy"
 	        TRANDATE = new SimpleDateFormat("dd-MM-yyyy").parse(trndate);
+	        
+	        System.out.println("Holiday TRANDATE"+TRANDATE);
 	    } catch (ParseException e) {
 	        e.printStackTrace();
 	        return "Invalid Date Format";
@@ -4113,8 +4179,9 @@ public class BGLSNavigationController {
 	    BGLS_Control_Table existingRecord1 = bGLS_CONTROL_TABLE_REP.findAll().get(0);
 	    if (existingRecord1 != null) {
 	        existingRecord1.setHol_check("Completed");
+	        existingRecord1.setDcp_status("PRE-DCP-3");
 	        bGLS_CONTROL_TABLE_REP.save(existingRecord1);
-	        System.out.println("Updated Journal Cons: " + existingRecord1.getJournal_cons());
+	        System.out.println("Updated Holiday Check: " + existingRecord1.getHol_check());
 	    } else {
 	        System.out.println("No record found in BGLS_Control_Table");
 	    }
@@ -4386,5 +4453,21 @@ public class BGLSNavigationController {
 
         return new FileSystemResource(repfile);
     }
+    
+    
+    
+    @RequestMapping(value = "InterestDemandValidate", method = RequestMethod.POST)
+	@ResponseBody
+	public String InterestDemandValidate(Model md, HttpServletRequest rq,
+			@RequestParam("trndate") String trndate) {
+		Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
+		
+		BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+
+		
+
+		return "Successfully Updated";
+	}
+
 
 }

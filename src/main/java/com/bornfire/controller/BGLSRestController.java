@@ -4388,7 +4388,9 @@ public class BGLSRestController {
         if (existingRecord != null) {
             System.out.println("Past gl consolidate : " + existingRecord.getGl_con());
             existingRecord.setGl_con("Completed");
+            existingRecord.setDcp_status("PRE-DCP-5");
             bGLS_CONTROL_TABLE_REP.save(existingRecord);
+            
             System.out.println("Updated gl consolidate: " + existingRecord.getGl_con());
         } else {
             System.out.println("No record found in BGLS_Control_Table");
