@@ -935,7 +935,9 @@
 			var todate = $('#todatefees').val();
 
 			if (!fromdate || !todate) {
-				alert("Please select both From Date and To Date.");
+				// alert("Please select both From Date and To Date.");
+				$("#normalalertmsg").text("Please select both From Date and To Date.");
+					$('#normalalert').modal('show');
 				return;
 			}
 
@@ -973,7 +975,9 @@
 			});
 
 			if (selectedData.length === 0) {
-				alert("No data found to submit.");
+				// alert("No data found to submit.");
+				$("#normalalertmsg").text("No data found to submit.");
+					$('#normalalert').modal('show');
 				return;
 			}
 
@@ -987,7 +991,9 @@
 				data: JSON.stringify(selectedData),
 				success: function (data) {
 					var tranId = data.trim();
-					alert("Transaction created successfully! Tran ID: " + tranId);
+					// alert("Transaction created successfully! Tran ID: " + tranId);
+					$("#normalalertmsg").text("Transaction created successfully! Tran ID: " + tranId);
+					$('#normalalert').modal('show');
 				},
 				error: function () {
 					$('#errorMessage').text('Error fetching data');
@@ -1003,7 +1009,9 @@
 			var todate = $('#todatepenalty').val();
 
 			if (!fromdate || !todate) {
-				alert("Please select both From Date and To Date.");
+				// alert("Please select both From Date and To Date.");
+				$("#normalalertmsg").text("Please select both From Date and To Date.");
+					$('#normalalert').modal('show');
 				return;
 			}
 
@@ -1041,7 +1049,9 @@
 			});
 
 			if (selectedData.length === 0) {
-				alert("No data found to submit.");
+				// alert("No data found to submit.");
+				$("#normalalertmsg").text("No data found to submit.");
+					$('#normalalert').modal('show');
 				return;
 			}
 
@@ -1055,7 +1065,9 @@
 				data: JSON.stringify(selectedData),
 				success: function (data) {
 					var tranId = data.trim();
-					alert("Transaction created successfully! Tran ID: " + tranId);
+					// alert("Transaction created successfully! Tran ID: " + tranId);
+					$("#normalalertmsg").text("Transaction created successfully! Tran ID: " + tranId);
+					$('#normalalert').modal('show');
 				},
 				error: function () {
 					$('#errorMessage').text('Error fetching data');
@@ -1070,7 +1082,9 @@
 			var todate = $('#todateinterest').val();
 
 			if (!fromdate || !todate) {
-				alert("Please select both From Date and To Date.");
+				// alert("Please select both From Date and To Date.");
+				$("#normalalertmsg").text("Please select both From Date and To Date.");
+					$('#normalalert').modal('show');
 				return;
 			}
 
@@ -1108,7 +1122,9 @@
 			});
 
 			if (selectedData.length === 0) {
-				alert("No data found to submit.");
+				// alert("No data found to submit.");
+				$("#normalalertmsg").text("No data found to submit.");
+					$('#normalalert').modal('show');
 				return;
 			}
 
@@ -1122,7 +1138,9 @@
 				data: JSON.stringify(selectedData),
 				success: function (data) {
 					var tranId = data.trim();
-					alert("Transaction created successfully! Tran ID: " + tranId);
+					// alert("Transaction created successfully! Tran ID: " + tranId);
+					$("#normalalertmsg").text("Transaction created successfully! Tran ID: " + tranId);
+					$('#normalalert').modal('show');
 				},
 				error: function () {
 					$('#errorMessage').text('Error fetching data');
@@ -1287,7 +1305,9 @@
 			});
 
 			if (selectedData.length === 0) {
-				alert("No data found to submit.");
+				// alert("No data found to submit.");
+				$("#normalalertmsg").text("No data found to submit.");
+				$('#normalalert').modal('show');
 				return;
 			}
 
@@ -1300,7 +1320,9 @@
 				contentType: 'application/json',
 				data: JSON.stringify(selectedData),
 				success: function (response) {
-					alert("Transaction Saved Successfully!\nTransaction ID: " + response);
+					// alert("Transaction Saved Successfully!\nTransaction ID: " + response);
+					$("#normalalertmsg").text("Transaction Saved Successfully!\nTransaction ID: " + response);
+					$('#normalalert').modal('show');
 				},
 				error: function () {
 					$('#errorMessage').text('Error saving transactions');
@@ -1496,7 +1518,9 @@
 			var todate = $('#todatebooking').val();
 
 			if (!fromdate || !todate) {
-				alert("Please select both From Date and To Date.");
+				// alert("Please select both From Date and To Date.");
+				$("#normalalertmsg").text("Please select both From Date and To Date.");
+					$('#normalalert').modal('show');
 				return;
 			}
 
@@ -1533,7 +1557,9 @@
 			});
 
 			if (selectedData.length === 0) {
-				alert("No data found to submit.");
+				// alert("No data found to submit.");
+				$("#normalalertmsg").text("No data found to submit.");
+					$('#normalalert').modal('show');
 				return;
 			}
 
@@ -1545,7 +1571,9 @@
 				contentType: 'application/json',
 				data: JSON.stringify(selectedData),
 				success: function (response) {
-					alert("Transaction Saved Successfully!\nTransaction ID: " + response + "\nDays: " + bookingDays + "\nInterest %: " + interestpercentage);
+					// alert("Transaction Saved Successfully!\nTransaction ID: " + response + "\nDays: " + bookingDays + "\nInterest %: " + interestpercentage);
+					$("#normalalertmsg").text("Transaction Saved Successfully!\nTransaction ID: " + response + "\nDays: " + bookingDays + "\nInterest %: " + interestpercentage);
+					$('#normalalert').modal('show');
 				},
 				error: function () {
 					$('#errorMessage').text('Error saving transactions');
@@ -2589,17 +2617,16 @@
 			// Enable inputs and clear previous values
 			$filters.prop('readonly', false).val('');
 			$filters.first().focus(); // Focus on the first input
-			filterModalRows2(); // Reset table filter
+			filterModalRows222(); // Reset table filter
 		});
 
 		// Live filtering as user types
 		$('#filterAccountNumber2, #filterAccountName2').on('input', function () {
-			filterModalRows2();
+			filterModalRows222();
 		});
 	});
 
-	// Function to filter rows
-	function filterModalRows2() {
+	function filterModalRows222() {
 		var accountNumber = $('#filterAccountNumber2').val().toUpperCase();
 		var accountName = $('#filterAccountName2').val().toUpperCase();
 
@@ -2781,6 +2808,10 @@
 			});
 		});
 	});
+
+	function refresh() {
+		window.location.reload();
+	}
 </script>
 
 <body>
@@ -3569,7 +3600,7 @@
 								</th>
 								<th>
 									<input type="text" id="filterAccountName2" class="form-control font-weight-bold"
-										placeholder="Account Name" readonly>
+										placeholder="Account Name" readonly>	
 								</th>
 							</tr>
 						</thead>
@@ -3822,6 +3853,28 @@
 				</div>
 			</div>
 		</div>
+
+
+		<div class="modal fade bd-example-modal-sm" tabindex="-1" id="normalalert" style="display: none;margin: auto;"
+		aria-hidden="true">
+		<div class="modal-dialog modal-sm" style="margin-top: 350px;">
+			<div class="modal-content" style="margin: auto;width: 500px;">
+				<!-- <div class="modal-header">
+					<h5 class="modal-title">Alert</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div> -->
+				<div class="modal-body" style="text-align: center; margin-top: 20px;">
+					<h6 id="normalalertmsg" style="font-size: 20px;"></h6>
+					<!-- <button type="button" class="btn-primary big-btn mt-4" data-dismiss="modal"
+						onclick="$('#normalalert').modal('hide')">Close</button> -->
+					<button type="button" class="btn-primary big-btn mt-4" data-dismiss="modal"
+						onclick="refresh()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
 </body>
 
