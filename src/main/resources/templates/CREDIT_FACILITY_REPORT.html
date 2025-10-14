@@ -160,9 +160,9 @@
 			height: 100%;
 			overflow: auto;
 			background-color: rgba(0, 0, 0, 0.4);
-			margin-left: 300px;
+			margin-left: 200px;
 		}
-
+	
 		.modal-content {
 			background-color: #fefefe;
 			margin: 15% auto;
@@ -172,17 +172,41 @@
 			height: 50%;
 			margin-left: 200px;
 		}
-
-		.modal-content1 {
-			background-color: #fefefe;
-			margin: 10% auto;
-			padding: 20px;
-			border: 1px solid #888;
-			width: 70%;
-			height: 45%;
-			margin-left: 200px;
+		
+		.table-container {
+		  max-height: 50vh; /* limit table area height */
+		  overflow-y: auto; /* scroll only inside tbody */
+		  margin-top: 10px;
+		  border: 1px solid #ccc;
 		}
 
+		/* Optional: sticky table header */
+		.table-container thead th {
+		  position: sticky;
+		  top: 0;
+		  background: #f2f2f2;
+		  z-index: 2;
+		}
+		.modal-content2 {
+				  background-color: #fefefe;
+				  margin: 10% auto;
+				  padding: 20px;
+				  border: 1px solid #888;
+				  width: 70%;
+				  max-height: 80vh; /* never exceed viewport height */
+				  border-radius: 8px;
+				  overflow: hidden; /* prevent modal itself from scrolling */
+				}
+		.modal-content1 {
+		  background-color: #fefefe;
+		  margin: 10% auto;
+		  padding: 20px;
+		  border: 1px solid #888;
+		  width: 70%;
+		  max-height: 80vh; /* never exceed viewport height */
+		  border-radius: 8px;
+		  overflow: hidden; /* prevent modal itself from scrolling */
+		}
 		.modal-pass {
 			background-color: #fefefe;
 			margin: 15% auto;
@@ -236,6 +260,7 @@
 		.big-btn {
 			font-size: 16px;
 		}
+		
 	</style>
 
 	<script>
@@ -1260,46 +1285,31 @@
 			}
 		}
 
-		// Open Bootstrap modal
-		function openModal() {
-			const myModal = new bootstrap.Modal(document.getElementById('myModal'));
-			myModal.show();
-		}
-		function closeModal() {
-			// Hide modal
-			var modal = document.getElementById("myModal");
-			modal.style.display = "none";
-
-			// Remove backdrop
-			var backdrop = document.querySelector('.modal-backdrop');
-			if (backdrop) {
-				backdrop.parentNode.removeChild(backdrop);
-			}
-
-			// Remove modal-open class from body to restore scrolling
-			document.body.classList.remove('modal-open');
-		}
+	
 
 
 		$(document)
 			.ready(
 				function () {
-					$('.filterable .btn-filter').click(function (event) {
-						event.preventDefault(); // Prevent the default action of the button
-
-						var $panel = $(this).parents('.filterable');
-						var $filters = $panel.find('.filters input');
-						var $tbody = $panel.find('.table tbody');
-
-						if ($filters.prop('disabled') == true) {
-							$filters.prop('disabled', false);
-							$filters.first().focus();
-						} else {
-							$filters.val('').prop('disabled', true);
-							$tbody.find('.no-result').remove();
-							$tbody.find('tr').show();
-						}
-					});
+					$('.filterable .btn-filter')
+						.click(
+							function () {
+								var $panel = $(this).parents(
+									'.filterable'), $filters = $panel
+										.find('.filters input'), $tbody = $panel
+											.find('.table tbody');
+								if ($filters.prop('disabled') == true) {
+									$filters
+										.prop('disabled', false);
+									$filters.first().focus();
+								} else {
+									$filters.val('').prop(
+										'disabled', true);
+									$tbody.find('.no-result')
+										.remove();
+									$tbody.find('tr').show();
+								}
+							});
 
 					$('.filterable .filters input')
 						.keyup(
@@ -1316,7 +1326,8 @@
 											.index($input.parents('th')), $table = $panel
 												.find('.table'), $rows = $table
 													.find('tbody tr');
-								/* Dirtiest filter function ever ;)  */
+								console.log($input);
+								/* Dirtiest filter function ever ;) */
 								var $filteredRows = $rows
 									.filter(function () {
 										var value = $(this)
@@ -1324,6 +1335,7 @@
 												column)
 											.text()
 											.toLowerCase();
+										console.log(value);
 										return value
 											.indexOf(inputContent) === -1;
 									});
@@ -1346,60 +1358,11 @@
 							});
 				});
 
-		document.getElementById("filterButton").addEventListener("click",
-			function (event) {
-				//alert("hi")
-				event.preventDefault(); // Prevent the default action of the button
-				// Your filtering logic goes here
-			});
-
-		function setAccountNo(idValue, acctNameValue) {
-			// Set account number
-			var input = document.getElementById("acctNo2");
-			if (input) {
-				input.value = idValue;
-			}
-
-			// Set account holder name
-			var acctNameInput = document.getElementById("acctName2");
-			if (acctNameInput) {
-				acctNameInput.value = acctNameValue;
-			}
-
-			console.log("Selected Account ID:", idValue);
-			console.log("Selected Account Name:", acctNameValue);
-		}
 		
-		function setAccountNo2(idValue, acctNameValue) {
-					// Set account number
-					var input = document.getElementById("acctNo");
-					if (input) {
-						input.value = idValue;
-					}
 
-					// Set account holder name
-					var acctNameInput = document.getElementById("acctName");
-					if (acctNameInput) {
-						acctNameInput.value = acctNameValue;
-					}
-
-					console.log("Selected Account ID:", idValue);
-					console.log("Selected Account Name:", acctNameValue);
-				}
-
-
-
-
-		function submitAccount() {
-
-			var filetype = 'pdf';
-			var acctNo = document.getElementById("acctNo2").value;
-			location.href = './downloadShedulePdf?' + '&filetype=' + filetype
-				+ '&acctNo=' + acctNo;
-
-			document.getElementById("acctNo2").value = '';
-			document.getElementById("acctName2").value = '';
-		}
+	
+		
+		
 
 		function closemainModal() {
 			const modalEl = document.getElementById('myModal');
@@ -1418,36 +1381,6 @@
 
 	<script>
 
-		function submitLoan() {
-
-			var filetype = 'pdf';
-			var acctNo = document.getElementById("acctNo").value;
-
-			location.href = './downloadDetailsPdf?' + '&filetype=' + filetype
-				+ '&acctNo=' + acctNo;
-
-			document.getElementById("acctNo").value = '';
-			document.getElementById("acctName").value = '';
-		}
-
-		function openModal1() {
-			const myModal2 = new bootstrap.Modal(document.getElementById('myModal2'));
-			myModal2.show();
-		}
-
-
-		function closeModal1(event) {
-			if (event) event.preventDefault(); // stop form submission
-			var modal2 = document.getElementById("myModal2");
-			modal2.style.display = "none"; // ✅ fixed variable name
-
-			var backdrop = document.querySelector('.modal-backdrop');
-			if (backdrop) {
-				backdrop.parentNode.removeChild(backdrop);
-			}
-
-			document.body.classList.remove('modal-open');
-		}
 
 
 
@@ -1576,116 +1509,113 @@
 		</div>
 	</div>
 
-	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->
+	<!--------------------------------------------------------------- Modal for alert messages-------------------------------->			
+				
+								
+	<!-- Modal 1: Schedule Modal -->
+	<div id="myModal" class="modal" role="dialog" aria-modal="true" style="font-size: 120%;">
+	    <div class="modal-content2">
+	        <form method="post" autocomplete="off" style="margin-top: -2%;">
+	            <!-- Modal Header with Filter Button -->
+	            <div class="modal-header d-flex justify-content-between align-items-center">
+	                <h5 class="modal-title" style="font-size: 18px;">Account Details</h5>
+	                <button type="button" id="btnFilter1" class="btn btn-primary">Filter</button>
+	            </div>
 
+	            <!-- Scrollable Table -->
+	            <div style="max-height: 350px; overflow-y: auto; margin-top: 10px;">
+	                <table class="table table-bordered table-sm" id="accountTableDetails">
+	                    <thead>
+	                        <tr class="filters">
+	                            <th style="width:100px;">
+	                                <input type="text" class="form-control font-weight-bold" placeholder="SNO" disabled>
+	                            </th>
+	                            <th>
+	                                <input type="text" id="filterAccountNo1" oninput="filterTableDetails()"
+	                                    class="form-control font-weight-bold" placeholder="Account No" disabled>
+	                            </th>
+	                            <th>
+	                                <input type="text" id="filterAccountName1" oninput="filterTableDetails()"
+	                                    class="form-control font-weight-bold" placeholder="Account Name" disabled>
+	                            </th>
+	                            <th style="width:200px;">
+	                                <input type="text" class="form-control font-weight-bold" placeholder="Action" style="text-align: center;" disabled>
+	                            </th>
+	                        </tr>
+	                    </thead>
+	                    <tbody>
+	                        <tr th:each="details, stat : ${loanvalues}" th:data-id="${details[0]}" th:data-name="${details[1]}" style="cursor: pointer;"
+	                            onclick="setAccountNo(this.getAttribute('data-id'), this.getAttribute('data-name')); closeModal();">
+	                            <td th:text="${stat.count}"></td>
+	                            <td th:text="${details[0]}"></td>
+	                            <td th:text="${details[1]}"></td>
+	                            <td class="text-center">
+	                                <input type="radio" name="selectedLoan" th:value="${details[0]}" th:data-name="${details[1]}"
+	                                    onclick="event.stopPropagation(); setAccountNo(this.value, this.getAttribute('data-name')); closeModal();">
+	                            </td>
+	                        </tr>
+	                    </tbody>
+	                </table>
+	            </div>
 
-	<div id="myModal" class="modal">
-		<div class="modal-content1">
-			<form id="uploadForm1" method="post" autocomplete="off">
-				<div class="panel panel-primary filterable">
-					<button class="btn text-white btn-filter btn-primary float-right">filter</button>
-
-					<div style="max-height: 350px; overflow-y: auto;">
-						<table class="table table-bordered table-sm">
-							<thead>
-								<tr class="filters">
-
-									<th style="width:100px;"><input type="text" class="form-control font-weight-bold"
-											placeholder="SNO" disabled></th>
-									<th><input type="text" id="filterclassification" oninput="filtermodal()"
-											class="form-control font-weight-bold" placeholder="Account No" disabled>
-									</th>
-									<th><input type="text" id="filteraccountname" oninput="filtermodal()"
-											class="form-control font-weight-bold" placeholder="Account Name" disabled>
-									</th>
-
-									<th style="width:200px;"><input type="text" class="form-control font-weight-bold"
-											placeholder="Action" style="text-align: center;" disabled></th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr th:each="details, stat : ${loanvalues}" th:data-id="${details[0]}"
-									th:data-name="${details[1]}" style="cursor: pointer;"
-									onclick="setAccountNo(this.getAttribute('data-id'), this.getAttribute('data-name')); closeModal();">
-
-									<td th:text="${stat.count}"></td>
-									<td th:text="${details[0]}"></td> <!-- ID -->
-									<td th:text="${details[1]}"></td> <!-- Account Holder Name -->
-
-									<td class="text-center">
-										<input type="radio" name="selectedLoan" th:value="${details[0]}"
-											th:data-name="${details[1]}"
-											onclick="event.stopPropagation(); setAccountNo(this.value, this.getAttribute('data-name')); closeModal();">
-									</td>
-								</tr>
-
-
-
-
-							</tbody>
-						</table>
-					</div>
-					<div class="text-center">
-						<button type="button" class="btn-primary big-btn" onclick="closeModal()">Close</button>
-					</div>
-				</div>
-			</form>
-		</div>
+	            <div class="text-center mt-2">
+	                <button type="button" class="btn-primary big-btn" onclick="closeModal()">Close</button>
+	            </div>
+	        </form>
+	    </div>
 	</div>
 
-	<!--for Detail modal-->
-	<div id="myModal2" class="modal">
-		<div class="modal-content1">
-			<form id="uploadForm1" method="post" autocomplete="off">
-				<div class="panel panel-primary filterable">
-					<button class="btn text-white btn-filter btn-primary float-right">filter</button>
+	<!-- Modal 2: Details Modal -->
+	<div id="myModal2" class="modal" role="dialog" aria-modal="true" style="font-size: 120%;">
+	    <div class="modal-content1">
+	        <form method="post" autocomplete="off" style="margin-top: -2%;">
+	            <!-- Modal Header with Filter Button -->
+	            <div class="modal-header d-flex justify-content-between align-items-center">
+	                <h5 class="modal-title" style="font-size: 18px;">Account Details</h5>
+	                <button type="button" id="btnFilter2" class="btn btn-primary">Filter</button>
+	            </div>
 
-					<div style="max-height: 350px; overflow-y: auto;">
-						<table class="table table-bordered table-sm">
-							<thead>
-								<tr class="filters">
+	            <!-- Scrollable Table -->
+	            <div style="max-height: 350px; overflow-y: auto; margin-top: 10px;">
+	                <table class="table table-bordered table-sm" id="accountTableSchedule">
+	                    <thead>
+	                        <tr class="filters">
+	                            <th style="width:100px;">
+	                                <input type="text" class="form-control font-weight-bold" placeholder="SNO" disabled>
+	                            </th>
+	                            <th>
+	                                <input type="text" id="filterAccountNo2" oninput="filterTableSchedule()"
+	                                    class="form-control font-weight-bold" placeholder="Account No" disabled>
+	                            </th>
+	                            <th>
+	                                <input type="text" id="filterAccountName2" oninput="filterTableSchedule()"
+	                                    class="form-control font-weight-bold" placeholder="Account Name" disabled>
+	                            </th>
+	                            <th style="width:200px;">
+	                                <input type="text" class="form-control font-weight-bold" placeholder="Action" style="text-align: center;" disabled>
+	                            </th>
+	                        </tr>
+	                    </thead>
+	                    <tbody>
+	                        <tr th:each="details, stat : ${loanDetails}" th:data-id="${details[0]}" th:data-name="${details[1]}" style="cursor: pointer;"
+	                            onclick="setAccountNo2(this.getAttribute('data-id'), this.getAttribute('data-name')); closeModal1();">
+	                            <td th:text="${stat.count}"></td>
+	                            <td th:text="${details[0]}"></td>
+	                            <td th:text="${details[1]}"></td>
+	                            <td class="text-center">
+	                                <input type="radio" name="selectedLoan" th:value="${details[0]}" th:data-name="${details[1]}"
+	                                    onclick="event.stopPropagation(); setAccountNo2(this.value, this.getAttribute('data-name')); closeModal1();">
+	                            </td>
+	                        </tr>
+	                    </tbody>
+	                </table>
+	            </div>
 
-									<th style="width:100px;"><input type="text" class="form-control font-weight-bold"
-											placeholder="SNO" disabled></th>
-									<th><input type="text" id="filterclassification" oninput="filtermodal()"
-											class="form-control font-weight-bold" placeholder="Account No" disabled>
-									</th>
-									<th><input type="text" id="filteraccountname" oninput="filtermodal()"
-											class="form-control font-weight-bold" placeholder="Account Name" disabled>
-									</th>
-
-									<th style="width:200px;"><input type="text" class="form-control font-weight-bold"
-											placeholder="Action" style="text-align: center;" disabled></th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr th:each="details, stat : ${loanDetails}" th:data-id="${details[0]}"
-									th:data-name="${details[1]}" style="cursor: pointer;"
-									onclick="setAccountNo2(this.getAttribute('data-id'), this.getAttribute('data-name')); closeModal1();">
-
-									<td th:text="${stat.count}"></td>
-									<td th:text="${details[0]}"></td> <!-- ID -->
-									<td th:text="${details[1]}"></td> <!-- Account Holder Name -->
-
-									<td class="text-center">
-										<input type="radio" name="selectedLoan" th:value="${details[0]}"
-											th:data-name="${details[1]}"
-											onclick="event.stopPropagation(); setAccountNo2(this.value, this.getAttribute('data-name')); closeModal1();">
-									</td>
-								</tr>
-
-
-
-
-							</tbody>
-						</table>
-					</div>
-					<div class="text-center">
-						<button type="button" class="btn-primary big-btn" onclick="closeModal1()">Close</button>
-					</div>
-				</div>
-			</form>
-		</div>
+	            <div class="text-center mt-2">
+	                <button type="button" class="btn-primary big-btn" onclick="closeModal1()">Close</button>
+	            </div>
+	        </form>
+	    </div>
 	</div>
 
 
@@ -1698,5 +1628,125 @@
 	}
 
 </script>
+<script>
+function setupFilter(tableId, btnId, inputNoId, inputNameId) {
+    const table = document.getElementById(tableId);
+    const btn = document.getElementById(btnId);
+    const inputNo = document.getElementById(inputNoId);
+    const inputName = document.getElementById(inputNameId);
+    const headerInputs = Array.from(table.querySelectorAll('thead .filters input'));
 
+    function setInputsEnabled(enabled) {
+        headerInputs.forEach(i => i.disabled = !enabled);
+        if (enabled) inputNo.focus();
+    }
+
+    setInputsEnabled(false);
+
+    btn.addEventListener('click', function(ev) {
+        ev.preventDefault();
+        const currentlyDisabled = headerInputs[0].disabled;
+        setInputsEnabled(currentlyDisabled);
+        btn.textContent = currentlyDisabled ? 'Disable Filter' : 'Filter';
+    });
+
+    function filterTable() {
+        const noVal = inputNo.value.trim().toLowerCase();
+        const nameVal = inputName.value.trim().toLowerCase();
+
+        table.querySelectorAll('tbody tr').forEach(row => {
+            const cellNo = row.cells[1]?.textContent.toLowerCase() || '';
+            const cellName = row.cells[2]?.textContent.toLowerCase() || '';
+            row.style.display = (cellNo.includes(noVal) && cellName.includes(nameVal)) ? '' : 'none';
+        });
+    }
+
+    inputNo.addEventListener('input', filterTable);
+    inputName.addEventListener('input', filterTable);
+}
+
+// Call setup for both modals
+document.addEventListener('DOMContentLoaded', function() {
+    setupFilter('accountTableDetails', 'btnFilter1', 'filterAccountNo1', 'filterAccountName1');
+    setupFilter('accountTableSchedule', 'btnFilter2', 'filterAccountNo2', 'filterAccountName2');
+});
+
+// Modal open/close
+//function openModal() {
+   // new bootstrap.Modal(document.getElementById('myModal')).show();
+//}
+
+function openModal() {
+    resetFilter('accountTableDetails', 'filterAccountNo1', 'filterAccountName1', 'btnFilter1');
+    new bootstrap.Modal(document.getElementById('myModal')).show();
+}
+function closeModal() {
+    const modal = document.getElementById('myModal');
+    modal.style.display = "none";
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) backdrop.remove();
+    document.body.classList.remove('modal-open');
+}
+
+//function openModal1() {
+   // new bootstrap.Modal(document.getElementById('myModal2')).show();
+//}
+
+
+function openModal1() {
+    resetFilter('accountTableSchedule', 'filterAccountNo2', 'filterAccountName2', 'btnFilter2');
+    new bootstrap.Modal(document.getElementById('myModal2')).show();
+}
+function closeModal1() {
+    const modal = document.getElementById('myModal2');
+    modal.style.display = "none";
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) backdrop.remove();
+    document.body.classList.remove('modal-open');
+}
+
+// Set account numbers
+function setAccountNo(id, name) {
+    document.getElementById("acctNo2").value = id;
+    document.getElementById("acctName2").value = name;
+}
+
+function setAccountNo2(id, name) {
+    document.getElementById("acctNo").value = id;
+    document.getElementById("acctName").value = name;
+}
+
+// Submit functions
+function submitAccount() {
+    const acctNo = document.getElementById("acctNo2").value;
+    location.href = './downloadShedulePdf?filetype=pdf&acctNo=' + acctNo;
+    document.getElementById("acctNo2").value = '';
+    document.getElementById("acctName2").value = '';
+}
+
+function submitLoan() {
+    const acctNo = document.getElementById("acctNo").value;
+    location.href = './downloadDetailsPdf?filetype=pdf&acctNo=' + acctNo;
+    document.getElementById("acctNo").value = '';
+    document.getElementById("acctName").value = '';
+}
+
+function resetFilter(modalTableId, inputNoId, inputNameId, btnId) {
+    const table = document.getElementById(modalTableId);
+    const inputNo = document.getElementById(inputNoId);
+    const inputName = document.getElementById(inputNameId);
+    const btn = document.getElementById(btnId);
+
+    table.querySelectorAll('thead .filters input').forEach(i => i.disabled = true);
+
+    if (inputNo) inputNo.value = '';
+    if (inputName) inputName.value = '';
+
+    // Reset button text
+    if (btn) btn.textContent = 'Filter';
+
+    table.querySelectorAll('tbody tr').forEach(row => row.style.display = '');
+}
+
+</script>
 </html>

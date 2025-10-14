@@ -331,13 +331,15 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
 	@Query(value = "SELECT a.id, c.FIRST_NAME || ' ' || c.LAST_NAME AS accountHolderName "
 			+ "FROM LOAN_ACCOUNT_MASTER_TBL a " + "JOIN CLIENT_MASTER_TBL c ON a.account_holderkey = c.encoded_key "
 			+ "ORDER BY a.id", nativeQuery = true)
-	List<Object[]> getAllDetails();
+	List<Object[]> getAllDetails();	
+	
+	@Query(value = "SELECT l.ID, c.FIRST_NAME || ' ' || c.LAST_NAME AS accountHolderName, " +
+            "c.MOBILE_PHONE AS mobile_phone, c.FIRST_NAME AS first_name, c.LAST_NAME AS last_name " +
+            "FROM LOAN_ACCOUNT_MASTER_TBL l " +
+            "INNER JOIN CLIENT_MASTER_TBL c ON c.ENCODED_KEY = l.ACCOUNT_HOLDERKEY " +
+            "ORDER BY l.ID", nativeQuery = true)
+List<Object[]> getLoanNo();
 
-	@Query(value = "  SELECT l.ID,c.FIRST_NAME || ' ' || c.LAST_NAME AS accountHolderName , c.MOBILE_PHONE AS mobile_phone,c.FIRST_NAME AS first_name,c.LAST_NAME AS last_name   "
-			+ "  FROM LOAN_ACCOUNT_MASTER_TBL l  " + "  INNER JOIN CLIENT_MASTER_TBL c  "
-			+ "      ON c.ENCODED_KEY = l.ACCOUNT_HOLDERKEY  " + "  ORDER BY l.ID  "
-			+ "  OFFSET ?1 ROWS FETCH NEXT ?2 ROWS ONLY  ", nativeQuery = true)
-	List<Object[]> getLoanNo(int offset, int limit);
 
 	@Query(value = "SELECT DISTINCT a.id, b.first_name || ' ' || b.last_name AS full_name "
 			+ "FROM loan_account_master_tbl a " + "JOIN client_master_tbl b ON b.encoded_key = a.account_holderkey "

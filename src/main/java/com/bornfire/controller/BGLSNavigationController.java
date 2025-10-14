@@ -4373,7 +4373,7 @@ public class BGLSNavigationController {
                     .body("Error saving bulk collection: " + e.getMessage());
         }
     }
-
+    
     @RequestMapping(value = "credit_facility_report", method = { RequestMethod.GET, RequestMethod.POST })
     public String credit_facility_report(@RequestParam(required = false) String formmode,
                                          @RequestParam(required = false) String userid, Model md, HttpServletRequest req) {
@@ -4385,10 +4385,8 @@ public class BGLSNavigationController {
             md.addAttribute("formmode", "list");
             List<Object[]> results = LOAN_ACT_MST_REPO.getAllDetails();
             md.addAttribute("loanvalues", results);
-            // Details List
-            int offset = 0;
-            int limit = 50;
-            md.addAttribute("loanDetails", LOAN_ACT_MST_REPO.getLoanNo(offset, limit));
+            // Details List 
+            md.addAttribute("loanDetails", LOAN_ACT_MST_REPO.getLoanNo()); // <-- no arguments
 
         }
 
