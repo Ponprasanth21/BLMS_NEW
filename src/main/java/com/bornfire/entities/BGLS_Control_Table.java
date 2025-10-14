@@ -12,9 +12,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name="BGLS_CONTROL_TABLE")
 public class BGLS_Control_Table {
 
-	@Id
+	
 	private String	org_name;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@Id
 	private Date	tran_date;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date	next_work_date;
