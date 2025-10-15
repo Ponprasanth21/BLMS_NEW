@@ -362,14 +362,16 @@
 			);
 		}, 2000);
 
-		var trndate = $("#nxtdate").val();
-		console.log("Selected Date:", trndate);
+		var  nxtdate= $("#nxtdate").val();
+		console.log("Selected Date:", nxtdate);
+		
+		var trndate = $("#current_date").val();
 
 		// AJAX call
 		$.ajax({
 			url: "dateChageProcess",  // ✅ backend Spring Boot endpoint
 			type: 'POST',
-			data: {trndate: trndate},
+			data: {nxtdate: nxtdate,trndate:trndate},
 			success: function (res) {
 				console.log("success: " + res);
 				$('#td11').remove();
