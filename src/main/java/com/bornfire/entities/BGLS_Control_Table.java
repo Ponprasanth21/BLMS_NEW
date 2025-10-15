@@ -39,6 +39,7 @@ public class BGLS_Control_Table {
 	private String interest_demand_gen;
 	private String fee_demand_gen;
 	private String penalty;
+	private Date  previous_date;
 	public String getOrg_name() {
 		return org_name;
 	}
@@ -181,6 +182,18 @@ public class BGLS_Control_Table {
 	public void setDcp_status(String dcp_status) {
 		this.dcp_status = dcp_status;
 	}
+	
+	
+	public Date getPrevious_date() {
+		return previous_date;
+	}
+
+
+	public void setPrevious_date(Date previous_date) {
+		this.previous_date = previous_date;
+	}
+
+
 	public BGLS_Control_Table() {
 		super();
 		// TODO Auto-generated constructor stub

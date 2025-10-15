@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name = "BGLS_JOURNAL_HISTORY")
+@Table(name = "BGLS_TRM_WORK_HISTORY")
 public class BGLS_Journal_History {
 	@Id
 	private String	srl_no;

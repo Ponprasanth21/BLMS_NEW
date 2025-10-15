@@ -18,12 +18,15 @@ public class DateChangeService {
     private BGLS_CONTROL_TABLE_REP bGLS_CONTROL_TABLE_REP;
 
     @Transactional
-    public String dateChange(Date trandate) {
+    public String dateChange(Date nxtDate,Date trandate) {
 
     	System.out.println("trandate"+trandate);
     	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        String formattedDate = sdf.format(trandate);
-        System.out.println("Formatted trandate: " + formattedDate);
+        String formattedtrandate = sdf.format(trandate);
+        String formattedDatenxtDate = sdf.format(nxtDate);
+        System.out.println("Formatted trandate: " + formattedtrandate);
+        System.out.println("Formatted trandate: " + formattedDatenxtDate);
+
         List<Object[]> processFlags = bGLS_CONTROL_TABLE_REP.checkProcess();
         boolean hasPending = processFlags.stream()
             .flatMap(row -> Arrays.stream(row))
@@ -39,7 +42,7 @@ public class DateChangeService {
         
         System.out.println("oldDate"+oldDate);
         // 3️⃣ Update TRAN_DATE and DCP_END_TIME
-        int updated1 = bGLS_CONTROL_TABLE_REP.updateTranDate(formattedDate);
+        int updated1 = bGLS_CONTROL_TABLE_REP.updateTranDate(formattedDatenxtDate,formattedtrandate);
         
         System.out.println("updated1"+updated1);
 

@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 @Repository
-public interface BGLS_CONTROL_TABLE_REP extends JpaRepository<BGLS_Control_Table, String>{
+public interface BGLS_CONTROL_TABLE_REP extends JpaRepository<BGLS_Control_Table,Date>{
 	@Query(value="SELECT * FROM BGLS_CONTROL_TABLE", nativeQuery = true)
 	BGLS_Control_Table getTranDate();
 	
@@ -63,8 +63,8 @@ public interface BGLS_CONTROL_TABLE_REP extends JpaRepository<BGLS_Control_Table
 
 	    // 2️⃣ Update TRAN_DATE and DCP_END_TIME
 	    @Modifying
-	    @Query(value = "UPDATE BGLS_CONTROL_TABLE SET TRAN_DATE = :trandate, DCP_END_TIME = CURRENT_TIMESTAMP", nativeQuery = true)
-	    int updateTranDate(@Param("trandate") String trandate);
+	    @Query(value = "UPDATE BGLS_CONTROL_TABLE SET TRAN_DATE = :nxtDate, DCP_END_TIME = CURRENT_TIMESTAMP,PREVIOUS_DATE =:tranDate", nativeQuery = true)
+	    int updateTranDate(@Param("nxtDate") String nxtDate,@Param("tranDate") String tranDate);
 
 	    // 3️⃣ Update flags (conditionally after date changed)
 	    @Modifying
