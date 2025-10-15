@@ -169,7 +169,7 @@ public class LoginServices {
 			 //FOR AUIDT
 	        Optional<UserProfile> up1 = userProfileRep.findById(inputUser);
 		    UserProfile user = up1.get();
-			audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE ADD", "ADDED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE");
+			audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE ADD", "ADDED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE","-");
 
 			msg = "User Created Successfully";
 
@@ -177,55 +177,101 @@ public class LoginServices {
 
 		else if (formmode.equals("modify")) {
 
-			UserProfile original = userProfileRep.getRole(userProfile.getUserid());
+		    UserProfile original = userProfileRep.getRole(userProfile.getUserid());
 
-			UserProfile up = new UserProfile(userProfile);
+		    UserProfile up = new UserProfile(userProfile);
 
-			String encryptedPassword = PasswordEncryption.getEncryptedPassword(up.getPassword());
+		    String encryptedPassword = PasswordEncryption.getEncryptedPassword(up.getPassword());
 
-			if (up.getLogin_status().equals("Active")) {
-				up.setUser_locked_flg("N");
-			} else {
-				up.setUser_locked_flg("Y");
-			}
+		    if (up.getLogin_status().equals("Active")) {
+		        up.setUser_locked_flg("N");
+		    } else {
+		        up.setUser_locked_flg("Y");
+		    }
 
-			if (up.getUser_status().equals("Active")) {
-				up.setDisable_flg("N");
-			} else {
-				up.setDisable_flg("Y");
-			}
-			System.out.println(up.getBranch_id()+" ------ "+up.getBranch_des());
+		    if (up.getUser_status().equals("Active")) {
+		        up.setDisable_flg("N");
+		    } else {
+		        up.setDisable_flg("Y");
+		    }
 
-			up.setEntity_flg("Y");
-			up.setModify_flg("N");
-			up.setAuth_flg("Y");
-			up.setDel_flg("N");
-			
-			up.setModify_time(new Date());
-			up.setModify_user(inputUser);
-//			up.setModify_flg("Y");
-//			up.setDel_flg("N");
-			up.setLogin_flg("N");
-			up.setNo_of_attmp(0);
-			up.setEntry_user(original.getEntry_user());
-			up.setEntry_time(original.getEntry_time());
-			up.setAuth_user(original.getAuth_user());
-			up.setAuth_time(original.getAuth_time());
-//			up.setEntity_flg("Y");
-			up.setPassword(encryptedPassword);
+		    up.setEntity_flg("Y");
+		    up.setModify_flg("N");
+		    up.setAuth_flg("Y");
+		    up.setDel_flg("N");
+		    up.setModify_time(new Date());
+		    up.setModify_user(inputUser);
+		    up.setLogin_flg("N");
+		    up.setNo_of_attmp(0);
+		    up.setEntry_user(original.getEntry_user());
+		    up.setEntry_time(original.getEntry_time());
+		    up.setAuth_user(original.getAuth_user());
+		    up.setAuth_time(original.getAuth_time());
+		    up.setPassword(encryptedPassword);
 
-			userProfileRep.save(up);
-			
-			Optional<UserProfile> up1 = userProfileRep.findById(inputUser);
+		    // Save the updated entity
+		    userProfileRep.save(up);
+
+		    // 🔍 Compare and find modified fields
+		    StringBuilder changeDetails = new StringBuilder();
+
+		    if (!Objects.equals(original.getEmpid(), up.getEmpid()))
+		        changeDetails.append("empid changed from ").append(original.getEmpid())
+		                     .append(" to ").append(up.getEmpid()).append("; ");
+
+		    if (!Objects.equals(original.getEmp_name(), up.getEmp_name()))
+		        changeDetails.append("emp_name changed from ").append(original.getEmp_name())
+		                     .append(" to ").append(up.getEmp_name()).append("; ");
+
+		    if (!Objects.equals(original.getUser_status(), up.getUser_status()))
+		        changeDetails.append("user_status changed from ").append(original.getUser_status())
+		                     .append(" to ").append(up.getUser_status()).append("; ");
+
+		    if (!Objects.equals(original.getLogin_status(), up.getLogin_status()))
+		        changeDetails.append("login_status changed from ").append(original.getLogin_status())
+		                     .append(" to ").append(up.getLogin_status()).append("; ");
+
+		    if (!Objects.equals(original.getRole_id(), up.getRole_id()))
+		        changeDetails.append("role_id changed from ").append(original.getRole_id())
+		                     .append(" to ").append(up.getRole_id()).append("; ");
+
+		    if (!Objects.equals(original.getBranch_id(), up.getBranch_id()))
+		        changeDetails.append("branch_id changed from ").append(original.getBranch_id())
+		                     .append(" to ").append(up.getBranch_id()).append("; ");
+
+		    if (!Objects.equals(original.getBranch_des(), up.getBranch_des()))
+		        changeDetails.append("branch_des changed from ").append(original.getBranch_des())
+		                     .append(" to ").append(up.getBranch_des()).append("; ");
+
+		    if (!Objects.equals(original.getEmail_id(), up.getEmail_id()))
+		        changeDetails.append("email_id changed from ").append(original.getEmail_id())
+		                     .append(" to ").append(up.getEmail_id()).append("; ");
+
+		    if (!Objects.equals(original.getMob_number(), up.getMob_number()))
+		        changeDetails.append("mob_number changed from ").append(original.getMob_number())
+		                     .append(" to ").append(up.getMob_number()).append("; ");
+
+		    // Add more fields here as needed...
+
+		    if (changeDetails.length() == 0) {
+		        changeDetails.append("No significant field changes detected.");
+		    }
+
+		    // 📝 Audit logging
+		    Optional<UserProfile> up1 = userProfileRep.findById(inputUser);
 		    UserProfile user = up1.get();
-			audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE EDIT", "EDITED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE");
-			
-			msg = "User Modified Successfully";
-
+		    audit.insertServiceAudit(
+		        user.getUserid(),
+		        user.getUsername(),
+		        "USER PROFILE EDIT",
+		        "EDITED SUCCESSFULLY",
+		        "BGLS_USER_PROFILE_TABLE",
+		        "USER PROFILE",
+		        changeDetails.toString()   // 🧠 Log modified fields here
+		    );
+		    msg = "User Modified Successfully";
 		}
-
 		return msg;
-
 	}
 
 	/* Praveen */
@@ -253,7 +299,7 @@ public class LoginServices {
 			 //FOR AUIDT
 	        Optional<UserProfile> up1 = userProfileRep.findById(inputUser);
 		    UserProfile user = up1.get();
-		    audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE VERIFY", "VERIFIED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE");
+		    audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE VERIFY", "VERIFIED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE","-");
 
 		} else {
 			msg = "User Not Found";
@@ -277,7 +323,7 @@ public class LoginServices {
 			 //FOR AUIDT
 	        Optional<UserProfile> up1 = userProfileRep.findById(userid1);
 		    UserProfile user = up1.get(); 
-		    audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE DELETE", "DELETED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE");
+		    audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE DELETE", "DELETED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE","-");
 		    
 
 		} else {
@@ -288,7 +334,7 @@ public class LoginServices {
 			 //FOR AUIDT
 	        Optional<UserProfile> up1 = userProfileRep.findById(userid1);
 		    UserProfile user = up1.get();
-		    audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE DELETE", "DELETED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE");
+		    audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE DELETE", "DELETED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE","-");
 		  
 		}
 		return msg;
@@ -344,7 +390,7 @@ public class LoginServices {
 				 //FOR AUIDT
 		         Optional<UserProfile> up1 = userProfileRep.findById(inputUser);
 			     UserProfile user = up1.get();   
-			     audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE VERIFY", "VERIFIED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE");
+			     audit.insertServiceAudit(user.getUserid(), user.getUsername(), "USER PROFILE VERIFY", "VERIFIED SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "USER PROFILE","-");
 
 			}
 

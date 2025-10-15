@@ -4326,7 +4326,7 @@ public class CustOnboardinController {
 			//for audit
 			Optional<UserProfile> up1 = userProfileRep.findById(userId);
 			UserProfile user = up1.get();
-			audit.insertServiceAudit(user.getUserid(), user.getUsername(), "CUSTOMER ONBOARDING ADD", "ADDED SUCCESSFULLY","BACP_CUS_PROFILE", "CUSTOMER ONBOARDING");
+			audit.insertServiceAudit(user.getUserid(), user.getUsername(), "CUSTOMER ONBOARDING ADD", "ADDED SUCCESSFULLY","BACP_CUS_PROFILE", "CUSTOMER ONBOARDING","-");
 		}
 
 		return ResponseEntity.ok("Form submitted successfully.");

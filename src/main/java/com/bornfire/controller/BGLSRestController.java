@@ -272,7 +272,7 @@ public class BGLSRestController {
 			Optional<UserProfile> up1 = userProfileRep.findById(userid);
 			UserProfile user = up1.get();
 			
-			audit.insertServiceAudit(user.getUserid(), user.getUsername(), "EMPLOYEE PROFILE ADD", "ADDED SUCCESSFULLY","BGLS_EMPLOYEE_PROFILE", "EMPLOYEE PROFILE");
+			audit.insertServiceAudit(user.getUserid(), user.getUsername(), "EMPLOYEE PROFILE ADD", "ADDED SUCCESSFULLY","BGLS_EMPLOYEE_PROFILE", "EMPLOYEE PROFILE","-");
 			return "Sucessfully Saved";
 		}
 
@@ -476,7 +476,7 @@ public class BGLSRestController {
 		// FOR AUIDT
 		Optional<UserProfile> up1 = userProfileRep.findById(userid);
 		UserProfile user = up1.get();
-		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "EMPLOYEE PROFILE VERIFY", "VERIFIED SUCCESSFULLY","BGLS_EMPLOYEE_PROFILE", "EMPLOYEE PROFILE");
+		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "EMPLOYEE PROFILE VERIFY", "VERIFIED SUCCESSFULLY","BGLS_EMPLOYEE_PROFILE", "EMPLOYEE PROFILE","-");
 		return "Sucessfully Verified";
 
 	}
@@ -530,7 +530,7 @@ public class BGLSRestController {
 		Optional<UserProfile> up1 = userProfileRep.findById(userid);
 		UserProfile user = up1.get();
 
-		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "EMPLOYEE PROFILE DELETE", "DELETED SUCCESSFULLY","BGLS_EMPLOYEE_PROFILE", "EMPLOYEE PROFILE");
+		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "EMPLOYEE PROFILE DELETE", "DELETED SUCCESSFULLY","BGLS_EMPLOYEE_PROFILE", "EMPLOYEE PROFILE","-");
 		return "Sucessfully Deleted";
 
 	}
@@ -625,7 +625,7 @@ public class BGLSRestController {
 			Optional<UserProfile> up1 = userProfileRep.findById(userid);
 			UserProfile user = up1.get();
 
-			audit.insertServiceAudit(user.getUserid(), user.getUsername(), "CHART OF ACCOUNTS ADD", "ADDED SUCCESSFULLY","BGLS_CHART_OF_ACCOUNTS", "CHART OF ACCOUNTS");
+			audit.insertServiceAudit(user.getUserid(), user.getUsername(), "CHART OF ACCOUNTS ADD", "ADDED SUCCESSFULLY","BGLS_CHART_OF_ACCOUNTS", "CHART OF ACCOUNTS","-");
 
 			return "Saved Successfully";
 		}
@@ -633,30 +633,120 @@ public class BGLSRestController {
 
 	/* Thanveer */
 	@RequestMapping(value = "ModifyScreens", method = RequestMethod.POST)
-
 	@ResponseBody
-	public String ModifyScreens(Model md, HttpServletRequest rq, @ModelAttribute Chart_Acc_Entity chart_Acc_Entity,
-			@RequestParam(required = false) String acct_num) {
-		String userid = (String) rq.getSession().getAttribute("USERID");
-		System.out.println("THE GETT");
-		String msg = "";
+	public String ModifyScreens(Model md, HttpServletRequest rq,
+	                            @ModelAttribute Chart_Acc_Entity chart_Acc_Entity,
+	                            @RequestParam(required = false) String acct_num) {
+	    String userid = (String) rq.getSession().getAttribute("USERID");
+	    String msg = "";
 
-		Chart_Acc_Entity up = chart_Acc_Rep.getaedit(acct_num);
+	    Chart_Acc_Entity existing = chart_Acc_Rep.getaedit(acct_num);
 
-		if (Objects.nonNull(up)) {
-			up = chart_Acc_Entity;
-			up.setDel_flg("N");
-			up.setEntity_flg("N");
-			chart_Acc_Rep.save(up);
-			msg = "Modify Successfully";
-		} else {
-			msg = "Data Not Found";
-		}
-		// FOR AUIDT
-		Optional<UserProfile> up1 = userProfileRep.findById(userid);
-		UserProfile user = up1.get();
-		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "CHART OF ACCOUNTS EDIT", "EDITED SUCCESSFULLY","BGLS_CHART_OF_ACCOUNTS", "CHART OF ACCOUNTS");
-		return msg;
+	    if (Objects.nonNull(existing)) {
+	        // Compare old vs new values for audit
+	        StringBuilder changeDetails = new StringBuilder();
+
+	        if (!Objects.equals(existing.getDr_amt(), chart_Acc_Entity.getDr_amt())) {
+	            changeDetails.append("Dr Amount+").append(existing.getDr_amt()).append("+")
+	                         .append(chart_Acc_Entity.getDr_amt()).append("||");
+	        }
+	        if (!Objects.equals(existing.getAcct_bal(), chart_Acc_Entity.getAcct_bal())) {
+	            changeDetails.append("Account Balance+").append(existing.getAcct_bal()).append("+")
+	                         .append(chart_Acc_Entity.getAcct_bal()).append("||");
+	        }
+	        if (!Objects.equals(existing.getRef_crncy_bal(), chart_Acc_Entity.getRef_crncy_bal())) {
+	            changeDetails.append("Ref Currency Balance+").append(existing.getRef_crncy_bal()).append("+")
+	                         .append(chart_Acc_Entity.getRef_crncy_bal()).append("||");
+	        }
+	        if (!Objects.equals(existing.getAcct_cls_flg(), chart_Acc_Entity.getAcct_cls_flg())) {
+	            changeDetails.append("Account Close Flag+").append(existing.getAcct_cls_flg()).append("+")
+	                         .append(chart_Acc_Entity.getAcct_cls_flg()).append("||");
+	        }
+	        if (!Objects.equals(existing.getAcct_cls_date(), chart_Acc_Entity.getAcct_cls_date())) {
+	            changeDetails.append("Account Close Date+").append(existing.getAcct_cls_date()).append("+")
+	                         .append(chart_Acc_Entity.getAcct_cls_date()).append("||");
+	        }
+	        if (!Objects.equals(existing.getOwn_type(), chart_Acc_Entity.getOwn_type())) {
+	            changeDetails.append("Ownership Type+").append(existing.getOwn_type()).append("+")
+	                         .append(chart_Acc_Entity.getOwn_type()).append("||");
+	        }
+	        if (!Objects.equals(existing.getOwn_remarks(), chart_Acc_Entity.getOwn_remarks())) {
+	            changeDetails.append("Ownership Remarks+").append(existing.getOwn_remarks()).append("+")
+	                         .append(chart_Acc_Entity.getOwn_remarks()).append("||");
+	        }
+	        if (!Objects.equals(existing.getVendor_type(), chart_Acc_Entity.getVendor_type())) {
+	            changeDetails.append("Vendor Type+").append(existing.getVendor_type()).append("+")
+	                         .append(chart_Acc_Entity.getVendor_type()).append("||");
+	        }
+	        if (!Objects.equals(existing.getVendor_name(), chart_Acc_Entity.getVendor_name())) {
+	            changeDetails.append("Vendor Name+").append(existing.getVendor_name()).append("+")
+	                         .append(chart_Acc_Entity.getVendor_name()).append("||");
+	        }
+	        if (!Objects.equals(existing.getPan_no(), chart_Acc_Entity.getPan_no())) {
+	            changeDetails.append("PAN No+").append(existing.getPan_no()).append("+")
+	                         .append(chart_Acc_Entity.getPan_no()).append("||");
+	        }
+	        if (!Objects.equals(existing.getGstin(), chart_Acc_Entity.getGstin())) {
+	            changeDetails.append("GSTIN+").append(existing.getGstin()).append("+")
+	                         .append(chart_Acc_Entity.getGstin()).append("||");
+	        }
+	        if (!Objects.equals(existing.getPassport(), chart_Acc_Entity.getPassport())) {
+	            changeDetails.append("Passport+").append(existing.getPassport()).append("+")
+	                         .append(chart_Acc_Entity.getPassport()).append("||");
+	        }
+	        if (!Objects.equals(existing.getBank_acc_name(), chart_Acc_Entity.getBank_acc_name())) {
+	            changeDetails.append("Bank Account Name+").append(existing.getBank_acc_name()).append("+")
+	                         .append(chart_Acc_Entity.getBank_acc_name()).append("||");
+	        }
+	        if (!Objects.equals(existing.getBank_remarks(), chart_Acc_Entity.getBank_remarks())) {
+	            changeDetails.append("Bank Remarks+").append(existing.getBank_remarks()).append("+")
+	                         .append(chart_Acc_Entity.getBank_remarks()).append("||");
+	        }
+	        if (!Objects.equals(existing.getCrncy_code(), chart_Acc_Entity.getCrncy_code())) {
+	            changeDetails.append("Currency Code+").append(existing.getCrncy_code()).append("+")
+	                         .append(chart_Acc_Entity.getCrncy_code()).append("||");
+	        }
+	        if (!Objects.equals(existing.getBranch_id(), chart_Acc_Entity.getBranch_id())) {
+	            changeDetails.append("Branch ID+").append(existing.getBranch_id()).append("+")
+	                         .append(chart_Acc_Entity.getBranch_id()).append("||");
+	        }
+	        if (!Objects.equals(existing.getAcct_open_date(), chart_Acc_Entity.getAcct_open_date())) {
+	            changeDetails.append("Account Open Date+").append(existing.getAcct_open_date()).append("+")
+	                         .append(chart_Acc_Entity.getAcct_open_date()).append("||");
+	        }
+	        if (!Objects.equals(existing.getNational_id(), chart_Acc_Entity.getNational_id())) {
+	            changeDetails.append("National ID+").append(existing.getNational_id()).append("+")
+	                         .append(chart_Acc_Entity.getNational_id()).append("||");
+	        }
+	        if (!Objects.equals(existing.getMobile_no(), chart_Acc_Entity.getMobile_no())) {
+	            changeDetails.append("Mobile No+").append(existing.getMobile_no()).append("+")
+	                         .append(chart_Acc_Entity.getMobile_no()).append("||");
+	        }
+
+	        // Save updated record
+	        chart_Acc_Entity.setDel_flg("N");
+	        chart_Acc_Entity.setEntity_flg("N");
+	        chart_Acc_Rep.save(chart_Acc_Entity);
+	        msg = "Modified Successfully";
+
+	        // Audit entry
+	        Optional<UserProfile> up1 = userProfileRep.findById(userid);
+	        if (up1.isPresent()) {
+	            UserProfile user = up1.get();
+	            audit.insertServiceAudit(
+	                user.getUserid(),
+	                user.getUsername(),
+	                "CHART OF ACCOUNTS EDIT",
+	                "EDITED SUCCESSFULLY",
+	                "BGLS_CHART_OF_ACCOUNTS",
+	                "CHART OF ACCOUNTS",
+	                "FIELDS MODIFIED: " + changeDetails.toString()
+	            );
+	        }
+	    } else {
+	        msg = "Data Not Found";
+	    }
+	    return msg;
 	}
 
 	/* Thanveer */
@@ -672,7 +762,7 @@ public class BGLSRestController {
 		// FOR AUIDT
 		Optional<UserProfile> up1 = userProfileRep.findById(userid);
 		UserProfile user = up1.get();
-		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "CHART OF ACCOUNTS VERIFY", "VERIFIED SUCCESSFULLY","BGLS_CHART_OF_ACCOUNTS", "CHART OF ACCOUNTS");
+		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "CHART OF ACCOUNTS VERIFY", "VERIFIED SUCCESSFULLY","BGLS_CHART_OF_ACCOUNTS", "CHART OF ACCOUNTS","-");
 
 		return "Verified Successfully";
 
@@ -700,7 +790,7 @@ public class BGLSRestController {
 		Optional<UserProfile> up1 = userProfileRep.findById(userid);
 		UserProfile user = up1.get();
 
-		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "CHART OF ACCOUNTS DELETE", "DELETED SUCCESSFULLY","BGLS_CHART_OF_ACCOUNTS", "CHART OF ACCOUNTS");
+		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "CHART OF ACCOUNTS DELETE", "DELETED SUCCESSFULLY","BGLS_CHART_OF_ACCOUNTS", "CHART OF ACCOUNTS","-");
 
 		return msg;
 
@@ -735,7 +825,7 @@ public class BGLSRestController {
 				// --- Audit Logging ---
 				Optional<UserProfile> up1 = userProfileRep.findById(userid);
 				UserProfile user = up1.get();
-				audit.insertServiceAudit(user.getUserid(), user.getUsername(), "ORGANIZATION ADD", "ADDED SUCCESSFULLY","BGLS_ORG_BRANCH", "ORGANIZATION DETAILS");
+				audit.insertServiceAudit(user.getUserid(), user.getUsername(), "ORGANIZATION ADD", "ADDED SUCCESSFULLY","BGLS_ORG_BRANCH", "ORGANIZATION DETAILS","-");
 				return "Added successfully.";
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -762,7 +852,7 @@ public class BGLSRestController {
 
 		Optional<UserProfile> up1 = userProfileRep.findById(userid);
 		UserProfile user = up1.get();
-		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "ORGANIZATION DELETE", "DELETED SUCCESSFULLY","BGLS_ORG_BRANCH", "ORGANIZATION DETAILS");
+		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "ORGANIZATION DELETE", "DELETED SUCCESSFULLY","BGLS_ORG_BRANCH", "ORGANIZATION DETAILS","-");
 		return "Deleted Successfully";
 
 	}
@@ -772,144 +862,166 @@ public class BGLSRestController {
 	@ResponseBody
 	public String tab1modify(Model md, HttpServletRequest rq, @ModelAttribute Organization_Entity organization_Entity) {
 
-		Optional<Organization_Entity> up = organization_Repo.findById(organization_Entity.getOrg_name());
-		String userid = (String) rq.getSession().getAttribute("USERID");
+	    String userid = (String) rq.getSession().getAttribute("USERID");
+	    Optional<Organization_Entity> optionalOrg = organization_Repo.findById(organization_Entity.getOrg_name());
+	    String msg = "";
 
-		// ✅ Handle null safely
-		Date asOn = organization_Entity.getAs_on();
-		if (asOn != null) {
-			DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-			String formattedDate = dateFormat.format(asOn);
-			try {
-				Date parsedDate = dateFormat.parse(formattedDate);
-				System.out.println("Parsed As_on Date: " + parsedDate);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-		} else {
-			System.out.println("As_on is null for Org: " + organization_Entity.getOrg_name());
-		}
+	    if (!optionalOrg.isPresent()) {
+	        return "Organization not found";
+	    }
 
-		String msg = "";
-		if (up.isPresent()) {
-			Organization_Entity us1 = up.get();
+	    Organization_Entity existingOrg = optionalOrg.get();
 
-			// ✅ Null-safe equals check
-			boolean noChange = Objects.equals(us1.getOrg_type(), organization_Entity.getOrg_type())
-					&& Objects.equals(us1.getDate_of_regn(), organization_Entity.getDate_of_regn())
-					&& Objects.equals(us1.getReg_no(), organization_Entity.getReg_no())
-					&& Objects.equals(us1.getPan_card(), organization_Entity.getPan_card())
-					&& Objects.equals(us1.getTan_card(), organization_Entity.getTan_card())
-					&& Objects.equals(us1.getNo_of_emp(), organization_Entity.getNo_of_emp())
-					&& Objects.equals(us1.getAs_on(), organization_Entity.getAs_on())
-					&& Objects.equals(us1.getReg_addr_1(), organization_Entity.getReg_addr_1())
-					&& Objects.equals(us1.getReg_addr_2(), organization_Entity.getReg_addr_2())
-					&& Objects.equals(us1.getCorp_addr_1(), organization_Entity.getCorp_addr_1())
-					&& Objects.equals(us1.getCor_addr_2(), organization_Entity.getCor_addr_2())
-					&& Objects.equals(us1.getWeb_site(), organization_Entity.getWeb_site())
-					&& Objects.equals(us1.getEmail(), organization_Entity.getEmail());
+	    // ✅ Handle null safely for 'as_on' field
+	    Date asOn = organization_Entity.getAs_on();
+	    if (asOn != null) {
+	        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+	        try {
+	            Date parsedDate = dateFormat.parse(dateFormat.format(asOn));
+	            organization_Entity.setAs_on(parsedDate);
+	        } catch (ParseException e) {
+	            e.printStackTrace();
+	        }
+	    }
 
-			if (noChange) {
-				msg = "No modification done";
-			} else {
-				organization_Entity.setModify_flg("Y");
-				organization_Entity.setDel_flg("N");
-				organization_Entity.setModify_time(new Date());
-				organization_Entity.setModify_user(userid);
+	    // ✅ Check if any field has changed
+	    boolean noChange =
+	            Objects.equals(existingOrg.getOrg_type(), organization_Entity.getOrg_type()) &&
+	            Objects.equals(existingOrg.getDate_of_regn(), organization_Entity.getDate_of_regn()) &&
+	            Objects.equals(existingOrg.getReg_no(), organization_Entity.getReg_no()) &&
+	            Objects.equals(existingOrg.getPan_card(), organization_Entity.getPan_card()) &&
+	            Objects.equals(existingOrg.getTan_card(), organization_Entity.getTan_card()) &&
+	            Objects.equals(existingOrg.getNo_of_emp(), organization_Entity.getNo_of_emp()) &&
+	            Objects.equals(existingOrg.getAs_on(), organization_Entity.getAs_on()) &&
+	            Objects.equals(existingOrg.getReg_addr_1(), organization_Entity.getReg_addr_1()) &&
+	            Objects.equals(existingOrg.getReg_addr_2(), organization_Entity.getReg_addr_2()) &&
+	            Objects.equals(existingOrg.getCorp_addr_1(), organization_Entity.getCorp_addr_1()) &&
+	            Objects.equals(existingOrg.getCor_addr_2(), organization_Entity.getCor_addr_2()) &&
+	            Objects.equals(existingOrg.getWeb_site(), organization_Entity.getWeb_site()) &&
+	            Objects.equals(existingOrg.getEmail(), organization_Entity.getEmail());
 
-				// build modification details
-				StringBuilder sb = new StringBuilder();
-				if (!Objects.equals(us1.getOrg_type(), organization_Entity.getOrg_type())) {
-					sb.append("Organization Type+").append(us1.getOrg_type()).append("+")
-							.append(organization_Entity.getOrg_type()).append("||");
-				}
-				if (!Objects.equals(us1.getDate_of_regn(), organization_Entity.getDate_of_regn())) {
-					sb.append("Date of Registration+").append(us1.getDate_of_regn()).append("+")
-							.append(organization_Entity.getDate_of_regn()).append("||");
-				}
-				if (!Objects.equals(us1.getReg_no(), organization_Entity.getReg_no())) {
-					sb.append("Certificate and Registration+").append(us1.getReg_no()).append("+")
-							.append(organization_Entity.getReg_no()).append("||");
-				}
-				if (!Objects.equals(us1.getPan_card(), organization_Entity.getPan_card())) {
-					sb.append("Business Registration Card+").append(us1.getPan_card()).append("+")
-							.append(organization_Entity.getPan_card()).append("||");
-				}
-				if (!Objects.equals(us1.getTan_card(), organization_Entity.getTan_card())) {
-					sb.append("VAT Reference+").append(us1.getTan_card()).append("+")
-							.append(organization_Entity.getTan_card()).append("||");
-				}
-				if (!Objects.equals(us1.getNo_of_emp(), organization_Entity.getNo_of_emp())) {
-					sb.append("No of Employees+").append(us1.getNo_of_emp()).append("+")
-							.append(organization_Entity.getNo_of_emp()).append("||");
-				}
-				if (!Objects.equals(us1.getAs_on(), organization_Entity.getAs_on())) {
-					sb.append("As On+").append(us1.getAs_on()).append("+").append(organization_Entity.getAs_on())
-							.append("||");
-				}
-				if (!Objects.equals(us1.getReg_addr_1(), organization_Entity.getReg_addr_1())) {
-					sb.append("Registered Office Address 1+").append(us1.getReg_addr_1()).append("+")
-							.append(organization_Entity.getReg_addr_1()).append("||");
-				}
-				if (!Objects.equals(us1.getCorp_addr_1(), organization_Entity.getCorp_addr_1())) {
-					sb.append("Corporate Office Address 1+").append(us1.getCorp_addr_1()).append("+")
-							.append(organization_Entity.getCorp_addr_1()).append("||");
-				}
-				if (!Objects.equals(us1.getCor_addr_2(), organization_Entity.getCor_addr_2())) {
-					sb.append("Corporate Office Address 2+").append(us1.getCor_addr_2()).append("+")
-							.append(organization_Entity.getCor_addr_2()).append("||");
-				}
-				if (!Objects.equals(us1.getWeb_site(), organization_Entity.getWeb_site())) {
-					sb.append("Website+").append(us1.getWeb_site()).append("+")
-							.append(organization_Entity.getWeb_site()).append("||");
-				}
-				if (!Objects.equals(us1.getEmail(), organization_Entity.getEmail())) {
-					sb.append("Email+").append(us1.getEmail()).append("+").append(organization_Entity.getEmail())
-							.append("||");
-				}
+	    if (noChange) {
+	        msg = "No modification done";
+	    } else {
 
-				// audit
-				Optional<UserProfile> up1 = userProfileRep.findById(userid);
-				UserProfile user = up1.get();
-				audit.insertServiceAudit(user.getUserid(), user.getUsername(), "HEAD OFFICE EDIT", "EDITED SUCCESSFULLY","BGLS_ORG_BRANCH", "ORGANIZATION DETAILS");
+	        // ✅ Set modification flags
+	        organization_Entity.setModify_flg("Y");
+	        organization_Entity.setDel_flg("N");
+	        organization_Entity.setModify_time(new Date());
+	        organization_Entity.setModify_user(userid);
 
-				organization_Repo.save(organization_Entity);
+	        // ✅ Build modification details (field name + old + new)
+	        StringBuilder changeDetails = new StringBuilder();
 
-				msg = "User Modified Successfully";
-			}
-		}
-		return msg;
+	        appendChange(changeDetails, "Organization Type", existingOrg.getOrg_type(), organization_Entity.getOrg_type());
+	        appendChange(changeDetails, "Date of Registration", existingOrg.getDate_of_regn(), organization_Entity.getDate_of_regn());
+	        appendChange(changeDetails, "Certificate and Registration No", existingOrg.getReg_no(), organization_Entity.getReg_no());
+	        appendChange(changeDetails, "Business Registration (PAN)", existingOrg.getPan_card(), organization_Entity.getPan_card());
+	        appendChange(changeDetails, "VAT Reference (TAN)", existingOrg.getTan_card(), organization_Entity.getTan_card());
+	        appendChange(changeDetails, "No. of Employees", existingOrg.getNo_of_emp(), organization_Entity.getNo_of_emp());
+	        appendChange(changeDetails, "As On", existingOrg.getAs_on(), organization_Entity.getAs_on());
+	        appendChange(changeDetails, "Registered Office Address 1", existingOrg.getReg_addr_1(), organization_Entity.getReg_addr_1());
+	        appendChange(changeDetails, "Registered Office Address 2", existingOrg.getReg_addr_2(), organization_Entity.getReg_addr_2());
+	        appendChange(changeDetails, "Corporate Office Address 1", existingOrg.getCorp_addr_1(), organization_Entity.getCorp_addr_1());
+	        appendChange(changeDetails, "Corporate Office Address 2", existingOrg.getCor_addr_2(), organization_Entity.getCor_addr_2());
+	        appendChange(changeDetails, "Website", existingOrg.getWeb_site(), organization_Entity.getWeb_site());
+	        appendChange(changeDetails, "Email", existingOrg.getEmail(), organization_Entity.getEmail());
+
+	        // ✅ Save updated organization
+	        organization_Repo.save(organization_Entity);
+
+	        // ✅ Insert audit entry
+	        Optional<UserProfile> userProfileOpt = userProfileRep.findById(userid);
+	        if (userProfileOpt.isPresent()) {
+	            UserProfile user = userProfileOpt.get();
+	            audit.insertServiceAudit(
+	            		user.getUserid(),
+	                    user.getUsername(),
+	                    "ORGANIZATION EDIT",
+	                    "EDITED SUCCESSFULLY",
+	                    "BGLS_ORG_BRANCH",
+	                    "ORGANIZATION DETAILS",
+	                    changeDetails.toString()
+	                );
+	        }
+
+	        msg = "Organization Modified Successfully";
+	    }
+
+	    return msg;
+	}
+	/**
+	 * Utility function to append modified field details
+	 */
+	private void appendChange(StringBuilder sb, String fieldName, Object oldVal, Object newVal) {
+	    if (!Objects.equals(oldVal, newVal)) {
+	        sb.append(fieldName)
+	          .append(" [Old: ").append(oldVal != null ? oldVal : "null")
+	          .append(" | New: ").append(newVal != null ? newVal : "null")
+	          .append("] || ");
+	    }
 	}
 
 	/* Thanveer */
 	@RequestMapping(value = "tab2modify", method = RequestMethod.POST)
-//    @ResponseBody
-	public String tab2modify(Model md, HttpServletRequest rq,
-			@ModelAttribute Organization_Branch_Entity organization_Branch_Entity) {
+//  @ResponseBody
+public String tab2modify(Model md, HttpServletRequest rq,
+		@ModelAttribute Organization_Branch_Entity organization_Branch_Entity) {
 
-		/*
-		 * Organization_Branch_Entity up = organization_Branch_Entity;
-		 * up.setEntity_flg("N"); up.setDel_flg("N");
-		 *
-		 * organization_Branch_Rep.save(up);
-		 */
+	/*
+	 * Organization_Branch_Entity up = organization_Branch_Entity;
+	 * up.setEntity_flg("N"); up.setDel_flg("N");
+	 *
+	 * organization_Branch_Rep.save(up);
+	 */
 
-		Optional<Organization_Branch_Entity> up = organization_Branch_Rep
-				.findById(organization_Branch_Entity.getBranch_code());
-		String userid = (String) rq.getSession().getAttribute("USERID");
+	Optional<Organization_Branch_Entity> up = organization_Branch_Rep
+			.findById(organization_Branch_Entity.getBranch_code());
+	String userid = (String) rq.getSession().getAttribute("USERID");
 
-		// organization_Branch_Entity up = organization_Branch_Entity;
-		String msg = "";
-		if (up.isPresent()) {
-			Organization_Branch_Entity us1 = up.get();
+	// organization_Branch_Entity up = organization_Branch_Entity;
+	String msg = "";
+	if (up.isPresent()) {
+		Organization_Branch_Entity us1 = up.get();
+		if (Objects.equals(us1.getBranch_name(), organization_Branch_Entity.getBranch_name())
+				&& Objects.equals(us1.getDesignation(), organization_Branch_Entity.getDesignation())
+				&& Objects.equals(us1.getSwift_code(), organization_Branch_Entity.getSwift_code())
+				&& Objects.equals(us1.getLand_line(), organization_Branch_Entity.getLand_line())
+				&& Objects.equals(us1.getFax(), organization_Branch_Entity.getFax())
+				&& Objects.equals(us1.getMobile(), organization_Branch_Entity.getMobile())
+				&& Objects.equals(us1.getCont_person(), organization_Branch_Entity.getCont_person())
+				&& Objects.equals(us1.getBranch_head(), organization_Branch_Entity.getBranch_head())
+				&& Objects.equals(us1.getWebsite(), organization_Branch_Entity.getWebsite())
+				&& Objects.equals(us1.getMail_id(), organization_Branch_Entity.getMail_id())
+				&& Objects.equals(us1.getAdd_1(), organization_Branch_Entity.getAdd_1())
+				&& Objects.equals(us1.getAdd_2(), organization_Branch_Entity.getAdd_2())
+				&& Objects.equals(us1.getCity(), organization_Branch_Entity.getCity())
+				&& Objects.equals(us1.getState(), organization_Branch_Entity.getState())
+				&& Objects.equals(us1.getCountry(), organization_Branch_Entity.getCountry())
+				&& Objects.equals(us1.getRemarks(), organization_Branch_Entity.getRemarks())
+				&& Objects.equals(us1.getZip_code(), organization_Branch_Entity.getZip_code())) {
+
+			msg = "No any Modification done";
+		} else {
+			System.out.println(organization_Branch_Entity.getMobile() + "UYIU");
+
+			organization_Branch_Entity.setModify_flg("Y");
+			organization_Branch_Entity.setDel_flg("N");
+			organization_Branch_Entity.setModify_time(new Date());
+			organization_Branch_Entity.setModify_user(userid);
+
+			// for audit
+			StringBuilder stringBuilder = new StringBuilder();
+			StringBuilder modifiedFields = new StringBuilder();
+
 			if (Objects.equals(us1.getBranch_name(), organization_Branch_Entity.getBranch_name())
+					&& Objects.equals(us1.getBranch_head(), organization_Branch_Entity.getBranch_head())
 					&& Objects.equals(us1.getDesignation(), organization_Branch_Entity.getDesignation())
 					&& Objects.equals(us1.getSwift_code(), organization_Branch_Entity.getSwift_code())
 					&& Objects.equals(us1.getLand_line(), organization_Branch_Entity.getLand_line())
 					&& Objects.equals(us1.getFax(), organization_Branch_Entity.getFax())
 					&& Objects.equals(us1.getMobile(), organization_Branch_Entity.getMobile())
 					&& Objects.equals(us1.getCont_person(), organization_Branch_Entity.getCont_person())
-					&& Objects.equals(us1.getBranch_head(), organization_Branch_Entity.getBranch_head())
 					&& Objects.equals(us1.getWebsite(), organization_Branch_Entity.getWebsite())
 					&& Objects.equals(us1.getMail_id(), organization_Branch_Entity.getMail_id())
 					&& Objects.equals(us1.getAdd_1(), organization_Branch_Entity.getAdd_1())
@@ -920,128 +1032,58 @@ public class BGLSRestController {
 					&& Objects.equals(us1.getRemarks(), organization_Branch_Entity.getRemarks())
 					&& Objects.equals(us1.getZip_code(), organization_Branch_Entity.getZip_code())) {
 
-				msg = "No any Modification done";
-			} else {
-				System.out.println(organization_Branch_Entity.getMobile() + "UYIU");
-
-				organization_Branch_Entity.setModify_flg("Y");
-				organization_Branch_Entity.setDel_flg("N");
-				organization_Branch_Entity.setModify_time(new Date());
-				organization_Branch_Entity.setModify_user(userid);
-
-				// for audit
-				StringBuilder stringBuilder = new StringBuilder();
-
-				if (Objects.equals(us1.getBranch_name(), organization_Branch_Entity.getBranch_name())
-						&& Objects.equals(us1.getBranch_head(), organization_Branch_Entity.getBranch_head())
-						&& Objects.equals(us1.getDesignation(), organization_Branch_Entity.getDesignation())
-						&& Objects.equals(us1.getSwift_code(), organization_Branch_Entity.getSwift_code())
-						&& Objects.equals(us1.getLand_line(), organization_Branch_Entity.getLand_line())
-						&& Objects.equals(us1.getFax(), organization_Branch_Entity.getFax())
-						&& Objects.equals(us1.getMobile(), organization_Branch_Entity.getMobile())
-						&& Objects.equals(us1.getCont_person(), organization_Branch_Entity.getCont_person())
-						&& Objects.equals(us1.getWebsite(), organization_Branch_Entity.getWebsite())
-						&& Objects.equals(us1.getMail_id(), organization_Branch_Entity.getMail_id())
-						&& Objects.equals(us1.getAdd_1(), organization_Branch_Entity.getAdd_1())
-						&& Objects.equals(us1.getAdd_2(), organization_Branch_Entity.getAdd_2())
-						&& Objects.equals(us1.getCity(), organization_Branch_Entity.getCity())
-						&& Objects.equals(us1.getState(), organization_Branch_Entity.getState())
-						&& Objects.equals(us1.getCountry(), organization_Branch_Entity.getCountry())
-						&& Objects.equals(us1.getRemarks(), organization_Branch_Entity.getRemarks())
-						&& Objects.equals(us1.getZip_code(), organization_Branch_Entity.getZip_code())) {
-
-				}
-
-//                if (!us1.getBranch_name().equals(organization_Branch_Entity.getBranch_name())) {
-//					stringBuilder = stringBuilder.append("Branch Name+" + us1.getBranch_name() + "+"
-//							+ organization_Branch_Entity.getBranch_name() + "||");
-//				}
-//				if (!us1.getBranch_head().equals(organization_Branch_Entity.getBranch_head())) {
-//					stringBuilder = stringBuilder.append("Branch Head+" + us1.getBranch_head() + "+"
-//							+ organization_Branch_Entity.getBranch_head() + "||");
-//				}
-//				if (!us1.getDesignation().equals(organization_Branch_Entity.getDesignation())) {
-//					stringBuilder = stringBuilder.append("Designation+" + us1.getDesignation() + "+"
-//							+ organization_Branch_Entity.getDesignation() + "||");
-//				}
-//				if (!us1.getSwift_code().equals(organization_Branch_Entity.getSwift_code())) {
-//					stringBuilder = stringBuilder.append("Swift Code+" + us1.getSwift_code() + "+"
-//							+ organization_Branch_Entity.getSwift_code() + "||");
-//				}
-//				/*
-//				 * if (!us1.getPic_no().equals(organization_Branch_Entity.getPic_no())) {
-//				 * stringBuilder = stringBuilder .append("Pic No+" + us1.getPic_no() + "+" +
-//				 * organization_Branch_Entity.getPic_no() + "||"); }
-//				 */
-//				if (!us1.getLand_line().equals(organization_Branch_Entity.getLand_line())) {
-//					stringBuilder = stringBuilder.append(
-//							"Land Line+" + us1.getLand_line() + "+" + organization_Branch_Entity.getLand_line() + "||");
-//				}
-//				if (!us1.getFax().equals(organization_Branch_Entity.getFax())) {
-//					stringBuilder = stringBuilder
-//							.append("Fax+" + us1.getFax() + "+" + organization_Branch_Entity.getFax() + "||");
-//				}
-//				if (!(us1.getMobile() != null && us1.getMobile().equals(organization_Branch_Entity.getMobile()))) {
-//					stringBuilder = stringBuilder
-//							.append("Mobile+" + us1.getMobile() + "+" + organization_Branch_Entity.getMobile() + "||");
-//				}
-//				if (!(us1.getRemarks() != null && us1.getRemarks().equals(organization_Branch_Entity.getRemarks()))) {
-//					stringBuilder = stringBuilder.append(
-//							"Mobile+" + us1.getRemarks() + "+" + organization_Branch_Entity.getRemarks() + "||");
-//				}
-//				if (!us1.getCont_person().equals(organization_Branch_Entity.getCont_person())) {
-//					stringBuilder = stringBuilder.append("Contact Person+" + us1.getCont_person() + "+"
-//							+ organization_Branch_Entity.getCont_person() + "||");
-//				}
-//				if (!us1.getWebsite().equals(organization_Branch_Entity.getWebsite())) {
-//					stringBuilder = stringBuilder.append(
-//							"Web Site+" + us1.getWebsite() + "+" + organization_Branch_Entity.getWebsite() + "||");
-//				}
-//				if (!us1.getMail_id().equals(organization_Branch_Entity.getMail_id())) {
-//					stringBuilder = stringBuilder.append(
-//							"Mail Id+" + us1.getMail_id() + "+" + organization_Branch_Entity.getMail_id() + "||");
-//				}
-//				if (!us1.getAdd_1().equals(organization_Branch_Entity.getAdd_1())) {
-//					stringBuilder = stringBuilder
-//							.append("Address 1+" + us1.getAdd_1() + "+" + organization_Branch_Entity.getAdd_1() + "||");
-//				}
-//
-//				if (!us1.getAdd_2().equalsIgnoreCase(organization_Branch_Entity.getAdd_2())) {
-//					stringBuilder = stringBuilder
-//							.append("Address 2+" + us1.getAdd_2() + "+" + organization_Branch_Entity.getAdd_2() + "||");
-//
-//				}
-//				if (!us1.getCity().equalsIgnoreCase(organization_Branch_Entity.getCity())) {
-//					stringBuilder = stringBuilder
-//							.append("City+" + us1.getCity() + "+" + organization_Branch_Entity.getCity() + "||");
-//
-//				}
-//				if (!us1.getCountry().equalsIgnoreCase(organization_Branch_Entity.getCountry())) {
-//					stringBuilder = stringBuilder
-//							.append("State+" + us1.getCountry() + "+" + organization_Branch_Entity.getCountry() + "||");
-//				}
-//				if (!us1.getState().equalsIgnoreCase(organization_Branch_Entity.getState())) {
-//					stringBuilder = stringBuilder
-//							.append("Country+" + us1.getState() + "+" + organization_Branch_Entity.getState() + "||");
-//				}
-//
-//				if (!us1.getZip_code().equalsIgnoreCase(organization_Branch_Entity.getZip_code())) {
-//					stringBuilder = stringBuilder.append(
-//							"Zip Code+" + us1.getZip_code() + "+" + organization_Branch_Entity.getZip_code() + "||");
-//				}
-
-				Optional<UserProfile> up1 = userProfileRep.findById(userid);
-				UserProfile user = up1.get();
-				audit.insertServiceAudit(user.getUserid(), user.getUsername(), "ORGANIZATION EDIT", "EDITED SUCCESSFULLY","BGLS_ORG_BRANCH", "ORGANIZATION DETAILS");
-				organization_Branch_Rep.save(organization_Branch_Entity);
-				msg = "User Modified Successfully";
-
 			}
 
-		}
-		return "Modified Successfully";
+			// Track which fields are changed
+			if (!Objects.equals(us1.getBranch_name(), organization_Branch_Entity.getBranch_name()))
+				modifiedFields.append("Branch Name, ");
+			if (!Objects.equals(us1.getBranch_head(), organization_Branch_Entity.getBranch_head()))
+				modifiedFields.append("Branch Head, ");
+			if (!Objects.equals(us1.getDesignation(), organization_Branch_Entity.getDesignation()))
+				modifiedFields.append("Designation, ");
+			if (!Objects.equals(us1.getSwift_code(), organization_Branch_Entity.getSwift_code()))
+				modifiedFields.append("Swift Code, ");
+			if (!Objects.equals(us1.getLand_line(), organization_Branch_Entity.getLand_line()))
+				modifiedFields.append("Land Line, ");
+			if (!Objects.equals(us1.getFax(), organization_Branch_Entity.getFax()))
+				modifiedFields.append("Fax, ");
+			if (!Objects.equals(us1.getMobile(), organization_Branch_Entity.getMobile()))
+				modifiedFields.append("Mobile, ");
+			if (!Objects.equals(us1.getCont_person(), organization_Branch_Entity.getCont_person()))
+				modifiedFields.append("Contact Person, ");
+			if (!Objects.equals(us1.getWebsite(), organization_Branch_Entity.getWebsite()))
+				modifiedFields.append("Website, ");
+			if (!Objects.equals(us1.getMail_id(), organization_Branch_Entity.getMail_id()))
+				modifiedFields.append("Mail ID, ");
+			if (!Objects.equals(us1.getAdd_1(), organization_Branch_Entity.getAdd_1()))
+				modifiedFields.append("Address 1, ");
+			if (!Objects.equals(us1.getAdd_2(), organization_Branch_Entity.getAdd_2()))
+				modifiedFields.append("Address 2, ");
+			if (!Objects.equals(us1.getCity(), organization_Branch_Entity.getCity()))
+				modifiedFields.append("City, ");
+			if (!Objects.equals(us1.getState(), organization_Branch_Entity.getState()))
+				modifiedFields.append("State, ");
+			if (!Objects.equals(us1.getCountry(), organization_Branch_Entity.getCountry()))
+				modifiedFields.append("Country, ");
+			if (!Objects.equals(us1.getZip_code(), organization_Branch_Entity.getZip_code()))
+				modifiedFields.append("Zip Code, ");
+			if (!Objects.equals(us1.getRemarks(), organization_Branch_Entity.getRemarks()))
+				modifiedFields.append("Remarks, ");
 
+			String changedFields = modifiedFields.length() > 0
+					? modifiedFields.substring(0, modifiedFields.length() - 2)
+					: "No fields modified";
+
+			Optional<UserProfile> up1 = userProfileRep.findById(userid);
+			UserProfile user = up1.get();
+			audit.insertServiceAudit(user.getUserid(), user.getUsername(), "ORGANIZATION EDIT", "EDITED SUCCESSFULLY","BGLS_ORG_BRANCH", "ORGANIZATION DETAILS", changedFields);
+			organization_Branch_Rep.save(organization_Branch_Entity);
+			msg = "User Modified Successfully";
+		}
 	}
+	return "Modified Successfully";
+}
+
 
 	/* pon prasanth */
 	@GetMapping("transactionaccountdetails")
@@ -1100,7 +1142,7 @@ public class BGLSRestController {
 		
 		Optional<UserProfile> up1 = userProfileRep.findById(userid);
 		UserProfile user = up1.get();
-		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "REFERENCE CODE MAINTENANCE ADD", "ADDED SUCCESSFULLY","BGLS_REF_MASTER", "REFERENCE CODE MAINTENANCE");
+		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "REFERENCE CODE MAINTENANCE ADD", "ADDED SUCCESSFULLY","BGLS_REF_MASTER", "REFERENCE CODE MAINTENANCE","-");
 		return "Sucessfully Saved";
 	}
 
@@ -1118,7 +1160,7 @@ public class BGLSRestController {
 		System.out.println("the getting gl code is " + glcode);
 		System.out.println("the getting glsh code 234324is " + glsh_code);
 
-		String msg = adminOperServices.addGeneralLedger(generalLedgerEntity, formmode, glsh_code, glcode, userid);
+		String msg = adminOperServices.addGeneralLedger(generalLedgerEntity, formmode, glsh_code, glcode, userid,rq);
 		return msg;
 	}
 
@@ -1529,7 +1571,7 @@ public class BGLSRestController {
 			// --- Step 4: Save audit and posted transactions ---
 			Optional<UserProfile> up1 = userProfileRep.findById(user);
 			UserProfile user1 = up1.get();
-			audit.insertServiceAudit(user1.getUserid(), user1.getUsername(), "TRANSACTION MAINTENANCE ADD", "ADDED SUCCESSFULLY","BGLS_TRM_WRK_TRANSACTIONS", "TRANSACTION MAINTENANCE");
+			audit.insertServiceAudit(user1.getUserid(), user1.getUsername(), "TRANSACTION MAINTENANCE ADD", "ADDED SUCCESSFULLY","BGLS_TRM_WRK_TRANSACTIONS", "TRANSACTION MAINTENANCE","-");
 			tRAN_MAIN_TRM_WRK_REP.saveAll(savedTransactions);
 
 			return "Posted Successfully";

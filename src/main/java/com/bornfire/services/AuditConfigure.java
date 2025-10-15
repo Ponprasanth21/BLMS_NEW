@@ -167,7 +167,7 @@ public class AuditConfigure {
 		BGLSAuditTable_Rep.save(audit);
 	}
 		
-		public void insertServiceAudit(String userID, String username, String fun_code , String remarks , String table  ,String screen) {
+		public void insertServiceAudit(String userID, String username, String fun_code , String remarks , String table  ,String screen,String field) {
 			BGLSBusinessTable_Entity audit = new BGLSBusinessTable_Entity();
 			audit.setAudit_date(new Date());
 			audit.setEntry_time(new Date());
@@ -178,6 +178,7 @@ public class AuditConfigure {
 			audit.setAudit_screen(screen);
 			audit.setEvent_id(userID);
 			audit.setEvent_name(username);
+			audit.setField_name(field);
 			audit.setModi_details("-");
 			audit.setAudit_ref_no(sequence.generateRequestUUId());
 			BGLSBusinessTable_Rep.save(audit);

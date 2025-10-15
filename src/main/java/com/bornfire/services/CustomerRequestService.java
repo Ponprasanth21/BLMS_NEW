@@ -255,7 +255,7 @@ public class CustomerRequestService {
 			// FOR AUIDT
 			Optional<UserProfile> up1 = userProfileRep.findById(userId);
 			UserProfile user = up1.get();
-			audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "CUSTOMER ONBOARDING ADD", "ADDED SUCCESSFULLY","BACP_CUS_PROFILE", "CUSTOMER ONBOARDING");
+			audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "CUSTOMER ONBOARDING ADD", "ADDED SUCCESSFULLY","BACP_CUS_PROFILE", "CUSTOMER ONBOARDING","-");
 
 			msg = "Personal Detail Uploaded Successfully";
 
@@ -333,7 +333,7 @@ public class CustomerRequestService {
 			// FOR AUIDT
 			Optional<UserProfile> up1 = userProfileRep.findById(userId);
 			UserProfile user = up1.get();
-			audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "BACP_CUS_PROFILE ADD", "ADDED SUCCESSFULLY","BACP_CUS_PROFILE", "BACP_CUS_PROFILE");
+			audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "BACP_CUS_PROFILE ADD", "ADDED SUCCESSFULLY","BACP_CUS_PROFILE", "BACP_CUS_PROFILE","-");
 
 			msg = "Personal Detail Uploaded Successfully";
 
@@ -559,7 +559,7 @@ public class CustomerRequestService {
 					
 					Optional<UserProfile> up1 = userProfileRep.findById(userid);
 					UserProfile user = up1.get();
-					audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "GENERAL LEDGER UPLOAD", "UPLOADED SUCCESSFULLY","BGLS_GL_WORK", "GENERAL LEDGER");
+					audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "GENERAL LEDGER UPLOAD", "UPLOADED SUCCESSFULLY","BGLS_GL_WORK", "GENERAL LEDGER","-");
 
 					msg = "Excel Data Uploaded Successfully";
 				}
@@ -684,7 +684,7 @@ public class CustomerRequestService {
 					
 					Optional<UserProfile> up1 = userProfileRep.findById(userid);
 					UserProfile user = up1.get();
-					audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "COLLECTION PROCESS UPLOAD", "UPLOADED SUCCESSFULLY","COLLECTION_PROCESS", "COLLECTION PROCESS");
+					audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "COLLECTION PROCESS UPLOAD", "UPLOADED SUCCESSFULLY","COLLECTION_PROCESS", "COLLECTION PROCESS","-");
 
 					msg = "Excel Data Uploaded Successfully";
 				}
@@ -814,7 +814,7 @@ public class CustomerRequestService {
 					
 					Optional<UserProfile> up1 = userProfileRep.findById(userid);
 					UserProfile user = up1.get();
-					audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "HOLIDAY MASTER UPLOAD", "UPLOADED SUCCESSFULLY","HOLIDAY_MASTER", "HOLIDAY MASTER");
+					audit1.insertServiceAudit(user.getUserid(), user.getUsername(), "HOLIDAY MASTER UPLOAD", "UPLOADED SUCCESSFULLY","HOLIDAY_MASTER", "HOLIDAY MASTER","-");
 
 					msg = "Excel Data Uploaded Successfully";
 				}

@@ -3137,7 +3137,7 @@ public class BGLSNavigationController {
         Optional<UserProfile> up1 = userProfileRep.findById(userid);
         UserProfile user = up1.get();
         
-		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "GENERAL LEDGER UPLOAD", "UPLOADED SUCCESSFULLY","BGLS_GL_WORK", "GENERAL LEDGER");
+		audit.insertServiceAudit(user.getUserid(), user.getUsername(), "GENERAL LEDGER UPLOAD", "UPLOADED SUCCESSFULLY","BGLS_GL_WORK", "GENERAL LEDGER","-");
         // Return a response message or the list of saved records
         return "Records uploaded and saved successfully.";
 

@@ -619,7 +619,7 @@ public class UploadService {
 			resultMap.put("message", "File upload failed: " + e.getMessage());
 		}
 		logger.info("Start 9");	
-		audit.insertServiceAudit(userID, userName, "GENERAL LEDGER UPLOAD", "UPLOADED SUCCESSFULLY","BGLS_GENERAL_LED", "GENERAL LEDGER");
+		audit.insertServiceAudit(userID, userName, "GENERAL LEDGER UPLOAD", "UPLOADED SUCCESSFULLY","BGLS_GENERAL_LED", "GENERAL LEDGER","-");
 		logger.info("Start 10");
 		resultMap.put("status", "success");
 		resultMap.put("TotalSucceeded", successCount);
@@ -694,7 +694,7 @@ public class UploadService {
 			resultMap.put("message", "File upload failed: " + e.getMessage());
 		}
 		logger.info("Start 9");	
-		audit.insertServiceAudit(userID, userName, "GENERAL LEDGER UPLOAD", "UPLOADED SUCCESSFULLY","BGLS_GENERAL_LED", "GENERAL LEDGER");
+		audit.insertServiceAudit(userID, userName, "GENERAL LEDGER UPLOAD", "UPLOADED SUCCESSFULLY","BGLS_GENERAL_LED", "GENERAL LEDGER","-");
 		logger.info("Start 10");
 		resultMap.put("status", "success");
 		resultMap.put("TotalSucceeded", successCount);
