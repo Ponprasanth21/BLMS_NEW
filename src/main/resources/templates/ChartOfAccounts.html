@@ -993,7 +993,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="cr_amt" id="cr_amt"
 											class="form-control form-control-sm bg-white border border-dark"
-											value="0" readonly />
+											value="0.00" readonly />
 									</div>
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">Total
@@ -1001,7 +1001,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="dr_amt" id="dr_amt"
 											class="form-control form-control-sm bg-white border border-dark"
-											value="0" readonly />
+											value="0.00" readonly />
 									</div>
 								</div>
 
@@ -1011,7 +1011,7 @@ $(document).ready(function () {
 										Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="acct_bal" id="acct_bal"
-											value="0" class="form-control form-control-sm bg-white border border-dark"
+											value="0.00" class="form-control form-control-sm bg-white border border-dark"
 											readonly />
 									</div>
 									<div class="col-sm-1"></div>
@@ -1019,7 +1019,7 @@ $(document).ready(function () {
 										Currency Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="ref_crncy_bal" id="ref_crncy_bal"
-											value="0" class="form-control form-control-sm bg-white border border-dark"
+											value="0.00" class="form-control form-control-sm bg-white border border-dark"
 											readonly />
 									</div>
 								</div>
@@ -1317,7 +1317,9 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="cr_amt" id="cr_amt"
 											class="form-control form-control-sm bg-white border border-dark" 
-								  th:value="${#numbers.formatDecimal(chartaccount?.cr_amt, 0, 'COMMA', 2, 'POINT')}" readonly />
+								  			 th:value="${chartaccount?.cr_amt != null && chartaccount.cr_amt.compareTo(T(java.math.BigDecimal).ZERO) != 0 
+                  ? #numbers.formatDecimal(chartaccount.cr_amt, 0, 'COMMA', 2, 'POINT') 
+                  : '0.00'}" readonly />
 									</div>
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">Total
@@ -1325,7 +1327,9 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="dr_amt" id="dr_amt"
 											class="form-control form-control-sm bg-white border border-dark"
-											 th:value="${#numbers.formatDecimal(chartaccount?.dr_amt, 0, 'COMMA', 2, 'POINT')}"
+											 th:value="${chartaccount?.dr_amt != null && chartaccount.dr_amt.compareTo(T(java.math.BigDecimal).ZERO) != 0 
+                  ? #numbers.formatDecimal(chartaccount.dr_amt, 0, 'COMMA', 2, 'POINT') 
+                  : '0.00'}"
 											   readonly />
 									</div>
 								</div>
@@ -1336,7 +1340,9 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="acct_bal" id="acct_bal"
 											class="form-control form-control-sm bg-white border border-dark"
-											 th:value="${#numbers.formatDecimal(chartaccount?.acct_bal, 0, 'COMMA', 2, 'POINT')}"
+											 th:value="${chartaccount?.acct_bal != null && chartaccount.acct_bal.compareTo(T(java.math.BigDecimal).ZERO) != 0 
+                  ? #numbers.formatDecimal(chartaccount.acct_bal, 0, 'COMMA', 2, 'POINT') 
+                  : '0.00'}"
 											  readonly />
 									</div>
 									<div class="col-sm-1"></div>
@@ -1345,7 +1351,9 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="ref_crncy_bal" id="ref_crncy_bal"
 											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${chartaccount?.ref_crncy_bal}" readonly />
+											th:value="${chartaccount?.ref_crncy_bal != null && chartaccount.ref_crncy_bal.compareTo(T(java.math.BigDecimal).ZERO) != 0 
+                  ? #numbers.formatDecimal(chartaccount.ref_crncy_bal, 0, 'COMMA', 2, 'POINT') 
+                  : '0.00'}" readonly />
 									</div>
 								</div>
 							</form>
@@ -2174,14 +2182,18 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="cr_amt" id="cr_amt"
 											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${chartaccount?.cr_amt}" readonly />
+											th:value="${chartaccount?.cr_amt != null && chartaccount.cr_amt.compareTo(T(java.math.BigDecimal).ZERO) != 0 
+                  ? #numbers.formatDecimal(chartaccount.cr_amt, 0, 'COMMA', 2, 'POINT') 
+                  : '0.00'}" readonly />
 									</div>
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">Total
 										Debit Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="dr_amt" id="dr_amt"
-											th:value="${chartaccount?.dr_amt}"
+											 th:value="${chartaccount?.dr_amt != null && chartaccount.dr_amt.compareTo(T(java.math.BigDecimal).ZERO) != 0 
+                  ? #numbers.formatDecimal(chartaccount.dr_amt, 0, 'COMMA', 2, 'POINT') 
+                  : '0.00'}"
 											class="form-control form-control-sm bg-white border border-dark"
 											readonly />
 									</div>
@@ -2193,7 +2205,10 @@ $(document).ready(function () {
 										Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="acct_bal" id="acct_bal"
-											th:value="${chartaccount?.acct_bal}"
+											
+ th:value="${chartaccount?.acct_bal != null && chartaccount.acct_bal.compareTo(T(java.math.BigDecimal).ZERO) != 0 
+                  ? #numbers.formatDecimal(chartaccount.acct_bal, 0, 'COMMA', 2, 'POINT') 
+                  : '0.00'}"
 											class="form-control form-control-sm bg-white border border-dark"
 											readonly />
 									</div>
@@ -2202,7 +2217,9 @@ $(document).ready(function () {
 										Currency Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="ref_crncy_bal" id="ref_crncy_bal"
-											th:value="${chartaccount?.ref_crncy_bal}"
+											th:value="${chartaccount?.ref_crncy_bal != null && chartaccount.ref_crncy_bal.compareTo(T(java.math.BigDecimal).ZERO) != 0 
+                  ? #numbers.formatDecimal(chartaccount.ref_crncy_bal, 0, 'COMMA', 2, 'POINT') 
+                  : '0.00'}"
 											class="form-control form-control-sm bg-white border border-dark"
 											readonly />
 									</div>
