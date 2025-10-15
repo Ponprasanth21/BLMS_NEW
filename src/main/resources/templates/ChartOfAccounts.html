@@ -176,7 +176,7 @@ input:hover+.password-info {
 		const acct = document.getElementById("acct_num").value.trim();
 
 		if (acct === "") {
-			alert("Please fill out the Account Number field.");
+			alert("Please fill out the Account ID field.");
 		} else {
 			$.ajax({
 				url : './AddScreens',
@@ -411,14 +411,14 @@ function verifysubmit(a) {
 				
 				document.addEventListener("DOMContentLoaded", function() {
 				        // Make all input fields readonly
-				        document.querySelectorAll('#caid input').forEach(input => {
-				            input.readOnly = true;
-				        });
+				        // document.querySelectorAll('#caid input').forEach(input => {
+				        //     input.readOnly = true;
+				        // });
 
 				        // Make all select fields disabled
-				        document.querySelectorAll('#caid select').forEach(select => {
-				            select.disabled = true;
-				        });
+				        // document.querySelectorAll('#caid select').forEach(select => {
+				        //     select.disabled = true;
+				        // });
 				    });
 </script>
 <script>
@@ -435,12 +435,13 @@ function verifysubmit(a) {
 
 
 <!-- suresh -->
-<script>
+<script th:inline="javascript">
+
 
 
 function updateTable(data) {
     let rows = "";
-
+var current_user = /*[[${session.USERID}]]*/ '';
     data.forEach(chartacc => {
         rows += `
             <tr>
@@ -477,25 +478,28 @@ function updateTable(data) {
                             aria-expanded="false">Action</button>
 
                         <div class="dropdown-menu" style="padding:0px"
-                            aria-labelledby="dropdownMenuButton">
+                            aria-labelledby="dropdownMenuButton" >
                             
                             <!-- Modify -->
                             <a class="dropdown-item modify-item"
                                 data-attr="${chartacc.acct_num || ""}" title="Modify"
+								 ${chartacc.entry_user == current_user && chartacc.modify_flg == 'Y' ? '' : 'style="display:none;"'} 
                                 onclick="modifyuser(this)">Modify</a>
 
-                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-divider" ${chartacc.entry_user != current_user && chartacc.verify_flg == 'Y' ? '' : 'style="display:none;"' }   ></div>
 
                             <!-- Verify -->
                             <a class="dropdown-item verify-item"
                                 data-attr="${chartacc.acct_num || ""}" title="Verify"
+								${chartacc.entry_user != current_user && chartacc.verify_flg == 'Y' ? '' : 'style="display:none;"' }  
                                 onclick="verifyuser(this)">Verify</a>
 
-                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-divider" ${chartacc.entry_user == current_user && chartacc.verify_flg == 'N' ? '' : 'style="display:none;"'}  ></div>
 
                             <!-- Delete -->
                             <a class="dropdown-item delete-item"
                                 data-attribute="${chartacc.acct_num || ""}" title="Delete"
+								 ${chartacc.entry_user == current_user && chartacc.verify_flg == 'N' ? '' : 'style="display:none;"'} 
                                 onclick="deleteUser(this)">Delete</a>
 
                             <div class="dropdown-divider"></div>
@@ -764,14 +768,20 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">classification</div>
 									<div class="col-sm-2 d-flex align-items-center">
 										<select id="classification" name="classification"
-											class="form-control form-control-sm bg-white border border-dark">
+											class="form-control form-control-sm bg-white border border-dark" >
 											<option value="">Select</option>
-											<th:block th:each="code : ${Chart1}">
-												<option th:value="${code}" th:text="${code}"></option>
-											</th:block>
+											<option th:each="cls : ${Chart1}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}">
+											</option>
 										</select>
 									</div>
-
+										<!-- <option value="">Select</option>
+											<option value="Asset" >Asset</option>
+											<option value="Liability" >Liability</option>
+											<option value="Income" >Income</option>
+											<option value="Expenses" >Expenses</option>
+											<option value="Profit" >Profit</option> -->
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">Account
 										Type</div>
@@ -779,9 +789,10 @@ $(document).ready(function () {
 										<select id="acct_type" name="acct_type"
 											class="form-control form-control-sm bg-white border border-dark">
 											<option value="">Select</option>
-											<th:block th:each="code : ${Chart6}">
-												<option th:value="${code}" th:text="${code}"></option>
-											</th:block>
+											<option th:each="cls : ${Chart6}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}">
+											</option>
 										</select>
 									</div>
 								</div>
@@ -833,9 +844,11 @@ $(document).ready(function () {
 										<select id="schm_type" name="schm_type"
 											class="form-control form-control-sm bg-white border border-dark">
 											<option value="">Select</option>
-											<th:block th:each="code : ${Chart7}">
-												<option th:value="${code}" th:text="${code}"></option>
-											</th:block>
+											<option th:each="cls : ${Chart7}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}">
+											</option>
+
 										</select>
 
 									</div>
@@ -874,9 +887,10 @@ $(document).ready(function () {
 										<select id="add_det_flg" name="add_det_flg"
 											class="form-control form-control-sm bg-white border border-dark">
 											<option value="">Select</option>
-											<th:block th:each="code : ${Chart2}">
-												<option th:value="${code}" th:text="${code}"></option>
-											</th:block>
+											<option th:each="cls : ${Chart2}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}">
+											</option>
 										</select>
 									</div>
 									<div class="col-sm-1"></div>
@@ -886,9 +900,10 @@ $(document).ready(function () {
 										<select id="acct_partition" name="acct_partition"
 											class="form-control form-control-sm bg-white border border-dark">
 											<option value="">Select</option>
-											<th:block th:each="code : ${Chart3}">
-												<option th:value="${code}" th:text="${code}"></option>
-											</th:block>
+											<option th:each="cls : ${Chart3}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}">
+											</option>
 										</select>
 									</div>
 								</div>
@@ -942,9 +957,10 @@ $(document).ready(function () {
 										<select id="acct_status" name="acct_status"
 											class="form-control form-control-sm bg-white border border-dark">
 											<option value="">Select</option>
-											<th:block th:each="code : ${Chart4}">
-												<option th:value="${code}" th:text="${code}"></option>
-											</th:block>
+											<option th:each="cls : ${Chart4}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}">
+											</option>
 										</select>
 									</div>
 								</div>
@@ -956,9 +972,10 @@ $(document).ready(function () {
 										<select id="own_type" name="own_type"
 											class="form-control form-control-sm bg-white border border-dark">
 											<option value="">Select</option>
-											<th:block th:each="code : ${Chart5}">
-												<option th:value="${code}" th:text="${code}"></option>
-											</th:block>
+											<option th:each="cls : ${Chart5}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}">
+											</option>
 										</select>
 									</div>
 									<div class="col-sm-1"></div>
@@ -976,7 +993,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="cr_amt" id="cr_amt"
 											class="form-control form-control-sm bg-white border border-dark"
-											th:text="${chartaccount?.cr_amt}" readonly />
+											value="0" readonly />
 									</div>
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">Total
@@ -984,7 +1001,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="dr_amt" id="dr_amt"
 											class="form-control form-control-sm bg-white border border-dark"
-											readonly />
+											value="0" readonly />
 									</div>
 								</div>
 
@@ -994,7 +1011,7 @@ $(document).ready(function () {
 										Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="acct_bal" id="acct_bal"
-											class="form-control form-control-sm bg-white border border-dark"
+											value="0" class="form-control form-control-sm bg-white border border-dark"
 											readonly />
 									</div>
 									<div class="col-sm-1"></div>
@@ -1002,7 +1019,7 @@ $(document).ready(function () {
 										Currency Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="ref_crncy_bal" id="ref_crncy_bal"
-											class="form-control form-control-sm bg-white border border-dark"
+											value="0" class="form-control form-control-sm bg-white border border-dark"
 											readonly />
 									</div>
 								</div>
@@ -1022,15 +1039,19 @@ $(document).ready(function () {
 					</div>
 				</div>
 
-				<div th:if="${formmode}=='view'">
+				<div th:if="${formmode =='view' OR formmode == 'verify' OR formmode == 'delete' }" >
 					<div class="card">
 
 
 						<div class="card-header"
 							style="height: 50px; background-color: #e9ecef;">
 
-							<h6 style="font-size: 1.2rem; color: black;">CHART OF
-								ACCOUNTS</h6>
+							<h6 style="font-size: 1.2rem; color: black;" th:if="${formmode == 'view' }" >CHART OF
+								ACCOUNTS - VIEW</h6>
+							<h6 style="font-size: 1.2rem; color: black;" th:if="${formmode == 'verify' }" >CHART OF
+								ACCOUNTS - VERIFY</h6>
+							<h6 style="font-size: 1.2rem; color: black;" th:if="${formmode == 'delete' }" >CHART OF
+								ACCOUNTS - DELETE</h6>
 						</div>
 						<div class="card-body">
 							<form class=" border border-secondary" action="#" method="post"
@@ -1041,18 +1062,34 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">classification</div>
 									<div class="col-sm-2 d-flex align-items-center">
 
-										<input type="text" name="classification" id="classification"
+										<!-- <input type="text" name="classification" id="classification" readonly
 											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${chartaccount?.classification}" />
+											th:value="${chartaccount?.classification}" /> -->
+											<select name="classification" id="classification" class="form-control form-control-sm bg-white border border-dark" readonly >
+											<option value="" >Select</option>
+											<option th:each="cls : ${Chart1}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}"
+													th:selected="${cls.ref_type_desc == chartaccount?.classification}">
+											</option>
+										</select>
 									</div>
 
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">Account
 										Type</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="acct_type" id="acct_type"
+										<!-- <input type="text" name="acct_type" id="acct_type" readonly
 											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${chartaccount?.acct_type}" />
+											th:value="${chartaccount?.acct_type}" /> -->
+										<select name="acct_type" id="acct_type" class="form-control form-control-sm bg-white border border-dark" readonly >
+											<option value="" >Select</option>
+											<option th:each="cls : ${Chart6}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}"
+													th:selected="${cls.ref_type_desc == chartaccount?.acct_type}">
+											</option>
+										</select>
 									</div>
 								</div>
 
@@ -1061,7 +1098,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">General
 										Ledger</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="gl_code" id="gl_code"
+										<input type="text" name="gl_code" id="gl_code" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.gl_code}" />
 									</div>
@@ -1070,7 +1107,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">GL
 										Description</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="gl_desc" id="gl_desc"
+										<input type="text" name="gl_desc" id="gl_desc" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.gl_desc}" />
 									</div>
@@ -1082,7 +1119,7 @@ $(document).ready(function () {
 										Head</div>
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="glsh_code" id="glsh_code"
-											th:value="${chartaccount?.glsh_code}"
+											th:value="${chartaccount?.glsh_code}" readonly
 											class="form-control form-control-sm bg-white border border-dark" />
 									</div>
 
@@ -1090,7 +1127,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">GL Sub
 										Head Description</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="glsh_desc" id="glsh_desc"
+										<input type="text" name="glsh_desc" id="glsh_desc" readonly
 											th:value="${chartaccount?.glsh_desc}"
 											class="form-control form-control-sm bg-white border border-dark" />
 									</div>
@@ -1104,9 +1141,17 @@ $(document).ready(function () {
 										Type</div>
 
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="schm_type" id="schm_type"
+										<!-- <input type="text" name="schm_type" id="schm_type" readonly
 											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${chartaccount?.schm_type}" />
+											th:value="${chartaccount?.schm_type}" /> -->
+										<select name="schm_type" id="schm_type" class="form-control form-control-sm bg-white border border-dark" readonly >
+											<option value="" >Select</option>
+											<option th:each="cls : ${Chart7}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}"
+													th:selected="${cls.ref_type_desc == chartaccount?.schm_type}">
+											</option>
+										</select>
 
 									</div>
 
@@ -1114,7 +1159,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Scheme
 										Code</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="schm_code" id="schm_code"
+										<input type="text" name="schm_code" id="schm_code" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.schm_code}" />
 									</div>
@@ -1125,7 +1170,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Account
 										ID</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="acct_num" id="acct_num"
+										<input type="text" name="acct_num" id="acct_num" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.acct_num}" />
 									</div>
@@ -1133,7 +1178,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Account
 										Name</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="acct_name" id="acct_name"
+										<input type="text" name="acct_name" id="acct_name" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.acct_name}" />
 									</div>
@@ -1144,20 +1189,33 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Additional
 										Details Required</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="add_det_flg" id="add_det_flg"
+										<!-- <input type="text" name="add_det_flg" id="add_det_flg" readonly
 											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${chartaccount?.add_det_flg}" />
-
+											th:value="${chartaccount?.add_det_flg}" /> -->
+										<select name="add_det_flg" id="add_det_flg" class="form-control form-control-sm bg-white border border-dark" readonly >
+											<option value="" >Select</option>
+											<option th:each="cls : ${Chart2}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}"
+													th:selected="${cls.ref_type_desc == chartaccount?.add_det_flg}">
+											</option>
+										</select>
 									</div>
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">Account
 										Partitioning</div>
 									<div class="col-sm-2 d-flex align-items-center">
-
-										<input type="text" name="acct_partition" id="acct_partition"
+										<!-- <input type="text" name="acct_partition" id="acct_partition" readonly
 											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${chartaccount?.acct_partition}" />
-
+											th:value="${chartaccount?.acct_partition}" /> -->
+										<select name="acct_partition" id="acct_partition" class="form-control form-control-sm bg-white border border-dark" readonly >
+											<option value="" >Select</option>
+											<option th:each="cls : ${Chart3}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}"
+													th:selected="${cls.ref_type_desc == chartaccount?.acct_partition}">
+											</option>
+										</select>
 									</div>
 								</div>
 
@@ -1166,7 +1224,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Account
 										Currency</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="ref_crncy" id="ref_crncy"
+										<input type="text" name="ref_crncy" id="ref_crncy" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.ref_crncy}" />
 									</div>
@@ -1175,7 +1233,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Home
 										Currency</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="acct_crncy" id="acct_crncy"
+										<input type="text" name="acct_crncy" id="acct_crncy" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.acct_crncy}" />
 									</div>
@@ -1186,7 +1244,7 @@ $(document).ready(function () {
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">Ref Code</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="ref_code" id="ref_code"
+										<input type="text" name="ref_code" id="ref_code" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.ref_code}" />
 									</div>
@@ -1194,7 +1252,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Ref
 										Description</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="ref_desc" id="ref_desc"
+										<input type="text" name="ref_desc" id="ref_desc" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.ref_desc}" />
 									</div>
@@ -1205,7 +1263,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Report
 										Code</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="rpt_code" id="rpt_code"
+										<input type="text" name="rpt_code" id="rpt_code" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.rpt_code}" />
 									</div>
@@ -1213,11 +1271,17 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Account
 										Status</div>
 									<div class="col-sm-2 d-flex align-items-center">
-
-										<input type="text" name="acct_status" id="acct_status"
+										<!-- <input type="text" name="acct_status" id="acct_status" readonly
 											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${chartaccount?.acct_status}" />
-
+											th:value="${chartaccount?.acct_status}" /> -->
+										<select name="acct_status" id="acct_status" class="form-control form-control-sm bg-white border border-dark" readonly >
+											<option value="" >Select</option>
+											<option th:each="cls : ${Chart4}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}"
+													th:selected="${cls.ref_type_desc == chartaccount?.acct_status}">
+											</option>
+										</select>
 									</div>
 								</div>
 
@@ -1225,16 +1289,22 @@ $(document).ready(function () {
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">Ownership</div>
 									<div class="col-sm-2 d-flex align-items-center">
-
-										<input type="text" name="own_type" id="own_type"
+										<!-- <input type="text" name="own_type" id="own_type" readonly
 											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${chartaccount?.own_type}" />
-
+											th:value="${chartaccount?.own_type}" /> -->
+										<select name="own_type" id="own_type" class="form-control form-control-sm bg-white border border-dark" readonly >
+											<option value="" >Select</option>
+											<option th:each="cls : ${Chart5}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}"
+													th:selected="${cls.ref_type_desc == chartaccount?.own_type}">
+											</option>
+										</select>
 									</div>
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">Remarks</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="own_remarks" id="own_remarks"
+										<input type="text" name="own_remarks" id="own_remarks" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.own_remarks}" />
 									</div>
@@ -1246,7 +1316,7 @@ $(document).ready(function () {
 										Credit Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="cr_amt" id="cr_amt"
-											class="form-control form-control-sm bg-white border border-dark"
+											class="form-control form-control-sm bg-white border border-dark" 
 								  th:value="${#numbers.formatDecimal(chartaccount?.cr_amt, 0, 'COMMA', 2, 'POINT')}" readonly />
 									</div>
 									<div class="col-sm-1"></div>
@@ -1278,21 +1348,26 @@ $(document).ready(function () {
 											th:value="${chartaccount?.ref_crncy_bal}" readonly />
 									</div>
 								</div>
-
 							</form>
 						</div>
 						<div class="card-footer text-center"
 							style="background-color: #e9ecef">
-							<button type="button" class="btn-primary big-btn"
-								id="btnHome" onclick="home();">Home</button>
 
 							<button type="button" class="btn-primary big-btn"
+								id="btnHome" onclick="home();">Home</button>
+							<button type="button" class="btn-primary big-btn" th:if="${formmode == 'verify' }"
+								onclick="verifysubmit(this);">Verify</button>
+							<button type="button" class="btn-primary big-btn" id="btnsubmit"
+								th:attr="data-attr=${chartaccount?.acct_num}" th:if="${formmode == 'delete' }"
+								onclick="deletesubmit(this);">Delete</button>
+							<button type="button" class="btn-primary big-btn"
 								id="btnBack" onclick="Back();">Back</button>
+
 						</div>
 					</div>
 				</div>
 
-				<div th:if="${formmode}=='verify'">
+				<div th:if="${formmode}=='verify1'">
 					<div class="card">
 
 
@@ -1311,7 +1386,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">classification</div>
 									<div class="col-sm-2 d-flex align-items-center">
 
-										<input type="text" name="classification" id="classification"
+										<input type="text" name="classification" id="classification" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.classification}" />
 									</div>
@@ -1320,7 +1395,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Account
 										Type</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="acct_type" id="acct_type"
+										<input type="text" name="acct_type" id="acct_type" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.acct_type}" />
 									</div>
@@ -1331,7 +1406,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">General
 										Ledger</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="gl_code" id="gl_code"
+										<input type="text" name="gl_code" id="gl_code" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.gl_code}" />
 									</div>
@@ -1340,7 +1415,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">GL
 										Description</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="gl_desc" id="gl_desc"
+										<input type="text" name="gl_desc" id="gl_desc" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.gl_desc}" />
 									</div>
@@ -1351,7 +1426,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">GL Sub
 										Head</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="glsh_code" id="glsh_code"
+										<input type="text" name="glsh_code" id="glsh_code" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.glsh_code}" />
 									</div>
@@ -1360,7 +1435,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">GL Sub
 										Head Description</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="glsh_desc" id="glsh_desc"
+										<input type="text" name="glsh_desc" id="glsh_desc" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.glsh_desc}" />
 									</div>
@@ -1375,7 +1450,7 @@ $(document).ready(function () {
 										Type</div>
 
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="schm_type" id="schm_type"
+										<input type="text" name="schm_type" id="schm_type" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.schm_type}" />
 
@@ -1385,7 +1460,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Scheme
 										Code</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="schm_code" id="schm_code"
+										<input type="text" name="schm_code" id="schm_code" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.schm_code}" />
 									</div>
@@ -1396,7 +1471,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Account
 										ID</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="acct_num" id="acct_num"
+										<input type="text" name="acct_num" id="acct_num" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.acct_num}" />
 									</div>
@@ -1404,7 +1479,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Account
 										Name</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="acct_name" id="acct_name"
+										<input type="text" name="acct_name" id="acct_name" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.acct_name}" />
 									</div>
@@ -1415,7 +1490,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Additional
 										Details Required</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="add_det_flg" id="add_det_flg"
+										<input type="text" name="add_det_flg" id="add_det_flg" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.add_det_flg}" />
 
@@ -1425,7 +1500,7 @@ $(document).ready(function () {
 										Partitioning</div>
 									<div class="col-sm-2 d-flex align-items-center">
 
-										<input type="text" name="acct_partition" id="acct_partition"
+										<input type="text" name="acct_partition" id="acct_partition" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.acct_partition}" />
 
@@ -1437,7 +1512,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Account
 										Currency</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="ref_crncy" id="ref_crncy"
+										<input type="text" name="ref_crncy" id="ref_crncy" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.ref_crncy}" />
 									</div>
@@ -1446,7 +1521,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Home
 										Currency</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="acct_crncy" id="acct_crncy"
+										<input type="text" name="acct_crncy" id="acct_crncy" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.acct_crncy}" />
 									</div>
@@ -1457,7 +1532,7 @@ $(document).ready(function () {
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">Ref Code</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="ref_code" id="ref_code"
+										<input type="text" name="ref_code" id="ref_code" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.ref_code}" />
 									</div>
@@ -1465,7 +1540,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Ref
 										Description</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="ref_desc" id="ref_desc"
+										<input type="text" name="ref_desc" id="ref_desc" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.ref_desc}" />
 									</div>
@@ -1476,7 +1551,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Report
 										Code</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="rpt_code" id="rpt_code"
+										<input type="text" name="rpt_code" id="rpt_code" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.rpt_code}" />
 									</div>
@@ -1485,7 +1560,7 @@ $(document).ready(function () {
 										Status</div>
 									<div class="col-sm-2 d-flex align-items-center">
 
-										<input type="text" name="acct_status" id="acct_status"
+										<input type="text" name="acct_status" id="acct_status" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.acct_status}" />
 
@@ -1496,8 +1571,7 @@ $(document).ready(function () {
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">Ownership</div>
 									<div class="col-sm-2 d-flex align-items-center">
-
-										<input type="text" name="own_type" id="own_type"
+										<input type="text" name="own_type" id="own_type" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.acct_status}" />
 
@@ -1505,7 +1579,7 @@ $(document).ready(function () {
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">Remarks</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="own_remarks" id="own_remarks"
+										<input type="text" name="own_remarks" id="own_remarks" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.own_remarks}" />
 									</div>
@@ -1516,7 +1590,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Total
 										Credit Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="cr_amt" id="cr_amt"
+										<input type="text" name="cr_amt" id="cr_amt" 
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.cr_amt}" readonly />
 									</div>
@@ -1562,7 +1636,7 @@ $(document).ready(function () {
 					</div>
 				</div>
 
-				<div th:if="${formmode}=='delete'">
+				<div th:if="${formmode}=='delete1'">
 					<div class="card">
 
 
@@ -1854,16 +1928,12 @@ $(document).ready(function () {
 											class="form-control form-control-sm bg-white border border-dark bg-white border border-dark"
 											style="font-size: 15px;"
 											th:value="${chartaccount?.classification}">
-											<option value="Asset"
-												th:selected="${chartaccount?.classification == Asset}">Asset</option>
-											<option value="Liability"
-												th:selected="${chartaccount?.classification == Liability}">Liability</option>
-											<option value="Income"
-												th:selected="${chartaccount?.classification == Income}">Income</option>
-											<option value="Expenses"
-												th:selected="${chartaccount?.classification == Expenses}">Expenses</option>
-											<option value="Profit"
-												th:selected="${chartaccount?.classification == Profit}">Profit</option>
+												<option value="" >Select</option>
+												<option th:each="cls : ${Chart1}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}"
+													th:selected="${cls.ref_type_desc == chartaccount?.classification}">
+												</option>
 										</select>
 									</div>
 
@@ -1871,9 +1941,14 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Account
 										Type</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="acct_type" id="acct_type"
-											th:value="${chartaccount?.acct_type}"
-											class="form-control form-control-sm bg-white border border-dark" />
+										<select name="acct_type" id="acct_type" class="form-control form-control-sm bg-white border border-dark" >
+											<option value="" >Select</option>
+											<option th:each="cls : ${Chart6}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}"
+													th:selected="${cls.ref_type_desc == chartaccount?.acct_type}">
+											</option>
+										</select>
 									</div>
 								</div>
 
@@ -1925,9 +2000,14 @@ $(document).ready(function () {
 										Type</div>
 
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="schm_type" id="schm_type"
-											th:value="${chartaccount?.schm_type}"
-											class="form-control form-control-sm bg-white border border-dark" />
+										<select type="text" name="schm_type" id="schm_type" class="form-control form-control-sm bg-white border border-dark">
+											<option value="">Select</option>
+											<option th:each="cls : ${Chart7}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}"
+													th:selected="${cls.ref_type_desc == chartaccount?.schm_type}">
+											</option>
+										</select>
 
 									</div>
 
@@ -1970,12 +2050,11 @@ $(document).ready(function () {
 											class="form-control form-control-sm bg-white border border-dark bg-white border border-dark"
 											style="font-size: 15px;"
 											th:value="${chartaccount?.add_det_flg}">
-											<option value="C"
-												th:selected="${chartaccount?.add_det_flg == C}">C</option>
-											<option value="N"
-												th:selected="${chartaccount?.add_det_flg == N}">N</option>
-											<option value="D"
-												th:selected="${chartaccount?.add_det_flg == D}">D</option>
+											<option th:each="cls : ${Chart2}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}"
+													th:selected="${cls.ref_type_desc == chartaccount?.add_det_flg}">
+											</option>
 										</select>
 									</div>
 									<div class="col-sm-1"></div>
@@ -1987,10 +2066,12 @@ $(document).ready(function () {
 											class="form-control form-control-sm bg-white border border-dark bg-white border border-dark"
 											style="font-size: 15px;"
 											th:value="${chartaccount?.acct_partition}">
-											<option value="Y"
-												th:selected="${chartaccount?.acct_partition == Y}">Y</option>
-											<option value="N"
-												th:selected="${chartaccount?.acct_partition == N}">N</option>
+											<option value="" >Select</option>
+											<option th:each="cls : ${Chart3}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}"
+													th:selected="${cls.ref_type_desc == chartaccount?.acct_partition}">
+											</option>
 										</select>
 									</div>
 								</div>
@@ -2050,10 +2131,12 @@ $(document).ready(function () {
 											class="form-control form-control-sm bg-white border border-dark bg-white border border-dark"
 											style="font-size: 15px;"
 											th:value="${chartaccount?.acct_status}">
-											<option value="ACTIVE"
-												th:selected="${chartaccount?.acct_status == ACTIVE}">ACTIVE</option>
-											<option value="INACTIVE"
-												th:selected="${chartaccount?.acct_status == INACTIVE}">INACTIVE</option>
+											<option value="" >Select</option>
+											<option th:each="cls : ${Chart4}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}"
+													th:selected="${cls.ref_type_desc == chartaccount?.acct_status}">
+											</option>
 										</select>
 
 									</div>
@@ -2067,14 +2150,12 @@ $(document).ready(function () {
 										<select id="own_type" name="own_type"
 											class="form-control form-control-sm bg-white border border-dark bg-white border border-dark"
 											style="font-size: 15px;" th:value="${chartaccount?.own_type}">
-											<option value="Bank"
-												th:selected="${chartaccount?.own_type == Bank}">Bank</option>
-											<option value="Cash"
-												th:selected="${chartaccount?.own_type == Cash}">Cash</option>
-											<option value="Vendor"
-												th:selected="${chartaccount?.own_type == Vendor}">Vendor</option>
-											<option value="Employee"
-												th:selected="${chartaccount?.own_type == Employee}">Employee</option>
+											<option value="" >Select</option>
+											<option th:each="cls : ${Chart5}"
+													th:value="${cls.ref_type_desc}"
+													th:text="${cls.ref_id_desc}"
+													th:selected="${cls.ref_type_desc == chartaccount?.own_type}">
+											</option>
 										</select>
 									</div>
 									<div class="col-sm-1"></div>

@@ -64,14 +64,32 @@ public class Chart_Acc_Entity {
 	private String  branch_id;
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date	acct_open_date;
-	private String	national_id;
+    private String	national_id;
+    private String	modify_flg;
+    private String	verify_flg;
 	private BigDecimal	mobile_no;
 
 	public Date getAcct_open_date() {
 		return acct_open_date;
 	}
 
-	public void setAcct_open_date(Date acct_open_date) {
+    public String getModify_flg() {
+        return modify_flg;
+    }
+
+    public void setModify_flg(String modify_flg) {
+        this.modify_flg = modify_flg;
+    }
+
+    public String getVerify_flg() {
+        return verify_flg;
+    }
+
+    public void setVerify_flg(String verify_flg) {
+        this.verify_flg = verify_flg;
+    }
+
+    public void setAcct_open_date(Date acct_open_date) {
 		this.acct_open_date = acct_open_date;
 	}
 

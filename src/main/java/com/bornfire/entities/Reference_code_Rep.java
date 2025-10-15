@@ -22,7 +22,10 @@ public interface Reference_code_Rep extends JpaRepository<Reference_Code_Entity,
 	
 	@Query(value="SELECT REF_ID_DESC FROM BGLS_REF_MASTER where REF_TYPE =?1 AND DEL_FLG='N'", nativeQuery = true)
 	List<String> getReferenceCode(String ref_type);
-	
+
+    @Query(value="SELECT * FROM BGLS_REF_MASTER where REF_TYPE =?1 AND DEL_FLG='N'", nativeQuery = true)
+    List<Reference_Code_Entity> getFullReferenceCode(String ref_type);
+
 	@Query(value="SELECT REF_ID FROM BGLS_REF_MASTER where REF_TYPE =?1 AND DEL_FLG='N'", nativeQuery = true)
 	List<String> getRefCode(String ref_type);
 	
