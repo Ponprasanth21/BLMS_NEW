@@ -1037,14 +1037,14 @@
 
 								<div class="row formline" style="padding: 10px 0px 2px 0px;">
 									<div class="col-sm-1"></div>
-									<div class="col-sm-2 d-flex align-items-center">classification</div>
+									<div class="col-sm-2 d-flex align-items-center">Classification</div>
 									<div class="col-sm-2 d-flex align-items-center">
 
 										<!-- <input type="text" name="classification" id="classification" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.classification}" /> -->
-										<select name="classification" id="classification"
-											class="form-control form-control-sm bg-white border border-dark" readonly>
+										<select name="Classification" id="classification"
+											class="form-control form-control-sm bg-white border border-dark" disabled>
 											<option value="">Select</option>
 											<option th:each="cls : ${Chart1}" th:value="${cls.ref_type_desc}"
 												th:text="${cls.ref_id_desc}"
@@ -1061,7 +1061,7 @@
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.acct_type}" /> -->
 										<select name="acct_type" id="acct_type"
-											class="form-control form-control-sm bg-white border border-dark" readonly>
+											class="form-control form-control-sm bg-white border border-dark" disabled>
 											<option value="">Select</option>
 											<option th:each="cls : ${Chart6}" th:value="${cls.ref_type_desc}"
 												th:text="${cls.ref_id_desc}"
@@ -1123,7 +1123,7 @@
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.schm_type}" /> -->
 										<select name="schm_type" id="schm_type"
-											class="form-control form-control-sm bg-white border border-dark" readonly>
+											class="form-control form-control-sm bg-white border border-dark" disabled>
 											<option value="">Select</option>
 											<option th:each="cls : ${Chart7}" th:value="${cls.ref_type_desc}"
 												th:text="${cls.ref_id_desc}"
@@ -1171,7 +1171,7 @@
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.add_det_flg}" /> -->
 										<select name="add_det_flg" id="add_det_flg"
-											class="form-control form-control-sm bg-white border border-dark" readonly>
+											class="form-control form-control-sm bg-white border border-dark" disabled>
 											<option value="">Select</option>
 											<option th:each="cls : ${Chart2}" th:value="${cls.ref_type_desc}"
 												th:text="${cls.ref_id_desc}"
@@ -1187,7 +1187,7 @@
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.acct_partition}" /> -->
 										<select name="acct_partition" id="acct_partition"
-											class="form-control form-control-sm bg-white border border-dark" readonly>
+											class="form-control form-control-sm bg-white border border-dark" disabled>
 											<option value="">Select</option>
 											<option th:each="cls : ${Chart3}" th:value="${cls.ref_type_desc}"
 												th:text="${cls.ref_id_desc}"
@@ -1253,7 +1253,7 @@
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.acct_status}" /> -->
 										<select name="acct_status" id="acct_status"
-											class="form-control form-control-sm bg-white border border-dark" readonly>
+											class="form-control form-control-sm bg-white border border-dark" disabled>
 											<option value="">Select</option>
 											<option th:each="cls : ${Chart4}" th:value="${cls.ref_type_desc}"
 												th:text="${cls.ref_id_desc}"
@@ -1271,7 +1271,7 @@
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.own_type}" /> -->
 										<select name="own_type" id="own_type"
-											class="form-control form-control-sm bg-white border border-dark" readonly>
+											class="form-control form-control-sm bg-white border border-dark" disabled>
 											<option value="">Select</option>
 											<option th:each="cls : ${Chart5}" th:value="${cls.ref_type_desc}"
 												th:text="${cls.ref_id_desc}"
