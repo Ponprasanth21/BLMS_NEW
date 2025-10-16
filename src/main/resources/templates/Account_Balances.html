@@ -787,10 +787,16 @@ document.addEventListener('DOMContentLoaded', function() {
             onclick="clicktoacctloan(this)"></td>
         <td th:text="${lease[2]}"></td>
         <td th:text="${#dates.format(lease[3], 'dd-MM-yyyy')}"></td>
-        <td align="right"
+        <!-- <td style="text-align: right;"
             th:text="${lease[4] != null ? #numbers.formatDecimal(lease[4], 2, 'COMMA', 0, 'POINT') : '0.00'}"></td>
-        <td align="right"
-            th:text="${lease[5] != null ? #numbers.formatDecimal(lease[5], 2, 'COMMA', 0, 'POINT') : '0.00'}"></td>
+        <td style="text-align: right;"
+            th:text="${lease[5] != null ? #numbers.formatDecimal(lease[5], 2, 'COMMA', 0, 'POINT') : '0.00'}"></td> -->
+		<td style="text-align: right;"
+    th:text="${lease[4] != null ? #numbers.formatDecimal(lease[4], 0, 'COMMA', 2, 'POINT') : '0.00'}"></td>
+
+<td style="text-align: right;"
+    th:text="${lease[5] != null ? #numbers.formatDecimal(lease[5], 0, 'COMMA', 2, 'POINT') : '0.00'}"></td>
+
     </tr>
 </tbody>
 

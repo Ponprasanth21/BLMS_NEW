@@ -515,13 +515,18 @@ function updateTable(data) {
 }
 
 // Number formatting function (2 decimals, comma separator)
+// function formatNumber(num) {
+//     if (num == null || isNaN(num)) return "0.00";
+//     return Number(num).toLocaleString("en-IN", {
+//         minimumFractionDigits: 2,
+//         maximumFractionDigits: 2
+//     });
+// }
 function formatNumber(num) {
-    if (num == null || isNaN(num)) return "0.00";
-    return Number(num).toLocaleString("en-IN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
+    if (num == null || num === '' || isNaN(num) || num === 0) return '0.00';
+    return Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
+
 
 
 // mapping status values like thymeleaf switch

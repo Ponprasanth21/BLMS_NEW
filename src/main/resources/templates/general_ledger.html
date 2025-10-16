@@ -184,9 +184,20 @@ input:hover+.password-info {
 										<td th:text="${chartacc?.acct_num}" style="text-align: right;"></td>
 										<td th:text="${chartacc?.acct_name}"></td>
 										<td th:text="${chartacc?.acct_crncy}"></td>
-										<td th:text="${chartacc?.cr_amt}" style="text-align: right;"></td>
+										<!-- NORMAL -->
+										<!-- <td th:text="${chartacc?.cr_amt}" style="text-align: right;"></td>
 										<td th:text="${chartacc?.dr_amt}" style="text-align: right;"></td>
-										<td th:text="${chartacc?.acct_bal}" style="text-align: right;"></td>
+										<td th:text="${chartacc?.acct_bal}" style="text-align: right;"></td> -->
+										<!-- Million Format -->
+										<td th:text="${chartacc?.cr_amt != null ? #numbers.formatDecimal(chartacc.cr_amt, 0, 'COMMA', 2, 'POINT') : '0.00'}" 
+											style="text-align: right;"></td>
+
+										<td th:text="${chartacc?.dr_amt != null ? #numbers.formatDecimal(chartacc.dr_amt, 0, 'COMMA', 2, 'POINT') : '0.00'}" 
+											style="text-align: right;"></td>
+
+										<td th:text="${chartacc?.acct_bal != null ? #numbers.formatDecimal(chartacc.acct_bal, 0, 'COMMA', 2, 'POINT') : '0.00'}" 
+											style="text-align: right;"></td>
+
 										<th:block th:switch="${chartacc.entity_flg}">
 											<td th:case="'Y'" style="color: green;">Active</td>
 											<td th:case="'N'" style="color: red;">UnActive</td>

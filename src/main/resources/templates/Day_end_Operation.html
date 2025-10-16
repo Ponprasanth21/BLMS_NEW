@@ -362,16 +362,17 @@
 			);
 		}, 2000);
 
-		var  nxtdate= $("#nxtdate").val();
+		var nxtdate = $("#nxtdate").val();
 		console.log("Selected Date:", nxtdate);
-		
+
 		var trndate = $("#current_date").val();
+		console.log("Current Date:", trndate);
 
 		// AJAX call
 		$.ajax({
 			url: "dateChageProcess",  // ✅ backend Spring Boot endpoint
 			type: 'POST',
-			data: {nxtdate: nxtdate,trndate:trndate},
+			data: { nxtdate: nxtdate, trndate: trndate },
 			success: function (res) {
 				console.log("success: " + res);
 				$('#td11').remove();
@@ -399,6 +400,7 @@
 				);
 			}
 		});
+
 	}
 
 
@@ -413,7 +415,7 @@
 	// 		url: "Doatransactionpush",
 	// 		type: 'POST',
 	// 		data: {trndate: trndate},
-			
+
 	// 		success: function (responseText) {
 	// 			//  alert(responseText);  
 
@@ -441,7 +443,7 @@
 	// 			/*        setTimeout(function() {
 	// 					   //alert("timeout")
 	// 					   loader.style.display = 'none';
-					   	
+
 
 	// 					   // Check the responseField value to display the appropriate message
 	// 					   if (responseField.value === 'Account balances successfully inserted') {
@@ -463,83 +465,83 @@
 	// 	});
 	// }
 
-function Doatranscation() {
-	// Confirm before proceeding
-	if (!confirm("Are you sure you want to proceed with Daily Account Balance?")) return;
+	function Doatranscation() {
+		// Confirm before proceeding
+		if (!confirm("Are you sure you want to proceed with Daily Account Balance?")) return;
 
-	// Hide button
-	$("#play7").hide();
+		// Hide button
+		$("#play7").hide();
 
-	// Remove previous loader cell
-	$('#td7').remove();
+		// Remove previous loader cell
+		$('#td7').remove();
 
-	// Add loader in table cell
-	$('#tr7').append(`
+		// Add loader in table cell
+		$('#tr7').append(`
 		<td width="205px;" id="td7" style="text-align: center; padding-left:80px;">
 			<div class="loader"></div>
 		</td>
 	`);
 
-	// Show modal immediately with loader
-	$('#doaTransModalBody').html(`
+		// Show modal immediately with loader
+		$('#doaTransModalBody').html(`
 		<div class="text-center">
 			<div class="loader2"></div>
 			<p>Processing Daily Account Balance...</p>
 			<p id="doaResponseText"></p>
 		</div>
 	`);
-	// $('#doaTransModal').modal('show');
+		// $('#doaTransModal').modal('show');
 
-	// AJAX request
-	var trndate = $("#current_date").val();
-	$.ajax({
-		url: "Doatransactionpush",
-		type: 'POST',
-		data: { trndate: trndate },
-		success: function (responseText) {
-			console.log("Doatranscation Response:", responseText);
+		// AJAX request
+		var trndate = $("#current_date").val();
+		$.ajax({
+			url: "Doatransactionpush",
+			type: 'POST',
+			data: { trndate: trndate },
+			success: function (responseText) {
+				console.log("Doatranscation Response:", responseText);
 
-			// Keep loader in modal visible, show response text
-			$('#doaTransModalBody').html(`
+				// Keep loader in modal visible, show response text
+				$('#doaTransModalBody').html(`
 				<div class="text-center">
 					<p id="doaResponseText" style="text-align:center; font-size:20px;"></p>
 				</div>
 			`);
-			$("#doaResponseText").text(responseText).css({
-				color: responseText.includes("successfully") ? 'green' : 'red',
-				'font-weight': 'bold',
-				'font-size': '16px'
-			});
+				$("#doaResponseText").text(responseText).css({
+					color: responseText.includes("successfully") ? 'green' : 'red',
+					'font-weight': 'bold',
+					'font-size': '16px'
+				});
 
-			// Remove loader from table cell & append tick/cross
-			$('#td7').remove();
-			let isSuccess = responseText.includes("successfully");
-			$('#tr7').append(`
+				// Remove loader from table cell & append tick/cross
+				$('#td7').remove();
+				let isSuccess = responseText.includes("successfully");
+				$('#tr7').append(`
 				<td style="text-align:center; font-size:20px;">
 					${isSuccess ? '&#9989;' : '&#10060;'}
 				</td>
 			`);
-			$('#doaTransModal').modal('show');
-		},
-		error: function (xhr, status, error) {
-			console.error("Doatranscation Error:", error);
+				$('#doaTransModal').modal('show');
+			},
+			error: function (xhr, status, error) {
+				console.error("Doatranscation Error:", error);
 
-			// Remove loader in table cell & append cross
-			$('#td7').remove();
-			$('#tr7').append(`
+				// Remove loader in table cell & append cross
+				$('#td7').remove();
+				$('#tr7').append(`
 				<td style="text-align:center; font-size:20px;">&#10060;</td>
 			`);
 
-			// Keep loader in modal visible and show error
-			$("#doaResponseText").text("An error occurred while processing your request.").css({
-				color: 'red',
-				'font-weight': 'bold',
-				'font-size': '16px'
-			});
-			$('#doaTransModal').modal('show');
-		}
-	});
-}
+				// Keep loader in modal visible and show error
+				$("#doaResponseText").text("An error occurred while processing your request.").css({
+					color: 'red',
+					'font-weight': 'bold',
+					'font-size': '16px'
+				});
+				$('#doaTransModal').modal('show');
+			}
+		});
+	}
 
 
 	function refresh() {
@@ -552,7 +554,7 @@ function Doatranscation() {
 <script>
 	function formatAmount(value) {
 		if (value == null) return "0.00";
-		return parseFloat(value).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+		return parseFloat(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 	}
 
 	function ConsistencyCheck() {
@@ -570,7 +572,7 @@ function Doatranscation() {
 		$.ajax({
 			url: "/ASPIRA/consistencyCheck",
 			type: "POST",
-			data: {trndate: trndate},
+			data: { trndate: trndate },
 			dataType: "json",
 			success: function (res) {
 				console.log("ConsistencyCheck Response:", res);
@@ -578,7 +580,7 @@ function Doatranscation() {
 
 				$('#td8').remove();
 				$('#tr8').append('<td style="text-align:center; font-size:20px;">&#9989;</td>');
-				
+
 
 
 				// Build table dynamically with formatted amounts
@@ -640,7 +642,7 @@ function Doatranscation() {
 		$.ajax({
 			url: "accountLedgerdayend",
 			type: 'POST',
-			data: {trndate: trndate},
+			data: { trndate: trndate },
 			dataType: "json",
 			success: function (res) {
 				console.log("Account Ledger Response:", res);
@@ -716,7 +718,7 @@ function Doatranscation() {
 		$.ajax({
 			url: "holidayCheck",
 			type: 'POST',
-			data: {trndate: trndate},
+			data: { trndate: trndate },
 			dataType: "text",
 			success: function (res) {
 				console.log("HolidayCheck Response:", res);
@@ -815,7 +817,7 @@ function Doatranscation() {
 		$.ajax({
 			url: "movementoftransaction",
 			type: 'POST',
-			data: {trndate: trndate},
+			data: { trndate: trndate },
 			// dataType: "json",
 			success: function (res) {
 				// Remove loader
@@ -844,49 +846,49 @@ function Doatranscation() {
 		});
 	}
 
-function InterestDemandgeneration() {
-	// Hide the start button
-	$("#play2").hide();
+	function InterestDemandgeneration() {
+		// Hide the start button
+		$("#play2").hide();
 
-	// Remove any existing loader cell
-	$('#td2').remove();
+		// Remove any existing loader cell
+		$('#td2').remove();
 
-	// Append loader while processing
-	$('#tr2').append(`
+		// Append loader while processing
+		$('#tr2').append(`
 		<td width="205px;" id="td2" style="text-align: center; padding-left:80px;">
 			<div class="loader"></div>
 		</td>
 	`);
 
-	// Prepare data
-	var values = {
-		"MIG_DATE": $("#current_date").val()
-	};
+		// Prepare data
+		var values = {
+			"MIG_DATE": $("#current_date").val()
+		};
 
-	// AJAX request
-	$.ajax({
-		url: "intrestDemandgeneration",
-		type: "POST",
-		data: values,
-		// Remove dataType: 'json' since response is plain text
-		success: function (res) {
-			console.log("Interest Demand Response:", res);
+		// AJAX request
+		$.ajax({
+			url: "intrestDemandgeneration",
+			type: "POST",
+			data: values,
+			// Remove dataType: 'json' since response is plain text
+			success: function (res) {
+				console.log("Interest Demand Response:", res);
 
-			// Remove loader
-			$('#td2').remove();
+				// Remove loader
+				$('#td2').remove();
 
-			// Decide icon based on success keyword presence (optional)
-			let isSuccess = typeof res === 'string' && /success/i.test(res);
+				// Decide icon based on success keyword presence (optional)
+				let isSuccess = typeof res === 'string' && /success/i.test(res);
 
-			// Append tick or cross
-			$('#tr2').append(`
+				// Append tick or cross
+				$('#tr2').append(`
 				<td style="text-align:center; font-size:20px;">
 					${isSuccess ? '&#9989;' : '&#10060;'}
 				</td>
 			`);
 
-			// Show whatever message backend returned
-			let modalHtml = `
+				// Show whatever message backend returned
+				let modalHtml = `
 				<div style="text-align:center;">
 					<h5 class="mt-3 ${isSuccess ? 'text-success' : 'text-danger'}">
 						${res}
@@ -894,72 +896,72 @@ function InterestDemandgeneration() {
 				</div>
 			`;
 
-			$('#interestDemandBody').html(modalHtml);
-			$('#interestDemandModal').modal('show');
-		},
-		error: function (xhr, status, error) {
-			console.error("Interest Demand Error:", status, error);
+				$('#interestDemandBody').html(modalHtml);
+				$('#interestDemandModal').modal('show');
+			},
+			error: function (xhr, status, error) {
+				console.error("Interest Demand Error:", status, error);
 
-			// Remove loader and append cross
-			$('#td2').remove();
-			$('#tr2').append(`
+				// Remove loader and append cross
+				$('#td2').remove();
+				$('#tr2').append(`
 				<td style="text-align:center; font-size:20px;">&#10060;</td>
 			`);
 
-			// Show error message
-			var errorHtml = `
+				// Show error message
+				var errorHtml = `
 				<div style="text-align:center;">
 					<h5 class="mt-3 text-danger">An error occurred while processing your request.</h5>
 				</div>
 			`;
-			$('#interestDemandBody').html(errorHtml);
-			$('#interestDemandModal').modal('show');
-		}
-	});
-}
+				$('#interestDemandBody').html(errorHtml);
+				$('#interestDemandModal').modal('show');
+			}
+		});
+	}
 
-function FeeDemandgeneration() {
-	// Hide the start button
-	$("#play12").hide();
+	function FeeDemandgeneration() {
+		// Hide the start button
+		$("#play12").hide();
 
-	// Remove any existing loader cell
-	$('#td12').remove();
+		// Remove any existing loader cell
+		$('#td12').remove();
 
-	// Append loader while processing
-	$('#tr12').append(`
+		// Append loader while processing
+		$('#tr12').append(`
 		<td width="205px;" id="td12" style="text-align: center; padding-left:80px;">
 			<div class="loader"></div>
 		</td>
 	`);
 
-	// Prepare data
-	var values = {
-		"MIG_DATE": $("#current_date").val()
-	};
+		// Prepare data
+		var values = {
+			"MIG_DATE": $("#current_date").val()
+		};
 
-	// AJAX request
-	$.ajax({
-		url: "feedemandgeneration", // your backend endpoint
-		type: "POST",
-		data: values,
-		success: function (res) {
-			console.log("Fee Demand Response:", res);
+		// AJAX request
+		$.ajax({
+			url: "feedemandgeneration", // your backend endpoint
+			type: "POST",
+			data: values,
+			success: function (res) {
+				console.log("Fee Demand Response:", res);
 
-			// Remove loader
-			$('#td12').remove();
+				// Remove loader
+				$('#td12').remove();
 
-			// Detect success (optional keyword check)
-			let isSuccess = typeof res === 'string' && /success/i.test(res);
+				// Detect success (optional keyword check)
+				let isSuccess = typeof res === 'string' && /success/i.test(res);
 
-			// Append tick or cross
-			$('#tr12').append(`
+				// Append tick or cross
+				$('#tr12').append(`
 				<td style="text-align:center; font-size:20px;">
 					${isSuccess ? '&#9989;' : '&#10060;'}
 				</td>
 			`);
 
-			// Build modal message (display raw backend string)
-			let modalHtml = `
+				// Build modal message (display raw backend string)
+				let modalHtml = `
 				<div style="text-align:center;">
 					<h5 class="mt-3 ${isSuccess ? 'text-success' : 'text-danger'}">
 						${res}
@@ -967,75 +969,228 @@ function FeeDemandgeneration() {
 				</div>
 			`;
 
-			// Inject result into modal body
-			$('#feeDemandBody').html(modalHtml);
+				// Inject result into modal body
+				$('#feeDemandBody').html(modalHtml);
 
-			// Show modal
-			$('#feeDemandModal').modal('show');
-		},
-		error: function (xhr, status, error) {
-			console.error("Fee Demand Error:", status, error);
+				// Show modal
+				$('#feeDemandModal').modal('show');
+			},
+			error: function (xhr, status, error) {
+				console.error("Fee Demand Error:", status, error);
 
-			// Remove loader and append cross
-			$('#td12').remove();
-			$('#tr12').append(`
+				// Remove loader and append cross
+				$('#td12').remove();
+				$('#tr12').append(`
 				<td style="text-align:center; font-size:20px;">&#10060;</td>
 			`);
 
-			// Show error message in modal
-			var errorHtml = `
+				// Show error message in modal
+				var errorHtml = `
 				<div style="text-align:center;">
 					<h5 class="mt-3 text-danger">An error occurred while processing your request.</h5>
 				</div>
 			`;
-			$('#feeDemandBody').html(errorHtml);
-			$('#feeDemandModal').modal('show');
-		}
-	});
-}
+				$('#feeDemandBody').html(errorHtml);
+				$('#feeDemandModal').modal('show');
+			}
+		});
+	}
 
-function PenaltyCheck() {
-	// Hide the start button
-	$("#play13").hide();
+	function InterestAccural() {
+		// Hide the start button
+		$("#play1").hide();
 
-	// Remove any existing loader cell
-	$('#td13').remove();
+		// Remove any existing loader cell
+		$('#td1').remove();
 
-	// Append loader while processing
-	$('#tr13').append(`
+		// Append loader while processing
+		$('#tr1').append(`
+		<td width="205px;" id="td1" style="text-align: center; padding-left:80px;">
+			<div class="loader"></div>
+		</td>
+	`);
+
+		// Prepare data
+		var values = {
+			"MIG_DATE": $("#current_date").val()
+		};
+
+		// AJAX request
+		$.ajax({
+			url: "InterestAccural", // your backend endpoint
+			type: "POST",
+			data: values,
+			success: function (res) {
+				console.log("InterestAccural Response:", res);
+
+				// Remove loader
+				$('#td1').remove();
+
+				// Detect success (optional keyword check)
+				let isSuccess = typeof res === 'string' && /success/i.test(res);
+
+				// Append tick or cross
+				$('#tr1').append(`
+				<td style="text-align:center; font-size:20px;">
+					${isSuccess ? '&#9989;' : '&#10060;'}
+				</td>
+			`);
+
+				// Build modal message (display raw backend string)
+				let modalHtml = `
+				<div style="text-align:center;">
+					<h5 class="mt-3 ${isSuccess ? 'text-success' : 'text-danger'}">
+						${res}
+					</h5>
+				</div>
+			`;
+
+				// Inject result into modal body
+				$('#InterestAccuralBody').html(modalHtml);
+
+				// Show modal
+				$('#InterestAccuralModal').modal('show');
+			},
+			error: function (xhr, status, error) {
+				console.error("InterestAccural Error:", status, error);
+
+				// Remove loader and append cross
+				$('#td1').remove();
+				$('#tr1').append(`
+				<td style="text-align:center; font-size:20px;">&#10060;</td>
+			`);
+
+				// Show error message in modal
+				var errorHtml = `
+				<div style="text-align:center;">
+					<h5 class="mt-3 text-danger">An error occurred while processing your request.</h5>
+				</div>
+			`;
+				$('#InterestAccuralBody').html(errorHtml);
+				$('#InterestAccuralModal').modal('show');
+			}
+		});
+	}
+
+	function PenaltyAccural() {
+		// Hide the start button
+		$("#play14").hide();
+
+		// Remove any existing loader cell
+		$('#td14').remove();
+
+		// Append loader while processing
+		$('#tr14').append(`
+		<td width="205px;" id="td14" style="text-align: center; padding-left:80px;">
+			<div class="loader"></div>
+		</td>
+	`);
+
+		// Prepare data
+		var values = {
+			"MIG_DATE": $("#current_date").val()
+		};
+
+		// AJAX request
+		$.ajax({
+			url: "PenaltyAccural", // your backend endpoint
+			type: "POST",
+			data: values,
+			success: function (res) {
+				console.log("PenaltyAccural Response:", res);
+
+				// Remove loader
+				$('#td14').remove();
+
+				// Detect success (optional keyword check)
+				let isSuccess = typeof res === 'string' && /success/i.test(res);
+
+				// Append tick or cross
+				$('#tr14').append(`
+				<td style="text-align:center; font-size:20px;">
+					${isSuccess ? '&#9989;' : '&#10060;'}
+				</td>
+			`);
+
+				// Build modal message (display raw backend string)
+				let modalHtml = `
+				<div style="text-align:center;">
+					<h5 class="mt-3 ${isSuccess ? 'text-success' : 'text-danger'}">
+						${res}
+					</h5>
+				</div>
+			`;
+
+				// Inject result into modal body
+				$('#PenaltyAccuralBody').html(modalHtml);
+
+				// Show modal
+				$('#PenaltyAccuralModal').modal('show');
+			},
+			error: function (xhr, status, error) {
+				console.error("PenaltyAccural Error:", status, error);
+
+				// Remove loader and append cross
+				$('#td14').remove();
+				$('#tr14').append(`
+				<td style="text-align:center; font-size:20px;">&#10060;</td>
+			`);
+
+				// Show error message in modal
+				var errorHtml = `
+				<div style="text-align:center;">
+					<h5 class="mt-3 text-danger">An error occurred while processing your request.</h5>
+				</div>
+			`;
+				$('#PenaltyAccuralBody').html(errorHtml);
+				$('#PenaltyAccuralModal').modal('show');
+			}
+		});
+	}
+
+
+		function PenaltyCheck() {
+		// Hide the start button
+		$("#play13").hide();
+
+		// Remove any existing loader cell
+		$('#td13').remove();
+
+		// Append loader while processing
+		$('#tr13').append(`
 		<td width="205px;" id="td13" style="text-align: center; padding-left:80px;">
 			<div class="loader"></div>
 		</td>
 	`);
 
-	// Prepare data
-	var values = {
-		"MIG_DATE": $("#current_date").val()
-	};
+		// Prepare data
+		var values = {
+			"MIG_DATE": $("#current_date").val()
+		};
 
-	// AJAX request
-	$.ajax({
-		url: "penaltycheck", // your backend endpoint
-		type: "POST",
-		data: values,
-		success: function (res) {
-			console.log("Penalty Check Response:", res);
+		// AJAX request
+		$.ajax({
+			url: "penaltycheck", // your backend endpoint
+			type: "POST",
+			data: values,
+			success: function (res) {
+				console.log("Penalty Check Response:", res);
 
-			// Remove loader
-			$('#td13').remove();
+				// Remove loader
+				$('#td13').remove();
 
-			// Detect success (optional keyword check)
-			let isSuccess = typeof res === 'string' && /success/i.test(res);
+				// Detect success (optional keyword check)
+				let isSuccess = typeof res === 'string' && /success/i.test(res);
 
-			// Append tick or cross
-			$('#tr13').append(`
+				// Append tick or cross
+				$('#tr13').append(`
 				<td style="text-align:center; font-size:20px;">
 					${isSuccess ? '&#9989;' : '&#10060;'}
 				</td>
 			`);
 
-			// Build modal message (display raw backend string)
-			let modalHtml = `
+				// Build modal message (display raw backend string)
+				let modalHtml = `
 				<div style="text-align:center;">
 					<h5 class="mt-3 ${isSuccess ? 'text-success' : 'text-danger'}">
 						${res}
@@ -1043,121 +1198,126 @@ function PenaltyCheck() {
 				</div>
 			`;
 
-			// Inject result into modal body
-			$('#penaltyCheckBody').html(modalHtml);
+				// Inject result into modal body
+				$('#penaltyCheckBody').html(modalHtml);
 
-			// Show modal
-			$('#penaltyCheckModal').modal('show');
-		},
-		error: function (xhr, status, error) {
-			console.error("Penalty Check Error:", status, error);
+				// Show modal
+				$('#penaltyCheckModal').modal('show');
+			},
+			error: function (xhr, status, error) {
+				console.error("Penalty Check Error:", status, error);
 
-			// Remove loader and append cross
-			$('#td13').remove();
-			$('#tr13').append(`
+				// Remove loader and append cross
+				$('#td13').remove();
+				$('#tr13').append(`
 				<td style="text-align:center; font-size:20px;">&#10060;</td>
 			`);
 
-			// Show error message in modal
-			var errorHtml = `
+				// Show error message in modal
+				var errorHtml = `
 				<div style="text-align:center;">
 					<h5 class="mt-3 text-danger">An error occurred while processing your request.</h5>
 				</div>
 			`;
-			$('#penaltyCheckBody').html(errorHtml);
-			$('#penaltyCheckModal').modal('show');
-		}
-	});
-}
+				$('#penaltyCheckBody').html(errorHtml);
+				$('#penaltyCheckModal').modal('show');
+			}
+		});
+	}
 
 
 
 </script>
 <script>
 
+	function handleotherbatch(){
+		$('#otherbatch').modal('show');
+
+	}
+
 	function handleJournalValidation(triggerBtnId, rowId, cellId, modalId) {
-	// Hide the Start button
-	$('#' + triggerBtnId).hide();
+		// Hide the Start button
+		$('#' + triggerBtnId).hide();
 
-	// Remove any existing loader cell
-	$('#' + cellId).remove();
+		// Remove any existing loader cell
+		$('#' + cellId).remove();
 
-	// Append loader inside the target row (<tr>)
-	$('#' + rowId).append(`
+		// Append loader inside the target row (<tr>)
+		$('#' + rowId).append(`
 		<td width="205px;" id="${cellId}" style="text-align: center; padding-left:80px;">
 			<div class="loader"></div>
 		</td>
 	`);
 
-	// Show modal immediately (optional)
-	// $('#' + modalId).modal('show');
+		// Show modal immediately (optional)
+		// $('#' + modalId).modal('show');
 
-	// AJAX call
-	$.ajax({
-		url: '/ASPIRA/journalvalid',
-		type: 'POST',
-		contentType: 'application/json',
-		data: JSON.stringify({}),
-		success: function (res) {
-			console.log('Journal Validation Response:', res);
+		// AJAX call
+		$.ajax({
+			url: '/ASPIRA/journalvalid',
+			type: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify({}),
+			success: function (res) {
+				console.log('Journal Validation Response:', res);
 
-			// Remove loader cell
-			$('#' + cellId).remove();
+				// Remove loader cell
+				$('#' + cellId).remove();
 
-			// Build the modal content table
-			const $tbody = $('#journalTableBody');
-			$tbody.empty();
+				// Build the modal content table
+				const $tbody = $('#journalTableBody');
+				$tbody.empty();
 
-			if (res.Valuesfornotransaction) {
-				res.Valuesfornotransaction.forEach(item => {
-					$tbody.append(`<tr><td>Total No.of.Trans</td><td>${item[0]}</td><td>${item[1] || ''}</td></tr>`);
-				});
-			}
+				if (res.Valuesfornotransaction) {
+					res.Valuesfornotransaction.forEach(item => {
+						$tbody.append(`<tr><td>Total No.of.Trans</td><td>${item[0]}</td><td>${item[1] || ''}</td></tr>`);
+					});
+				}
 
-			if (res.Valuesfordebit) {
-				res.Valuesfordebit.forEach(item => {
-					$tbody.append(`<tr><td>Dr Transactions</td><td>${item[0]}</td><td>${item[1]}</td></tr>`);
-				});
-			}
+				if (res.Valuesfordebit) {
+					res.Valuesfordebit.forEach(item => {
+						$tbody.append(`<tr><td>Dr Transactions</td><td>${item[0]}</td><td>${item[1]}</td></tr>`);
+					});
+				}
 
-			if (res.ValuesforCredit) {
-				res.ValuesforCredit.forEach(item => {
-					$tbody.append(`<tr><td>Cr Transactions</td><td>${item[0]}</td><td>${item[1]}</td></tr>`);
-				});
-			}
+				if (res.ValuesforCredit) {
+					res.ValuesforCredit.forEach(item => {
+						$tbody.append(`<tr><td>Cr Transactions</td><td>${item[0]}</td><td>${item[1]}</td></tr>`);
+					});
+				}
 
-			$tbody.append(`<tr><td>Deleted</td><td>${res.ValuesforDel}</td><td></td></tr>`);
+				$tbody.append(`<tr><td>Deleted</td><td>${res.ValuesforDel}</td><td></td></tr>`);
 
-			// Show status and icon in same td position
-			if (res.Valuesforunpost == 0 || res.Valuesforunpost == 0.00) {
-				$('#' + rowId).append(`
+				// Show status and icon in same td position
+				if (res.Valuesforunpost == 0 || res.Valuesforunpost == 0.00) {
+					$('#' + rowId).append(`
 					<td style="text-align:center; font-size:20px;">&#9989;</td>
 				`);
-				$('#successMessageJournal').show();
-			} else {
-				$('#' + rowId).append(`
+					$('#successMessageJournal').show();
+				} else {
+					$('#' + rowId).append(`
 					<td style="text-align:center; font-size:20px;">&#9989;</td>
 				`);
-				$('#failureMessageJournal').show();
-			}
+					$('#failureMessageJournal').show();
+				}
 
-			// Show modal with updated data
-			$('#' + modalId).modal('show');
-		},
-		error: function (err) {
-			console.error('Journal Validation Error:', err);
+				// Show modal with updated data
+				$('#' + modalId).modal('show');
+			},
+			error: function (err) {
+				console.error('Journal Validation Error:', err);
 
-			// Remove loader and show ❌
-			$('#' + cellId).remove();
-			$('#' + rowId).append(`
+				// Remove loader and show ❌
+				$('#' + cellId).remove();
+				$('#' + rowId).append(`
 				<td style="text-align:center; font-size:20px;">&#10060;</td>
 			`);
 
-			$('#failureMessageJournal').show();
-			$('#' + modalId).modal('show');
-		}
-	});
-}
+				$('#failureMessageJournal').show();
+				$('#' + modalId).modal('show');
+			}
+		});
+	}
 
 
 
@@ -1258,6 +1418,7 @@ function PenaltyCheck() {
 
 		$(document).on("click", "#play4, #play5, #play6, #play7, #play8, #play9, #play10, #play11", function () {
 			callDcpUpdate();
+
 		});
 
 
@@ -1281,38 +1442,46 @@ function PenaltyCheck() {
 				data: JSON.stringify(values),
 				dataType: 'json',
 				success: function (res2) {
+					if (res2.status == "success") {
+						handleJournalValidation('play4', 'tr4', 'td4', 'journalValidationModal');
+					}
 					console.log("✅ dcpupdate Response:", res2);
+
 				},
 				error: function (err2) {
 					console.error("❌ dcpupdate AJAX Error:", err2);
 				}
 			});
 		}
-
+		// DAte Change Process
 		$(document).on("click", "#play11", function () {
 			DateChangeProcess();
 		});
-		$(document).on("click", "#play4", function () {
-			handleJournalValidation('play4', 'tr4', 'td4', 'journalValidationModal');
-		});
-
+		// Journal Validation
+		// $(document).on("click", "#play4", function () {
+		// 	handleJournalValidation('play4', 'tr4', 'td4', 'journalValidationModal');
+		// });
+		// Account Ledger
 		$(document).on("click", "#play5", function () {
 			AccountLedgerValidate();
 		});
-
+		// Holiday Check
 		$(document).on("click", "#play6", function () {
 			HolidayCheckValidate();
 		});
+		// Daily Account Balance
 		$(document).on("click", "#play7", function () {
 			Doatranscation();
 		});
-
+		// Consistency Check
 		$(document).on("click", "#play8", function () {
 			ConsistencyCheck();
 		});
+		// Gl Consolidation
 		$(document).on("click", "#play9", function () {
 			GlconsolidationCheck();
 		});
+		//MOvement Of Transaction
 		$(document).on("click", "#play10", function () {
 			MovementofTransaction();
 		});
@@ -1448,7 +1617,18 @@ function PenaltyCheck() {
 							<td style="padding-left: 5px;">Interest Accural</td>
 							<td width="205px;" id="td1"
 								style="text-align: center; vertical-align: middle; padding: 2px;">
-								<button type="button" class="btn-primary big-btn" value="Start" id="play1">
+								<button type="button" class="btn-primary big-btn" value="Start" id="play1" onclick="InterestAccural()">
+									Start
+								</button>
+							</td>
+						</tr>
+
+						<tr id="tr14" style="height: 25px;">
+							<td style="padding: 2px;"><b></b></td>
+							<td style="padding-left: 5px;">Penalty Accural</td>
+							<td width="205px;" id="td14"
+								style="text-align: center; vertical-align: middle; padding: 2px;">
+								<button type="button" class="btn-primary big-btn" value="Start" id="play14" onclick="PenaltyAccural()">
 									Start
 								</button>
 							</td>
@@ -1469,7 +1649,7 @@ function PenaltyCheck() {
 							<td style="padding-left: 5px;">Fee Demand Generation</td>
 							<td width="205px;" id="td12"
 								style="text-align: center; vertical-align: middle; padding: 2px;"><button type="button"
-									class="btn-primary big-btn" value="Start" id="play12" 
+									class="btn-primary big-btn" value="Start" id="play12"
 									onclick="FeeDemandgeneration()">Start</button>
 							</td>
 						</tr>
@@ -1487,7 +1667,7 @@ function PenaltyCheck() {
 							<td style="padding-left: 5px;">Other Batch Job</td>
 							<td width="205px;" id="td1"
 								style="text-align: center; vertical-align: middle; padding: 2px;"><button type="button"
-									class="btn-primary big-btn" value="Start" id="play1">Start</button>
+									class="btn-primary big-btn" value="Start" id="play1" onclick="handleotherbatch()">Start</button>
 							</td>
 						</tr>
 					</table>
@@ -1579,10 +1759,10 @@ function PenaltyCheck() {
 				</div>
 
 				<div class="modal-footer d-flex justify-content-center">
-	<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
-		Close
-	</button>
-</div>
+					<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
+						Close
+					</button>
+				</div>
 
 			</div>
 		</div>
@@ -1606,10 +1786,10 @@ function PenaltyCheck() {
 				</div>
 
 				<div class="modal-footer d-flex justify-content-center">
-	<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
-		Close
-	</button>
-</div>
+					<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
+						Close
+					</button>
+				</div>
 
 
 			</div>
@@ -1632,10 +1812,10 @@ function PenaltyCheck() {
 				</div>
 
 				<div class="modal-footer d-flex justify-content-center">
-	<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
-		Close
-	</button>
-</div>
+					<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
+						Close
+					</button>
+				</div>
 
 
 			</div>
@@ -1659,10 +1839,10 @@ function PenaltyCheck() {
 				</div>
 
 				<div class="modal-footer d-flex justify-content-center">
-	<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
-		Close
-	</button>
-</div>
+					<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
+						Close
+					</button>
+				</div>
 
 
 			</div>
@@ -1670,126 +1850,213 @@ function PenaltyCheck() {
 	</div>
 
 	<!-- Interest Demand Generation Modal -->
-<div id="interestDemandModal" class="modal fade" tabindex="-1" role="dialog">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
+	<div id="interestDemandModal" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
 
-			<!-- Header -->
-			<div class="modal-header">
-				<h5 class="modal-title text-center w-100">Interest Demand Generation</h5>
-			</div>
-
-			<!-- Body (dynamic content injected by JS) -->
-			<div class="modal-body" id="interestDemandBody">
-				<div class="text-center my-3">
-					<div class="loader"></div>
-					<p>Processing, please wait...</p>
+				<!-- Header -->
+				<div class="modal-header">
+					<h5 class="modal-title text-center w-100">Interest Demand Generation</h5>
 				</div>
-			</div>
 
-			<!-- Footer (centered Close button with refresh) -->
-			<div class="modal-footer d-flex justify-content-center">
-				<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
-					Close
-				</button>
-			</div>
+				<!-- Body (dynamic content injected by JS) -->
+				<div class="modal-body" id="interestDemandBody">
+					<div class="text-center my-3">
+						<div class="loader"></div>
+						<p>Processing, please wait...</p>
+					</div>
+				</div>
 
+				<!-- Footer (centered Close button with refresh) -->
+				<div class="modal-footer d-flex justify-content-center">
+					<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
+						Close
+					</button>
+				</div>
+
+			</div>
 		</div>
 	</div>
-</div>
 
-<div id="feeDemandModal" class="modal fade" tabindex="-1" role="dialog">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
+	<div id="feeDemandModal" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
 
-			<!-- Header -->
-			<div class="modal-header">
-				<h5 class="modal-title text-center w-100">Fee Demand Generation</h5>
-			</div>
-
-			<!-- Body (dynamic content injected by JS) -->
-			<div class="modal-body" id="feeDemandBody">
-				<div class="text-center my-3">
-					<div class="loader"></div>
-					<p>Processing, please wait...</p>
+				<!-- Header -->
+				<div class="modal-header">
+					<h5 class="modal-title text-center w-100">Fee Demand Generation</h5>
 				</div>
-			</div>
 
-			<!-- Footer (centered Close button with refresh) -->
-			<div class="modal-footer d-flex justify-content-center">
-				<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
-					Close
-				</button>
-			</div>
+				<!-- Body (dynamic content injected by JS) -->
+				<div class="modal-body" id="feeDemandBody">
+					<div class="text-center my-3">
+						<div class="loader"></div>
+						<p>Processing, please wait...</p>
+					</div>
+				</div>
 
+				<!-- Footer (centered Close button with refresh) -->
+				<div class="modal-footer d-flex justify-content-center">
+					<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
+						Close
+					</button>
+				</div>
+
+			</div>
 		</div>
 	</div>
-</div>
 
-<div id="penaltyCheckModal" class="modal fade" tabindex="-1" role="dialog">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
+	<div id="penaltyCheckModal" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
 
-			<!-- Header -->
-			<div class="modal-header">
-				<h5 class="modal-title text-center w-100">Penalty Check</h5>
-			</div>
-
-			<!-- Body (dynamic content injected by JS) -->
-			<div class="modal-body" id="penaltyCheckBody">
-				<div class="text-center my-3">
-					<div class="loader"></div>
-					<p>Processing, please wait...</p>
+				<!-- Header -->
+				<div class="modal-header">
+					<h5 class="modal-title text-center w-100">Penalty Check</h5>
 				</div>
-			</div>
 
-			<!-- Footer (centered Close button with refresh) -->
-			<div class="modal-footer d-flex justify-content-center">
-				<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
-					Close
-				</button>
-			</div>
+				<!-- Body (dynamic content injected by JS) -->
+				<div class="modal-body" id="penaltyCheckBody">
+					<div class="text-center my-3">
+						<div class="loader"></div>
+						<p>Processing, please wait...</p>
+					</div>
+				</div>
 
+				<!-- Footer (centered Close button with refresh) -->
+				<div class="modal-footer d-flex justify-content-center">
+					<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
+						Close
+					</button>
+				</div>
+
+			</div>
 		</div>
 	</div>
-</div>
 
-<div id="doaTransModal" class="modal fade" tabindex="-1" role="dialog">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
+	<div id="InterestAccuralModal" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
 
-			<!-- Header -->
-			<div class="modal-header">
-				<h5 class="modal-title text-center w-100">Daily Account Balance</h5>
-			</div>
-
-			<!-- Body (loader + response text) -->
-			<div class="modal-body" id="doaTransModalBody">
-				<div class="text-center my-3">
-					<div class="loader"></div>
-					<p>Processing, please wait...</p>
-					<p id="doaResponseText"></p>
+				<!-- Header -->
+				<div class="modal-header">
+					<h5 class="modal-title text-center w-100">Interest Accural</h5>
 				</div>
-			</div>
 
-			<!-- Footer -->
-			<div class="modal-footer d-flex justify-content-center">
-				<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
-					Close
-				</button>
-			</div>
+				<!-- Body (dynamic content injected by JS) -->
+				<div class="modal-body" id="InterestAccuralBody">
+					<div class="text-center my-3">
+						<div class="loader"></div>
+						<p>Processing, please wait...</p>
+					</div>
+				</div>
 
+				<!-- Footer (centered Close button with refresh) -->
+				<div class="modal-footer d-flex justify-content-center">
+					<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
+						Close
+					</button>
+				</div>
+
+			</div>
 		</div>
 	</div>
-</div>
 
+	<div id="PenaltyAccuralModal" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
 
+				<!-- Header -->
+				<div class="modal-header">
+					<h5 class="modal-title text-center w-100">Penalty Accural</h5>
+				</div>
 
+				<!-- Body (dynamic content injected by JS) -->
+				<div class="modal-body" id="PenaltyAccuralBody">
+					<div class="text-center my-3">
+						<div class="loader"></div>
+						<p>Processing, please wait...</p>
+					</div>
+				</div>
 
-
+				<!-- Footer (centered Close button with refresh) -->
+				<div class="modal-footer d-flex justify-content-center">
+					<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
+						Close
+					</button>
+				</div>
 
 			</div>
 		</div>
+	</div>
+
+
+	<div id="doaTransModal" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+				<!-- Header -->
+				<div class="modal-header">
+					<h5 class="modal-title text-center w-100">Daily Account Balance</h5>
+				</div>
+
+				<!-- Body (loader + response text) -->
+				<div class="modal-body" id="doaTransModalBody">
+					<div class="text-center my-3">
+						<div class="loader"></div>
+						<p>Processing, please wait...</p>
+						<p id="doaResponseText"></p>
+					</div>
+				</div>
+
+				<!-- Footer -->
+				<div class="modal-footer d-flex justify-content-center">
+					<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
+						Close
+					</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+	<div id="otherbatch" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+				<!-- Header -->
+				<div class="modal-header">
+					<h5 class="modal-title text-center w-100">Other Batch Job</h5>
+				</div>
+
+				<!-- Body (loader + response text) -->
+				<div class="modal-body" id="otherbatchBody">
+					<div class="text-center my-3">
+						<!-- <div class="loader"></div> -->
+						<p style="font-size: 20px;">No Batch job Available</p>
+						<!-- <p id="otherbatchResponseText"></p> -->
+					</div>
+				</div>
+
+				<!-- Footer -->
+				<div class="modal-footer d-flex justify-content-center">
+					<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
+						Close
+					</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+	</div>
+	</div>
 	</div>
 
 
@@ -1965,10 +2232,10 @@ function PenaltyCheck() {
 					<div id="consistencyMessage" style="text-align: center; margin-top: 10px;"></div>
 				</div>
 				<div class="modal-footer d-flex justify-content-center">
-	<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
-		Close
-	</button>
-</div>
+					<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
+						Close
+					</button>
+				</div>
 
 			</div>
 		</div>
@@ -2204,7 +2471,9 @@ function PenaltyCheck() {
 					<b class="modal-body" id="datechangeModelBody" style="font-size: 20px;"></b>
 				</div>
 				<div class="modal-footer ">
-					<button type="button" class="btn-primary big-btn" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary px-4" data-dismiss="modal" onclick="refresh()">
+						Close
+					</button>
 				</div>
 			</div>
 		</div>

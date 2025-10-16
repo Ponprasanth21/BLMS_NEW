@@ -602,7 +602,7 @@ $(document)
 											<td th:text="${chartacc?.acct_name}"></td>
 											<td th:text="${chartacc?.acct_crncy}"></td>
 											<td style="text-align: right;"><span
-												th:text="${chartacc.acct_bal == 0 ? '0.00' : #numbers.formatDecimal(chartacc.acct_bal.toString().replace('-', ''), 0, 'COMMA', 2, 'POINT')}"></span>
+												th:text="${chartacc.acct_bal == 0 OR chartacc.acct_bal == null ? '0.00' : #numbers.formatDecimal(chartacc.acct_bal.toString().replace('-', ''), 0, 'COMMA', 2, 'POINT')}"></span>
 											</td>
 										</tr>
 										<!-- Placeholder for the total row -->

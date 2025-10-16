@@ -1226,10 +1226,16 @@ $(document)
 												th:text="${details.tran_id} + '/' + ${details.part_tran_id}"></td>
 											<td th:text="${details.part_tran_type}"></td>
 											<td th:text="${details.acct_crncy}"></td>
-
-											<td style="text-align: right;"
+											<!-- Million Conversion -->
+											<!-- <td style="text-align: right;"
 												th:text="${details?.tran_amt == 0 ? '0.00' :#numbers.formatDecimal(details?.tran_amt, 0, 'COMMA', 2, 'POINT')}">
+											</td> -->
+											<td style="text-align: right;"
+												th:text="${details?.tran_amt == null || details?.tran_amt == 0 
+														? '0.00' 
+														: #numbers.formatDecimal(details?.tran_amt, 0, 'COMMA', 2, 'POINT')}">
 											</td>
+
 											<td th:text="${details.acct_num}"></td>
 											<td th:text="${details.acct_name}"></td>
 											<td th:text="${details.tran_particular}"></td>
@@ -1242,6 +1248,7 @@ $(document)
 
 
 										</tr>
+										
 
 									</tbody>
 								</table>

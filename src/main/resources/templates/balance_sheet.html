@@ -480,8 +480,14 @@ $(document)
 											<td th:text="${chartacc[1]}" style="text-align: left;"></td>
 											<td th:text="${chartacc[2]}" style="text-align: left;"></td>
 											<td th:text="${chartacc[3]}"></td>
-											<td class="acct-bal" style="text-align: right;"><span th:text="${chartacc[4] == null or chartacc[4] == 0 ? '0.00' : #numbers.formatDecimal(#strings.defaultString(chartacc[4], '0').replace('-', ''), 0, 'COMMA', 2, 'POINT')}"></span>
+											<!-- <td class="acct-bal" style="text-align: right;"><span th:text="${chartacc[4] == null or chartacc[4] == 0 ? '0.00' : #numbers.formatDecimal(#strings.defaultString(chartacc[4], '0').replace('-', ''), 0, 'COMMA', 2, 'POINT')}"></span>
+</td> -->
+
+<td class="acct-bal" style="text-align: right;">
+    <span th:text="${chartacc[4] != null and chartacc[4] != 0 ? #numbers.formatDecimal(chartacc[4], 0, 'COMMA', 2, 'POINT') : '0.00'}"></span>
 </td>
+
+
 										</tr>
 
 									</tbody>
@@ -561,7 +567,7 @@ $(document)
 											<td th:text="${chartacc[2]}" style="text-align: left;"></td>
 											<td th:text="${chartacc[3]}"></td>
 											<td style="text-align: right;"><span
-												th:text="${chartacc[4] == 0 ? '0.00' : #numbers.formatDecimal(chartacc[4].toString().replace('-', ''), 0, 'COMMA', 2, 'POINT')}"></span>
+												th:text="${chartacc[4] == 0 OR chartacc[4] == null ? '0.00' : #numbers.formatDecimal(chartacc[4].toString().replace('-', ''), 0, 'COMMA', 2, 'POINT')}"></span>
 											</td>
 										</tr>
 

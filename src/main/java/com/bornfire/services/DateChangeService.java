@@ -5,11 +5,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bornfire.entities.BGLS_CONTROL_TABLE_REP;
+import com.bornfire.entities.BGLS_Control_Table;
 
 @Service
 public class DateChangeService {
@@ -18,12 +21,13 @@ public class DateChangeService {
     private BGLS_CONTROL_TABLE_REP bGLS_CONTROL_TABLE_REP;
 
     @Transactional
-    public String dateChange(Date nxtDate,Date trandate) {
+    public String dateChange(Date nxtDate,Date trandate,HttpServletRequest rq) {
 
     	System.out.println("trandate"+trandate);
     	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         String formattedtrandate = sdf.format(trandate);
         String formattedDatenxtDate = sdf.format(nxtDate);
+        System.out.println("the custome dates format");
         System.out.println("Formatted trandate: " + formattedtrandate);
         System.out.println("Formatted trandate: " + formattedDatenxtDate);
 
@@ -43,7 +47,8 @@ public class DateChangeService {
         System.out.println("oldDate"+oldDate);
         // 3️⃣ Update TRAN_DATE and DCP_END_TIME
         int updated1 = bGLS_CONTROL_TABLE_REP.updateTranDate(formattedDatenxtDate,formattedtrandate);
-        
+        BGLS_Control_Table up1 = bGLS_CONTROL_TABLE_REP.getTranDate();
+        rq.getSession().setAttribute("TRANDATE", up1.getTran_date());        
         System.out.println("updated1"+updated1);
 
         // 4️⃣ Compare old vs new date before updating flags

@@ -39,12 +39,39 @@ public class BGLS_Control_Table {
 	private String interest_demand_gen;
 	private String fee_demand_gen;
 	private String penalty;
+	private String interest_accural;
+	private String penalty_accural;
 	private Date  previous_date;
 	public String getOrg_name() {
 		return org_name;
 	}
 	
 	
+	
+	public String getInterest_accural() {
+		return interest_accural;
+	}
+
+
+
+	public void setInterest_accural(String interest_accural) {
+		this.interest_accural = interest_accural;
+	}
+
+
+
+	public String getPenalty_accural() {
+		return penalty_accural;
+	}
+
+
+
+	public void setPenalty_accural(String penalty_accural) {
+		this.penalty_accural = penalty_accural;
+	}
+
+
+
 	public String getFee_demand_gen() {
 		return fee_demand_gen;
 	}

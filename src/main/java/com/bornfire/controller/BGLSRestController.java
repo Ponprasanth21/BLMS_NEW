@@ -4261,6 +4261,60 @@ public class BGLSRestController {
         return "Penalty check Successful";
     }
 
+    
+    @RequestMapping(value = "InterestAccural", method = { RequestMethod.GET, RequestMethod.POST })
+    public String InterestAccural(@RequestParam(required = false) String MIG_DATE, Model model,
+                               HttpServletRequest request) {
+
+//        String user = (String) request.getSession().getAttribute("USERID");
+        BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+
+        if (existingRecord != null) {
+            try {
+                System.out.println("Procedure Run for penalty check");
+//    			tranMainRep.runInterestAccural(MIG_DATE);
+            }catch(Exception e) {
+                System.out.println(e);
+            }
+            System.out.println("Past intrest accural : " + existingRecord.getInterest_accural());
+            existingRecord.setInterest_accural("Completed");
+            bGLS_CONTROL_TABLE_REP.save(existingRecord);
+            System.out.println("Updated intrest accural : " + existingRecord.getInterest_accural());
+        } else {
+            System.out.println("No record found in BGLS_Control_Table");
+            return "InterestAccural Failed";
+        }
+
+        return "InterestAccural Successful";
+    }
+
+    
+    @RequestMapping(value = "PenaltyAccural", method = { RequestMethod.GET, RequestMethod.POST })
+    public String PenaltyAccural(@RequestParam(required = false) String MIG_DATE, Model model,
+                               HttpServletRequest request) {
+
+//        String user = (String) request.getSession().getAttribute("USERID");
+        BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+
+        if (existingRecord != null) {
+            try {
+                System.out.println("Procedure Run for penalty check");
+//    			tranMainRep.runPenaltyAccural(MIG_DATE);
+            }catch(Exception e) {
+                System.out.println(e);
+            }
+            System.out.println("Past Penalty accural : " + existingRecord.getPenalty_accural());
+            existingRecord.setPenalty_accural("Completed");
+            bGLS_CONTROL_TABLE_REP.save(existingRecord);
+            System.out.println("Updated Penalty accural : " + existingRecord.getPenalty_accural());
+        } else {
+            System.out.println("No record found in BGLS_Control_Table");
+            return "PenaltyAccural Failed";
+        }
+
+        return "PenaltyAccural Successful";
+    }
+
 
     @GetMapping("getAccountName")
     public List<Lease_Loan_Master_Entity> getAccountName(@RequestParam(required = false) String accountNum) {

@@ -470,4 +470,14 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 					@Transactional
 					@Query(value = "CALL DAYEND_PENALITY_1(:MIG_DATE, :ENTRY_USER)", nativeQuery = true)
 					void runPenalty(@Param("MIG_DATE") String MIG_DATE, @Param("ENTRY_USER") String ENTRY_USER);
+					
+					@Modifying
+					@Transactional
+					@Query(value = "CALL CALCULATE_DAILY_INTEREST(:MIG_DATE)", nativeQuery = true)
+					void runInterestAccural(@Param("MIG_DATE") String MIG_DATE);
+					
+					@Modifying
+					@Transactional
+					@Query(value = "CALL UPDATE_DAILY_PENALTY_ALL(:MIG_DATE)", nativeQuery = true)
+					void runPenaltyAccural(@Param("MIG_DATE") String MIG_DATE);
 }

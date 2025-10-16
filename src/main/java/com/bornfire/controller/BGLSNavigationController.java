@@ -356,6 +356,8 @@ public class BGLSNavigationController {
 
     @Autowired
     AuditConfigure audit;
+    
+    
 
     public String getPagesize() {
         return pagesize;
@@ -2645,8 +2647,8 @@ public class BGLSNavigationController {
     public String day_end_operation(@RequestParam(required = false) String formmode, Model model,
                                     HttpServletRequest request) throws java.text.ParseException {
         // Journal
-        Date TRANDATE = (Date) request.getSession().getAttribute("TRANDATE");
-        System.out.println(TRANDATE + "TRANDATE");
+    	Date TRANDATE = (Date) request.getSession().getAttribute("TRANDATE");
+       
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String formattedDate = dateFormat.format(TRANDATE);
 
@@ -4184,19 +4186,29 @@ public class BGLSNavigationController {
 
     @RequestMapping(value = "dateChageProcess", method = RequestMethod.POST)
     @ResponseBody
-    public String dateChangeProcess(Model md, HttpServletRequest rq,
-                                    @RequestParam("nxtdate") String nxtdateStr,
-                                    @RequestParam("trndate") String trndateStr) throws java.text.ParseException {
+    public String dateChangeProcess(
+            Model md,
+            HttpServletRequest rq,
+            @RequestParam("nxtdate") String nxtdateStr,
+            @RequestParam("trndate") String trndateStr) throws java.text.ParseException {
 
-        // Get session date (already a Date object)
+        // Get session transaction date
         Date sessionTranDate = (Date) rq.getSession().getAttribute("TRANDATE");
 
         try {
-            // Define date format matching your input (dd-MM-yyyy)
+            // Strict date format: dd-MM-yyyy
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-            sdf.setLenient(false); // strict parsing
+            sdf.setLenient(false);
 
-            // Convert strings to java.util.Date
+            // Optional: validate format using regex before parsing
+            String datePattern = "^\\d{2}-\\d{2}-\\d{4}$";
+            if (!nxtdateStr.matches(datePattern) || !trndateStr.matches(datePattern)) {
+                return "Invalid date format. Expected format: dd-MM-yyyy";
+            }
+
+            // Parse strings to Date
+            System.out.println(trndateStr);
+            System.out.println(nxtdateStr);
             Date nxtDate = sdf.parse(nxtdateStr);
             Date tranDate = sdf.parse(trndateStr);
 
@@ -4204,14 +4216,17 @@ public class BGLSNavigationController {
             System.out.println("Parsed nxtdate: " + nxtDate);
             System.out.println("Session date: " + sessionTranDate);
 
-            // Now call your service method with the parsed date(s)
-            return DateChangeService.dateChange(nxtDate,tranDate);
+            // Example: call service here
+             return DateChangeService.dateChange(nxtDate, tranDate, rq);
+
+//            return "Success";
 
         } catch (ParseException e) {
             e.printStackTrace();
-            return "error"; // Or return a message like "Invalid date format"
+            return "Error: Invalid date format or value (e.g., 32-01-2025)";
         }
     }
+
 
 
     @PostMapping("/dcpupdate")
@@ -4276,7 +4291,11 @@ public class BGLSNavigationController {
         controlTable.setMov_dac("PENDING");
         controlTable.setMov_journal("PENDING");
         controlTable.setGl_con("PENDING");
+        //dues
         controlTable.setInterest_demand_gen("PENDING");
+        controlTable.setFee_demand_gen("PENDING");
+        controlTable.setPenalty("PENDING");
+        
         controlTable.setDcp_start_time(new Date());
         controlTable.setDcp_flg("N");
         controlTable.setDcp_status("CLOSE");
