@@ -34,11 +34,20 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 	@Query(value = "SELECT * FROM BGLS_CHART_OF_ACCOUNTS WHERE acct_num IN (:accountNumbers)", nativeQuery = true)
 	List<Chart_Acc_Entity> getcoaaccunt_num(@Param("accountNumbers") List<String> accountNumbers);
 
-	@Query(value = "SELECT * FROM BGLS_CHART_OF_ACCOUNTS WHERE del_flg='N' ORDER BY ACCT_NUM, CLASSIFICATION ASC", nativeQuery = true)
+	@Query(value = "SELECT * FROM BGLS_CHART_OF_ACCOUNTS WHERE del_flg='N' and OWN_TYPE = 'C' ORDER BY ACCT_NUM, CLASSIFICATION ASC", nativeQuery = true)
 	List<Chart_Acc_Entity> getList();
 
 	@Query(value = "SELECT * FROM BGLS_CHART_OF_ACCOUNTS WHERE del_flg='N' AND own_type ='O' ORDER BY ACCT_NUM, CLASSIFICATION ASC", nativeQuery = true)
 	List<Chart_Acc_Entity> getListoffice();
+	
+	@Query(value = "SELECT " + "a.gl_code, " + "a.ACCT_NAME, " + "SUM(b.TRAN_DATE_BAL) AS opening_bal, "
+			+ "SUM(a.CR_AMT) AS credit, " + "SUM(a.DR_AMT) AS debit, "
+			+ "ABS(SUM(a.DR_AMT) - SUM(a.CR_AMT)) AS net_change, "
+			+ "ABS((SUM(a.DR_AMT) - SUM(a.CR_AMT)) + SUM(b.TRAN_DATE_BAL)) AS closing_bal "
+			+ "FROM BGLS_CHART_OF_ACCOUNTS a " + "JOIN BGLS_DAILY_ACCT_BAL b ON a.ACCT_NAME = b.ACCT_NAME "
+			+ "WHERE a.OWN_TYPE = 'O' " + "GROUP BY a.gl_code, a.ACCT_NAME "
+			+ "ORDER BY a.ACCT_NAME", nativeQuery = true)
+	List<Object[]> getListtrail();
 
 	@Query(value = "SELECT GLSH_CODE, GLSH_DESC, COUNT(GLSH_CODE) as sum, acct_crncy, SUM(ACCT_BAL) FROM BGLS_CHART_OF_ACCOUNTS WHERE del_flg='N' AND classification='Asset' GROUP BY GLSH_CODE, GLSH_DESC, acct_crncy ORDER BY GLSH_CODE ASC", nativeQuery = true)
 	List<Object[]> getList1();
