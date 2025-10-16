@@ -418,68 +418,65 @@ input:hover+.password-info {
 
 										<thead class="thead-light">
 											<tr class="filters">
-												<th><input type="text"
-													class="form-control font-weight-bold" placeholder="HEAD"
+											<th><input type="text"
+													class="form-control font-weight-bold" placeholder="GL CODE"
 													disabled></th>
-												<th style="width: 7%"><input type="text"
-													class="form-control font-weight-bold" placeholder="GL"
+													<th><input type="text"
+													class="form-control font-weight-bold" placeholder="ACCOUNT NAME"
 													disabled></th>
-												<th style="width: 12%"><input type="text"
-													class="form-control font-weight-bold"
-													placeholder="GL DESCRIPTION" disabled></th>
-												<th style="width: 7%"><input type="text"
-													class="form-control font-weight-bold" placeholder="GLSH"
+													<th><input type="text"
+													class="form-control font-weight-bold" placeholder="OPENING BALANCE"
 													disabled></th>
-												<th style="width: 20%"><input type="text"
-													class="form-control font-weight-bold"
-													placeholder="GLSH DESCRIPTION" disabled></th>
-												<th style="width: 10%; text-align: left"><input
-													type="text" class="form-control font-weight-bold"
-													placeholder="NO OF ACCT" disabled></th>
-												<th><input type="text"
-													class="form-control font-weight-bold" placeholder="CUR"
+													<th><input type="text"
+													class="form-control font-weight-bold" placeholder="CREDIT"
 													disabled></th>
-												<th style="text-align: right"><input type="text"
-													style="text-align: right"
-													class="form-control font-weight-bold" placeholder="CREDITS"
+													<th><input type="text"
+													class="form-control font-weight-bold" placeholder="DEBIT"
 													disabled></th>
-												<th style="text-align: right"><input type="text"
-													style="text-align: right"
-													class="form-control font-weight-bold" placeholder="DEBITS"
+													<th><input type="text"
+													class="form-control font-weight-bold" placeholder="NET CHANGE"
+													disabled></th>
+													<th><input type="text"
+													class="form-control font-weight-bold" placeholder="CLOSING BALANCE"
 													disabled></th>
 											</tr>
 										</thead>
 
 										<tbody id="placelist">
 											<tr th:each="Trial: ${trialbal}" th:if="${trialbal != null}">
-												<td th:text="${Trial[1]}"></td>
-												<!-- Classification -->
-												<td th:text="${Trial[4]}"></td>
-												<!-- GL_CODE -->
-												<td th:text="${Trial[2]}"></td>
-												<!-- GL_DESC -->
-												<td class="text-primary" th:text="${Trial[0]}"
+
+												<td th:text="${Trial[0]}"
 													th:attr="data-glshcode=${Trial[0]}"
-													onclick="viewglsh(this);"></td>
-												<!-- GLSH_CODE -->
-												<td th:text="${Trial[5]}"></td>
-												<!-- GLSH_DESC -->
-												<td th:text="${Trial[6]}"></td>
-												<!-- total_count -->
-												<td th:text="${Trial[3]}"></td>
-												<!-- ACCT_CRNCY -->
-												<td style="text-align: right"
-													th:text="${Trial[7] > 0 ? #numbers.formatDecimal(Trial[7], 0, 'COMMA', 2, 'POINT') : '0.00'}">
-												</td>
-												<!-- cr_amt as Credit -->
-												<td style="text-align: right"
-													th:text="${Trial[8] > 0 ? #numbers.formatDecimal(Trial[8], 0, 'COMMA', 2, 'POINT') : '0.00'}">
-												</td>
-												<!-- dr_amt as Debit -->
+													onclick="viewglsh(this);" style="color: blue;"></td>
+												<!-- gl_code -->
+												<td th:text="${Trial[1]}"></td>
+												<td
+													th:text="${(Trial[2] != null and Trial[2] != 0) ? #numbers.formatDecimal(Trial[2] / 1000000, 0, 'COMMA', 2, 'POINT') : '0.00'}"
+													style="text-align: right"></td>
+												<!-- opening_bal in millions -->
+												<td
+													th:text="${(Trial[3] != null and Trial[3] != 0) ? #numbers.formatDecimal(Trial[3] / 1000000, 0, 'COMMA', 2, 'POINT') : '0.00'}"
+													style="text-align: right"></td>
+												<!-- credit in millions -->
+
+												<td
+													th:text="${(Trial[4] != null and Trial[4] != 0) ? #numbers.formatDecimal(Trial[4] / 1000000, 0, 'COMMA', 2, 'POINT') : '0.00'}"
+													style="text-align: right"></td>
+												<!-- debit in millions -->
+
+												<td
+													th:text="${(Trial[5] != null and Trial[5] != 0) ? #numbers.formatDecimal(Trial[5] / 1000000, 0, 'COMMA', 2, 'POINT') : '0.00'}"
+													style="text-align: right"></td>
+												<!-- net_change in millions -->
+
+												<td
+													th:text="${(Trial[6] != null and Trial[6] != 0) ? #numbers.formatDecimal(Trial[6] / 1000000, 0, 'COMMA', 2, 'POINT') : '0.00'}"
+													style="text-align: right"></td>
+												<!-- closing_bal in millions -->
+
 											</tr>
 										</tbody>
 									</table>
-
 								</div>
 								<div class="table-responsive mt-2">
 									<table class="table  table-bordered  table-hover table-sm"
@@ -487,25 +484,27 @@ input:hover+.password-info {
 										id="GLSHlist">
 
 										<thead class="thead-light">
-
-
 											<tr class="filters">
-												<th style="width: 20%"><input type="text"
-													class="form-control font-weight-bold"
-													placeholder="GLSH CODE" disabled></th>
-												<th style="width: 20%"><input type="text"
-													class="form-control font-weight-bold"
-													placeholder="ACCOUNT ID" disabled></th>
-												<th style="width: 20%; text-align: left"><input
-													type="text" class="form-control font-weight-bold"
-													placeholder="ACCOUNT NAME" disabled></th>
-												<th style="width: 20%; text-align: right"><input
-													type="text" style="text-align: right"
-													class="form-control font-weight-bold" placeholder="CREDITS"
+												<th><input type="text"
+													class="form-control font-weight-bold" placeholder="GL CODE"
 													disabled></th>
-												<th style="width: 20%; text-align: right"><input
-													type="text" style="text-align: right"
-													class="form-control font-weight-bold" placeholder="DEBITS"
+													<th><input type="text"
+													class="form-control font-weight-bold" placeholder="ACCOUNT NAME"
+													disabled></th>
+													<th><input type="text"
+													class="form-control font-weight-bold" placeholder="OPENING BALANCE"
+													disabled></th>
+													<th><input type="text"
+													class="form-control font-weight-bold" placeholder="CREDIT"
+													disabled></th>
+													<th><input type="text"
+													class="form-control font-weight-bold" placeholder="DEBIT"
+													disabled></th>
+													<th><input type="text"
+													class="form-control font-weight-bold" placeholder="NET CHANGE"
+													disabled></th>
+													<th><input type="text"
+													class="form-control font-weight-bold" placeholder="CLOSING BALANCE"
 													disabled></th>
 											</tr>
 										</thead>
@@ -549,6 +548,21 @@ input:hover+.password-info {
 							</div>
 						</div>
 					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" data-backdrop="false" data-keyboard="false" id="alert" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content" style="margin-left: -32%; width: 92%;height: 15%;">
+				<div class="modal-body" style="text-align: center;">
+					<h6 id="alertmsg"></h6>
+					<!--<button type="button" class="btn-primary big-btn" onclick="tab2()">Close</button>-->
+					<div>
+					<button type="button" class="btn-primary big-btn" data-dismiss="modal">Close</button>
+</div>
 				</div>
 			</div>
 		</div>
@@ -608,31 +622,32 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 data.forEach(trial => {
-                    const creditValue = trial[7] ? parseFloat(trial[7]) : 0.00;
-                    const debitValue = trial[8] ? parseFloat(trial[8]) : 0.00;
+                    // Convert to millions and parse float
+                    const value2 = trial[2] ? parseFloat(trial[2]) / 1000000 : 0.00; // trial[2]
+                    const creditValue = trial[3] ? parseFloat(trial[3]) / 1000000 : 0.00; // credit
+                    const debitValue = trial[4] ? parseFloat(trial[4]) / 1000000 : 0.00;  // debit
+                    const netChange = trial[5] ? parseFloat(trial[5]) / 1000000 : 0.00;  // net_change
+                    const closingBal = trial[6] ? parseFloat(trial[6]) / 1000000 : 0.00; // closing_bal
 
                     totalCredits += creditValue;
                     totalDebits += debitValue;
 
-                    const formattedCredit = creditValue.toLocaleString(undefined, {
-                        minimumFractionDigits: 2, maximumFractionDigits: 2
-                    });
-
-                    const formattedDebit = debitValue.toLocaleString(undefined, {
-                        minimumFractionDigits: 2, maximumFractionDigits: 2
-                    });
+                    // Format numbers with 2 decimals
+                    const formattedValue2 = value2.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const formattedCredit = creditValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const formattedDebit = debitValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const formattedNetChange = netChange.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const formattedClosingBal = closingBal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
                     $('#placelist').append(`
                         <tr>
-                            <td>${trial[0]}</td>
+                            <td class="text-primary" data-glshcode="${trial[0]}" data-date="${balancedate}" onclick="viewglshDAB(this);">${trial[0]}</td>
                             <td>${trial[1]}</td>
-                            <td>${trial[2]}</td>
-                            <td class="text-primary" data-glshcode="${trial[3]}" data-date="${balancedate}" onclick="viewglshDAB(this);">${trial[3]}</td>
-                            <td>${trial[4]}</td>
-                            <td>${trial[5]}</td>
-                            <td>${trial[6]}</td>
+                            <td style="text-align: right">${formattedValue2}</td>
                             <td style="text-align: right">${formattedCredit}</td>
                             <td style="text-align: right">${formattedDebit}</td>
+                            <td style="text-align: right">${formattedNetChange}</td>
+                            <td style="text-align: right">${formattedClosingBal}</td>
                         </tr>
                     `);
                 });
@@ -691,12 +706,17 @@ function formatDecimal(value) {
 }
 
 function viewglsh(element) {
+	document.getElementById('loadingModal').style.display = 'flex';
     var glshCode = element.getAttribute('data-glshcode'); 
    
     if (!glshCode) {
-        alert("GLSH Code not found.");
+        // Set the message in the modal
+        $('#alertmsg').text("GLSH Code not found.");
+        // Show the modal
+        $('#alert').modal('show');
         return;
     }
+
 
     var glshTable = $('#GLSHlist');
 
@@ -717,10 +737,14 @@ function viewglsh(element) {
         type: 'GET',
         data: { glshCode: glshCode },
         success: function(response) {
+        	document.getElementById('loadingModal').style.display = 'none';
             console.log(response);
 
             if (!response || response.length === 0) {
-                alert("No data found for the given GLSH Code.");
+            	    // Set the message in the modal
+            	    $('#alertmsg').text("No data found for the given GLSH Code.");
+            	    // Show the modal
+            	    $('#alert').modal('show');
                 return;
             }
 
@@ -744,17 +768,21 @@ function viewglsh(element) {
             });
         },
         error: function(xhr, status, error) {
+        	document.getElementById('loadingModal').style.display = 'none';
             console.error("Error fetching data: ", error);
-            alert("Failed to fetch data. Please try again.");
+            $('#alertmsg').text("Failed to fetch data. Please try again.");
+    	    $('#alert').modal('show');
         }
     });
 }
 
 function viewglshDAB(element) {
+	document.getElementById('loadingModal').style.display = 'flex';
     var glshCode = element.getAttribute('data-glshcode'); 
     var reportdate = element.getAttribute('data-date');
     if (!glshCode) {
-        alert("GLSH Code not found.");
+    	$('#alertmsg').text("GLSH Code not found.");
+	    $('#alert').modal('show');
         return;
     }
 
@@ -779,10 +807,12 @@ function viewglshDAB(element) {
         	reportdate: reportdate
         	},
         success: function(response) {
+        	document.getElementById('loadingModal').style.display = 'none';
             console.log(response);
 
             if (!response || response.length === 0) {
-                alert("No data found for the given GLSH Code.");
+            	$('#alertmsg').text("No data found for the given GLSH Code.");
+        	    $('#alert').modal('show');
                 return;
             }
 
@@ -806,14 +836,13 @@ function viewglshDAB(element) {
             });
         },
         error: function(xhr, status, error) {
+        	document.getElementById('loadingModal').style.display = 'none';
             console.error("Error fetching data: ", error);
-            alert("Failed to fetch data. Please try again.");
+            $('#alertmsg').text("Failed to fetch data. Please try again.");
+    	    $('#alert').modal('show');
         }
     });
 
 }
-
 </script>
-
-
 </html>

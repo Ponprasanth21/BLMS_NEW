@@ -1258,29 +1258,6 @@ public class BGLSNavigationController {
         return "TrialBalanceReports";
     }
 
-    @RequestMapping(value = "trialBalanceReports1", method = { RequestMethod.GET, RequestMethod.POST })
-    @ResponseBody
-    public List<Object[]> trialBalanceReports1(@RequestParam(required = false) String formmode,
-                                               @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date balancedate,
-                                               @RequestParam(required = false) String tran, Model md, HttpServletRequest rq) {
-
-        List<Object[]> balances = dAB_Repo.getbalance(balancedate);
-
-        // Convert List<Object[]> to List<Map<String, Object>>
-        List<Map<String, Object>> result = new ArrayList<>();
-        for (Object[] row : balances) {
-            Map<String, Object> rowMap = new HashMap<>();
-            rowMap.put("primary_gl_desc", row[0]); // gl_desc AS primary_gl_desc
-            rowMap.put("gl_code", row[1]); // gl_code
-            rowMap.put("glsh_code", row[2]); // glsh_code
-            rowMap.put("total_credit", row[3]); // total_credit
-            rowMap.put("total_debit", row[4]); // total_debit
-            rowMap.put("acct_crncy", row[5]); // acct_crncy
-            result.add(rowMap);
-        }
-        return balances;
-    }
-
     @RequestMapping(value = "assetliability", method = { RequestMethod.GET, RequestMethod.POST })
     @ResponseBody
     public Map<String, List<Object[]>> assetliability(@RequestParam(required = false) String formmode,
@@ -3315,8 +3292,29 @@ public class BGLSNavigationController {
         return "LeaseOperations";
     }
 
+    @RequestMapping(value = "trialBalanceReports1", method = { RequestMethod.GET, RequestMethod.POST })
+    @ResponseBody
+    public List<Object[]> trialBalanceReports1(@RequestParam(required = false) String formmode,
+                                               @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date balancedate,
+                                               @RequestParam(required = false) String tran, Model md, HttpServletRequest rq) {
 
+        List<Object[]> balances = chart_Acc_Rep.getListtraildate(balancedate);
 
+        // Convert List<Object[]> to List<Map<String, Object>>
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Object[] row : balances) {
+            Map<String, Object> rowMap = new HashMap<>();
+            rowMap.put("gl_code", row[0]);          // GL code
+            rowMap.put("acct_name", row[1]);        // Account name
+            rowMap.put("opening_bal", row[2]);      // Opening balance
+            rowMap.put("credit", row[3]);           // Total credit
+            rowMap.put("debit", row[4]);            // Total debt
+            rowMap.put("net_change", row[5]);       // Net change
+            rowMap.put("closing_bal", row[6]);      // Closing balance
+            result.add(rowMap);
+        }
+        return balances;
+    }
 
     @RequestMapping(value = "trialBalanceReports2", method = { RequestMethod.GET, RequestMethod.POST })
     public String trialBalanceReports2(@RequestParam(required = false) String formmode,
@@ -3329,8 +3327,8 @@ public class BGLSNavigationController {
             md.addAttribute("formmode", "list");
 
             System.out.println("balance");
-            md.addAttribute("trialbal", chart_Acc_Rep.getglcode());
-            md.addAttribute("trialbalance", chart_Acc_Rep.getList());
+            md.addAttribute("trialbal", chart_Acc_Rep.getListtrail());
+            //md.addAttribute("trialbalance", chart_Acc_Rep.getList());
             // Date TRANDATE = new Date(); // Replace with your actual date
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             String formattedDate = dateFormat.format(TRANDATE);
@@ -3352,8 +3350,8 @@ public class BGLSNavigationController {
             md.addAttribute("formmode", "list");
 
             System.out.println("balance");
-            md.addAttribute("trialbal", chart_Acc_Rep.getglcode());
-            md.addAttribute("trialbalance", chart_Acc_Rep.getList());
+            md.addAttribute("trialbal", chart_Acc_Rep.getListtrail());
+            //md.addAttribute("trialbalance", chart_Acc_Rep.getList());
             // Date TRANDATE = new Date(); // Replace with your actual date
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             String formattedDate = dateFormat.format(TRANDATE);
