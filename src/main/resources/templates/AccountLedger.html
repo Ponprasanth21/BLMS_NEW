@@ -783,28 +783,33 @@ function funcall() {
 function updateTable(data) {
     let rows = "";
 
-    data.forEach(chartacc => {
-        rows += `
-            <tr>
-                <td>${chartacc.classification || ""}</td>
-                <td style="color:blue; cursor:pointer;" 
-                    data-attr="${chartacc.acct_num}" 
-                    onclick="enquiryuser(this);">
-                    ${chartacc.acct_num || ""}
-                </td>
-                <td>${chartacc.acct_name || ""}</td>
-                <td>${chartacc.acct_crncy || ""}</td>
+	function formatNumber(num) {
+	    if (num == null || num === '' || isNaN(num) || num === 0) return '0.00';
+	    return Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+	}
 
-                <td style="text-align:right;">${chartacc.cr_amt === 0 ? "0.00" : formatNumber(chartacc.cr_amt)}</td>
-                <td style="text-align:right;">${chartacc.dr_amt === 0 ? "0.00" : formatNumber(chartacc.dr_amt)}</td>
-                <td style="text-align:right;">${chartacc.acct_bal === 0 ? "0.00" : formatNumber(chartacc.acct_bal)}</td>
+	data.forEach(chartacc => {
+	    rows += `
+	        <tr>
+	            <td>${chartacc.classification || ""}</td>
+	            <td style="color:blue; cursor:pointer;" 
+	                data-attr="${chartacc.acct_num}" 
+	                onclick="enquiryuser(this);">
+	                ${chartacc.acct_num || ""}
+	            </td>
+	            <td>${chartacc.acct_name || ""}</td>
+	            <td>${chartacc.acct_crncy || ""}</td>
 
-                <td style="color:${chartacc.acct_status === 'Active' || chartacc.acct_status === 'Y' ? 'green' : 'red'};">
-                    ${mapStatus(chartacc.acct_status)}
-                </td>
-            </tr>
-        `;
-    });
+	            <td style="text-align:right;">${formatNumber(chartacc.cr_amt)}</td>
+	            <td style="text-align:right;">${formatNumber(chartacc.dr_amt)}</td>
+	            <td style="text-align:right;">${formatNumber(chartacc.acct_bal)}</td>
+
+	            <td style="color:${chartacc.acct_status === 'Active' || chartacc.acct_status === 'Y' ? 'green' : 'red'};">
+	                ${mapStatus(chartacc.acct_status)}
+	            </td>
+	        </tr>
+	    `;
+	});
 
     $("#placelist").html(rows);
 }
@@ -816,8 +821,8 @@ function formatNumber(num) {
 
 // mapping status values like thymeleaf switch
 function mapStatus(status) {
-    if (status === "Active" || status === "Y") return "Active";
-    if (status === "N" || status === "Closed") return "Closed";
+    if (status == "Active" || status == "Y") return "Active";
+    if (status == "N" || status == "Closed" || status == null || status == "INACTIVE") return "Closed";
     return status;
 }
 

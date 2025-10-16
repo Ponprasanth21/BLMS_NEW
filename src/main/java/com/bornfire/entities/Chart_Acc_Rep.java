@@ -12,13 +12,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 
-	@Query(value = "SELECT SUM(TO_NUMBER(total_balance)) "
-			+ "FROM BGLS_GL_WORK "
+	@Query(value = "SELECT SUM(TO_NUMBER(total_balance)) " + "FROM BGLS_GL_WORK "
 			+ "WHERE TO_NUMBER(total_balance) < 0", nativeQuery = true)
 	String getacctbaldebit();
 
-	@Query(value = "SELECT SUM(TO_NUMBER(total_balance)) "
-			+ "FROM BGLS_GL_WORK "
+	@Query(value = "SELECT SUM(TO_NUMBER(total_balance)) " + "FROM BGLS_GL_WORK "
 			+ "WHERE TO_NUMBER(total_balance) > 0", nativeQuery = true)
 	String getacctbalcredit();
 
@@ -39,7 +37,7 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 
 	@Query(value = "SELECT * FROM BGLS_CHART_OF_ACCOUNTS WHERE del_flg='N' AND own_type ='O' ORDER BY ACCT_NUM, CLASSIFICATION ASC", nativeQuery = true)
 	List<Chart_Acc_Entity> getListoffice();
-	
+
 	@Query(value = "SELECT " + "a.gl_code, " + "a.ACCT_NAME, " + "SUM(b.TRAN_DATE_BAL) AS opening_bal, "
 			+ "SUM(a.CR_AMT) AS credit, " + "SUM(a.DR_AMT) AS debit, "
 			+ "ABS(SUM(a.DR_AMT) - SUM(a.CR_AMT)) AS net_change, "
@@ -99,12 +97,9 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 	List<Chart_Acc_Entity> getglsh(String glshCode);
 
 	@Query(value = "SELECT DISTINCT GLSH_CODE, CLASSIFICATION, GL_DESC, ACCT_CRNCY, GL_CODE, GLSH_DESC, "
-			+ "COUNT(GLSH_CODE) AS total_count, "
-			+ "SUM(CASE WHEN acct_bal > 0 THEN acct_bal ELSE 0 END) AS cr_amt, "
-			+ "SUM(CASE WHEN acct_bal < 0 THEN ABS(acct_bal) ELSE 0 END) AS dr_amt "
-			+ "FROM BGLS_CHART_OF_ACCOUNTS "
-			+ "WHERE del_flg = 'N' "
-			+ "GROUP BY GLSH_CODE, CLASSIFICATION, GL_DESC, ACCT_CRNCY, GL_CODE, GLSH_DESC "
+			+ "COUNT(GLSH_CODE) AS total_count, " + "SUM(CASE WHEN acct_bal > 0 THEN acct_bal ELSE 0 END) AS cr_amt, "
+			+ "SUM(CASE WHEN acct_bal < 0 THEN ABS(acct_bal) ELSE 0 END) AS dr_amt " + "FROM BGLS_CHART_OF_ACCOUNTS "
+			+ "WHERE del_flg = 'N' " + "GROUP BY GLSH_CODE, CLASSIFICATION, GL_DESC, ACCT_CRNCY, GL_CODE, GLSH_DESC "
 			+ "ORDER BY GLSH_CODE ASC", nativeQuery = true)
 	Object[] getglcode();
 
@@ -126,20 +121,13 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 	@Query(value = "SELECT ACCT_BAL FROM BGLS_CHART_OF_ACCOUNTS WHERE ACCT_NUM=?1", nativeQuery = true)
 	BigDecimal getaccountbal(String acc_num);
 
-	@Query(value = "SELECT * " +
-            "FROM BGLS_CHART_OF_ACCOUNTS " +
-            "WHERE del_flg = 'N' " +
-            "  AND OWN_TYPE IN ('O') " +
-            "ORDER BY ACCT_NUM, CLASSIFICATION ASC",
-    nativeQuery = true)
-List<Chart_Acc_Entity> getListoffice1();
+	@Query(value = "SELECT * " + "FROM BGLS_CHART_OF_ACCOUNTS " + "WHERE del_flg = 'N' "
+			+ "  AND OWN_TYPE IN ('O', 'M') " + // <-- include 'M'
+			"ORDER BY ACCT_NUM, CLASSIFICATION ASC", nativeQuery = true)
+	List<Chart_Acc_Entity> getListoffice1();
 
-@Query(value = "SELECT * " +
-        "FROM BGLS_CHART_OF_ACCOUNTS " +
-        "WHERE del_flg = 'N' " +
-        "  AND OWN_TYPE IN ('C') " +
-        "ORDER BY ACCT_NUM, CLASSIFICATION ASC",
-nativeQuery = true)
-List<Chart_Acc_Entity> getListofCustomer();
+	@Query(value = "SELECT * " + "FROM BGLS_CHART_OF_ACCOUNTS " + "WHERE del_flg = 'N' " + "  AND OWN_TYPE IN ('C') "
+			+ "ORDER BY ACCT_NUM, CLASSIFICATION ASC", nativeQuery = true)
+	List<Chart_Acc_Entity> getListofCustomer();
 
 }

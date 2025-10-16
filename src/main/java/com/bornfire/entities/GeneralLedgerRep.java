@@ -22,7 +22,7 @@ public interface GeneralLedgerRep extends CrudRepository<GeneralLedgerEntity,Str
 	@Query(value = "SELECT * from BGLS_GENERAL_LED WHERE glsh_code=?1 ", nativeQuery = true)
 	GeneralLedgerEntity getRefMaster(String glsh_code);
 	
-	@Query(value = "SELECT * from BGLS_GENERAL_LED_COPY where del_flg ='N'", nativeQuery = true)
+	@Query(value = "SELECT * from BGLS_GENERAL_LED where del_flg ='N'", nativeQuery = true)
 	List<GeneralLedgerEntity> getlistvalue();
 	
 	@Query(value = "SELECT * from BGLS_GENERAL_LED WHERE GLSH_CODE=?1", nativeQuery = true)

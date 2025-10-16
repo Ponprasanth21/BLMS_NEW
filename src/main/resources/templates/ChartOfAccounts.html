@@ -1,580 +1,581 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="/ASPIRA/js/jquery.min.js"></script>
-<script src="/ASPIRA/js/jquery-ui.min.js"></script>
-<style>
-.btn {
-	line-height: 0.5rem;
-}
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="/ASPIRA/js/jquery.min.js"></script>
+	<script src="/ASPIRA/js/jquery-ui.min.js"></script>
+	<style>
+		.btn {
+			line-height: 0.5rem;
+		}
 
-.table-bordered td, .table-bordered th {
-	font-size: smaller;
-}
+		.table-bordered td,
+		.table-bordered th {
+			font-size: smaller;
+		}
 
-.container-manager {
-	width: 83.5%;
-	padding-right: 15px;
-	padding-left: 15px;
-	margin-right: auto;
-	margin-left: 17.3%;
-	margin-top: 80px;
-	margin-top: 80px;
-}
+		.container-manager {
+			width: 83.5%;
+			padding-right: 15px;
+			padding-left: 15px;
+			margin-right: auto;
+			margin-left: 17.3%;
+			margin-top: 80px;
+			margin-top: 80px;
+		}
 
-.table .thead-light th {
-	color: #495057;
-	background-color: #e9ecef;
-	border-color: #dee2e6;
-	width: 23px;
-}
-</style>
-<style>
-.modal {
-	display: none;
-	position: fixed;
-	z-index: 1;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	overflow: auto;
-	background-color: rgba(0, 0, 0, 0.4);
-	margin-left: 350px;
-}
+		.table .thead-light th {
+			color: #495057;
+			background-color: #e9ecef;
+			border-color: #dee2e6;
+			width: 23px;
+		}
+	</style>
+	<style>
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: rgba(0, 0, 0, 0.4);
+			margin-left: 350px;
+		}
 
-.modal-content {
-	background-color: #fefefe;
-	margin: 15% auto;
-	padding: 20px;
-	border: 1px solid #888;
-	width: 70%;
-	height: 50%;
-	margin-left: 200px;
-}
+		.modal-content {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 70%;
+			height: 50%;
+			margin-left: 200px;
+		}
 
-.modal-pass {
-	background-color: #fefefe;
-	margin: 15% auto;
-	padding: 20px;
-	border: 1px solid #888;
-	width: 40%;
-	height: 25%;
-	margin-left: 400PX;
-	margin-right: auto;
-	border-radius: 10px;
-	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
-	/* Adding shadow for depth */
-	font-family: Arial, sans-serif; /* Using a more common font */
-}
+		.modal-pass {
+			background-color: #fefefe;
+			margin: 15% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 40%;
+			height: 25%;
+			margin-left: 400PX;
+			margin-right: auto;
+			border-radius: 10px;
+			box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+			/* Adding shadow for depth */
+			font-family: Arial, sans-serif;
+			/* Using a more common font */
+		}
 
-.close {
-	color: red;
-	font-size: 28px;
-	font-weight: bold;
-}
+		.close {
+			color: red;
+			font-size: 28px;
+			font-weight: bold;
+		}
 
-.tablinks.active {
-	background-color: #007bff;
-	color: #fff;
-}
-</style>
-<style>
-.password-info {
-	visibility: hidden;
-	width: 320px;
-	background-color: #333;
-	color: #fff;
-	text-align: left;
-	border-radius: 10px;
-	padding: 10px;
-	position: absolute;
-	z-index: 1;
-	top: calc(100% + 10px);
-	left: 50%;
-	transform: translateX(-50%);
-	opacity: 0;
-	transition: opacity 0.3s;
-}
+		.tablinks.active {
+			background-color: #007bff;
+			color: #fff;
+		}
+	</style>
+	<style>
+		.password-info {
+			visibility: hidden;
+			width: 320px;
+			background-color: #333;
+			color: #fff;
+			text-align: left;
+			border-radius: 10px;
+			padding: 10px;
+			position: absolute;
+			z-index: 1;
+			top: calc(100% + 10px);
+			left: 50%;
+			transform: translateX(-50%);
+			opacity: 0;
+			transition: opacity 0.3s;
+		}
 
-input:hover+.password-info {
-	visibility: visible;
-	opacity: 0.8;
-}
+		input:hover+.password-info {
+			visibility: visible;
+			opacity: 0.8;
+		}
 
-.filterable .filters input[disabled] {
-	background-color: transparent;
-	border: none;
-	cursor: auto;
-	box-shadow: none;
-	padding: 0;
-	height: auto;
-}
+		.filterable .filters input[disabled] {
+			background-color: transparent;
+			border: none;
+			cursor: auto;
+			box-shadow: none;
+			padding: 0;
+			height: auto;
+		}
 
-.filterable .filters input[disabled]::-webkit-input-placeholder {
-	color: #333;
-}
+		.filterable .filters input[disabled]::-webkit-input-placeholder {
+			color: #333;
+		}
 
-.filterable .filters input[disabled]::-moz-placeholder {
-	color: #333;
-}
+		.filterable .filters input[disabled]::-moz-placeholder {
+			color: #333;
+		}
 
-.filterable .filters input[disabled]:-ms-input-placeholder {
-	color: #333;
-}
+		.filterable .filters input[disabled]:-ms-input-placeholder {
+			color: #333;
+		}
 
-.filterable .filters input[disabled]::-webkit-input-placeholder {
-	color: #333;
-}
-.big-btn {
-  font-size: 16px;
-}
-</style>
+		.filterable .filters input[disabled]::-webkit-input-placeholder {
+			color: #333;
+		}
 
-<script>
-	function Home() {
+		.big-btn {
+			font-size: 16px;
+		}
+	</style>
 
-		location.href = 'Dashboard';
-	}
+	<script>
+		function Home() {
 
-	function Back() {
-		window.history.back();
-	}
-	
-	function adduser(a) {
+			location.href = 'Dashboard';
+		}
 
-		location.href = 'chartOfAccounts?formmode=add';
+		function Back() {
+			window.history.back();
+		}
 
-	}
-	
-	function modifyuser(a) {
-		var acctno = a.getAttribute("data-attr"); 
-		location.href = 'chartOfAccounts?formmode=modify&acct_num=' + acctno;
-	}
+		function adduser(a) {
 
-	function enquiryuser(a) {
-		var acctno = a.getAttribute("data-attr"); 
-		location.href = 'chartOfAccounts?formmode=view&acct_num=' + acctno;
-	}
-	
-	function verifyuser(a) {
-		var acctno = a.getAttribute("data-attr"); 
-		location.href = 'chartOfAccounts?formmode=verify&acct_num=' + acctno;
-	}
-	
-	function deleteUser(button) {
-	    var acctNo = button.getAttribute("data-attribute"); 
-	    location.href = 'chartOfAccounts?formmode=delete&acct_num=' + acctNo;
-	}
-	
-	function addsubmit(a) {
-		
-		const acct = document.getElementById("acct_num").value.trim();
+			location.href = 'chartOfAccounts?formmode=add';
 
-		if (acct === "") {
-			alert("Please fill out the Account ID field.");
-		} else {
+		}
+
+		function modifyuser(a) {
+			var acctno = a.getAttribute("data-attr");
+			location.href = 'chartOfAccounts?formmode=modify&acct_num=' + acctno;
+		}
+
+		function enquiryuser(a) {
+			var acctno = a.getAttribute("data-attr");
+			location.href = 'chartOfAccounts?formmode=view&acct_num=' + acctno;
+		}
+
+		function verifyuser(a) {
+			var acctno = a.getAttribute("data-attr");
+			location.href = 'chartOfAccounts?formmode=verify&acct_num=' + acctno;
+		}
+
+		function deleteUser(button) {
+			var acctNo = button.getAttribute("data-attribute");
+			location.href = 'chartOfAccounts?formmode=delete&acct_num=' + acctNo;
+		}
+
+		function addsubmit(a) {
+
+			const acct = document.getElementById("acct_num").value.trim();
+
+			if (acct === "") {
+				alert("Please fill out the Account ID field.");
+			} else {
+				$.ajax({
+					url: './AddScreens',
+					data: $("#caid").serialize(),
+					type: 'POST',
+					success: function (data) {
+						alert(data);
+						window.history.back();
+					}
+				});
+			}
+		};
+
+		function verifysubmit(a) {
 			$.ajax({
-				url : './AddScreens',
-				data : $("#caid").serialize(),
-				type : 'POST',
-				success : function(data) {
+				url: './VerifyScreens',
+				data: $("#caid").serialize(),
+				type: 'POST',
+				success: function (data) {
+					alert(data);
+					window.history.back();
+				}
+			});
+
+		};
+
+		function deletesubmit(button) { // Use 'button' to match the parameter
+
+			$.ajax({
+				url: './DeleteScreens', // Append acct_num to the URL
+				data: $("#caid").serialize(),
+				type: 'POST',
+				success: function (data) {
 					alert(data);
 					window.history.back();
 				}
 			});
 		}
-	};
-	
-function verifysubmit(a) {
-			$.ajax({
-				url : './VerifyScreens',
-				data : $("#caid").serialize(),
-				type : 'POST',
-				success : function(data) {
-					alert(data);
-					window.history.back();
-				}
-			});
-		
-	};
-	
-	function deletesubmit(button) { // Use 'button' to match the parameter
-
-	    $.ajax({
-	        url: './DeleteScreens', // Append acct_num to the URL
-	        data: $("#caid").serialize(),
-	        type: 'POST',
-	        success: function(data) {
-	            alert(data);
-	            window.history.back();
-	        }
-	    });
-	}
 
 
-	function RefCode(a) {
-		event.preventDefault();
-		var ref = document.getElementById("RefButton");
-		ref.classList.add("active");
+		function RefCode(a) {
+			event.preventDefault();
+			var ref = document.getElementById("RefButton");
+			ref.classList.add("active");
 
-		var gl = document.getElementById("GLButton");
-		gl.classList.remove("active");
+			var gl = document.getElementById("GLButton");
+			gl.classList.remove("active");
 
-		 var scheme = document.getElementById("param");
-		scheme.classList.remove("active"); 
+			var scheme = document.getElementById("param");
+			scheme.classList.remove("active");
 
-		var chart = document.getElementById("chartOfAccounts");
-		chart.classList.remove("active");
+			var chart = document.getElementById("chartOfAccounts");
+			chart.classList.remove("active");
 
-		var act = document.getElementById("accountLedger");
-		act.classList.remove("active");
+			var act = document.getElementById("accountLedger");
+			act.classList.remove("active");
 
-		location.href = './refCodeMain?formmode=list';
-	}
+			location.href = './refCodeMain?formmode=list';
+		}
 
-	function GLStruct(a) {
-		event.preventDefault();
-		var ref = document.getElementById("RefButton");
-		ref.classList.remove("active");
+		function GLStruct(a) {
+			event.preventDefault();
+			var ref = document.getElementById("RefButton");
+			ref.classList.remove("active");
 
-		var gl = document.getElementById("GLButton");
-		gl.classList.add("active");
+			var gl = document.getElementById("GLButton");
+			gl.classList.add("active");
 
-		 var scheme = document.getElementById("param");
-		scheme.classList.remove("active"); 
+			var scheme = document.getElementById("param");
+			scheme.classList.remove("active");
 
-		var chart = document.getElementById("chartOfAccounts");
-		chart.classList.remove("active");
+			var chart = document.getElementById("chartOfAccounts");
+			chart.classList.remove("active");
 
-		var act = document.getElementById("accountLedger");
-		act.classList.remove("active");
+			var act = document.getElementById("accountLedger");
+			act.classList.remove("active");
 
-		location.href = './glcode';
-	}
+			location.href = './glcode';
+		}
 
-	function SchemeCode(a) {
-		event.preventDefault();
-		var ref = document.getElementById("RefButton");
-		ref.classList.remove("active");
+		function SchemeCode(a) {
+			event.preventDefault();
+			var ref = document.getElementById("RefButton");
+			ref.classList.remove("active");
 
-		var gl = document.getElementById("GLButton");
-		gl.classList.remove("active");
+			var gl = document.getElementById("GLButton");
+			gl.classList.remove("active");
 
-		var scheme = document.getElementById("param");
-		scheme.classList.add("active"); 
+			var scheme = document.getElementById("param");
+			scheme.classList.add("active");
 
-		var chart = document.getElementById("chartOfAccounts");
-		chart.classList.remove("active");
+			var chart = document.getElementById("chartOfAccounts");
+			chart.classList.remove("active");
 
-		var act = document.getElementById("accountLedger");
-		act.classList.remove("active");
+			var act = document.getElementById("accountLedger");
+			act.classList.remove("active");
 
-		location.href = './Parameter';
-	}
+			location.href = './Parameter';
+		}
 
-	function Chart(a) {
-		event.preventDefault();
-		var ref = document.getElementById("RefButton");
-		ref.classList.remove("active");
+		function Chart(a) {
+			event.preventDefault();
+			var ref = document.getElementById("RefButton");
+			ref.classList.remove("active");
 
-		var gl = document.getElementById("GLButton");
-		gl.classList.remove("active");
+			var gl = document.getElementById("GLButton");
+			gl.classList.remove("active");
 
-		var scheme = document.getElementById("param");
-		scheme.classList.remove("active");
+			var scheme = document.getElementById("param");
+			scheme.classList.remove("active");
 
-		var chart = document.getElementById("chartOfAccounts");
-		chart.classList.add("active");
+			var chart = document.getElementById("chartOfAccounts");
+			chart.classList.add("active");
 
-		var act = document.getElementById("accountLedger");
-		act.classList.remove("active");
+			var act = document.getElementById("accountLedger");
+			act.classList.remove("active");
 
-		location.href = './chartOfAccounts';
-	}
+			location.href = './chartOfAccounts';
+		}
 
-	function Account(a) {
-		event.preventDefault();
-		var ref = document.getElementById("RefButton");
-		ref.classList.remove("active");
+		function Account(a) {
+			event.preventDefault();
+			var ref = document.getElementById("RefButton");
+			ref.classList.remove("active");
 
-		var gl = document.getElementById("GLButton");
-		gl.classList.remove("active");
+			var gl = document.getElementById("GLButton");
+			gl.classList.remove("active");
 
-		var scheme = document.getElementById("param");
-		scheme.classList.remove("active");
+			var scheme = document.getElementById("param");
+			scheme.classList.remove("active");
 
-		var chart = document.getElementById("chartOfAccounts");
-		chart.classList.remove("active");
+			var chart = document.getElementById("chartOfAccounts");
+			chart.classList.remove("active");
 
-		var act = document.getElementById("accountLedger");
-		act.classList.add("active");
+			var act = document.getElementById("accountLedger");
+			act.classList.add("active");
 
-		location.href = './accountLedger';
-	}
-	
-	//Filter Table
-	
-	$(document)
-		.ready(
-				function() {
+			location.href = './accountLedger';
+		}
+
+		//Filter Table
+
+		$(document)
+			.ready(
+				function () {
 					$('.filterable .btn-filter')
-							.click(
-									function() {
-										var $panel = $(this).parents(
-												'.filterable'), $filters = $panel
-												.find('.filters input'), $tbody = $panel
-												.find('.table tbody');
-										if ($filters.prop('disabled') == true) {
-											$filters
-													.prop('disabled', false);
-											$filters.first().focus();
-										} else {
-											$filters.val('').prop(
-													'disabled', true);
-											$tbody.find('.no-result')
-													.remove();
-											$tbody.find('tr').show();
-										}
-									});
+						.click(
+							function () {
+								var $panel = $(this).parents(
+									'.filterable'), $filters = $panel
+										.find('.filters input'), $tbody = $panel
+											.find('.table tbody');
+								if ($filters.prop('disabled') == true) {
+									$filters
+										.prop('disabled', false);
+									$filters.first().focus();
+								} else {
+									$filters.val('').prop(
+										'disabled', true);
+									$tbody.find('.no-result')
+										.remove();
+									$tbody.find('tr').show();
+								}
+							});
 
 					$('.filterable .filters input')
-							.keyup(
-									function(e) {
-										/* Ignore tab key */
-										var code = e.keyCode || e.which;
-										if (code == '9')
-											return;
-										/* Useful DOM data and selectors */
-										var $input = $(this), inputContent = $input
-												.val().toLowerCase(), $panel = $input
-												.parents('.filterable'), column = $panel
-												.find('.filters th')
-												.index($input.parents('th')), $table = $panel
+						.keyup(
+							function (e) {
+								/* Ignore tab key */
+								var code = e.keyCode || e.which;
+								if (code == '9')
+									return;
+								/* Useful DOM data and selectors */
+								var $input = $(this), inputContent = $input
+									.val().toLowerCase(), $panel = $input
+										.parents('.filterable'), column = $panel
+											.find('.filters th')
+											.index($input.parents('th')), $table = $panel
 												.find('.table'), $rows = $table
-												.find('tbody tr');
-										/* Dirtiest filter function ever ;) */
-										var $filteredRows = $rows
-												.filter(function() {
-													var value = $(this)
-															.find('td').eq(
-																	column)
-															.text()
-															.toLowerCase();
-													return value
-															.indexOf(inputContent) === -1;
-												});
-										/* Clean previous no-result if exist */
-										$table.find('tbody .no-result')
-												.remove();
-										/* Show all rows, hide filtered ones (never do that outside of a demo ! xD) */
-										$rows.show();
-										$filteredRows.hide();
-										/* Prepend no-result row if all rows are filtered */
-										if ($filteredRows.length === $rows.length) {
-											$table
-													.find('tbody')
-													.prepend(
-															$('<tr class="no-result text-center"><td colspan="'
-																	+ $table
-																			.find('.filters th').length
-																	+ '">No result found</td></tr>'));
-										}
+													.find('tbody tr');
+								/* Dirtiest filter function ever ;) */
+								var $filteredRows = $rows
+									.filter(function () {
+										var value = $(this)
+											.find('td').eq(
+												column)
+											.text()
+											.toLowerCase();
+										return value
+											.indexOf(inputContent) === -1;
 									});
+								/* Clean previous no-result if exist */
+								$table.find('tbody .no-result')
+									.remove();
+								/* Show all rows, hide filtered ones (never do that outside of a demo ! xD) */
+								$rows.show();
+								$filteredRows.hide();
+								/* Prepend no-result row if all rows are filtered */
+								if ($filteredRows.length === $rows.length) {
+									$table
+										.find('tbody')
+										.prepend(
+											$('<tr class="no-result text-center"><td colspan="'
+												+ $table
+													.find('.filters th').length
+												+ '">No result found</td></tr>'));
+								}
+							});
 				});
-				
-				function modifysubmit(a) {
-				    const acct = document.getElementById("acct_num").value.trim();
-				    alert("THE ACCOUNT NUMBER IS " + acct);
 
-				    if (acct === "") {
-				        alert("Please fill out the Account Number field.");
-				    } else {
-				        $.ajax({
-				            url: './ModifyScreens?acct=' + encodeURIComponent(acct), // Add the acct parameter to the URL
-				            data: $("#caid").serialize(), // Send the form data separately
-				            type: 'POST',
-				            success: function(data) {
-				                alert(data); // Display the response
-				                window.history.back(); // Navigate back
-				            },
-				            error: function(xhr, status, error) {
-				                alert("An error occurred: " + error); // Handle errors
-				            }
-				        });
-				    }
-				};
-				
-				document.addEventListener("DOMContentLoaded", function() {
-				        // Make all input fields readonly
-				        // document.querySelectorAll('#caid input').forEach(input => {
-				        //     input.readOnly = true;
-				        // });
+		function modifysubmit(a) {
+			const acct = document.getElementById("acct_num").value.trim();
+			alert("THE ACCOUNT NUMBER IS " + acct);
 
-				        // Make all select fields disabled
-				        // document.querySelectorAll('#caid select').forEach(select => {
-				        //     select.disabled = true;
-				        // });
-				    });
-</script>
-<script>
-	/* function for the table scroll */
-	function adjustHeight() {
-		const cardBody = document.getElementById("cardBody");
-		const viewportHeight = window.innerHeight;
-		cardBody.style.maxHeight = `${viewportHeight * 0.90}px`; // Adjust 80% of the viewport height
-	}
+			if (acct === "") {
+				alert("Please fill out the Account Number field.");
+			} else {
+				$.ajax({
+					url: './ModifyScreens?acct=' + encodeURIComponent(acct), // Add the acct parameter to the URL
+					data: $("#caid").serialize(), // Send the form data separately
+					type: 'POST',
+					success: function (data) {
+						alert(data); // Display the response
+						window.history.back(); // Navigate back
+					},
+					error: function (xhr, status, error) {
+						alert("An error occurred: " + error); // Handle errors
+					}
+				});
+			}
+		};
 
-	window.addEventListener("resize", adjustHeight);
-	document.addEventListener("DOMContentLoaded", adjustHeight);
-</script>
+		document.addEventListener("DOMContentLoaded", function () {
+			// Make all input fields readonly
+			// document.querySelectorAll('#caid input').forEach(input => {
+			//     input.readOnly = true;
+			// });
 
+			// Make all select fields disabled
+			// document.querySelectorAll('#caid select').forEach(select => {
+			//     select.disabled = true;
+			// });
+		});
+	</script>
+	<script>
+		/* function for the table scroll */
+		function adjustHeight() {
+			const cardBody = document.getElementById("cardBody");
+			const viewportHeight = window.innerHeight;
+			cardBody.style.maxHeight = `${viewportHeight * 0.90}px`; // Adjust 80% of the viewport height
+		}
 
-<!-- suresh -->
-<script th:inline="javascript">
+		window.addEventListener("resize", adjustHeight);
+		document.addEventListener("DOMContentLoaded", adjustHeight);
+	</script>
 
 
-
-function updateTable(data) {
-    let rows = "";
-var current_user = /*[[${session.USERID}]]*/ '';
-    data.forEach(chartacc => {
-        rows += `
-            <tr>
-                <td>${chartacc.classification || ""}</td>
-                <td>${chartacc.gl_code || ""}</td>
-                <td>${chartacc.schm_code || ""}</td>
-                <td class="text-primary" 
-                    data-attr="${chartacc.acct_num || ""}" 
-                    onclick="enquiryuser(this);">
-                    ${chartacc.acct_num || ""}
-                </td>
-                <td>${chartacc.acct_name || ""}</td>
-                <td>${chartacc.acct_crncy || ""}</td>
-
-                <td style="text-align:right;">
-                    ${formatNumber(chartacc.cr_amt)}
-                </td>
-                <td style="text-align:right;">
-                    ${formatNumber(chartacc.dr_amt)}
-                </td>
-                <td style="text-align:right;">
-                    ${formatNumber(chartacc.acct_bal)}
-                </td>
-
-                <td style="color:${chartacc.entity_flg === 'Y' ? 'green' : 'red'};">
-                    ${chartacc.entity_flg === 'Y' ? 'Active' : 'Inactive'}
-                </td>
-
-                <td>
-                    <div class="dropdown action-dropdown">
-                        <button class="btn btn-action dropdown-toggle" style="padding:0px"
-                            type="button" id="dropdownMenuButton" title="Action"
-                            data-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false">Action</button>
-
-                        <div class="dropdown-menu" style="padding:0px"
-                            aria-labelledby="dropdownMenuButton" >
-                            
-                            <!-- Modify -->
-                            <a class="dropdown-item modify-item"
-                                data-attr="${chartacc.acct_num || ""}" title="Modify"
-								 ${chartacc.entry_user == current_user && chartacc.modify_flg == 'Y' ? '' : 'style="display:none;"'} 
-                                onclick="modifyuser(this)">Modify</a>
-
-                            <div class="dropdown-divider" ${chartacc.entry_user != current_user && chartacc.verify_flg == 'Y' ? '' : 'style="display:none;"' }   ></div>
-
-                            <!-- Verify -->
-                            <a class="dropdown-item verify-item"
-                                data-attr="${chartacc.acct_num || ""}" title="Verify"
-								${chartacc.entry_user != current_user && chartacc.verify_flg == 'Y' ? '' : 'style="display:none;"' }  
-                                onclick="verifyuser(this)">Verify</a>
-
-                            <div class="dropdown-divider" ${chartacc.entry_user == current_user && chartacc.verify_flg == 'N' ? '' : 'style="display:none;"'}  ></div>
-
-                            <!-- Delete -->
-                            <a class="dropdown-item delete-item"
-                                data-attribute="${chartacc.acct_num || ""}" title="Delete"
-								 ${chartacc.entry_user == current_user && chartacc.verify_flg == 'N' ? '' : 'style="display:none;"'} 
-                                onclick="deleteUser(this)">Delete</a>
-
-                            <div class="dropdown-divider"></div>
-
-                            <!-- View -->
-                            <a class="dropdown-item view-item"
-                                data-attr="${chartacc.acct_num || ""}" title="View"
-                                onclick="enquiryuser(this)">View</a>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        `;
-    });
-
-    $("#placelist").html(rows);
-}
-
-// Number formatting function (2 decimals, comma separator)
-function formatNumber(num) {
-    if (num == null || isNaN(num)) return "0.00";
-    return Number(num).toLocaleString("en-IN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-}
+	<!-- suresh -->
+	<script th:inline="javascript">
 
 
-// mapping status values like thymeleaf switch
-function mapStatus(status) {
-    if (status === "Active" || status === "Y") return "Active";
-    if (status === "N" || status === "Closed") return "Closed";
-    return status;
-}
+
+		function updateTable(data) {
+			let rows = "";
+
+			function formatNumber(num) {
+				if (num == null || num === '' || isNaN(num)) return '0.00';
+				return Number(num).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+			}
+
+			data.forEach(chartacc => {
+				rows += `
+		        <tr>
+		            <td>${chartacc.classification || ""}</td>
+		            <td>${chartacc.gl_code || ""}</td>
+		            <td>${chartacc.schm_code || ""}</td>
+		            <td class="text-primary" 
+		                data-attr="${chartacc.acct_num || ""}" 
+		                onclick="enquiryuser(this);">
+		                ${chartacc.acct_num || ""}
+		            </td>
+		            <td style="white-space:nowrap;">${chartacc.acct_name || ""}</td>
+		            <td>${chartacc.acct_crncy || ""}</td>
+
+		            <td style="text-align:right;">
+		                ${formatNumber(chartacc.cr_amt)}
+		            </td>
+		            <td style="text-align:right;">
+		                ${formatNumber(chartacc.dr_amt)}
+		            </td>
+		            <td style="text-align:right;">
+		                ${formatNumber(chartacc.acct_bal)}
+		            </td>
+
+		            <td style="color:${chartacc.entity_flg === 'Y' ? 'green' : 'red'};">
+		                ${chartacc.entity_flg === 'Y' ? 'Active' : 'Inactive'}
+		            </td>
+
+		            <td>
+		                <div class="dropdown action-dropdown">
+		                    <button class="btn btn-action dropdown-toggle" style="padding:0px"
+		                        type="button" id="dropdownMenuButton" title="Action"
+		                        data-toggle="dropdown" aria-haspopup="true"
+		                        aria-expanded="false">Action</button>
+
+		                    <div class="dropdown-menu" style="padding:0px"
+		                        aria-labelledby="dropdownMenuButton">
+		                        
+		                        <a class="dropdown-item modify-item"
+		                            data-attr="${chartacc.acct_num || ""}" title="Modify"
+		                            onclick="modifyuser(this)">Modify</a>
+
+		                        <div class="dropdown-divider"></div>
+
+		                        <a class="dropdown-item verify-item"
+		                            data-attr="${chartacc.acct_num || ""}" title="Verify"
+		                            onclick="verifyuser(this)">Verify</a>
+
+		                        <div class="dropdown-divider"></div>
+
+		                        <a class="dropdown-item delete-item"
+		                            data-attribute="${chartacc.acct_num || ""}" title="Delete"
+		                            onclick="deleteUser(this)">Delete</a>
+
+		                        <div class="dropdown-divider"></div>
+
+		                        <a class="dropdown-item view-item"
+		                            data-attr="${chartacc.acct_num || ""}" title="View"
+		                            onclick="enquiryuser(this)">View</a>
+		                    </div>
+		                </div>
+		            </td>
+		        </tr>
+		    `;
+			});
+
+			$("#placelist").html(rows);
+		}
+
+		// Number formatting function (2 decimals, comma separator)
+		function formatNumber(num) {
+			if (num == null || isNaN(num)) return "0.00";
+			return Number(num).toLocaleString("en-IN", {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			});
+		}
 
 
-$(document).ready(function () {
-    // call handleSelect once DOM is fully loaded
-    handleSelect();
-});
+		// mapping status values like thymeleaf switch
+		function mapStatus(status) {
+			if (status === "Active" || status === "Y") return "Active";
+			if (status === "N" || status === "Closed") return "Closed";
+			return status;
+		}
 
-	function handleSelect() {
-    let type = $("#filterselect").val();
 
-    document.getElementById('loadingModal').style.display = 'flex';
+		$(document).ready(function () {
+			// call handleSelect once DOM is fully loaded
+			handleSelect();
+		});
 
-    $.ajax({
-        url: "chartaccounts/filter",
-        type: "GET",
-        data: { type: type }, // send O or C to backend
-        success: function (response) {
-            if (response && response.length > 0) {
-                updateTable(response);
-            } else {
-                $("#placelist").html(
-                    `<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
-                );
-            }
-        },
-        error: function () {
-            $("#placelist").html(
-                `<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
-            );
-        },
-        complete: function () {
-            document.getElementById('loadingModal').style.display = 'none';
-        }
-    });
-}
-</script>
+		function handleSelect() {
+			let type = $("#filterselect").val();
+
+			document.getElementById('loadingModal').style.display = 'flex';
+
+			$.ajax({
+				url: "chartaccounts/filter",
+				type: "GET",
+				data: {type: type}, // send O or C to backend
+				success: function (response) {
+					if (response && response.length > 0) {
+						updateTable(response);
+					} else {
+						$("#placelist").html(
+							`<tr><td colspan="8" class="text-center text-warning">No results found</td></tr>`
+						);
+					}
+				},
+				error: function () {
+					$("#placelist").html(
+						`<tr><td colspan="8" class="text-center text-danger">Error fetching data</td></tr>`
+					);
+				},
+				complete: function () {
+					document.getElementById('loadingModal').style.display = 'none';
+				}
+			});
+		}
+	</script>
 
 
 
 
 </head>
+
 <body>
 
 	<div class="col-sm-2 d-flex align-items-center">
@@ -599,8 +600,7 @@ $(document).ready(function () {
 										<option value="O" selected>OFFICE</option>
 										<option value="C">CUSTOMER</option>
 									</select>
-									<button type="button"
-										class="btn-primary big-btn btn-filter mr-2">Filter</button>
+									<button type="button" class="btn-primary big-btn btn-filter mr-2">Filter</button>
 									<button type="button" class="btn-primary big-btn" id="btnadd"
 										style="text-align: center;" onclick="adduser(this);">Add</button>
 								</div>
@@ -609,24 +609,19 @@ $(document).ready(function () {
 							<div class="mt-3"
 								style="padding: 4px 4px; position: relative; display: flex; justify-content: space-around; width: 100%;">
 								<!-- Tab buttons -->
-								<button class="tablinks rounded-pill" id="RefButton"
-									onclick="RefCode(this);"
+								<button class="tablinks rounded-pill" id="RefButton" onclick="RefCode(this);"
 									style="font-size: 16px; padding: 4px 8px; height: 40%; width: 18%;">Reference
 									Code Maintenance</button>
-								<button class="tablinks rounded-pill" id="GLButton"
-									onclick="GLStruct(this);"
+								<button class="tablinks rounded-pill" id="GLButton" onclick="GLStruct(this);"
 									style="font-size: 16px; padding: 4px 8px; height: 40%; width: 18%;">GL
 									Structure</button>
-								<button class="tablinks rounded-pill" id="param"
-									onclick="SchemeCode(this);"
+								<button class="tablinks rounded-pill" id="param" onclick="SchemeCode(this);"
 									style="font-size: 16px; padding: 4px 8px; height: 40%; width: 18%;">Scheme
 									Codes</button>
-								<button class="tablinks active rounded-pill"
-									id="chartOfAccounts" onclick="Chart(this);"
+								<button class="tablinks active rounded-pill" id="chartOfAccounts" onclick="Chart(this);"
 									style="font-size: 16px; padding: 4px 8px; height: 40%; width: 18%;">Chart
 									of Accounts</button>
-								<button class="tablinks rounded-pill" id="accountLedger"
-									onclick="Account(this);"
+								<button class="tablinks rounded-pill" id="accountLedger" onclick="Account(this);"
 									style="font-size: 16px; padding: 4px 8px; height: 40%; width: 18%;">Account
 									Ledger</button>
 
@@ -636,41 +631,38 @@ $(document).ready(function () {
 								<div class="table-responsive" id="cardBody">
 									<table class="table  table-bordered  table-hover table-sm"
 										style="margin-bottom: 0px; font-size: initial;" id="usertable">
-										<thead class="thead-light"  style="position: sticky; top: 0;background-color: #f8f9fa; z-index: 1;">
+										<thead class="thead-light"
+											style="position: sticky; top: 0;background-color: #f8f9fa; z-index: 1;">
 											<tr class="filters">
 												<th style="width: 6%"><input type="text"
-													class="form-control font-weight-bold" placeholder="HEAD"
-													disabled></th>
-												<th><input type="text"
-													class="form-control font-weight-bold" placeholder="GL"
-													disabled></th>
+														class="form-control font-weight-bold" placeholder="HEAD"
+														disabled></th>
+												<th><input type="text" class="form-control font-weight-bold"
+														placeholder="GL" disabled></th>
 												<th style="width: 9%"><input type="text"
-													class="form-control font-weight-bold"
-													placeholder="SCHEME CODE" disabled></th>
-												<th><input type="text"
-													class="form-control font-weight-bold"
-													placeholder="ACCT ID" disabled></th>
+														class="form-control font-weight-bold" placeholder="SCHEME CODE"
+														disabled></th>
+												<th><input type="text" class="form-control font-weight-bold"
+														placeholder="ACCT ID" disabled></th>
 												<th style="width: 18%"><input type="text"
-													class="form-control font-weight-bold"
-													placeholder="ACCT NAME" disabled></th>
+														class="form-control font-weight-bold" placeholder="ACCT NAME"
+														disabled></th>
 												<th style="width: 7%"><input type="text"
-													class="form-control font-weight-bold"
-													placeholder="CURRENCY" disabled></th>
+														class="form-control font-weight-bold" placeholder="CURRENCY"
+														disabled></th>
 												<th><input type="text" style="text-align: right"
-													class="form-control font-weight-bold" placeholder="CREDITS"
-													disabled></th>
+														class="form-control font-weight-bold" placeholder="CREDITS"
+														disabled></th>
 												<th><input type="text" style="text-align: right"
-													class="form-control font-weight-bold" placeholder="DEBITS"
-													disabled></th>
+														class="form-control font-weight-bold" placeholder="DEBITS"
+														disabled></th>
 												<th><input type="text" style="text-align: right"
-													class="form-control font-weight-bold" placeholder="BALANCE"
-													disabled></th>
-												<th><input type="text"
-													class="form-control font-weight-bold" placeholder="STATUS"
-													disabled></th>
-												<th><input type="text"
-													class="form-control font-weight-bold" placeholder="ACTION"
-													disabled></th>
+														class="form-control font-weight-bold" placeholder="BALANCE"
+														disabled></th>
+												<th><input type="text" class="form-control font-weight-bold"
+														placeholder="STATUS" disabled></th>
+												<th><input type="text" class="form-control font-weight-bold"
+														placeholder="ACTION" disabled></th>
 											</tr>
 										</thead>
 										<tbody id="placelist">
@@ -737,8 +729,7 @@ $(document).ready(function () {
 									</table>
 								</div>
 							</div>
-							<div class="card-footer text-center border-top-0"
-								style="background-color: #e9ecef">
+							<div class="card-footer text-center border-top-0" style="background-color: #e9ecef">
 								<button type="button" class="btn-primary big-btn" id="btnHome"
 									onclick="home();">Home</button>
 								<button type="button" class="btn-primary big-btn" id="btnBack"
@@ -753,30 +744,28 @@ $(document).ready(function () {
 					<div class="card">
 
 
-						<div class="card-header"
-							style="height: 50px; background-color: #e9ecef;">
+						<div class="card-header" style="height: 50px; background-color: #e9ecef;">
 
 							<h6 style="font-size: 1.2rem; color: black;">CHART OF
 								ACCOUNTS - ADD</h6>
 
 						</div>
 						<div class="card-body">
-							<form class=" border border-secondary" action="#" method="post"
-								id="caid" autocomplete="off">
+							<form class=" border border-secondary" action="#" method="post" id="caid"
+								autocomplete="off">
 								<div class="row formline" style="padding: 10px 0px 2px 0px;">
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">classification</div>
 									<div class="col-sm-2 d-flex align-items-center">
 										<select id="classification" name="classification"
-											class="form-control form-control-sm bg-white border border-dark" >
+											class="form-control form-control-sm bg-white border border-dark">
 											<option value="">Select</option>
-											<option th:each="cls : ${Chart1}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}">
+											<option th:each="cls : ${Chart1}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}">
 											</option>
 										</select>
 									</div>
-										<!-- <option value="">Select</option>
+									<!-- <option value="">Select</option>
 											<option value="Asset" >Asset</option>
 											<option value="Liability" >Liability</option>
 											<option value="Income" >Income</option>
@@ -789,9 +778,8 @@ $(document).ready(function () {
 										<select id="acct_type" name="acct_type"
 											class="form-control form-control-sm bg-white border border-dark">
 											<option value="">Select</option>
-											<option th:each="cls : ${Chart6}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}">
+											<option th:each="cls : ${Chart6}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}">
 											</option>
 										</select>
 									</div>
@@ -844,9 +832,8 @@ $(document).ready(function () {
 										<select id="schm_type" name="schm_type"
 											class="form-control form-control-sm bg-white border border-dark">
 											<option value="">Select</option>
-											<option th:each="cls : ${Chart7}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}">
+											<option th:each="cls : ${Chart7}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}">
 											</option>
 
 										</select>
@@ -887,9 +874,8 @@ $(document).ready(function () {
 										<select id="add_det_flg" name="add_det_flg"
 											class="form-control form-control-sm bg-white border border-dark">
 											<option value="">Select</option>
-											<option th:each="cls : ${Chart2}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}">
+											<option th:each="cls : ${Chart2}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}">
 											</option>
 										</select>
 									</div>
@@ -900,9 +886,8 @@ $(document).ready(function () {
 										<select id="acct_partition" name="acct_partition"
 											class="form-control form-control-sm bg-white border border-dark">
 											<option value="">Select</option>
-											<option th:each="cls : ${Chart3}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}">
+											<option th:each="cls : ${Chart3}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}">
 											</option>
 										</select>
 									</div>
@@ -957,9 +942,8 @@ $(document).ready(function () {
 										<select id="acct_status" name="acct_status"
 											class="form-control form-control-sm bg-white border border-dark">
 											<option value="">Select</option>
-											<option th:each="cls : ${Chart4}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}">
+											<option th:each="cls : ${Chart4}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}">
 											</option>
 										</select>
 									</div>
@@ -972,9 +956,8 @@ $(document).ready(function () {
 										<select id="own_type" name="own_type"
 											class="form-control form-control-sm bg-white border border-dark">
 											<option value="">Select</option>
-											<option th:each="cls : ${Chart5}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}">
+											<option th:each="cls : ${Chart5}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}">
 											</option>
 										</select>
 									</div>
@@ -1010,28 +993,24 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Account
 										Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="acct_bal" id="acct_bal"
-											value="0.00" class="form-control form-control-sm bg-white border border-dark"
-											readonly />
+										<input type="text" name="acct_bal" id="acct_bal" value="0.00"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
 									</div>
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">Ref
 										Currency Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="ref_crncy_bal" id="ref_crncy_bal"
-											value="0.00" class="form-control form-control-sm bg-white border border-dark"
-											readonly />
+										<input type="text" name="ref_crncy_bal" id="ref_crncy_bal" value="0.00"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
 									</div>
 								</div>
 
 							</form>
 						</div>
-						<div class="card-footer text-center"
-							style="background-color: #e9ecef">
+						<div class="card-footer text-center" style="background-color: #e9ecef">
 							<button type="button" class="btn-primary big-btn" id="btnHome"
 								onclick="home();">Home</button>
-							<button type="button" class="btn-primary big-btn"
-								onclick="addsubmit(this);">Submit</button>
+							<button type="button" class="btn-primary big-btn" onclick="addsubmit(this);">Submit</button>
 							<button type="button" class="btn-primary big-btn" id="btnBack"
 								onclick="Back();">Back</button>
 						</div>
@@ -1039,23 +1018,22 @@ $(document).ready(function () {
 					</div>
 				</div>
 
-				<div th:if="${formmode =='view' OR formmode == 'verify' OR formmode == 'delete' }" >
+				<div th:if="${formmode =='view' OR formmode == 'verify' OR formmode == 'delete' }">
 					<div class="card">
 
 
-						<div class="card-header"
-							style="height: 50px; background-color: #e9ecef;">
+						<div class="card-header" style="height: 50px; background-color: #e9ecef;">
 
-							<h6 style="font-size: 1.2rem; color: black;" th:if="${formmode == 'view' }" >CHART OF
+							<h6 style="font-size: 1.2rem; color: black;" th:if="${formmode == 'view' }">CHART OF
 								ACCOUNTS - VIEW</h6>
-							<h6 style="font-size: 1.2rem; color: black;" th:if="${formmode == 'verify' }" >CHART OF
+							<h6 style="font-size: 1.2rem; color: black;" th:if="${formmode == 'verify' }">CHART OF
 								ACCOUNTS - VERIFY</h6>
-							<h6 style="font-size: 1.2rem; color: black;" th:if="${formmode == 'delete' }" >CHART OF
+							<h6 style="font-size: 1.2rem; color: black;" th:if="${formmode == 'delete' }">CHART OF
 								ACCOUNTS - DELETE</h6>
 						</div>
 						<div class="card-body">
-							<form class=" border border-secondary" action="#" method="post"
-								id="caid" autocomplete="off">
+							<form class=" border border-secondary" action="#" method="post" id="caid"
+								autocomplete="off">
 
 								<div class="row formline" style="padding: 10px 0px 2px 0px;">
 									<div class="col-sm-1"></div>
@@ -1065,12 +1043,12 @@ $(document).ready(function () {
 										<!-- <input type="text" name="classification" id="classification" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.classification}" /> -->
-											<select name="classification" id="classification" class="form-control form-control-sm bg-white border border-dark" readonly >
-											<option value="" >Select</option>
-											<option th:each="cls : ${Chart1}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}"
-													th:selected="${cls.ref_type_desc == chartaccount?.classification}">
+										<select name="classification" id="classification"
+											class="form-control form-control-sm bg-white border border-dark" readonly>
+											<option value="">Select</option>
+											<option th:each="cls : ${Chart1}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}"
+												th:selected="${cls.ref_type_desc == chartaccount?.classification}">
 											</option>
 										</select>
 									</div>
@@ -1082,12 +1060,12 @@ $(document).ready(function () {
 										<!-- <input type="text" name="acct_type" id="acct_type" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.acct_type}" /> -->
-										<select name="acct_type" id="acct_type" class="form-control form-control-sm bg-white border border-dark" readonly >
-											<option value="" >Select</option>
-											<option th:each="cls : ${Chart6}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}"
-													th:selected="${cls.ref_type_desc == chartaccount?.acct_type}">
+										<select name="acct_type" id="acct_type"
+											class="form-control form-control-sm bg-white border border-dark" readonly>
+											<option value="">Select</option>
+											<option th:each="cls : ${Chart6}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}"
+												th:selected="${cls.ref_type_desc == chartaccount?.acct_type}">
 											</option>
 										</select>
 									</div>
@@ -1144,12 +1122,12 @@ $(document).ready(function () {
 										<!-- <input type="text" name="schm_type" id="schm_type" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.schm_type}" /> -->
-										<select name="schm_type" id="schm_type" class="form-control form-control-sm bg-white border border-dark" readonly >
-											<option value="" >Select</option>
-											<option th:each="cls : ${Chart7}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}"
-													th:selected="${cls.ref_type_desc == chartaccount?.schm_type}">
+										<select name="schm_type" id="schm_type"
+											class="form-control form-control-sm bg-white border border-dark" readonly>
+											<option value="">Select</option>
+											<option th:each="cls : ${Chart7}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}"
+												th:selected="${cls.ref_type_desc == chartaccount?.schm_type}">
 											</option>
 										</select>
 
@@ -1192,12 +1170,12 @@ $(document).ready(function () {
 										<!-- <input type="text" name="add_det_flg" id="add_det_flg" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.add_det_flg}" /> -->
-										<select name="add_det_flg" id="add_det_flg" class="form-control form-control-sm bg-white border border-dark" readonly >
-											<option value="" >Select</option>
-											<option th:each="cls : ${Chart2}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}"
-													th:selected="${cls.ref_type_desc == chartaccount?.add_det_flg}">
+										<select name="add_det_flg" id="add_det_flg"
+											class="form-control form-control-sm bg-white border border-dark" readonly>
+											<option value="">Select</option>
+											<option th:each="cls : ${Chart2}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}"
+												th:selected="${cls.ref_type_desc == chartaccount?.add_det_flg}">
 											</option>
 										</select>
 									</div>
@@ -1208,12 +1186,12 @@ $(document).ready(function () {
 										<!-- <input type="text" name="acct_partition" id="acct_partition" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.acct_partition}" /> -->
-										<select name="acct_partition" id="acct_partition" class="form-control form-control-sm bg-white border border-dark" readonly >
-											<option value="" >Select</option>
-											<option th:each="cls : ${Chart3}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}"
-													th:selected="${cls.ref_type_desc == chartaccount?.acct_partition}">
+										<select name="acct_partition" id="acct_partition"
+											class="form-control form-control-sm bg-white border border-dark" readonly>
+											<option value="">Select</option>
+											<option th:each="cls : ${Chart3}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}"
+												th:selected="${cls.ref_type_desc == chartaccount?.acct_partition}">
 											</option>
 										</select>
 									</div>
@@ -1274,12 +1252,12 @@ $(document).ready(function () {
 										<!-- <input type="text" name="acct_status" id="acct_status" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.acct_status}" /> -->
-										<select name="acct_status" id="acct_status" class="form-control form-control-sm bg-white border border-dark" readonly >
-											<option value="" >Select</option>
-											<option th:each="cls : ${Chart4}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}"
-													th:selected="${cls.ref_type_desc == chartaccount?.acct_status}">
+										<select name="acct_status" id="acct_status"
+											class="form-control form-control-sm bg-white border border-dark" readonly>
+											<option value="">Select</option>
+											<option th:each="cls : ${Chart4}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}"
+												th:selected="${cls.ref_type_desc == chartaccount?.acct_status}">
 											</option>
 										</select>
 									</div>
@@ -1292,12 +1270,12 @@ $(document).ready(function () {
 										<!-- <input type="text" name="own_type" id="own_type" readonly
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.own_type}" /> -->
-										<select name="own_type" id="own_type" class="form-control form-control-sm bg-white border border-dark" readonly >
-											<option value="" >Select</option>
-											<option th:each="cls : ${Chart5}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}"
-													th:selected="${cls.ref_type_desc == chartaccount?.own_type}">
+										<select name="own_type" id="own_type"
+											class="form-control form-control-sm bg-white border border-dark" readonly>
+											<option value="">Select</option>
+											<option th:each="cls : ${Chart5}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}"
+												th:selected="${cls.ref_type_desc == chartaccount?.own_type}">
 											</option>
 										</select>
 									</div>
@@ -1316,8 +1294,7 @@ $(document).ready(function () {
 										Credit Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="cr_amt" id="cr_amt"
-											class="form-control form-control-sm bg-white border border-dark" 
-								  			 th:value="${chartaccount?.cr_amt != null && chartaccount.cr_amt.compareTo(T(java.math.BigDecimal).ZERO) != 0 
+											class="form-control form-control-sm bg-white border border-dark" th:value="${chartaccount?.cr_amt != null && chartaccount.cr_amt.compareTo(T(java.math.BigDecimal).ZERO) != 0 
                   ? #numbers.formatDecimal(chartaccount.cr_amt, 0, 'COMMA', 2, 'POINT') 
                   : '0.00'}" readonly />
 									</div>
@@ -1326,11 +1303,9 @@ $(document).ready(function () {
 										Debit Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="dr_amt" id="dr_amt"
-											class="form-control form-control-sm bg-white border border-dark"
-											 th:value="${chartaccount?.dr_amt != null && chartaccount.dr_amt.compareTo(T(java.math.BigDecimal).ZERO) != 0 
+											class="form-control form-control-sm bg-white border border-dark" th:value="${chartaccount?.dr_amt != null && chartaccount.dr_amt.compareTo(T(java.math.BigDecimal).ZERO) != 0 
                   ? #numbers.formatDecimal(chartaccount.dr_amt, 0, 'COMMA', 2, 'POINT') 
-                  : '0.00'}"
-											   readonly />
+                  : '0.00'}" readonly />
 									</div>
 								</div>
 								<div class="row formline" style="padding: 0px 0px 10px 0px;">
@@ -1339,37 +1314,33 @@ $(document).ready(function () {
 										Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="acct_bal" id="acct_bal"
-											class="form-control form-control-sm bg-white border border-dark"
-											 th:value="${chartaccount?.acct_bal != null && chartaccount.acct_bal.compareTo(T(java.math.BigDecimal).ZERO) != 0 
+											class="form-control form-control-sm bg-white border border-dark" th:value="${chartaccount?.acct_bal != null && chartaccount.acct_bal.compareTo(T(java.math.BigDecimal).ZERO) != 0 
                   ? #numbers.formatDecimal(chartaccount.acct_bal, 0, 'COMMA', 2, 'POINT') 
-                  : '0.00'}"
-											  readonly />
+                  : '0.00'}" readonly />
 									</div>
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">Ref
 										Currency Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="ref_crncy_bal" id="ref_crncy_bal"
-											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${chartaccount?.ref_crncy_bal != null && chartaccount.ref_crncy_bal.compareTo(T(java.math.BigDecimal).ZERO) != 0 
+											class="form-control form-control-sm bg-white border border-dark" th:value="${chartaccount?.ref_crncy_bal != null && chartaccount.ref_crncy_bal.compareTo(T(java.math.BigDecimal).ZERO) != 0 
                   ? #numbers.formatDecimal(chartaccount.ref_crncy_bal, 0, 'COMMA', 2, 'POINT') 
                   : '0.00'}" readonly />
 									</div>
 								</div>
 							</form>
 						</div>
-						<div class="card-footer text-center"
-							style="background-color: #e9ecef">
+						<div class="card-footer text-center" style="background-color: #e9ecef">
 
-							<button type="button" class="btn-primary big-btn"
-								id="btnHome" onclick="home();">Home</button>
+							<button type="button" class="btn-primary big-btn" id="btnHome"
+								onclick="home();">Home</button>
 							<button type="button" class="btn-primary big-btn" th:if="${formmode == 'verify' }"
 								onclick="verifysubmit(this);">Verify</button>
 							<button type="button" class="btn-primary big-btn" id="btnsubmit"
 								th:attr="data-attr=${chartaccount?.acct_num}" th:if="${formmode == 'delete' }"
 								onclick="deletesubmit(this);">Delete</button>
-							<button type="button" class="btn-primary big-btn"
-								id="btnBack" onclick="Back();">Back</button>
+							<button type="button" class="btn-primary big-btn" id="btnBack"
+								onclick="Back();">Back</button>
 
 						</div>
 					</div>
@@ -1379,15 +1350,14 @@ $(document).ready(function () {
 					<div class="card">
 
 
-						<div class="card-header"
-							style="height: 50px; background-color: #e9ecef;">
+						<div class="card-header" style="height: 50px; background-color: #e9ecef;">
 
 							<h6 style="font-size: 1.2rem; color: black;">CHART OF
 								ACCOUNTS</h6>
 						</div>
 						<div class="card-body">
-							<form class=" border border-secondary" action="#" method="post"
-								id="caid" autocomplete="off">
+							<form class=" border border-secondary" action="#" method="post" id="caid"
+								autocomplete="off">
 
 								<div class="row formline" style="padding: 10px 0px 2px 0px;">
 									<div class="col-sm-1"></div>
@@ -1598,7 +1568,7 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Total
 										Credit Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="cr_amt" id="cr_amt" 
+										<input type="text" name="cr_amt" id="cr_amt"
 											class="form-control form-control-sm bg-white border border-dark"
 											th:value="${chartaccount?.cr_amt}" readonly />
 									</div>
@@ -1632,8 +1602,7 @@ $(document).ready(function () {
 
 							</form>
 						</div>
-						<div class="card-footer text-center"
-							style="background-color: #e9ecef">
+						<div class="card-footer text-center" style="background-color: #e9ecef">
 							<button type="button" class="btn-primary big-btn" id="btnHome"
 								onclick="home();">Home</button>
 							<button type="button" class="btn-primary big-btn" id=""
@@ -1648,15 +1617,14 @@ $(document).ready(function () {
 					<div class="card">
 
 
-						<div class="card-header"
-							style="height: 50px; background-color: #e9ecef;">
+						<div class="card-header" style="height: 50px; background-color: #e9ecef;">
 
 							<h6 style="font-size: 1.2rem; color: black;">CHART OF
 								ACCOUNTS - DELETE</h6>
 						</div>
 						<div class="card-body">
-							<form class=" border border-secondary" action="#" method="post"
-								id="caid" autocomplete="off">
+							<form class=" border border-secondary" action="#" method="post" id="caid"
+								autocomplete="off">
 
 								<div class="row formline" style="padding: 10px 0px 2px 0px;">
 									<div class="col-sm-1"></div>
@@ -1902,8 +1870,7 @@ $(document).ready(function () {
 
 							</form>
 						</div>
-						<div class="card-footer text-center"
-							style="background-color: #e9ecef">
+						<div class="card-footer text-center" style="background-color: #e9ecef">
 							<button type="button" class="btn-primary big-btn" id="btnHome"
 								onclick="home();">Home</button>
 							<button type="button" class="btn-primary big-btn" id="btnsubmit"
@@ -1918,15 +1885,14 @@ $(document).ready(function () {
 
 				<div th:if="${formmode}=='modify'">
 					<div class="card">
-						<div class="card-header"
-							style="padding: 1px 0px 0px 1px; background-color: #e9ecef;">
+						<div class="card-header" style="padding: 1px 0px 0px 1px; background-color: #e9ecef;">
 
 							<h4 style="height: 40px; text-align: left; padding: 10px;">
 								CHART OF ACCOUNTS - MODIFY</h4>
 						</div>
 						<div class="card-body">
-							<form class=" border border-secondary" action="#" method="post"
-								id="caid" autocomplete="off">
+							<form class=" border border-secondary" action="#" method="post" id="caid"
+								autocomplete="off">
 								<div class="row formline" style="padding: 10px 0px 2px 0px;">
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">classification</div>
@@ -1934,14 +1900,12 @@ $(document).ready(function () {
 
 										<select id="classification" name="classification"
 											class="form-control form-control-sm bg-white border border-dark bg-white border border-dark"
-											style="font-size: 15px;"
-											th:value="${chartaccount?.classification}">
-												<option value="" >Select</option>
-												<option th:each="cls : ${Chart1}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}"
-													th:selected="${cls.ref_type_desc == chartaccount?.classification}">
-												</option>
+											style="font-size: 15px;" th:value="${chartaccount?.classification}">
+											<option value="">Select</option>
+											<option th:each="cls : ${Chart1}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}"
+												th:selected="${cls.ref_type_desc == chartaccount?.classification}">
+											</option>
 										</select>
 									</div>
 
@@ -1949,12 +1913,12 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Account
 										Type</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<select name="acct_type" id="acct_type" class="form-control form-control-sm bg-white border border-dark" >
-											<option value="" >Select</option>
-											<option th:each="cls : ${Chart6}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}"
-													th:selected="${cls.ref_type_desc == chartaccount?.acct_type}">
+										<select name="acct_type" id="acct_type"
+											class="form-control form-control-sm bg-white border border-dark">
+											<option value="">Select</option>
+											<option th:each="cls : ${Chart6}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}"
+												th:selected="${cls.ref_type_desc == chartaccount?.acct_type}">
 											</option>
 										</select>
 									</div>
@@ -2008,12 +1972,12 @@ $(document).ready(function () {
 										Type</div>
 
 									<div class="col-sm-2 d-flex align-items-center">
-										<select type="text" name="schm_type" id="schm_type" class="form-control form-control-sm bg-white border border-dark">
+										<select type="text" name="schm_type" id="schm_type"
+											class="form-control form-control-sm bg-white border border-dark">
 											<option value="">Select</option>
-											<option th:each="cls : ${Chart7}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}"
-													th:selected="${cls.ref_type_desc == chartaccount?.schm_type}">
+											<option th:each="cls : ${Chart7}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}"
+												th:selected="${cls.ref_type_desc == chartaccount?.schm_type}">
 											</option>
 										</select>
 
@@ -2056,12 +2020,10 @@ $(document).ready(function () {
 
 										<select id="add_det_flg" name="add_det_flg"
 											class="form-control form-control-sm bg-white border border-dark bg-white border border-dark"
-											style="font-size: 15px;"
-											th:value="${chartaccount?.add_det_flg}">
-											<option th:each="cls : ${Chart2}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}"
-													th:selected="${cls.ref_type_desc == chartaccount?.add_det_flg}">
+											style="font-size: 15px;" th:value="${chartaccount?.add_det_flg}">
+											<option th:each="cls : ${Chart2}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}"
+												th:selected="${cls.ref_type_desc == chartaccount?.add_det_flg}">
 											</option>
 										</select>
 									</div>
@@ -2072,13 +2034,11 @@ $(document).ready(function () {
 
 										<select id="acct_partition" name="acct_partition"
 											class="form-control form-control-sm bg-white border border-dark bg-white border border-dark"
-											style="font-size: 15px;"
-											th:value="${chartaccount?.acct_partition}">
-											<option value="" >Select</option>
-											<option th:each="cls : ${Chart3}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}"
-													th:selected="${cls.ref_type_desc == chartaccount?.acct_partition}">
+											style="font-size: 15px;" th:value="${chartaccount?.acct_partition}">
+											<option value="">Select</option>
+											<option th:each="cls : ${Chart3}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}"
+												th:selected="${cls.ref_type_desc == chartaccount?.acct_partition}">
 											</option>
 										</select>
 									</div>
@@ -2137,13 +2097,11 @@ $(document).ready(function () {
 
 										<select id="acct_status" name="acct_status"
 											class="form-control form-control-sm bg-white border border-dark bg-white border border-dark"
-											style="font-size: 15px;"
-											th:value="${chartaccount?.acct_status}">
-											<option value="" >Select</option>
-											<option th:each="cls : ${Chart4}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}"
-													th:selected="${cls.ref_type_desc == chartaccount?.acct_status}">
+											style="font-size: 15px;" th:value="${chartaccount?.acct_status}">
+											<option value="">Select</option>
+											<option th:each="cls : ${Chart4}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}"
+												th:selected="${cls.ref_type_desc == chartaccount?.acct_status}">
 											</option>
 										</select>
 
@@ -2158,11 +2116,10 @@ $(document).ready(function () {
 										<select id="own_type" name="own_type"
 											class="form-control form-control-sm bg-white border border-dark bg-white border border-dark"
 											style="font-size: 15px;" th:value="${chartaccount?.own_type}">
-											<option value="" >Select</option>
-											<option th:each="cls : ${Chart5}"
-													th:value="${cls.ref_type_desc}"
-													th:text="${cls.ref_id_desc}"
-													th:selected="${cls.ref_type_desc == chartaccount?.own_type}">
+											<option value="">Select</option>
+											<option th:each="cls : ${Chart5}" th:value="${cls.ref_type_desc}"
+												th:text="${cls.ref_id_desc}"
+												th:selected="${cls.ref_type_desc == chartaccount?.own_type}">
 											</option>
 										</select>
 									</div>
@@ -2181,8 +2138,7 @@ $(document).ready(function () {
 										Credit Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
 										<input type="text" name="cr_amt" id="cr_amt"
-											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${chartaccount?.cr_amt != null && chartaccount.cr_amt.compareTo(T(java.math.BigDecimal).ZERO) != 0 
+											class="form-control form-control-sm bg-white border border-dark" th:value="${chartaccount?.cr_amt != null && chartaccount.cr_amt.compareTo(T(java.math.BigDecimal).ZERO) != 0 
                   ? #numbers.formatDecimal(chartaccount.cr_amt, 0, 'COMMA', 2, 'POINT') 
                   : '0.00'}" readonly />
 									</div>
@@ -2190,12 +2146,9 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Total
 										Debit Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="dr_amt" id="dr_amt"
-											 th:value="${chartaccount?.dr_amt != null && chartaccount.dr_amt.compareTo(T(java.math.BigDecimal).ZERO) != 0 
+										<input type="text" name="dr_amt" id="dr_amt" th:value="${chartaccount?.dr_amt != null && chartaccount.dr_amt.compareTo(T(java.math.BigDecimal).ZERO) != 0 
                   ? #numbers.formatDecimal(chartaccount.dr_amt, 0, 'COMMA', 2, 'POINT') 
-                  : '0.00'}"
-											class="form-control form-control-sm bg-white border border-dark"
-											readonly />
+                  : '0.00'}" class="form-control form-control-sm bg-white border border-dark" readonly />
 									</div>
 								</div>
 
@@ -2204,30 +2157,22 @@ $(document).ready(function () {
 									<div class="col-sm-2 d-flex align-items-center">Account
 										Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="acct_bal" id="acct_bal"
-											
- th:value="${chartaccount?.acct_bal != null && chartaccount.acct_bal.compareTo(T(java.math.BigDecimal).ZERO) != 0 
+										<input type="text" name="acct_bal" id="acct_bal" th:value="${chartaccount?.acct_bal != null && chartaccount.acct_bal.compareTo(T(java.math.BigDecimal).ZERO) != 0 
                   ? #numbers.formatDecimal(chartaccount.acct_bal, 0, 'COMMA', 2, 'POINT') 
-                  : '0.00'}"
-											class="form-control form-control-sm bg-white border border-dark"
-											readonly />
+                  : '0.00'}" class="form-control form-control-sm bg-white border border-dark" readonly />
 									</div>
 									<div class="col-sm-1"></div>
 									<div class="col-sm-2 d-flex align-items-center">Ref
 										Currency Balance</div>
 									<div class="col-sm-2 d-flex align-items-center">
-										<input type="text" name="ref_crncy_bal" id="ref_crncy_bal"
-											th:value="${chartaccount?.ref_crncy_bal != null && chartaccount.ref_crncy_bal.compareTo(T(java.math.BigDecimal).ZERO) != 0 
+										<input type="text" name="ref_crncy_bal" id="ref_crncy_bal" th:value="${chartaccount?.ref_crncy_bal != null && chartaccount.ref_crncy_bal.compareTo(T(java.math.BigDecimal).ZERO) != 0 
                   ? #numbers.formatDecimal(chartaccount.ref_crncy_bal, 0, 'COMMA', 2, 'POINT') 
-                  : '0.00'}"
-											class="form-control form-control-sm bg-white border border-dark"
-											readonly />
+                  : '0.00'}" class="form-control form-control-sm bg-white border border-dark" readonly />
 									</div>
 								</div>
 							</form>
 						</div>
-						<div class="card-footer text-center"
-							style="background-color: #e9ecef">
+						<div class="card-footer text-center" style="background-color: #e9ecef">
 							<button type="button" class="btn-primary big-btn" id="btnHome"
 								onclick="home();">Home</button>
 							<button type="button" class="btn-primary big-btn"
@@ -2245,18 +2190,19 @@ $(document).ready(function () {
 </body>
 
 <script>
- 
-    const schmData = /*[[${Chart8}]]*/ [];
 
-    document.getElementById('schm_type').addEventListener('change', function() {
-        const selectedCode = this.value;
-        const matchedSchm = schmData.find(item => item.ref_id === selectedCode);
-        
-        if (matchedSchm) {
-            document.getElementById('schm_code').value = matchedSchm.schm_code;
-        } else {
-            document.getElementById('schm_code').value = "";
-        }
-    });
+	const schmData = /*[[${Chart8}]]*/[];
+
+	document.getElementById('schm_type').addEventListener('change', function () {
+		const selectedCode = this.value;
+		const matchedSchm = schmData.find(item => item.ref_id === selectedCode);
+
+		if (matchedSchm) {
+			document.getElementById('schm_code').value = matchedSchm.schm_code;
+		} else {
+			document.getElementById('schm_code').value = "";
+		}
+	});
 </script>
+
 </html>
