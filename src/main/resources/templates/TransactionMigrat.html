@@ -1397,7 +1397,8 @@ th > input {
 												<td th:text="${item.tran_id}"></td>
 												<td th:text="${#dates.format(item.flow_date, 'dd-MM-yyyy')}"></td>
 												<td th:text="${item.flow_code}"></td>
-												<td th:text="${item.tran_amt}" ></td>
+												<td th:text="${item.tran_amt == null || item.tran_amt == 0 ? '0.00' : #numbers.formatDecimal(item.tran_amt, 0, 'COMMA', 2, 'POINT')}"
+												        style="text-align: right;"></td>
 												<td th:text="${item.acct_num}"></td>
 												<td th:text="${item.acct_name}"></td>
 											</tr>
@@ -1446,7 +1447,8 @@ th > input {
 												<td th:text="${item.tran_id}"></td>
 												<td th:text="${#dates.format(item.flow_date, 'dd-MM-yyyy')}"></td>
 												<td th:text="${item.flow_code}"></td>
-												<td th:text="${item.tran_amt}" ></td>
+												<td th:text="${item.tran_amt == null || item.tran_amt == 0 ? '0.00' : #numbers.formatDecimal(item.tran_amt, 0, 'COMMA', 2, 'POINT')}"
+												        style="text-align: right;"></td>
 												<td th:text="${item.acct_num}"></td>
 												<td th:text="${item.acct_name}"></td>
 											</tr>
@@ -1494,7 +1496,8 @@ th > input {
 												<td th:text="${item.tran_id}"></td>
 												<td th:text="${#dates.format(item.flow_date, 'dd-MM-yyyy')}"></td>
 												<td th:text="${item.flow_code}"></td>
-												<td th:text="${item.tran_amt}" ></td>
+												<td th:text="${item.tran_amt == null || item.tran_amt == 0 ? '0.00' : #numbers.formatDecimal(item.tran_amt, 0, 'COMMA', 2, 'POINT')}"
+												        style="text-align: right;"></td>
 												<td th:text="${item.acct_num}"></td>
 												<td th:text="${item.acct_name}"></td>
 											</tr>
@@ -1541,7 +1544,8 @@ th > input {
 												<td th:text="${item.tran_id}"></td>
 												<td th:text="${#dates.format(item.flow_date, 'dd-MM-yyyy')}"></td>
 												<td th:text="${item.flow_code}"></td>
-												<td th:text="${item.tran_amt}" ></td>
+												<td th:text="${item.tran_amt == null || item.tran_amt == 0 ? '0.00' : #numbers.formatDecimal(item.tran_amt, 0, 'COMMA', 2, 'POINT')}"
+												        style="text-align: right;"></td>
 												<td th:text="${item.acct_num}"></td>
 												<td th:text="${item.acct_name}"></td>
 											</tr>
@@ -1588,7 +1592,8 @@ th > input {
 												<td th:text="${item.tran_id}"></td>
 												<td th:text="${#dates.format(item.flow_date, 'dd-MM-yyyy')}"></td>
 												<td th:text="${item.flow_code}"></td>
-												<td th:text="${item.tran_amt}" ></td>
+												<td th:text="${item.tran_amt == null || item.tran_amt == 0 ? '0.00' : #numbers.formatDecimal(item.tran_amt, 0, 'COMMA', 2, 'POINT')}"
+												        style="text-align: right;"></td>
 												<td th:text="${item.acct_num}"></td>
 												<td th:text="${item.acct_name}"></td>
 											</tr>
@@ -3351,5 +3356,120 @@ th > input {
 	</div>
 	</div>
 </body>
+<!--<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Function to format numbers in millions with commas and 2 decimals
+    function formatNumber(num) {
+        if (num == null || num === '' || isNaN(num)) return "0.00";
+        let millionValue = Number(num) / 1_000_000; // Convert to millions
+        return millionValue.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    // Select all rows inside tbody with id 'placelist1'
+    const rows = document.querySelectorAll("#placelist1 tr");
+
+    rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+
+        // Flow Amount column is the 5th <td> (index 4)
+        const flowAmtCell = cells[4];
+        if (flowAmtCell) {
+            const originalValue = flowAmtCell.textContent.trim().replace(/,/g, "");
+            flowAmtCell.textContent = formatNumber(originalValue);
+        }
+    });
+});
+</script>-->
+
+
+
+
+<script>
+// Format numbers with commas and 2 decimals
+function formatNumber(num) {
+    if (num == null || num === '' || isNaN(num)) return '0.00';
+    return Number(num).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
+function updateTable(tbodyId, data) {
+    let rows = "";
+
+    if (!data || data.length === 0) {
+        rows = `<tr><td colspan="7" style="text-align:center;color:red;">No data found</td></tr>`;
+    } else {
+        data.forEach((item, idx) => {
+            const flowDate = item.flow_date ? new Date(item.flow_date).toLocaleDateString('en-GB') : "";
+            rows += `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td style="color:blue; cursor:pointer;" data-attr="${item.tran_id}" onclick="enquiryuser(this)">
+                        ${item.tran_id || ""}
+                    </td>
+                    <td>${flowDate}</td>
+                    <td>${item.flow_code || ""}</td>
+                    <td style="text-align:right;">${formatNumber(item.tran_amt)}</td>
+                    <td>${item.acct_num || ""}</td>
+                    <td>${item.acct_name || ""}</td>
+                </tr>
+            `;
+        });
+    }
+
+    document.getElementById(tbodyId).innerHTML = rows;
+}
+
+// Format existing Thymeleaf rows if any
+function formatExistingRows(tbodyId) {
+    const rows = document.querySelectorAll(`#${tbodyId} tr`);
+    rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        if (cells[4]) { // 5th column = Flow Amount
+            let value = cells[4].textContent.trim().replace(/,/g, "");
+            cells[4].textContent = formatNumber(value);
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    ["placelist1", "placelist2", "placelist3", "placelist4", "placelist5"].forEach(tbodyId => formatExistingRows(tbodyId));
+});
+
+
+fetch('/getDisbursementData') // Replace with your API for each table
+    .then(res => res.json())
+    .then(data => updateTable('placelist1', data))
+    .catch(err => console.error(err));
+
+
+function searchByFlowCode(keyword, flowCode, filterType) {
+    $.ajax({
+        url: 'transactions/search',
+        type: 'GET',
+        data: { keyword, flowCode, filterType },
+        success: function (data) {
+            const flowMap = {
+                "DISBT": "placelist1",
+                "INDEM": "placelist2",
+                "FEEDEM": "placelist3",
+				"COLL": "placelist4",
+				 "PENDEM": "placelist5"
+            };
+            const targetTbody = flowMap[flowCode];
+            if (!targetTbody) return;
+
+            updateTable(targetTbody, data);
+        },
+        error: function (xhr) {
+            console.error("Search failed", xhr);
+        }
+    });
+}
+</script>
 
 </html>
