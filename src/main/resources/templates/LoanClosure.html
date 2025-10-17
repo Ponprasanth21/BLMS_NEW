@@ -1367,12 +1367,28 @@
 			document.getElementById("preclosuredatas").style.display = "block";
 			document.getElementById("closuredatas").style.display = "none";
 			document.getElementById("loanHeader").innerHTML = "LOAN PRE - CLOSURE";
+
+			 // Hide Closure buttons
+			document.getElementById('closeRepaymentSchedule').style.display = 'none';
+			document.getElementById('closeLedgerSchedule').style.display = 'none';
+
+			// Show Pre-Closure buttons
+			document.getElementById('preRepaymentSchedule').style.display = 'inline-block';
+			document.getElementById('preLedgerSchedule').style.display = 'inline-block';
 		}
 
 		function showClosure() {
 			document.getElementById("preclosuredatas").style.display = "none";
 			document.getElementById("closuredatas").style.display = "block";
 			document.getElementById("loanHeader").innerHTML = "LOAN CLOSURE";
+
+			// Hide Pre-Closure buttons
+			document.getElementById('preRepaymentSchedule').style.display = 'none';
+			document.getElementById('preLedgerSchedule').style.display = 'none';
+
+			// Show Closure buttons
+			document.getElementById('closeRepaymentSchedule').style.display = 'inline-block';
+			document.getElementById('closeLedgerSchedule').style.display = 'inline-block';
 		}
 
 		function openModalpreclosure(a) {
@@ -1426,11 +1442,11 @@
 						var $filters = $panel.find('.filters input');
 						var $tbody = $panel.find('.table tbody');
 
-						if ($filters.prop('disabled') == true) {
-							$filters.prop('disabled', false);
+						if ($filters.prop('readonly') == true) {
+							$filters.prop('readonly', false);
 							$filters.first().focus();
 						} else {
-							$filters.val('').prop('disabled', true);
+							$filters.val('').prop('readonly', true);
 							$tbody.find('.no-result').remove();
 							$tbody.find('tr').show();
 						}
@@ -1556,64 +1572,65 @@
 		}
 	</script>
 	<script>
-		$(document).ready(function () {
-			// Prevent page reload and toggle readonly state on Filter button click
-			$('#myModalpreclosure').on('click', '.btn-filter', function (event) {
-				event.preventDefault(); // ✅ stops page reload or navigation
-				event.stopPropagation(); // ✅ prevents modal focus issues
+		// $(document).ready(function () {
+		// 	// Prevent page reload and toggle readonly state on Filter button click
+		// 	$('#myModalpreclosure').on('click', '.btn-filter', function (event) {
+		// 		event.preventDefault(); // ✅ stops page reload or navigation
+		// 		event.stopPropagation(); // ✅ prevents modal focus issues
 
-				var $panel = $(this).closest('.filterable');
-				var $filters = $panel.find('.filters input');
+		// 		var $panel = $(this).closest('.filterable');
+		// 		var $filters = $panel.find('.filters input');
 
-				// Toggle readonly state
-				var isReadonly = $filters.first().prop('readonly');
+		// 		// Toggle readonly state
+		// 		var isReadonly = $filters.first().prop('readonly');
 
-				if (isReadonly) {
-					// Enable filters
-					$filters.prop('readonly', false).val('');
-					$filters.first().focus();
-				} else {
-					// Disable filters and reset
-					$filters.prop('readonly', true).val('');
-					$panel.find('tbody tr').show();
-					$panel.find('.no-result').remove();
-				}
-			});
+		// 		if (isReadonly) {
+		// 			// Enable filters
+		// 			$filters.prop('readonly', false).val('');
+		// 			$filters.first().focus();
+		// 		} else {
+		// 			// Disable filters and reset
+		// 			$filters.prop('readonly', true).val('');
+		// 			$panel.find('tbody tr').show();
+		// 			$panel.find('.no-result').remove();
+		// 		}
+		// 	});
 
-			// Filter rows dynamically as user types
-			$('#filterAccountNumberpreclosure, #filterAccountNamepreclosure').on('input', function () {
-				filterModalRows();
-			});
+		// 	// Filter rows dynamically as user types
+		// 	$('#filterAccountNumberpreclosure, #filterAccountNamepreclosure').on('input', function () {
+		// 		filterModalRows();
+		// 	});
 
-			function filterModalRows() {
-				var accountNumber = $('#filterAccountNumberpreclosure').val().toUpperCase();
-				var accountName = $('#filterAccountNamepreclosure').val().toUpperCase();
+		// 	function filterModalRows() {
+		// 		var accountNumber = $('#filterAccountNumberpreclosure').val().toUpperCase();
+		// 		var accountName = $('#filterAccountNamepreclosure').val().toUpperCase();
 
-				var $rows = $('#myModalpreclosure tbody tr');
-				var anyVisible = false;
+		// 		var $rows = $('#myModalpreclosure tbody tr');
+		// 		var anyVisible = false;
 
-				$rows.each(function () {
-					var colNumber = $(this).find('td').eq(0).text().toUpperCase();
-					var colName = $(this).find('td').eq(1).text().toUpperCase();
+		// 		$rows.each(function () {
+		// 			var colNumber = $(this).find('td').eq(0).text().toUpperCase();
+		// 			var colName = $(this).find('td').eq(1).text().toUpperCase();
 
-					if (colNumber.includes(accountNumber) && colName.includes(accountName)) {
-						$(this).show();
-						anyVisible = true;
-					} else {
-						$(this).hide();
-					}
-				});
+		// 			if (colNumber.includes(accountNumber) && colName.includes(accountName)) {
+		// 				$(this).show();
+		// 				anyVisible = true;
+		// 			} else {
+		// 				$(this).hide();
+		// 			}
+		// 		});
 
-				// Show "No result found" row if nothing matches
-				$('#myModalpreclosure tbody .no-result').remove();
-				if (!anyVisible) {
-					var colspan = $('#myModalpreclosure thead th').length;
-					$('#myModalpreclosure tbody').prepend(
-						`<tr class="no-result text-center"><td colspan="${colspan}">No result found</td></tr>`
-					);
-				}
-			}
-		});
+		// 		// Show "No result found" row if nothing matches
+		// 		$('#myModalpreclosure tbody .no-result').remove();
+		// 		if (!anyVisible) {
+		// 			var colspan = $('#myModalpreclosure thead th').length;
+		// 			$('#myModalpreclosure tbody').prepend(
+		// 				`<tr class="no-result text-center"><td colspan="${colspan}">No result found</td></tr>`
+		// 			);
+		// 		}
+		// 	}
+		// });
+	
 	</script>
 	<!--PRE CLOSURE SCHEDULE AND LEDGER CODE-->
 	<script>
@@ -1671,15 +1688,18 @@
 	<script>
 		function scheduleClosure(event) {
 			event.preventDefault();
+			console.log("Schedule Closure function called");
 			var element = document.getElementById("closureaccountnumber");
 
 			if (element) {
 				var id = element.value.trim();
 
 				if (!id) {
+					console.log("Account number is required");
 					$('#mypopup22').modal('show');
 					$("#popupmsg_body").html("Account number is required!...");
 				} else {
+					console.log("Account Number:", id);
 					$.ajax({
 						type: 'GET',
 						url: './FetchLoanDetails',
@@ -1709,6 +1729,7 @@
 		}
 
 		function ledgerClosure(event) {
+			console.log("Ledger Closure function called");
 			event.preventDefault();
 			var element = document.getElementById("closureaccountnumber");
 
@@ -1725,7 +1746,14 @@
 				alert("Element not found");
 			}
 		}
+
+
+
+
+
+
 	</script>
+
 
 </head>
 
@@ -1749,19 +1777,51 @@
 
 						<input type="hidden" id="hidden_acct_name" value="" style="display: none;">
 
-						<div class="float-right">
-							<button class="btn p-2" id="repaymentschedule" onclick="schedulePreClosure(event)"
+						<!-- <div class="float-right">
+							<button class="btn-primary big-btn" id="repaymentschedule" onclick="schedulePreClosure(event)"
 								style="display: inline-block;">
 								SCHEDULER
 							</button>
-							<button class="btn p-2" id="ledgerschedule" onclick="ledgerPreClosure(event)"
+							<button class="btn-primary big-btn" id="ledgerschedule" onclick="ledgerPreClosure(event)"
 								style="display: inline-block;">
 								LEDGER
 							</button>
-							<button class="btn P-2" onclick="showPreClosure();">PRE
+							<button class="btn-primary big-btn" onclick="showPreClosure();">PRE
 								- CLOSURE</button>
-							<button class="btn P-2" onclick="showClosure();">CLOSURE</button>
-						</div>
+								<button class="btn-primary big-btn" id="repaymentschedule" onclick="schedulePreClosure(event)"
+								style="display: inline-block;">
+								SCHEDULER
+							</button>
+							<button class="btn-primary big-btn" id="ledgerschedule" onclick="ledgerPreClosure(event)"
+								style="display: inline-block;">
+								LEDGER
+							</button>
+							<button class="btn-primary big-btn" onclick="showClosure();">CLOSURE</button>
+						</div> -->
+					
+						<div class="float-right">
+    <!-- PRE-CLOSURE BUTTONS -->
+	 <button class="btn-primary big-btn" id="preRepaymentSchedule" onclick="schedulePreClosure(event)" style="display: none;">
+        SCHEDULER
+    </button>
+    <button class="btn-primary big-btn" id="preLedgerSchedule" onclick="ledgerPreClosure(event)" style="display: none;">
+        LEDGER
+    </button>
+    <button class="btn-primary big-btn" onclick="showPreClosure()">PRE - CLOSURE</button>
+    
+
+    <!-- CLOSURE BUTTONS -->
+	 <button class="btn-primary big-btn" id="closeRepaymentSchedule" onclick="scheduleClosure(event)" style="display: none;">
+        SCHEDULER
+    </button>
+    <button class="btn-primary big-btn" id="closeLedgerSchedule" onclick="ledgerClosure(event)" style="display: none;">
+        LEDGER
+    </button>
+    <button class="btn-primary big-btn" onclick="showClosure()">CLOSURE</button>
+    
+</div>
+
+
 					</div>
 
 					<div class="card-body border" id="preclosuredatas">
@@ -2034,7 +2094,7 @@
 
 	<div id="myModalpreclosure" class="modal" style="font-size:120%;">
 		<div class="modal-content1">
-			<div class="close text-right" onclick="closeModalpreclosure(this);">&times;</div>
+			<!-- <div class="close text-right" onclick="closeModalpreclosure(this);">&times;</div> -->
 			<div class="panel panel-primary filterable">
 
 				<!-- FILTER BUTTON -->
@@ -2076,7 +2136,7 @@
 
 	<div id="myModalclosure" class="modal" style="font-size:120%;">
 		<div class="modal-content1">
-			<div class="close text-right" onclick="closeModalclosure(this);">&times;</div>
+			<!-- <div class="close text-right" onclick="closeModalclosure(this);">&times;</div> -->
 			<div class="panel panel-primary filterable">
 
 				<!-- FILTER BUTTON -->

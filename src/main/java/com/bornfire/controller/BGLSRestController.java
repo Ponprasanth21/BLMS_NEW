@@ -4193,7 +4193,7 @@ public class BGLSRestController {
         if (existingRecord != null) {
             try {
                 System.out.println("Procedure Run for interest demand");
-//    			tranMainRep.runInterestDemand(MIG_DATE, user);
+    			tranMainRep.runInterestDemand(user);
             }catch(Exception e) {
                 System.out.println(e);
             }
@@ -4219,7 +4219,7 @@ public class BGLSRestController {
         if (existingRecord != null) {
             try {
                 System.out.println("Procedure Run for fee demand");
-//    			tranMainRep.runFeeDemand(MIG_DATE, user);
+    			tranMainRep.runFeeDemand(user);
             }catch(Exception e) {
                 System.out.println(e);
             }
@@ -4245,7 +4245,7 @@ public class BGLSRestController {
         if (existingRecord != null) {
             try {
                 System.out.println("Procedure Run for penalty check");
-//    			tranMainRep.runPenalty(MIG_DATE, user);
+    			tranMainRep.runPenalty(user);
             }catch(Exception e) {
                 System.out.println(e);
             }
@@ -4272,7 +4272,7 @@ public class BGLSRestController {
         if (existingRecord != null) {
             try {
                 System.out.println("Procedure Run for penalty check");
-//    			tranMainRep.runInterestAccural(MIG_DATE);
+    			tranMainRep.runInterestAccural(MIG_DATE);
             }catch(Exception e) {
                 System.out.println(e);
             }
@@ -4299,7 +4299,7 @@ public class BGLSRestController {
         if (existingRecord != null) {
             try {
                 System.out.println("Procedure Run for penalty check");
-//    			tranMainRep.runPenaltyAccural(MIG_DATE);
+    			tranMainRep.runPenaltyAccural(MIG_DATE);
             }catch(Exception e) {
                 System.out.println(e);
             }
