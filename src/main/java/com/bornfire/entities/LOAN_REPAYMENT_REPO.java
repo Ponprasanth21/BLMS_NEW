@@ -472,4 +472,55 @@ public interface LOAN_REPAYMENT_REPO extends JpaRepository<LOAN_REPAYMENT_ENTITY
 			+ "ORDER BY B.due_date", nativeQuery = true)
 	List<Object[]> getPenaltyDemFlowsData(String reportDate, String accountNum);
 
+	@Query(value = "SELECT * FROM ( " + "  SELECT * FROM LOAN_REPAYMENT_TBL "
+			+ "  WHERE DEL_FLG = 'N' AND parent_account_key = ?1 AND (interest_exp - interest_paid) > 0 "
+			+ "  ORDER BY due_date ASC " + // earliest due_date first; change column if needed
+			") WHERE ROWNUM = 1", nativeQuery = true)
+	LOAN_REPAYMENT_ENTITY getFirstPendingInterest(String parentAccountKey);
+
+	@Query(value = "WITH ControlDate AS ( " + "    SELECT MAX(TRAN_DATE) AS TRAN_DATE FROM BGLS_CONTROL_TABLE " + "), "
+			+ "LoanDataBefore AS ( " + "    SELECT B.DUE_DATE, "
+			+ "           SUM(B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) AS PRDEM_TOTAL, "
+			+ "           MAX(B.INTEREST_EXP - B.INTEREST_PAID) AS INDEM_TOTAL, "
+			+ "           MAX(B.FEE_EXP - B.FEE_PAID) AS FEEDEM_TOTAL, "
+			+ "           MAX(B.PENALTY_EXP - B.PENALTY_PAID) AS PENDEM_TOTAL, " + "           A.ID AS loan_acct_no, "
+			+ "           CM.FIRST_NAME || ' ' || CM.LAST_NAME AS acct_name, "
+			+ "           A.ENCODED_KEY AS encoded_key, " + "           C.TRAN_DATE AS control_date "
+			+ "    FROM LOAN_ACCOUNT_MASTER_TBL A "
+			+ "    JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY "
+			+ "    JOIN CLIENT_MASTER_TBL CM ON CM.ENCODED_KEY = A.ACCOUNT_HOLDERKEY " + "    CROSS JOIN ControlDate C "
+			+ "    WHERE B.DUE_DATE < C.TRAN_DATE " + "      AND A.ID = :accountNum "
+			+ "      AND B.payment_state IN ('PENDING','PARTIALLY_PAID','LATE') " + "      AND B.DEL_FLG = 'N' "
+			+ "    GROUP BY B.DUE_DATE, A.ID, A.LOAN_NAME, A.ENCODED_KEY, CM.FIRST_NAME, CM.LAST_NAME, C.TRAN_DATE "
+			+ "), " + "LoanDataAfter AS ( " + "    SELECT B.DUE_DATE, "
+			+ "           SUM(B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) AS PRDEM_TOTAL, "
+			+ "           MAX(B.INTEREST_EXP - B.INTEREST_PAID) AS INDEM_TOTAL, "
+			+ "           MAX(B.FEE_EXP - B.FEE_PAID) AS FEEDEM_TOTAL, "
+			+ "           MAX(B.PENALTY_EXP - B.PENALTY_PAID) AS PENDEM_TOTAL, " + "           A.ID AS loan_acct_no, "
+			+ "           CM.FIRST_NAME || ' ' || CM.LAST_NAME AS acct_name, "
+			+ "           A.ENCODED_KEY AS encoded_key, " + "           C.TRAN_DATE AS control_date "
+			+ "    FROM LOAN_ACCOUNT_MASTER_TBL A "
+			+ "    JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY "
+			+ "    JOIN CLIENT_MASTER_TBL CM ON CM.ENCODED_KEY = A.ACCOUNT_HOLDERKEY " + "    CROSS JOIN ControlDate C "
+			+ "    WHERE B.DUE_DATE >= C.TRAN_DATE " + "      AND A.ID = :accountNum " + "      AND B.DEL_FLG = 'N' "
+			+ "    GROUP BY B.DUE_DATE, A.ID, A.LOAN_NAME, A.ENCODED_KEY, CM.FIRST_NAME, CM.LAST_NAME, C.TRAN_DATE "
+			+ ") " + "SELECT * FROM ( "
+			+ "    SELECT LD.due_date, '4' AS flow_id, 'PRDEM' AS flow_code, LD.PRDEM_TOTAL AS total_amount, LD.loan_acct_no, LD.acct_name, LD.encoded_key, LD.control_date "
+			+ "    FROM LoanDataBefore LD WHERE LD.PRDEM_TOTAL > 0 " + "    UNION ALL "
+			+ "    SELECT LD.due_date, '3', 'INDEM', LD.INDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key, LD.control_date FROM LoanDataBefore LD WHERE LD.INDEM_TOTAL > 0 "
+			+ "    UNION ALL "
+			+ "    SELECT LD.due_date, '2', 'FEEDEM', LD.FEEDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key, LD.control_date FROM LoanDataBefore LD WHERE LD.FEEDEM_TOTAL > 0 "
+			+ "    UNION ALL "
+			+ "    SELECT LD.due_date, '1', 'PENDEM', LD.PENDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key, LD.control_date FROM LoanDataBefore LD WHERE LD.PENDEM_TOTAL > 0 "
+			+ "    UNION ALL "
+			+ "    SELECT LD.DUE_DATE, '4', 'PRDEM', LD.PRDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key, LD.control_date FROM LoanDataAfter LD WHERE LD.PRDEM_TOTAL > 0 "
+			+ "    UNION ALL "
+			+ "    SELECT LD.DUE_DATE, '3', 'INDEM', LD.INDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key, LD.control_date FROM LoanDataAfter LD WHERE LD.INDEM_TOTAL > 0 "
+			+ "    UNION ALL "
+			+ "    SELECT LD.DUE_DATE, '2', 'FEEDEM', LD.FEEDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key, LD.control_date FROM LoanDataAfter LD WHERE LD.FEEDEM_TOTAL > 0 "
+			+ "    UNION ALL "
+			+ "    SELECT LD.DUE_DATE, '1', 'PENDEM', LD.PENDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key, LD.control_date FROM LoanDataAfter LD WHERE LD.PENDEM_TOTAL > 0 "
+			+ ") FinalResult " + "ORDER BY due_date, TO_NUMBER(flow_id)", nativeQuery = true)
+	List<Object[]> getLoanFlowsWithCustomer1(@Param("accountNum") String accountNum);
+
 }

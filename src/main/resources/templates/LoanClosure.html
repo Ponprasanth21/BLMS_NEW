@@ -769,43 +769,34 @@
 			var loanBal = parseFloat(document.getElementById("loan_bal").value.replace(/,/g, '')) || 0;
 			var acctBalance = parseFloat(document.getElementById("acct_balancedatas").value.replace(/,/g, '')) || 0;
 
-			alert("THE LOAN ACCOUNT BALANCE IS " + loanBal);
-			alert("THE PRECLOSURE ACCOUNT BALANCE IS " + acctBalance);
-
 			var selectedData = [];
-			var encodedKey = "";
 
-			$("#serviceflowIdTable tr").each(function () {
+			$("#flowIdTbodynew tr").each(function (index) {
 				var row = $(this);
 				let flowAmt = row.find("input[name='flow_amt']").val() || row.find("input[name='flow_amtvals']").val();
 
-				if (!flowAmt) return true; // Skip row if no amount
-
-				let selectedRadio = row.find("input[type='radio']:checked").val() || "None";
+				if (!flowAmt) return true; // Skip if no amount
 
 				let rowData = {
+					row_index: index + 1,
 					flow_amt: flowAmt.replace(/,/g, ''), // Remove commas
 					flow_code: row.find("input[name='flow_code']").val() || '',
 					flow_date: row.find("input[name='flow_date']").val() || '',
 					flow_id: row.find("input[name='flow_id']").val() || '',
 					loan_acct_no: row.find("input[name='loan_acct_no']").val() || '',
 					acct_name: row.find("input[name='acct_name']").val() || '',
-					encoded_key: row.find("input[name='row_select']").data("encoded_key") || '',
-					selected_option: selectedRadio
+					encoded_key: encodedKey
 				};
 
+				console.log("Row " + (index + 1) + " Data:", rowData);
 				selectedData.push(rowData);
 			});
 
-
 			if (selectedData.length === 0) {
-				alert("No data found.");
+				alert("No data found in the table.");
+				console.log("No data rows found.");
 				return;
 			}
-
-			console.log("Loan Balance:", loanBal);
-			console.log("Preclosure Balance:", acctBalance);
-			console.log("Comparison Result:", Math.abs(loanBal) === Math.abs(acctBalance));
 
 			// Compare absolute values and process accordingly
 			if (Math.abs(loanBal) === Math.abs(acctBalance)) {
@@ -823,21 +814,29 @@
 				contentType: 'application/json',
 				data: JSON.stringify(selectedData),
 				success: function (data) {
-					console.log("Server response:", data);
-					var tranId = data.trim();
-					var parttranid = "1";
-					var redirectUrl = 'accountLedgerPost?formmode=verify' +
-						'&acct_num=' + encodeURIComponent(selectedData[0].loan_acct_no) +
-						'&tran_id=' + encodeURIComponent(tranId) +
-						'&part_tran_id=' + encodeURIComponent(parttranid);
-					location.href = redirectUrl;
+					var tranId = data.trim(); // assign tranId from response
+
+					// Show success modal with tran_id
+					$('#successModalBody').text("Transaction saved successfully! Tran ID: " + tranId);
+					$('#successModal').modal('show');
+
+					// Close button (X) reloads the page
+					$('#successModalCloseBtn').off('click').on('click', function () {
+						location.reload();
+					});
+
+					// Close button (footer) reloads the page
+					$('#successModalCloseBtnFooter').off('click').on('click', function () {
+						location.reload();
+					});
 				},
 				error: function () {
-					$('#errorMessage').text('Error fetching data');
+					$('#errorMessage').text('Error saving transaction');
 					$('#errorModal').modal('show');
 				}
 			});
 		}
+
 
 		function handleCheckboxClickCollectiondata1() {
 			// Show confirmation modal before proceeding
@@ -853,73 +852,67 @@
 				location.reload(); // Refresh the page
 			});
 		}
+		
 		function proceedWithTransaction1() {
-			var loanBal = parseFloat(document.getElementById("loan_bal1").value.replace(/,/g, '')) || 0;
-			var acctBalance = parseFloat(document.getElementById("acct_balancedatas1").value.replace(/,/g, '')) || 0;
+		    var loanBal = parseFloat(document.getElementById("loan_bal1").value.replace(/,/g, '')) || 0;
+		    var acctBalance = parseFloat(document.getElementById("acct_balancedatas1").value.replace(/,/g, '')) || 0;
 
-			var processRows = [];
+		    var processRows = [];
 
-			$("#flowIdTbodynew1 tr").each(function () {
-				var row = $(this);
-				let flowAmt = row.find("input[name='flow_amt']").val() || row.find("input[name='flow_amtvals']").val();
+		    $("#flowIdTbodynew1 tr").each(function (index) {
+		        var row = $(this);
+		        let flowAmt = row.find("input[name='flow_amt']").val() || row.find("input[name='flow_amtvals']").val();
 
-				if (!flowAmt) return true; // Skip row if no amount
+		        if (!flowAmt) return true; // Skip row if no amount
 
-				let selectedRadio = row.find("input[type='radio']:checked").val() || "None";
+		        let encodedKey = encodedKeys[index] || '';
 
-				let rowData = {
-					flow_amt: flowAmt.replace(/,/g, ''), // Remove commas
-					flow_code: row.find("input[name='flow_code']").val() || '',
-					flow_date: row.find("input[name='flow_date']").val() || '',
-					flow_id: row.find("input[name='flow_id']").val() || '',
-					loan_acct_no: row.find("input[name='loan_acct_no']").val() || '',
-					acct_name: row.find("input[name='acct_name']").val() || '',
-					encoded_key: row.find("input[name='row_select']").data("encoded_key") || '',
-					selected_option: selectedRadio
-				};
+		        let rowData = {
+		            flow_amt: flowAmt.replace(/,/g, ''), // Remove commas
+		            flow_code: row.find("input[name='flow_code']").val() || '',
+		            flow_date: row.find("input[name='flow_date']").val() || '',
+		            flow_id: row.find("input[name='flow_id']").val() || '',
+		            loan_acct_no: row.find("input[name='loan_acct_no']").val() || '',
+		            acct_name: row.find("input[name='acct_name']").val() || '',
+		            encoded_key: encodedKey
+		        };
 
-				processRows.push(rowData);
-			});
+		        processRows.push(rowData);
+		    });
 
-			if (processRows.length === 0) {
-				alert("No rows to process.");
-				return;
-			}
+		    if (processRows.length === 0) {
+		        alert("No rows to process.");
+		        return;
+		    }
 
-			console.log("Loan Balance:", loanBal);
-			console.log("Preclosure Balance:", acctBalance);
-			console.log("Comparison Result:", Math.abs(loanBal) === Math.abs(acctBalance));
+		    console.log("Loan Balance:", loanBal);
+		    console.log("Preclosure Balance:", acctBalance);
+		    console.log("Encoded Keys being sent:", processRows.map(r => r.encoded_key));
 
-			// **Compare absolute values to match -20807 and 20807**
-			if (Math.abs(loanBal) === Math.abs(acctBalance)) {
-				processTransaction1('./transactionCollectiondatas1212', processRows);
-			} else {
-				processTransaction1('./transactionCollectiondatas1221', processRows);
-			}
-		}
+		    // Compare exact values (without adding/subtracting anything)
+		    let url = (loanBal === acctBalance || loanBal === -acctBalance)
+		        ? './transactionCollectiondatas1212'  // SAME
+		        : './transactionCollectiondatas1221'; // DIFFERENT
 
-		// Function to handle AJAX transaction request
-		function processTransaction1(url, selectedData) {
-			$.ajax({
-				type: 'POST',
-				url: url,
-				contentType: 'application/json',
-				data: JSON.stringify(selectedData),
-				success: function (data) {
-					console.log("Server response:", data);
-					var tranId = data.trim();
-					var parttranid = "1";
-					var redirectUrl = 'accountLedgerPost?formmode=verify' +
-						'&acct_num=' + encodeURIComponent(selectedData[0].loan_acct_no) +
-						'&tran_id=' + encodeURIComponent(tranId) +
-						'&part_tran_id=' + encodeURIComponent(parttranid);
-					location.href = redirectUrl;
-				},
-				error: function () {
-					$('#errorMessage').text('Error fetching data');
-					$('#errorModal').modal('show');
-				}
-			});
+		    $.ajax({
+		        type: 'POST',
+		        url: url,
+		        contentType: 'application/json',
+		        data: JSON.stringify(processRows),
+		        success: function (data) {
+		            var tranId = data.trim();
+		            $('#successModalBody').text("Transaction saved successfully! Tran ID: " + tranId);
+		            $('#successModal').modal('show');
+
+		            $('#successModalCloseBtn, #successModalCloseBtnFooter').off('click').on('click', function () {
+		                location.reload();
+		            });
+		        },
+		        error: function () {
+		            $('#errorMessage').text('Error saving transaction');
+		            $('#errorModal').modal('show');
+		        }
+		    });
 		}
 
 
@@ -955,13 +948,14 @@
 									var flowAmount = entity.flow_amt ? formatNumberWithCommas(entity.flow_amt) : "0.00";
 
 									tHTML += "<tr>"
-										+ "<td><input type='text' value='" + flowDate + "' class='border-0' readonly /></td>"
-										+ "<td><input type='text' value='" + entity.flow_id + "' class='border-0' readonly /></td>"
-										+ "<td><input type='text' value='" + entity.flow_code + "' class='border-0' readonly /></td>"
-										+ "<td style='text-align: right;'><input type='text' value='" + flowAmount + "' class='border-0 text-right' readonly /></td>"
-										+ "<td><input type='text' value='" + (entity.loan_acct_no || "") + "' class='border-0' readonly /></td>"
-										+ "<td><input type='text' value='" + (entity.acct_name || "") + "' class='border-0' readonly /></td>"
+										+ "<td><input type='text' name='flow_date' value='" + flowDate + "' class='border-0' readonly /></td>"
+										+ "<td><input type='text' name='flow_id' value='" + entity.flow_id + "' class='border-0' readonly /></td>"
+										+ "<td><input type='text' name='flow_code' value='" + entity.flow_code + "' class='border-0' readonly /></td>"
+										+ "<td style='text-align: right;'><input type='text' name='flow_amtvals' value='" + flowAmount + "' class='border-0 text-right' readonly /></td>"
+										+ "<td><input type='text' name='loan_acct_no' value='" + (entity.loan_acct_no || "") + "' class='border-0' readonly /></td>"
+										+ "<td><input type='text' name='acct_name' value='" + (entity.acct_name || "") + "' class='border-0' readonly /></td>"
 										+ "</tr>";
+
 								});
 							} else {
 								tHTML = "<tr><td colspan='7'>No records available</td></tr>";
@@ -982,6 +976,9 @@
 			});
 		}
 
+		// Global array to store encoded_keys
+		var encodedKeys = [];
+
 		function fetchacctnum1() {
 			var acctnum = document.getElementById("closureaccountnumber").value;
 
@@ -996,58 +993,76 @@
 					});
 
 					document.getElementById("loan_bal1").value = formattedBalance;
-					document.getElementById("repaymentschedule").style.removeProperty("display");
-					document.getElementById("ledgerschedule").style.removeProperty("display");
 
 					$.ajax({
 						type: 'GET',
 						url: './getloanclosetdatas521',
 						data: {accountNumber: acctnum},
 						success: function (data) {
-							var formattedTotalAmount = parseFloat(data.flow_total_amt || "0.00").toLocaleString('en-US', {
+							console.log(data);
+
+							// ✅ Safely handle total amount field
+							let formattedTotalAmount = parseFloat(data.flow_total_amt || "0.00").toLocaleString('en-US', {
 								minimumFractionDigits: 2,
 								maximumFractionDigits: 2
 							});
 
-							document.getElementById("acct_balancedatas1").value = formattedTotalAmount;
+							let balanceField = document.getElementById("acct_balancedatas1");
+							if (balanceField) {
+								balanceField.value = formattedTotalAmount;
+							}
 
 							let tHTML = "";
 							let tranDate = data.tran_date ? formatDate(data.tran_date) : "";
 
 							if (data.loan_flows && data.loan_flows.length > 0) {
 								$.each(data.loan_flows, function (index, entity) {
-									var flowDate = entity.flow_date ? formatDate(entity.flow_date) : "";
-									var flowCode = entity.flow_code || "";
-									var flowAmount = entity.flow_amt ? formatNumberWithCommas(entity.flow_amt) : "0.00";
-									var acctNo = entity.loan_acct_no || "";
-									var acctName = entity.acct_name || "";
-									var encodedKey = entity.encoded_key || "";
+									let flowDate = entity.flow_date ? formatDate(entity.flow_date) : "";
+									let flowCode = entity.flow_code || "";
+									let flowAmount = entity.flow_amt ? formatNumberWithCommas(entity.flow_amt) : "0.00";
+									let acctNo = entity.loan_acct_no || "";
+									let acctName = entity.acct_name || "";
+									let encoded_key = entity.encoded_key || ''; // store encoded_key for this row
 
-									var isEditable = (flowCode === "FEEDEM" && flowDate === tranDate);
+									// Push encoded_key to global array
+									encodedKeys.push(encoded_key);
+
+									let isEditable = (flowCode === "FEEDEM" && flowDate === tranDate);
 
 									tHTML += `
-									<tr>
-									    <td style="white-space: nowrap;">${flowDate}</td>
-									    <td style="white-space: nowrap;">${entity.flow_id || ""}</td>
-									    <td style="white-space: nowrap;">${flowCode}</td>
-									    <td style="text-align: right; white-space: nowrap;">
-									        ${isEditable
-											? `<input type='number' name='flow_amt' value='${flowAmount}' class='border text-right' onchange='updateFeeDemAmount(this)' />`
-											: `<input type='text' name='flow_amt' value='${flowAmount}' class='border-0 text-right' readonly />`}
-									    </td>
-									    <td style="white-space: nowrap;">${acctNo}</td>
-									    <td style="white-space: nowrap;">${acctName}</td>
-									</tr>`;
+									    <tr>
+									        <td><input type="text" name="flow_date" value="${flowDate}" class="border-0" readonly style="white-space: nowrap;" /></td>
+									        <td><input type="text" name="flow_id" value="${entity.flow_id || ""}" class="border-0" readonly style="white-space: nowrap;" /></td>
+									        <td><input type="text" name="flow_code" value="${flowCode}" class="border-0" readonly style="white-space: nowrap;" /></td>
+									        <td style="text-align: right; white-space: nowrap;">
+									            ${isEditable
+											? `<input type="number" name="flow_amt" value="${flowAmount}" class="border text-right" onchange="updateFeeDemAmount(this)" />`
+											: `<input type="text" name="flow_amt" value="${flowAmount}" class="border-0 text-right" readonly />`}
+									        </td>
+									        <td><input type="text" name="loan_acct_no" value="${acctNo}" class="border-0" readonly style="white-space: nowrap;" /></td>
+									        <td><input type="text" name="acct_name" value="${acctName}" class="border-0" readonly style="white-space: nowrap;" /></td>
+									    </tr>`;
 								});
 							} else {
 								tHTML = "<tr><td colspan='7'>No records available</td></tr>";
 							}
 
-							$("#flowIdTbodynew1").empty().append(tHTML);
+							// ✅ Only append if table body exists
+							if ($("#flowIdTbodynew1").length) {
+								$("#flowIdTbodynew1").empty().append(tHTML);
+							}
+
+							// ✅ Safely hide loading modal (only if it exists)
+							let loadingModal = document.getElementById("loadingModal");
+							if (loadingModal) {
+								loadingModal.style.display = 'none';
+							}
 						},
 						error: function () {
-							$('#errorMessage').text('Error fetching loan data');
-							$('#errorModal').modal('show');
+							if ($('#errorMessage').length && $('#errorModal').length) {
+								$('#errorMessage').text('Error fetching loan data');
+								$('#errorModal').modal('show');
+							}
 						}
 					});
 				},
@@ -1068,9 +1083,9 @@
 				url: './getloanclosetdatas511',
 				data: {accountNumber: accountNumber},
 				success: function (data) {
-					let table = document.getElementById("serviceflowIdTable");
+					let tbody = document.getElementById("flowIdTbodynew"); // Correct tbody reference
 
-					let newRow = table.insertRow();
+					let newRow = tbody.insertRow(); // Insert row into tbody
 					newRow.classList.add("deletable-row");
 
 					newRow.innerHTML = `
@@ -1080,8 +1095,8 @@
 		                <td style="text-align:right;">
 		                    <input type="text" name="flow_amtvals" class="border-0 text-right" />
 		                </td>
-		                <td><input type="text" name="loan_acct_no" class="border-0" value="${data.loan_data[0]}" readonly /></td>
-		                <td><input type="text" name="acct_name" class="border-0" value="${data.loan_data[1]}" readonly /></td>
+		                <td><input type="text" name="loan_acct_no" class="border-0" value="${data.loan_data[0] || ''}" readonly /></td>
+		                <td><input type="text" name="acct_name" class="border-0" value="${data.loan_data[1] || ''}" readonly /></td>
 		            `;
 
 					flowCounter1++;
@@ -1213,10 +1228,11 @@
 				url: './getloanclosetdatas511',
 				data: {accountNumber: accountNumber},
 				success: function (data) {
-					let table = document.getElementById("flowIdTbodynew1");
+					let tbody = document.getElementById("flowIdTbodynew1"); // Correct tbody reference
 
-					let newRow = table.insertRow();
+					let newRow = tbody.insertRow(); // Insert row into tbody
 					newRow.classList.add("deletable-row");
+
 
 					newRow.innerHTML = `
 					    <td><input type="text" name="flow_date" value="${data.tran_date || ''}" readonly style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; border: none; background: transparent;"></td>
@@ -1302,8 +1318,7 @@
 		let flowCounter = 3; // Initialize flow_id starting from 2
 
 		function deleteloanRowclosure() {
-			let table = document.getElementById("flowIdTbodynew1");
-
+			let tbody = document.getElementById("flowIdTbodynew1"); // Correct tbody reference
 			// Ensure at least 2 rows remain
 			if (table.getElementsByClassName("deletable-row").length <= 0) {
 				alert("At least 1 dynamically added row must remain.");
@@ -1368,7 +1383,7 @@
 			document.getElementById("closuredatas").style.display = "none";
 			document.getElementById("loanHeader").innerHTML = "LOAN PRE - CLOSURE";
 
-			 // Hide Closure buttons
+			// Hide Closure buttons
 			document.getElementById('closeRepaymentSchedule').style.display = 'none';
 			document.getElementById('closeLedgerSchedule').style.display = 'none';
 
@@ -1630,7 +1645,7 @@
 		// 		}
 		// 	}
 		// });
-	
+
 	</script>
 	<!--PRE CLOSURE SCHEDULE AND LEDGER CODE-->
 	<script>
@@ -1798,28 +1813,32 @@
 							</button>
 							<button class="btn-primary big-btn" onclick="showClosure();">CLOSURE</button>
 						</div> -->
-					
-						<div class="float-right">
-    <!-- PRE-CLOSURE BUTTONS -->
-	 <button class="btn-primary big-btn" id="preRepaymentSchedule" onclick="schedulePreClosure(event)" style="display: none;">
-        SCHEDULER
-    </button>
-    <button class="btn-primary big-btn" id="preLedgerSchedule" onclick="ledgerPreClosure(event)" style="display: none;">
-        LEDGER
-    </button>
-    <button class="btn-primary big-btn" onclick="showPreClosure()">PRE - CLOSURE</button>
-    
 
-    <!-- CLOSURE BUTTONS -->
-	 <button class="btn-primary big-btn" id="closeRepaymentSchedule" onclick="scheduleClosure(event)" style="display: none;">
-        SCHEDULER
-    </button>
-    <button class="btn-primary big-btn" id="closeLedgerSchedule" onclick="ledgerClosure(event)" style="display: none;">
-        LEDGER
-    </button>
-    <button class="btn-primary big-btn" onclick="showClosure()">CLOSURE</button>
-    
-</div>
+						<div class="float-right">
+							<!-- PRE-CLOSURE BUTTONS -->
+							<button class="btn-primary big-btn" id="preRepaymentSchedule"
+								onclick="schedulePreClosure(event)" style="display: none;">
+								SCHEDULER
+							</button>
+							<button class="btn-primary big-btn" id="preLedgerSchedule" onclick="ledgerPreClosure(event)"
+								style="display: none;">
+								LEDGER
+							</button>
+							<button class="btn-primary big-btn" onclick="showPreClosure()">PRE - CLOSURE</button>
+
+
+							<!-- CLOSURE BUTTONS -->
+							<button class="btn-primary big-btn" id="closeRepaymentSchedule"
+								onclick="scheduleClosure(event)" style="display: none;">
+								SCHEDULER
+							</button>
+							<button class="btn-primary big-btn" id="closeLedgerSchedule" onclick="ledgerClosure(event)"
+								style="display: none;">
+								LEDGER
+							</button>
+							<button class="btn-primary big-btn" onclick="showClosure()">CLOSURE</button>
+
+						</div>
 
 
 					</div>
@@ -1964,12 +1983,12 @@
 
 					<div class="card-footer text-center" style="background-color: #e9ecef;">
 						<button class="btn-primary big-btn" onclick="Home();">Home</button>
-						<button class="btn-primary big-btn" id="preclosuresubmit" onclick="handleCheckboxClickCollectiondata();"
-							style="display:none;">
+						<button class="btn-primary big-btn" id="preclosuresubmit"
+							onclick="handleCheckboxClickCollectiondata();" style="display:none;">
 							Submit
 						</button>
-						<button class="btn-primary big-btn" id="closuresubmit" onclick="handleCheckboxClickCollectiondata1();"
-							style="display:none;">
+						<button class="btn-primary big-btn" id="closuresubmit"
+							onclick="handleCheckboxClickCollectiondata1();" style="display:none;">
 							Submit
 						</button>
 						<button class="btn-primary big-btn" onclick="back();">Back</button>
@@ -2171,6 +2190,26 @@
 					<button type="button" class="btn-primary big-btn" onclick="closeModalclosure(this);">
 						Close
 					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Success Modal -->
+	<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="successModalLabel">Success</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+						id="successModalCloseBtn"></button>
+				</div>
+				<div class="modal-body" id="successModalBody">
+					<!-- Message inserted by JS -->
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" id="successModalCloseBtnFooter">Close</button>
 				</div>
 			</div>
 		</div>

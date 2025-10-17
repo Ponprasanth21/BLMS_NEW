@@ -394,5 +394,4 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
 			+ "JOIN CLIENT_MASTER_TBL b ON a.ACCOUNT_HOLDERKEY = b.ENCODED_KEY "
 			+ "WHERE a.id = :id", nativeQuery = true)
 	Object findAccountWithFullName(@Param("id") String id);
-
 }
