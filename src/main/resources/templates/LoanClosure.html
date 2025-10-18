@@ -776,6 +776,8 @@
 				let flowAmt = row.find("input[name='flow_amt']").val() || row.find("input[name='flow_amtvals']").val();
 
 				if (!flowAmt) return true; // Skip if no amount
+				
+				let encodedKey = encodedKeys1[index] || '';
 
 				let rowData = {
 					row_index: index + 1,
@@ -852,69 +854,71 @@
 				location.reload(); // Refresh the page
 			});
 		}
-		
+
 		function proceedWithTransaction1() {
-		    var loanBal = parseFloat(document.getElementById("loan_bal1").value.replace(/,/g, '')) || 0;
-		    var acctBalance = parseFloat(document.getElementById("acct_balancedatas1").value.replace(/,/g, '')) || 0;
+			var loanBal = parseFloat(document.getElementById("loan_bal1").value.replace(/,/g, '')) || 0;
+			var acctBalance = parseFloat(document.getElementById("acct_balancedatas1").value.replace(/,/g, '')) || 0;
 
-		    var processRows = [];
+			var processRows = [];
 
-		    $("#flowIdTbodynew1 tr").each(function (index) {
-		        var row = $(this);
-		        let flowAmt = row.find("input[name='flow_amt']").val() || row.find("input[name='flow_amtvals']").val();
+			$("#flowIdTbodynew1 tr").each(function (index) {
+				var row = $(this);
+				let flowAmt = row.find("input[name='flow_amt']").val() || row.find("input[name='flow_amtvals']").val();
 
-		        if (!flowAmt) return true; // Skip row if no amount
+				if (!flowAmt) return true; // Skip row if no amount
 
-		        let encodedKey = encodedKeys[index] || '';
+				let encodedKey = encodedKeys[index] || '';
 
-		        let rowData = {
-		            flow_amt: flowAmt.replace(/,/g, ''), // Remove commas
-		            flow_code: row.find("input[name='flow_code']").val() || '',
-		            flow_date: row.find("input[name='flow_date']").val() || '',
-		            flow_id: row.find("input[name='flow_id']").val() || '',
-		            loan_acct_no: row.find("input[name='loan_acct_no']").val() || '',
-		            acct_name: row.find("input[name='acct_name']").val() || '',
-		            encoded_key: encodedKey
-		        };
+				let rowData = {
+					flow_amt: flowAmt.replace(/,/g, ''), // Remove commas
+					flow_code: row.find("input[name='flow_code']").val() || '',
+					flow_date: row.find("input[name='flow_date']").val() || '',
+					flow_id: row.find("input[name='flow_id']").val() || '',
+					loan_acct_no: row.find("input[name='loan_acct_no']").val() || '',
+					acct_name: row.find("input[name='acct_name']").val() || '',
+					encoded_key: encodedKey
+				};
 
-		        processRows.push(rowData);
-		    });
+				processRows.push(rowData);
+			});
 
-		    if (processRows.length === 0) {
-		        alert("No rows to process.");
-		        return;
-		    }
+			if (processRows.length === 0) {
+				alert("No rows to process.");
+				return;
+			}
 
-		    console.log("Loan Balance:", loanBal);
-		    console.log("Preclosure Balance:", acctBalance);
-		    console.log("Encoded Keys being sent:", processRows.map(r => r.encoded_key));
+			console.log("Loan Balance:", loanBal);
+			console.log("Preclosure Balance:", acctBalance);
+			console.log("Encoded Keys being sent:", processRows.map(r => r.encoded_key));
 
-		    // Compare exact values (without adding/subtracting anything)
-		    let url = (loanBal === acctBalance || loanBal === -acctBalance)
-		        ? './transactionCollectiondatas1212'  // SAME
-		        : './transactionCollectiondatas1221'; // DIFFERENT
+			// ✅ Compare absolute values (treat -2000 and 2000 as same)
+			let url = (Math.abs(loanBal) === Math.abs(acctBalance))
+				? './transactionCollectiondatas1212'   // SAME AMOUNT
+				: './transactionCollectiondatas1221';  // DIFFERENT AMOUNT
 
-		    $.ajax({
-		        type: 'POST',
-		        url: url,
-		        contentType: 'application/json',
-		        data: JSON.stringify(processRows),
-		        success: function (data) {
-		            var tranId = data.trim();
-		            $('#successModalBody').text("Transaction saved successfully! Tran ID: " + tranId);
-		            $('#successModal').modal('show');
+			$.ajax({
+				type: 'POST',
+				url: url,
+				contentType: 'application/json',
+				data: JSON.stringify(processRows),
+				success: function (data) {
+					var tranId = data.trim();
+					$('#successModalBody').text("Transaction saved successfully! Tran ID: " + tranId);
+					$('#successModal').modal('show');
 
-		            $('#successModalCloseBtn, #successModalCloseBtnFooter').off('click').on('click', function () {
-		                location.reload();
-		            });
-		        },
-		        error: function () {
-		            $('#errorMessage').text('Error saving transaction');
-		            $('#errorModal').modal('show');
-		        }
-		    });
+					$('#successModalCloseBtn, #successModalCloseBtnFooter').off('click').on('click', function () {
+						location.reload();
+					});
+				},
+				error: function () {
+					$('#errorMessage').text('Error saving transaction');
+					$('#errorModal').modal('show');
+				}
+			});
 		}
 
+		// Global array to store encoded_keys
+		var encodedKeys1 = [];
 
 		function fetchacctnum() {
 			var acctnum = $("#precosureaccount").val();
@@ -946,6 +950,11 @@
 								data.loan_flows.forEach(function (entity) {
 									var flowDate = entity.flow_date ? formatDate(entity.flow_date) : "";
 									var flowAmount = entity.flow_amt ? formatNumberWithCommas(entity.flow_amt) : "0.00";
+
+									let encoded_key = entity.encoded_key || ''; // store encoded_key for this row
+
+									// Push encoded_key to global array
+									encodedKeys1.push(encoded_key);
 
 									tHTML += "<tr>"
 										+ "<td><input type='text' name='flow_date' value='" + flowDate + "' class='border-0' readonly /></td>"

@@ -431,6 +431,39 @@ public interface LOAN_REPAYMENT_REPO extends JpaRepository<LOAN_REPAYMENT_ENTITY
 			+ "    SELECT LD.DUE_DATE, '1', 'PENDEM', LD.PENDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key FROM LoanDataAfter LD WHERE LD.PENDEM_TOTAL > 0 "
 			+ ") FinalResult " + "ORDER BY due_date, TO_NUMBER(flow_id)", nativeQuery = true)
 	List<Object[]> getLoanFlowsWithCustomer(@Param("accountNum") String accountNum);
+	
+	
+	@Query(value = 
+			"WITH LoanData AS ( " +
+			"    SELECT B.DUE_DATE, " +
+			"           SUM(NVL(B.PRINCIPAL_EXP,0) - NVL(B.PRINCIPAL_PAID,0)) AS PRDEM_TOTAL, " +
+			"           MAX(NVL(B.INTEREST_EXP,0) - NVL(B.INTEREST_PAID,0)) AS INDEM_TOTAL, " +
+			"           MAX(NVL(B.FEE_EXP,0) - NVL(B.FEE_PAID,0)) AS FEEDEM_TOTAL, " +
+			"           MAX(NVL(B.PENALTY_EXP,0) - NVL(B.PENALTY_PAID,0)) AS PENDEM_TOTAL, " +
+			"           A.ID AS loan_acct_no, " +
+			"           CM.FIRST_NAME || ' ' || CM.LAST_NAME AS acct_name, " +
+			"           A.ENCODED_KEY AS encoded_key " +
+			"    FROM LOAN_ACCOUNT_MASTER_TBL A " +
+			"    JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY " +
+			"    JOIN CLIENT_MASTER_TBL CM ON CM.ENCODED_KEY = A.ACCOUNT_HOLDERKEY " +
+			"    JOIN BGLS_CONTROL_TABLE C ON B.DUE_DATE = C.TRAN_DATE " + // ✅ Only matching TRAN_DATE rows
+			"    WHERE A.ID = :accountNum " +
+			"      AND B.DEL_FLG = 'N' " +
+			"      AND B.payment_state IN ('PENDING','PARTIALLY_PAID','LATE') " +
+			"    GROUP BY B.DUE_DATE, A.ID, A.LOAN_NAME, A.ENCODED_KEY, CM.FIRST_NAME, CM.LAST_NAME " +
+			") " +
+			"SELECT * FROM ( " +
+			"    SELECT LD.DUE_DATE, '4' AS flow_id, 'PRDEM', LD.PRDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key FROM LoanData LD WHERE LD.PRDEM_TOTAL > 0 " +
+			"    UNION ALL " +
+			"    SELECT LD.DUE_DATE, '3', 'INDEM', LD.INDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key FROM LoanData LD WHERE LD.INDEM_TOTAL > 0 " +
+			"    UNION ALL " +
+			"    SELECT LD.DUE_DATE, '2', 'FEEDEM', LD.FEEDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key FROM LoanData LD WHERE LD.FEEDEM_TOTAL > 0 " +
+			"    UNION ALL " +
+			"    SELECT LD.DUE_DATE, '1', 'PENDEM', LD.PENDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key FROM LoanData LD WHERE LD.PENDEM_TOTAL > 0 " +
+			") FinalResult " +
+			"ORDER BY DUE_DATE, TO_NUMBER(flow_id)", nativeQuery = true)
+			List<Object[]> getLoanFlowsWithCustomermatched(@Param("accountNum") String accountNum);
+
 
 	@Query(value = "SELECT \r\n" + "    B.due_date AS due_date,\r\n" + "    '1' AS flow_id,\r\n"
 			+ "    'INDEM' AS flow_code,\r\n" + "    (B.interest_exp - B.interest_paid) AS flow_amt,\r\n"
@@ -523,4 +556,11 @@ public interface LOAN_REPAYMENT_REPO extends JpaRepository<LOAN_REPAYMENT_ENTITY
 			+ ") FinalResult " + "ORDER BY due_date, TO_NUMBER(flow_id)", nativeQuery = true)
 	List<Object[]> getLoanFlowsWithCustomer1(@Param("accountNum") String accountNum);
 
+	@Query(value = "select due_date from LOAN_REPAYMENT_TBL where parent_account_key = ?1", nativeQuery = true)
+	List<Object[]> getPenaltyDemFlowsDatavalue(String accountNum);
+	
+	@Transactional
+	@Modifying
+	@Query(value = "UPDATE LOAN_REPAYMENT_TBL SET DEL_FLG = 'Y' WHERE PARENT_ACCOUNT_KEY = :encodedKey AND DUE_DATE = :dueDate", nativeQuery = true)
+	void updateDelFlag(@Param("encodedKey") String encodedKey, @Param("dueDate") String dueDate);
 }
