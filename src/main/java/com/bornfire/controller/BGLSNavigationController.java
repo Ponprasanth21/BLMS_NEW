@@ -2925,6 +2925,7 @@ public class BGLSNavigationController {
             List<BigDecimal> existingBalances = tRAN_MAIN_TRM_WRK_REP
                     .findLatestTRAN_DATE_BALByAccountNumber(accountNum);
 
+            //BigDecimal TrandateBal = BigDecimal.ZERO;
             if (!existingBalances.isEmpty()) {
                 System.out.println("Account " + accountNum + " exists. Updating END_TRAN_DATE to yesterday.");
 
@@ -2933,10 +2934,14 @@ public class BGLSNavigationController {
                     LocalDate tranDate = LocalDate.parse(formattedDate);
                     // Call the update method with the date minus one day
                     tRAN_MAIN_TRM_WRK_REP.updateEndDateToYesterday1(accountNum, tranDate.minusDays(1));
+                    //TrandateBal=tRAN_MAIN_TRM_WRK_REP.getTrandateBal(accountNum, tranDate.minusDays(1));
                 } catch (DateTimeParseException e) {
                     // Handle parsing error (e.g., log the error or set a default value)
                     System.err.println("Invalid date format for TRANDATE: " + TRANDATE);
                 }
+                
+               // BigDecimal updatedTrandateBal = netAmount.subtract(TrandateBal);
+
 
                 // Calculate new TRAN_DATE_BAL
                 BigDecimal latestBalance = existingBalances.get(0);
@@ -2947,8 +2952,8 @@ public class BGLSNavigationController {
 
                 // Insert new account balance with debit and credit columns
                 System.out.println("Inserting updated balance record for Account " + accountNum);
-                tRAN_MAIN_TRM_WRK_REP.insertNewAccountBalance(currentGlCode, currentGlDesc, currentGlshCode,
-                        currentGlshDesc, accountNum, accountName, "SCR", newTRAN_DATE_BAL, TRANDATE, // Ensure TRANDATE
+                tRAN_MAIN_TRM_WRK_REP.UpdateExsistAccountBalance(currentGlCode, currentGlDesc, currentGlshCode,
+                        currentGlshDesc, accountNum, accountName, "KES", newTRAN_DATE_BAL, TRANDATE, // Ensure TRANDATE
                         // is in the
                         // correct
                         // format
@@ -2959,7 +2964,7 @@ public class BGLSNavigationController {
                 System.out.println("Account " + accountNum + " does not exist. Inserting new row with TRAN_DATE_BAL: "
                         + netAmount);
                 tRAN_MAIN_TRM_WRK_REP.insertNewAccountBalance(currentGlCode, currentGlDesc, currentGlshCode,
-                        currentGlshDesc, accountNum, accountName, "SCR", netAmount, TRANDATE, // Ensure TRANDATE is in
+                        currentGlshDesc, accountNum, accountName, "KES", netAmount, TRANDATE, // Ensure TRANDATE is in
                         // the correct format
                         netAmount, totalDebit, totalCredit);
 
