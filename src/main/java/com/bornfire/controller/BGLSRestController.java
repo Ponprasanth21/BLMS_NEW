@@ -4280,7 +4280,7 @@ public class BGLSRestController {
 		if (existingRecord != null) {
 			try {
 				System.out.println("Procedure Run for penalty check");
-//				tranMainRep.runInterestAccural(MIG_DATE);
+				tranMainRep.runInterestAccural(MIG_DATE);
 			} catch (Exception e) {
 				System.out.println(e);
 			}
