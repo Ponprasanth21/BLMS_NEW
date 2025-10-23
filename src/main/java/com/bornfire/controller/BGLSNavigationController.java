@@ -4375,11 +4375,12 @@ public class BGLSNavigationController {
 
 
     @RequestMapping(value = "Parameteradd", method = { RequestMethod.GET, RequestMethod.POST })
-    public String redirectschemeadd1() {
+    public String redirectschemeadd1(Model md) {
 
 
 //		md.addAttribute("refdetails",reference_code_Rep.getRefById(id) );
 //		md.addAttribute("refType", reference_code_Rep.getReferenceType());
+    	md.addAttribute("principle",chart_Acc_Rep.getListoffice1());
 
         return "BACP/PARAMETERADD";
     }
@@ -4421,6 +4422,7 @@ public class BGLSNavigationController {
         md.addAttribute("parameters", entity);
         List<BGLS_ORG_BRANCH_ENTITY> branch = branchrepo.findAll();
         md.addAttribute("branches", branch);
+        md.addAttribute("principle",chart_Acc_Rep.getListoffice1());
         return "BACP/PARAMETERUPDATE.html";
     }
 

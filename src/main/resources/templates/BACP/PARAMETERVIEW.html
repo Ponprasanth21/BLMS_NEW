@@ -1076,6 +1076,142 @@ function Delete() {
                                             </div>
 
                                         </div>
+
+
+
+
+                                     
+
+                                        <!-- ✅ Form Section -->
+                                        <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Transaction
+                                                Settings</label>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <div class="col-md-2 d-flex align-items-center">
+
+                                            </div>
+
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;text-align: center;margin-left: 60px;">Income
+                                                    A/C</label>
+                                            </div>
+
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;text-align: center;margin-left: 60px;">Recieved</label>
+                                            </div>
+
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;text-align: center;margin-left: 60px;">Parking</label>
+                                            </div>
+
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;text-align: center;margin-left: 60px;">Collection</label>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <!-- PRINCIPLE -->
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">PRINCIPLE</label>
+                                            </div>
+
+                                            <div class="col-md-2 d-flex align-items-center"></div>
+                                            <div class="col-md-2 d-flex align-items-center"></div>
+                                            <div class="col-md-2 d-flex align-items-center">
+
+                                                <input type="text" id="principleparking" name="principleparking"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    th:value="${parameters.principleparking}"
+                                                    style="width: 90%;" readonly>
+                                               
+
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+
+                                                <input type="text" id="principlecollection" name="principlecollection"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    th:value="${parameters.principlecollection}"
+                                                    style="width: 90%;" readonly>
+                                                
+
+                                            </div>
+
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <!-- INTEREST -->
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">INTEREST</label>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+
+                                                <input type="text" id="interestincome" name="interestincome"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    th:value="${parameters.interestincome}"
+                                                    style="width: 90%;" readonly>
+                                                
+
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+
+                                                <input type="text" id="interestreceived" name="interestreceived"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    th:value="${parameters.interestreceived}"
+                                                    style="width: 90%;" readonly>
+                                               
+
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <!-- FEES -->
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEES</label>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+
+                                                <input type="text" id="feeincome" name="feeincome"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    th:value="${parameters.feeincome}"
+                                                    style="width: 90%;" readonly>
+                                                
+
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <!-- PENALTY -->
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">PENALTY</label>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+
+                                                <input type="text" id="penaltyincome" name="penaltyincome"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    th:value="${parameters.penaltyincome}"
+                                                    style="width: 90%;" readonly>
+                                               
+
+                                            </div>
+                                        </div>
+                                        <!-- -------------------------------- -->
+
+
+
+
                                         <div class="row g-3 mt-2">
                                             <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Internal
                                                 Controls</label>
@@ -2798,7 +2934,7 @@ function Delete() {
     </div>
 
 
-    <div class="modal fade" data-backdrop="false" data-keyboard="false" id="alert2" tabindex="-7" role="dialog"
+    <div class="modal fade success2" data-backdrop="false" data-keyboard="false" id="alert2" tabindex="-7" role="dialog"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">

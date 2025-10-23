@@ -57,37 +57,39 @@
     <style>
         .modal {
             display: none;
-            /* Hidden by default */
-            position: absolute;
-            /* Stay in place */
+            position: fixed;
             z-index: 1;
-            /* Location of the box */
             left: 0;
             top: 0;
             width: 100%;
-            /* Full width */
             height: 100%;
-            /* Full height */
             overflow: auto;
-            /* Enable scroll if needed */
-            background-color: rgb(0, 0, 0);
-            /* Fallback color */
             background-color: rgba(0, 0, 0, 0.4);
-            /* Black w/ opacity */
+            margin-left: 350px;
         }
 
-        /* Modal Content */
+        .success2 {
+            margin-left: 0px !important;
+        }
+
         .modal-content {
             background-color: #fefefe;
-            margin: auto;
+            margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
             width: 100%;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-            -webkit-animation-name: animatetop;
-            -webkit-animation-duration: 0.4s;
-            animation-name: animatetop;
-            animation-duration: 0.4s
+            height: 25%;
+            margin-left: 200px;
+        }
+
+        .modal-content1 {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 70%;
+            height: 45%;
+            margin-left: 200px;
         }
 
         .modal-pass {
@@ -101,9 +103,7 @@
             margin-right: auto;
             border-radius: 10px;
             box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
-            /* Adding shadow for depth */
             font-family: Arial, sans-serif;
-            /* Using a more common font */
         }
 
         .close {
@@ -112,8 +112,11 @@
             font-weight: bold;
         }
 
-        .custom-border {
-            border: 2px dashed black !important;
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
     <style>
@@ -238,6 +241,77 @@
         });
 
 
+    </script>
+
+
+
+
+    <!-- then -->
+    <script>
+        let activeField = null; // store which input to fill
+
+        // Open Modal and remember which field opened it
+        function openModal1(fieldId) {
+            event.preventDefault();
+            activeField = fieldId;
+            document.getElementById("myModal").style.display = "block";
+        }
+
+        // Close Modal
+        function closeModal() {
+            event.preventDefault();
+            document.getElementById("myModal").style.display = "none";
+        }
+
+        // Enable filters
+        function enableFilter() {
+            document.getElementById("filterAccountNumber").disabled = false;
+            document.getElementById("filterAccountName").disabled = false;
+            document.getElementById("filterAccountNumber").focus();
+        }
+
+        // Filter rows by account number or name
+        function filterModalRows() {
+            const numFilter = document.getElementById("filterAccountNumber").value.toUpperCase();
+            const nameFilter = document.getElementById("filterAccountName").value.toUpperCase();
+
+            const rows = document.querySelectorAll("#myModal tbody tr");
+            let found = false;
+
+            rows.forEach(row => {
+                const acctNum = row.cells[0].innerText.toUpperCase();
+                const acctName = row.cells[1].innerText.toUpperCase();
+                if (acctNum.includes(numFilter) && acctName.includes(nameFilter)) {
+                    row.style.display = "";
+                    found = true;
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            // Handle no result found
+            const tbody = document.querySelector("#myModal tbody");
+            const noResultRow = tbody.querySelector(".no-result");
+            if (!found) {
+                if (!noResultRow) {
+                    const tr = document.createElement("tr");
+                    tr.className = "no-result text-center";
+                    tr.innerHTML = `<td colspan="2">No result found</td>`;
+                    tbody.prepend(tr);
+                }
+            } else if (noResultRow) {
+                noResultRow.remove();
+            }
+        }
+
+        // Select account and update the corresponding field
+        function selectAccount(row) {
+            const acctNum = row.cells[0].innerText.trim();
+            if (activeField) {
+                document.getElementById(activeField).value = acctNum;
+            }
+            closeModal();
+        }
     </script>
 
 
@@ -900,6 +974,151 @@
                                             </div>
 
                                         </div>
+
+
+                                        <!-- -------------------------------- -->
+
+
+                                        <!-- ✅ Form Section -->
+                                        <div class="row g-3 mt-2">
+                                            <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Transaction
+                                                Settings</label>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <div class="col-md-2 d-flex align-items-center">
+
+                                            </div>
+
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;text-align: center;margin-left: 60px;">Income
+                                                    A/C</label>
+                                            </div>
+
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;text-align: center;margin-left: 60px;">Recieved</label>
+                                            </div>
+
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;text-align: center;margin-left: 60px;">Parking</label>
+                                            </div>
+
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;text-align: center;margin-left: 60px;">Collection</label>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <!-- PRINCIPLE -->
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">PRINCIPLE</label>
+                                            </div>
+
+                                            <div class="col-md-2 d-flex align-items-center"></div>
+                                            <div class="col-md-2 d-flex align-items-center"></div>
+                                            <div class="col-md-2 d-flex align-items-center">
+
+                                                <input type="text" id="principleparking" name="principleparking"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 90%;" readonly>
+                                                <button type="button" onclick="openModal1('principleparking')"
+                                                    style="padding: 5px;">
+                                                    <i class="fa fa-search"></i>
+                                                </button>
+
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+
+                                                <input type="text" id="principlecollection" name="principlecollection"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 90%;" readonly>
+                                                <button type="button" onclick="openModal1('principlecollection')"
+                                                    style="padding: 5px;">
+                                                    <i class="fa fa-search"></i>
+                                                </button>
+
+                                            </div>
+
+
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+
+                                            <!-- INTEREST -->
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">INTEREST</label>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+
+                                                <input type="text" id="interestincome" name="interestincome"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 90%;" readonly>
+                                                <button type="button" onclick="openModal1('interestincome')"
+                                                    style="padding: 5px;">
+                                                    <i class="fa fa-search"></i>
+                                                </button>
+
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+
+                                                <input type="text" id="interestreceived" name="interestreceived"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 90%;" readonly>
+                                                <button type="button" onclick="openModal1('interestreceived')"
+                                                    style="padding: 5px;">
+                                                    <i class="fa fa-search"></i>
+                                                </button>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <!-- FEES -->
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEES</label>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+
+                                                <input type="text" id="feeincome" name="feeincome"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 90%;" readonly>
+                                                <button type="button" onclick="openModal1('feeincome')"
+                                                    style="padding: 5px;">
+                                                    <i class="fa fa-search"></i>
+                                                </button>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2">
+                                            <!-- PENALTY -->
+                                            <div class="col-md-2 d-flex align-items-center">
+                                                <label class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">PENALTY</label>
+                                            </div>
+                                            <div class="col-md-2 d-flex align-items-center">
+
+                                                <input type="text" id="penaltyincome" name="penaltyincome"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 90%;" readonly>
+                                                <button type="button" onclick="openModal1('penaltyincome')"
+                                                    style="padding: 5px;">
+                                                    <i class="fa fa-search"></i>
+                                                </button>
+
+                                            </div>
+                                        </div>
+                                        <!-- -------------------------------- -->
+
+
                                         <div class="row g-3 mt-2">
                                             <label style="font-size: 1rem; font-weight: bold; padding: 8px;">Internal
                                                 Controls</label>
@@ -2030,66 +2249,66 @@
                                         </div>
 
                                         <div class="row g-3 mt-2 ">
-    <div class="col-md-4 d-flex align-items-center">
-        <label for="fee17Name" class="form-label me-2 mb-0 text-end"
-            style="width: 45%;">FEE17_NAME</label>
-        <input type="text" id="fee17Name" name="fee17Name"
-            class="form-control form-control-sm border border-dark"
-            style="width: 55%;">
-    </div>
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee17Name" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE17_NAME</label>
+                                                <input type="text" id="fee17Name" name="fee17Name"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
 
-    <div class="col-md-4 d-flex align-items-center">
-        <label for="fee17IdType" class="form-label me-2 mb-0 text-end"
-            style="width: 45%;">FEE17_ID_TYPE</label>
-        <input type="text" id="fee17IdType" name="fee17IdType"
-            class="form-control form-control-sm border border-dark"
-            style="width: 55%;">
-    </div>
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee17IdType" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE17_ID_TYPE</label>
+                                                <input type="text" id="fee17IdType" name="fee17IdType"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
 
-    <div class="col-md-4 d-flex align-items-center">
-        <label for="fee17Payment" class="form-label me-2 mb-0 text-end"
-            style="width: 45%;">FEE17_PAYMENT</label>
-        <input type="text" id="fee17Payment" name="fee17Payment"
-            class="form-control form-control-sm border border-dark"
-            style="width: 55%;">
-    </div>
-</div>
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee17Payment" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE17_PAYMENT</label>
+                                                <input type="text" id="fee17Payment" name="fee17Payment"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
 
-<div class="row g-3 mt-2">
-    <div class="col-md-4 d-flex align-items-center">
-        <label for="fee17AmortProfile" class="form-label me-2 mb-0 text-end"
-            style="width: 45%;">FEE17_AMORT_PROFILE</label>
-        <input type="text" id="fee17AmortProfile" name="fee17AmortProfile"
-            class="form-control form-control-sm border border-dark"
-            style="width: 55%;">
-    </div>
+                                        <div class="row g-3 mt-2">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee17AmortProfile" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE17_AMORT_PROFILE</label>
+                                                <input type="text" id="fee17AmortProfile" name="fee17AmortProfile"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
 
-    <div class="col-md-4 d-flex align-items-center">
-        <label for="fee17Type" class="form-label me-2 mb-0 text-end"
-            style="width: 45%;">TYPE</label>
-        <input type="text" id="fee17Type" name="fee17Type"
-            class="form-control form-control-sm border border-dark"
-            style="width: 55%;">
-    </div>
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee17Type" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">TYPE</label>
+                                                <input type="text" id="fee17Type" name="fee17Type"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
 
-    <div class="col-md-4 d-flex align-items-center">
-        <label for="fee17Amount" class="form-label me-2 mb-0 text-end"
-            style="width: 45%;">AMOUNT</label>
-        <input type="number" id="fee17Amount" name="fee17Amount"
-            class="form-control form-control-sm border border-dark"
-            style="width: 55%;">
-    </div>
-</div>
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee17Amount" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">AMOUNT</label>
+                                                <input type="number" id="fee17Amount" name="fee17Amount"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
 
-<div class="row g-3 mt-2 ">
-    <div class="col-md-4 d-flex align-items-center">
-        <label for="fee17Application" class="form-label me-2 mb-0 text-end"
-            style="width: 45%;">FEE17_APPLICATION</label>
-        <input type="text" id="fee17Application" name="fee17Application"
-            class="form-control form-control-sm border border-dark"
-            style="width: 55%;">
-    </div>
-</div>
+                                        <div class="row g-3 mt-2 ">
+                                            <div class="col-md-4 d-flex align-items-center">
+                                                <label for="fee17Application" class="form-label me-2 mb-0 text-end"
+                                                    style="width: 45%;">FEE17_APPLICATION</label>
+                                                <input type="text" id="fee17Application" name="fee17Application"
+                                                    class="form-control form-control-sm border border-dark"
+                                                    style="width: 55%;">
+                                            </div>
+                                        </div>
 
 
 
@@ -2293,7 +2512,7 @@
     </div>
 
 
-    <div class="modal fade" data-backdrop="false" data-keyboard="false" id="alert2" tabindex="-7" role="dialog"
+    <div class="modal fade success2" data-backdrop="false" data-keyboard="false" id="alert2" tabindex="-7" role="dialog"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
@@ -2306,7 +2525,7 @@
         </div>
     </div>
 
-    <div class="modal fade" data-backdrop="false" data-keyboard="false" id="alert" tabindex="-7" role="dialog"
+    <div class="modal fade success2" data-backdrop="false" data-keyboard="false" id="alert" tabindex="-7" role="dialog"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
@@ -2320,7 +2539,7 @@
         </div>
     </div>
 
-    <div class="modal fade" data-backdrop="false" data-keyboard="false" id="alert1" tabindex="-7" role="dialog"
+    <div class="modal fade success2" data-backdrop="false" data-keyboard="false" id="alert1" tabindex="-7" role="dialog"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
@@ -2333,6 +2552,53 @@
             </div>
         </div>
     </div>
+
+
+
+    <!-- then -->
+    <!-- ✅ Common Modal -->
+    <div id="myModal" class="modal" style="font-size:120%; display:none;">
+        <div class="modal-content1">
+            <div class="panel panel-primary filterable">
+                <button type="button" class="btn text-white btn-filter btn-primary float-right"
+                    onclick="enableFilter()">Filter</button>
+
+                <div style="max-height: 350px; overflow-y: auto;">
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr class="filters">
+                                <th>
+                                    <input type="text" id="filterAccountNumber" class="form-control font-weight-bold"
+                                        placeholder="Account Number" disabled onkeyup="filterModalRows()">
+                                </th>
+                                <th>
+                                    <input type="text" id="filterAccountName" class="form-control font-weight-bold"
+                                        placeholder="Account Name" disabled onkeyup="filterModalRows()">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="ref : ${principle}" onclick="selectAccount(this)">
+                                <td th:text="${ref.acct_num}"></td>
+                                <td th:text="${ref.acct_name}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="text-center mt-2">
+                    <button type="button" class="btn-primary big-btn" onclick="closeModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
 
 
 </body>

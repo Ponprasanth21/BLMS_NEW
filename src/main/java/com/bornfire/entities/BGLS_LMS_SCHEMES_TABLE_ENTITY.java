@@ -564,6 +564,36 @@ public class BGLS_LMS_SCHEMES_TABLE_ENTITY {
     @Column(name = "AUTO_CREATE_SETTLEMENT_ACCT", length = 5)
     private String autoCreateSettlementAcct = "N";
     
+    @Column(name = "PRINCIPLE", length = 50)
+    private String principle;
+
+    @Column(name = "FEES", length = 50)
+    private String fees;
+
+    @Column(name = "INTEREST", length = 50)
+    private String interest;
+
+    @Column(name = "PENALTY", length = 50)
+    private String penalty;
+    
+    @Column(name = "PRINCIPLEPARKING", length = 50)
+    private String principleparking;
+    
+    @Column(name = "PRINCIPLECOLLECTION", length = 50)
+    private String principlecollection;
+    
+    @Column(name = "INTERESTINCOME", length = 50)
+    private String interestincome;
+    
+    @Column(name = "INTERESTRECEIVED", length = 50)
+    private String interestreceived;
+    
+    @Column(name = "FEEINCOME", length = 50)
+    private String feeincome;
+    
+    @Column(name = "PENALTYINCOME", length = 50)
+    private String penaltyincome;
+    
     
 
     @Column(name = "ENTRY_USER")
@@ -596,6 +626,86 @@ public class BGLS_LMS_SCHEMES_TABLE_ENTITY {
     private String verifyFlg;
     
     
+
+	public String getPrincipleparking() {
+		return principleparking;
+	}
+
+	public void setPrincipleparking(String principleparking) {
+		this.principleparking = principleparking;
+	}
+
+	public String getPrinciplecollection() {
+		return principlecollection;
+	}
+
+	public void setPrinciplecollection(String principlecollection) {
+		this.principlecollection = principlecollection;
+	}
+
+	public String getInterestincome() {
+		return interestincome;
+	}
+
+	public void setInterestincome(String interestincome) {
+		this.interestincome = interestincome;
+	}
+
+	public String getInterestreceived() {
+		return interestreceived;
+	}
+
+	public void setInterestreceived(String interestreceived) {
+		this.interestreceived = interestreceived;
+	}
+
+	public String getFeeincome() {
+		return feeincome;
+	}
+
+	public void setFeeincome(String feeincome) {
+		this.feeincome = feeincome;
+	}
+
+	public String getPenaltyincome() {
+		return penaltyincome;
+	}
+
+	public void setPenaltyincome(String penaltyincome) {
+		this.penaltyincome = penaltyincome;
+	}
+
+	public String getPrinciple() {
+		return principle;
+	}
+
+	public void setPrinciple(String principle) {
+		this.principle = principle;
+	}
+
+	public String getFees() {
+		return fees;
+	}
+
+	public void setFees(String fees) {
+		this.fees = fees;
+	}
+
+	public String getInterest() {
+		return interest;
+	}
+
+	public void setInterest(String interest) {
+		this.interest = interest;
+	}
+
+	public String getPenalty() {
+		return penalty;
+	}
+
+	public void setPenalty(String penalty) {
+		this.penalty = penalty;
+	}
 
 	public String getId() {
 		return id;
