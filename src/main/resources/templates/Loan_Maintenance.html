@@ -362,7 +362,7 @@
 
 			// Remove commas and format dates BEFORE serializing
 			["disposable_income", "interest_paid", "interest_due", "interest_balance", "loan_amount", "manualoverride_amount", "cpfees", "fees_balance", "fees_paid",
-				"principal_balance", "principal_paid", "total_product_price", "principal_due", "fees_due", "penalty_due", "penalty_paid", "penalty_balance", "deposit_amount"]
+				"principal_balance", "principal_paid", "total_product_price", "principal_due", "fees_due", "penalty_due", "penalty_paid", "penalty_balance", "deposit_amount","accrued_penalty","accrued_interest"]
 				.forEach(function (fieldId) {
 					var field = document.getElementById(fieldId);
 					if (field && field.value) {
@@ -1384,6 +1384,52 @@
 												name="penalty_balance" />
 										</div>
 									</div>
+
+
+									<div class="row formline ml-2  mt-1">
+										<div class="col-sm-2">
+											<label style="color: red;">As On Date</label>
+										</div>
+										<div class="col-sm-2">
+											
+											<input type="text" id="asondate" style="background-color:orange;"
+												th:if="${formmode}=='view'"
+												th:value="${#dates.format(view?.asondate, 'dd-MM-yyyy')}"
+												name="asondate" readonly /> 
+												<input type="text"
+												style="background-color:orange" id="asondate"
+												th:if="${formmode}=='modify'"
+												th:value="${#dates.format(view?.asondate, 'dd-MM-yyyy')}"
+												name="asondate" />
+										</div>
+										<div class="col-sm-2">
+											<label style="color: red;">Accrued Interest</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="accrued_interest" id="accrued_interest"
+												style="background-color:orange;" th:if="${formmode}=='view'"
+												th:value="${view?.accrued_interest == 0 ? '0.00' :#numbers.formatDecimal(view?.accrued_interest, 0, 'COMMA', 2, 'POINT')}"
+												readonly /> <input type="text" name="accrued_interest"
+												style="background-color:orange;" id="accrued_interest"
+												th:if="${formmode}=='modify'"
+												th:value="${view?.accrued_interest == 0 ? '0.00' :#numbers.formatDecimal(view?.accrued_interest, 0, 'COMMA', 2, 'POINT')}" />
+										</div>
+										<div class="col-sm-2">
+											<label style="color: red;">Accrued Penalty</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="accrued_penalty" style="background-color:orange;"
+												th:if="${formmode}=='view'"
+												th:value="${view?.accrued_penalty == 0 ? '0.00' :#numbers.formatDecimal(view?.accrued_penalty, 0, 'COMMA', 2, 'POINT')}"
+												name="accrued_penalty" readonly /> <input type="text"
+												style="background-color:orange;" id="accrued_penalty"
+												th:if="${formmode}=='modify'"
+												th:value="${view?.accrued_penalty == 0 ? '0.00' :#numbers.formatDecimal(view?.accrued_penalty, 0, 'COMMA', 2, 'POINT')}"
+												name="accrued_penalty" />
+										</div>
+									</div>
+
+
 								</div>
 								<!-------------------------------------------------------------------------- ADDITIONAL DETAILS ------------------------------------------------------------>
 								<div>
@@ -2087,6 +2133,33 @@
 											<input type="text" id="penalty_balance"
 												th:value="${view?.penalty_balance == 0 ? '0.00' :#numbers.formatDecimal(view?.penalty_balance, 0, 'COMMA', 2, 'POINT')}"
 												name="penalty_balance" readonly />
+										</div>
+									</div>
+
+									<div class="row formline ml-2  mt-1">
+										<div class="col-sm-2">
+											<label>As On Date</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="asondate"
+												th:value="${#dates.format(view?.asondate, 'dd-MM-yyyy')}"
+												name="asondate" readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Accrued Interest</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" name="accrued_interest" id="accrued_interest"
+												th:value="${view?.accrued_interest == 0 ? '0.00' :#numbers.formatDecimal(view?.accrued_interest, 0, 'COMMA', 2, 'POINT')}"
+												readonly />
+										</div>
+										<div class="col-sm-2">
+											<label>Penalty Balance</label>
+										</div>
+										<div class="col-sm-2">
+											<input type="text" id="accrued_penalty"
+												th:value="${view?.accrued_penalty == 0 ? '0.00' :#numbers.formatDecimal(view?.accrued_penalty, 0, 'COMMA', 2, 'POINT')}"
+												name="accrued_penalty" readonly />
 										</div>
 									</div>
 								</div>

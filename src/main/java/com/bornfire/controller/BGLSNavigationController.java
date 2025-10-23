@@ -3878,6 +3878,8 @@ public class BGLSNavigationController {
             up.setDate_of_first_call(loan_act_mst_entity.getDate_of_first_call());
             up.setLast_call_outcome(loan_act_mst_entity.getLast_call_outcome());
             up.setAsondate(loan_act_mst_entity.getAsondate());
+            up.setAccrued_interest(loan_act_mst_entity.getAccrued_interest());
+            up.setAccrued_penalty(loan_act_mst_entity.getAccrued_penalty());
 
             // Update last modified date
             up.setLast_modified_date(new Date());
