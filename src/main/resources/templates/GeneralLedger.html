@@ -906,7 +906,7 @@ input:hover+.password-info {
 											<th style="width: 8%;"><input type="text"
 												class="form-control font-weight-bold"
 												placeholder="CRNCY CODE" disabled></th>
-											<th><input type="text" style="text-align: right;"
+											<th style="width: 8%;" ><input type="text" style="text-align: right;"
 												class="form-control font-weight-bold"
 												placeholder="CREDIT BAL" disabled></th>
 											<th><input type="text" style="text-align: right;"
@@ -945,9 +945,10 @@ input:hover+.password-info {
 											<!-- Negative Balance -->
 											<td style="text-align: right;"
 											    th:text="${#strings.isEmpty(chartacc.total_balance) 
-											              || T(java.lang.Double).valueOf(chartacc.total_balance) >= 0 
-											              ? '0.00' 
-											              : #numbers.formatDecimal(T(java.lang.Double).valueOf(chartacc.total_balance).abs(), 2, 2)}">
+															|| T(java.lang.Double).valueOf(chartacc.total_balance) >= 0 
+															? '0.00' 
+															: #numbers.formatDecimal(T(java.lang.Math).abs(T(java.lang.Double).valueOf(chartacc.total_balance)), 2, 2)}"
+													>
 											</td>
 											<td class="text-center">
 																<div class="dropdown action-dropdown">
