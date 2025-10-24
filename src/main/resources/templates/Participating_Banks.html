@@ -359,6 +359,11 @@ input:hover+.password-info {
 
 										</thead>
 										<tbody id="placelist">
+											 <tr th:if="${chartaccount == null or chartaccount.isEmpty()}">
+												<td colspan="6" style="text-align: center; color: red; font-weight: bold;">
+													No data found
+												</td>
+											</tr>
 											<tr th:each="chartacc : ${chartaccount}">
 												<td th:text="${chartacc?.bank_code}"></td>
 												<td th:text="${chartacc?.bank_name}"></td>
