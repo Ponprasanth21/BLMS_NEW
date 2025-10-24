@@ -632,6 +632,7 @@ public class UploadService {
 	public Map<String, Object> saveTranFile(MultipartFile file, String userID, String userName,boolean overwrite ,String auditRefNo) throws SQLException {
 		int successCount = 0, failureCount = 0;
 		Map<String, Object> resultMap = new LinkedHashMap<>();
+		System.out.println("THE TRANSACTION FUNCTION UPLOAD SERVICE WORKED "+successCount);
 		logger.info("Start 1");
 		try (InputStream inputStream = file.getInputStream();
 			     Workbook workbook = WorkbookFactory.create(inputStream)) {
@@ -665,7 +666,10 @@ public class UploadService {
 
 					entity.setTransaction_id(item.get(0));    
 					entity.setNames(item.get(1));
-					entity.setReference(item.get(2));
+					String fullValue = item.get(2); // e.g., "pvt/2016/013408"
+					String[] parts = fullValue.split("/"); 
+					String reference = parts[parts.length - 1].trim(); // "013408"
+					entity.setReference(reference);
 					entity.setMobile_number(item.get(3));
 					entity.setAmount(DateParser.parseBigDecimal(item.get(4)));
 					entity.setAllocated_amount(DateParser.parseBigDecimal(item.get(5)));

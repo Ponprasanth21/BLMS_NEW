@@ -250,6 +250,9 @@ public class BGLSRestController {
 	@Autowired
 	HolidayMaster_Rep holidayMaster_Rep;
 
+	@Autowired
+	Transaction_accounts_Rep transaction_accounts_Rep;
+
 	/* THANVEER */
 	@RequestMapping(value = "employeeAdd", method = RequestMethod.POST)
 	@ResponseBody
@@ -2906,64 +2909,81 @@ public class BGLSRestController {
 
 				if ("PRDEM".equalsIgnoreCase(flowCode) || "INDEM".equalsIgnoreCase(flowCode)) {
 
-					Lease_Loan_Work_Entity dep = lease_Loan_Work_Repo.getLeaseAccount(loanAcctNo);
-					BigDecimal intrate = dep != null ? dep.getEffective_interest_rate() : BigDecimal.ZERO;
+				Lease_Loan_Work_Entity dep = lease_Loan_Work_Repo.getLeaseAccount(loanAcctNo);
+				BigDecimal intrate = dep != null ? dep.getEffective_interest_rate() : BigDecimal.ZERO;
 
-					String acct_num = "1291700001"; // Debit account
-					String tranParticulars = "Booking: " + loanAcctNo + " for " + days + " days @ " + interestPercentage
-							+ "%";
+				String productname = lOAN_ACT_MST_REPO.getLoanproductnames(loanAcctNo);
+				System.out.println("THE PASSED LOAN ACCOUNT NUMBER FOR PRODUCT NAME " + loanAcctNo);
+				System.out.println("THE GETTING DATABASE PRODUCT NAME IS " + productname);
 
-					Chart_Acc_Entity depositevalue = chart_Acc_Rep.getaedit(acct_num);
-					ActNo = acct_num;
+				// ✅ If product name is "Customer Loan Product", convert to "Credit Facility"
+				if ("Customer Loan Product".equalsIgnoreCase(productname)) {
+					productname = "Credit Facility";
+				}
 
-					TRAN_MAIN_TRM_WRK_ENTITY debitTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
-					debitTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
-					debitTrm.setTran_id(tranId);
-					debitTrm.setPart_tran_id(partTranId1);
-					debitTrm.setAcct_num(depositevalue.getAcct_num());
-					debitTrm.setAcct_name(depositevalue.getAcct_name());
-					debitTrm.setAcct_crncy(depositevalue.getAcct_crncy());
-					debitTrm.setTran_type("TRANSFER");
-					debitTrm.setPart_tran_type("Debit");
-					debitTrm.setTran_amt(interest);
-					debitTrm.setTran_particular(tranParticulars);
-					debitTrm.setTran_remarks(tranParticulars);
-					debitTrm.setTran_date(transactionDate);
-					debitTrm.setValue_date(monthEndDate);
-					debitTrm.setFlow_code(flowCode);
-					debitTrm.setFlow_date(flowDate);
-					debitTrm.setTran_status("ENTERED");
-					debitTrm.setEntry_user(user);
-					debitTrm.setEntry_time(flowDate);
-					debitTrm.setDel_flg("N");
+				Transaction_accounts_entity account_numbervalues = transaction_accounts_Rep.getLoanView(productname);
+				System.out.println(
+						"the getting interest recivable account is " + account_numbervalues.getInterest_recivable());
+				System.out.println(
+						"the getting interest collected account is " + account_numbervalues.getInterest_income());
 
-					tRAN_MAIN_TRM_WRK_REP.save(debitTrm);
+				// Debit account from database
+				String acct_num = account_numbervalues.getInterest_recivable();
+				String tranParticulars = "Booking: " + loanAcctNo + " for " + days + " days @ " + interestPercentage
+						+ "%";
 
-					String acct_num1 = "4100004110"; // Credit account
-					Chart_Acc_Entity termdeposite = chart_Acc_Rep.getaedit(acct_num1);
+				Chart_Acc_Entity depositevalue = chart_Acc_Rep.getaedit(acct_num);
+				ActNo = acct_num;
 
-					TRAN_MAIN_TRM_WRK_ENTITY creditTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
-					creditTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
-					creditTrm.setTran_id(tranId);
-					creditTrm.setPart_tran_id(partTranId2);
-					creditTrm.setAcct_num(termdeposite.getAcct_num());
-					creditTrm.setAcct_name(termdeposite.getAcct_name());
-					creditTrm.setAcct_crncy(termdeposite.getAcct_crncy());
-					creditTrm.setTran_type("TRANSFER");
-					creditTrm.setPart_tran_type("Credit");
-					creditTrm.setTran_amt(interest);
-					creditTrm.setTran_particular(tranParticulars);
-					creditTrm.setTran_remarks(tranParticulars);
-					creditTrm.setTran_date(transactionDate);
-					creditTrm.setValue_date(monthEndDate);
-					creditTrm.setFlow_code(flowCode);
-					creditTrm.setFlow_date(flowDate);
-					creditTrm.setTran_status("ENTERED");
-					creditTrm.setEntry_user(user);
-					creditTrm.setEntry_time(flowDate);
-					creditTrm.setDel_flg("N");
+				TRAN_MAIN_TRM_WRK_ENTITY debitTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
+				debitTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
+				debitTrm.setTran_id(tranId);
+				debitTrm.setPart_tran_id(partTranId1);
+				debitTrm.setAcct_num(depositevalue.getAcct_num());
+				debitTrm.setAcct_name(depositevalue.getAcct_name());
+				debitTrm.setAcct_crncy(depositevalue.getAcct_crncy());
+				debitTrm.setTran_type("TRANSFER");
+				debitTrm.setPart_tran_type("Debit");
+				debitTrm.setTran_amt(interest);
+				debitTrm.setTran_particular(tranParticulars);
+				debitTrm.setTran_remarks(tranParticulars);
+				debitTrm.setTran_date(transactionDate);
+				debitTrm.setValue_date(monthEndDate);
+				debitTrm.setFlow_code(flowCode);
+				debitTrm.setFlow_date(flowDate);
+				debitTrm.setTran_status("ENTERED");
+				debitTrm.setEntry_user(user);
+				debitTrm.setEntry_time(flowDate);
+				debitTrm.setDel_flg("N");
 
-					tRAN_MAIN_TRM_WRK_REP.save(creditTrm);
+				tRAN_MAIN_TRM_WRK_REP.save(debitTrm);
+
+				// Credit account from database
+				String acct_num1 = account_numbervalues.getInterest_income();
+				Chart_Acc_Entity termdeposite = chart_Acc_Rep.getaedit(acct_num1);
+
+				TRAN_MAIN_TRM_WRK_ENTITY creditTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
+				creditTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
+				creditTrm.setTran_id(tranId);
+				creditTrm.setPart_tran_id(partTranId2);
+				creditTrm.setAcct_num(termdeposite.getAcct_num());
+				creditTrm.setAcct_name(termdeposite.getAcct_name());
+				creditTrm.setAcct_crncy(termdeposite.getAcct_crncy());
+				creditTrm.setTran_type("TRANSFER");
+				creditTrm.setPart_tran_type("Credit");
+				creditTrm.setTran_amt(interest);
+				creditTrm.setTran_particular(tranParticulars);
+				creditTrm.setTran_remarks(tranParticulars);
+				creditTrm.setTran_date(transactionDate);
+				creditTrm.setValue_date(monthEndDate);
+				creditTrm.setFlow_code(flowCode);
+				creditTrm.setFlow_date(flowDate);
+				creditTrm.setTran_status("ENTERED");
+				creditTrm.setEntry_user(user);
+				creditTrm.setEntry_time(flowDate);
+				creditTrm.setDel_flg("N");
+
+				tRAN_MAIN_TRM_WRK_REP.save(creditTrm);
 				}
 			}
 		}
@@ -6084,7 +6104,20 @@ public class BGLSRestController {
 		tRAN_MAIN_TRM_WRK_REP.save(creditTrm);
 
 		// Office Loan Account Debit (second transaction)
-		String acct_num = "2700002750";
+		String productname = lOAN_ACT_MST_REPO.getLoanproductnames(accountNo);
+		System.out.println("THE PASSED LOAN ACCOUNT NUMBER FOR PRODUCT NAME " + accountNo);
+		System.out.println("THE GETTING DATABASE PRODUCT NAME IS " + productname);
+
+		// ✅ If product name is "Customer Loan Product", convert to "Credit Facility"
+		if ("Customer Loan Product".equalsIgnoreCase(productname)) {
+			productname = "Credit Facility";
+		}
+
+		Transaction_accounts_entity account_numbervalues = transaction_accounts_Rep.getLoanView(productname);
+		System.out.println("the getting interest recivable account is " + account_numbervalues.getInterest_recivable());
+
+		// Debit account from database
+		String acct_num = account_numbervalues.getLoan_parking_account();
 		Chart_Acc_Entity leasydebit = chart_Acc_Rep.getaedit(acct_num);
 		LOAN_ACT_MST_ENTITY loanDetails1 = lOAN_ACT_MST_REPO.getLoanView(accountNo);
 
@@ -6197,8 +6230,23 @@ public class BGLSRestController {
 			transactionList.add(creditTrm);
 
 			// --- DEBIT ENTRY FOR THE SAME TRANSACTION ---
-			String debitAcctNum = "2700002750"; // Example debit account
-			Chart_Acc_Entity debitAccount = chart_Acc_Rep.getaedit(debitAcctNum);
+			// Office Loan Account Debit (second transaction)
+			String productname = lOAN_ACT_MST_REPO.getLoanproductnames(accountNo);
+			System.out.println("THE PASSED LOAN ACCOUNT NUMBER FOR PRODUCT NAME " + accountNo);
+			System.out.println("THE GETTING DATABASE PRODUCT NAME IS " + productname);
+
+			// ✅ If product name is "Customer Loan Product", convert to "Credit Facility"
+			if ("Customer Loan Product".equalsIgnoreCase(productname)) {
+				productname = "Credit Facility";
+			}
+
+			Transaction_accounts_entity account_numbervalues = transaction_accounts_Rep.getLoanView(productname);
+			System.out.println(
+					"the getting interest recivable account is " + account_numbervalues.getInterest_recivable());
+
+			// Debit account from database
+			String acct_num = account_numbervalues.getLoan_parking_account();
+			Chart_Acc_Entity debitAccount = chart_Acc_Rep.getaedit(acct_num);
 
 			TRAN_MAIN_TRM_WRK_ENTITY debitTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
 			debitTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
@@ -6527,6 +6575,10 @@ public class BGLSRestController {
 		List<LOAN_REPAYMENT_ENTITY> demandRecordsList1 = Optional
 				.ofNullable(lOAN_REPAYMENT_REPO.getLoanFlowsValueDatas21(encodedKey)).orElse(Collections.emptyList());
 
+		String loanaccountnumber = null;
+
+		Transaction_accounts_entity account_numbervalues = null;
+
 		for (Map<String, String> transaction : transactions) {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 			Date flowDate = dateFormat.parse(transaction.get("flow_date"));
@@ -6541,6 +6593,20 @@ public class BGLSRestController {
 
 			String accountNo = transaction.get("loan_acct_no");
 			String flowDateKey = transaction.get("flow_date");
+
+			String productname = lOAN_ACT_MST_REPO.getLoanproductnames(accountNo);
+			System.out.println("THE PASSED LOAN ACCOUNT NUMBER FOR PRODUCT NAME " + accountNo);
+			System.out.println("THE GETTING DATABASE PRODUCT NAME IS " + productname);
+
+			// ✅ If product name is "Customer Loan Product", convert to "Credit Facility"
+			if ("Customer Loan Product".equalsIgnoreCase(productname)) {
+				productname = "Credit Facility";
+			}
+
+			account_numbervalues = transaction_accounts_Rep.getLoanView(productname);
+			System.out.println(
+					"the getting interest recivable account is " + account_numbervalues.getLoan_parking_account());
+			loanaccountnumber = account_numbervalues.getLoan_parking_account();
 
 			LOAN_ACT_MST_ENTITY loanDetails = lOAN_ACT_MST_REPO.getLoanView(accountNo);
 
@@ -6580,7 +6646,7 @@ public class BGLSRestController {
 				creditTrm.setTran_remarks("Fees amount recovered on " + flowDateKey);
 				break;
 			case "PENDEM":
-				totalFeedem.merge(flowDateKey, flowAmt, BigDecimal::add);
+				totalPendem.merge(flowDateKey, flowAmt, BigDecimal::add);
 				creditTrm.setTran_particular(loanDetails.getId() + " Penalty Recovery");
 				creditTrm.setTran_remarks("Fees amount recovered on " + flowDateKey);
 				break;
@@ -6622,8 +6688,8 @@ public class BGLSRestController {
 				.add(totalFeedem.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add));
 
 		if (totalTranAmt.compareTo(BigDecimal.ZERO) > 0) {
-			String acct_num = "2700002750";
-			Chart_Acc_Entity leasydebit = chart_Acc_Rep.getaedit(acct_num);
+
+			Chart_Acc_Entity leasydebit = chart_Acc_Rep.getaedit(loanaccountnumber);
 			LOAN_ACT_MST_ENTITY loanDetails1 = lOAN_ACT_MST_REPO.getLoanView(transactions.get(0).get("loan_acct_no"));
 
 			TRAN_MAIN_TRM_WRK_ENTITY debitTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
@@ -6649,66 +6715,65 @@ public class BGLSRestController {
 
 			tRAN_MAIN_TRM_WRK_REP.save(debitTrm);
 		}
-		
-		  // Fetch latest TRAN_DATE
-	    Date tranDateObj1 = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
-	    if (tranDateObj1 == null) {
-	        throw new IllegalStateException("TRAN_DATE cannot be null.");
-	    }
 
-	 // 1️⃣ Fetch the first account number from transactions list
-	    String firstAccountNo = null;
-	    if (transactions != null && !transactions.isEmpty()) {
-	        firstAccountNo = transactions.get(0).get("loan_acct_no");
-	        System.out.println("First account number from transactions: " + firstAccountNo);
-	    } else {
-	        System.out.println("No transactions available to fetch account number.");
-	    }
+		// Fetch latest TRAN_DATE
+		Date tranDateObj1 = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
+		if (tranDateObj1 == null) {
+			throw new IllegalStateException("TRAN_DATE cannot be null.");
+		}
 
-	    if (firstAccountNo != null && !firstAccountNo.isEmpty()) {
-	        // 2️⃣ Get encoded key
-	        String encodedKey1 = lOAN_ACT_MST_REPO.getLoanViewdatas(firstAccountNo);
-	        System.out.println("Encoded key for account: " + encodedKey1);
+		// 1️⃣ Fetch the first account number from transactions list
+		String firstAccountNo = null;
+		if (transactions != null && !transactions.isEmpty()) {
+			firstAccountNo = transactions.get(0).get("loan_acct_no");
+			System.out.println("First account number from transactions: " + firstAccountNo);
+		} else {
+			System.out.println("No transactions available to fetch account number.");
+		}
 
-	        // 3️⃣ Get due_dates for the account
-	        List<Object[]> dueDatesList = lOAN_REPAYMENT_REPO.getPenaltyDemFlowsDatavalue(encodedKey1);
-	        System.out.println("Number of due dates fetched: " + dueDatesList.size());
+		if (firstAccountNo != null && !firstAccountNo.isEmpty()) {
+			// 2️⃣ Get encoded key
+			String encodedKey1 = lOAN_ACT_MST_REPO.getLoanViewdatas(firstAccountNo);
+			System.out.println("Encoded key for account: " + encodedKey1);
 
-	        // 4️⃣ Get latest TRAN_DATE
-	        Date tranDateObj2 = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
-	        if (tranDateObj2 == null) {
-	            throw new IllegalStateException("TRAN_DATE cannot be null.");
-	        }
-	        LocalDate tranDate1 = (tranDateObj2 instanceof java.sql.Date)
-	                ? ((java.sql.Date) tranDateObj2).toLocalDate()
-	                : tranDateObj2.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-	        System.out.println("Latest TRAN_DATE fetched: " + tranDate1);
+			// 3️⃣ Get due_dates for the account
+			List<Object[]> dueDatesList = lOAN_REPAYMENT_REPO.getPenaltyDemFlowsDatavalue(encodedKey1);
+			System.out.println("Number of due dates fetched: " + dueDatesList.size());
 
-	        // 5️⃣ Iterate due_dates and update DEL_FLG = 'Y' if due_date < tranDate
-	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy", Locale.ENGLISH);
+			// 4️⃣ Get latest TRAN_DATE
+			Date tranDateObj2 = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
+			if (tranDateObj2 == null) {
+				throw new IllegalStateException("TRAN_DATE cannot be null.");
+			}
+			LocalDate tranDate1 = (tranDateObj2 instanceof java.sql.Date) ? ((java.sql.Date) tranDateObj2).toLocalDate()
+					: tranDateObj2.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			System.out.println("Latest TRAN_DATE fetched: " + tranDate1);
 
-	        for (Object[] row : dueDatesList) {
-	            Date dueDateObj = (Date) row[0]; // Extract first column as Date
-	            LocalDate dueDate = dueDateObj.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			// 5️⃣ Iterate due_dates and update DEL_FLG = 'Y' if due_date < tranDate
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy", Locale.ENGLISH);
 
-	            // Format date as dd-MMM-yyyy for sysout
-	            String formattedDate = dueDate.format(formatter);
-	            System.out.println("Due date fetched: " + formattedDate);
+			for (Object[] row : dueDatesList) {
+				Date dueDateObj = (Date) row[0]; // Extract first column as Date
+				LocalDate dueDate = dueDateObj.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-	            if (dueDate.isAfter(tranDate)) {
-	                lOAN_REPAYMENT_REPO.updateDelFlag(encodedKey, formattedDate);
-	                System.out.println("Updated DEL_FLG = 'Y' for due date: " + formattedDate);
-	            } else {
-	                System.out.println("No update needed for due date: " + formattedDate);
-	            }
+				// Format date as dd-MMM-yyyy for sysout
+				String formattedDate = dueDate.format(formatter);
+				System.out.println("Due date fetched: " + formattedDate);
 
-	        }
+				if (dueDate.isAfter(tranDate)) {
+					lOAN_REPAYMENT_REPO.updateDelFlag(encodedKey, formattedDate);
+					System.out.println("Updated DEL_FLG = 'Y' for due date: " + formattedDate);
+				} else {
+					System.out.println("No update needed for due date: " + formattedDate);
+				}
 
-	        System.out.println("Processing of due dates completed for account: " + firstAccountNo);
-	    } else {
-	        System.out.println("First account number is null or empty. Skipping due date processing.");
-	    }
-		
+			}
+
+			System.out.println("Processing of due dates completed for account: " + firstAccountNo);
+		} else {
+			System.out.println("First account number is null or empty. Skipping due date processing.");
+		}
+
 		tRAN_MAIN_TRM_WRK_REP.saveAll(transactionList);
 	}
 
@@ -6780,6 +6845,11 @@ public class BGLSRestController {
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
+		String loanaccountnumber1 = null;
+		String loanaccountnumber2 = null;
+		String loanaccountnumber3 = null;
+
+		Transaction_accounts_entity account_numbervalues = null;
 // Process transactions
 		for (Map<String, String> transaction : transactions) {
 			Date flowDate = dateFormat.parse(transaction.get("flow_date"));
@@ -6788,6 +6858,22 @@ public class BGLSRestController {
 			String flowCode = transaction.get("flow_code");
 			BigDecimal flowAmt = new BigDecimal(transaction.get("flow_amt").trim());
 			String accountNo = transaction.get("loan_acct_no");
+
+			String productname = lOAN_ACT_MST_REPO.getLoanproductnames(accountNo);
+			System.out.println("THE PASSED LOAN ACCOUNT NUMBER FOR PRODUCT NAME " + accountNo);
+			System.out.println("THE GETTING DATABASE PRODUCT NAME IS " + productname);
+
+			// ✅ If product name is "Customer Loan Product", convert to "Credit Facility"
+			if ("Customer Loan Product".equalsIgnoreCase(productname)) {
+				productname = "Credit Facility";
+			}
+
+			account_numbervalues = transaction_accounts_Rep.getLoanView(productname);
+			System.out.println(
+					"the getting interest recivable account is " + account_numbervalues.getLoan_parking_account());
+			loanaccountnumber1 = account_numbervalues.getInterest_income();
+			loanaccountnumber2 = account_numbervalues.getFees_income();
+			loanaccountnumber3 = account_numbervalues.getPenalty_income();
 
 			LOAN_ACT_MST_ENTITY loanDetails = lOAN_ACT_MST_REPO.getLoanView(accountNo);
 
@@ -6839,9 +6925,9 @@ public class BGLSRestController {
 		}
 
 // Prepare debit entries
-		Chart_Acc_Entity acctIndem = chart_Acc_Rep.getaedit("4100004110"); // Interest
-		Chart_Acc_Entity acctFee = chart_Acc_Rep.getaedit("4200004210"); // Fee
-		Chart_Acc_Entity acctPendem = chart_Acc_Rep.getaedit("4200004230");// Penalty
+		Chart_Acc_Entity acctIndem = chart_Acc_Rep.getaedit(loanaccountnumber1); // Interest
+		Chart_Acc_Entity acctFee = chart_Acc_Rep.getaedit(loanaccountnumber2); // Fee
+		Chart_Acc_Entity acctPendem = chart_Acc_Rep.getaedit(loanaccountnumber3);// Penalty
 		LOAN_ACT_MST_ENTITY loanDetails1 = lOAN_ACT_MST_REPO.getLoanView(transactions.get(0).get("loan_acct_no"));
 
 // Debit Interest
@@ -7179,6 +7265,11 @@ public class BGLSRestController {
 		System.out.println("Total Indem: " + totalIndemSum);
 		System.out.println("Total Pendem: " + totalPendemSum);
 
+		String loanaccountnumber = null;
+		String loanaccountnumber1 = null;
+
+		Transaction_accounts_entity account_numbervalues = null;
+
 		for (Map<String, String> transaction : transactions) {
 			Date flowDate = dateFormat.parse(transaction.get("flow_date"));
 			String flowDateKey = new SimpleDateFormat("yyyy-MM-dd").format(flowDate);
@@ -7186,6 +7277,21 @@ public class BGLSRestController {
 			String flowCode = transaction.get("flow_code");
 			BigDecimal flowAmt = new BigDecimal(transaction.get("flow_amt").trim());
 			String accountNo = transaction.get("loan_acct_no");
+
+			String productname = lOAN_ACT_MST_REPO.getLoanproductnames(accountNo);
+			System.out.println("THE PASSED LOAN ACCOUNT NUMBER FOR PRODUCT NAME " + accountNo);
+			System.out.println("THE GETTING DATABASE PRODUCT NAME IS " + productname);
+
+			// ✅ If product name is "Customer Loan Product", convert to "Credit Facility"
+			if ("Customer Loan Product".equalsIgnoreCase(productname)) {
+				productname = "Credit Facility";
+			}
+
+			account_numbervalues = transaction_accounts_Rep.getLoanView(productname);
+			System.out.println(
+					"the getting interest recivable account is " + account_numbervalues.getLoan_parking_account());
+			loanaccountnumber = account_numbervalues.getInterest_income();
+			loanaccountnumber1 = account_numbervalues.getPenalty_income();
 
 			if ("PRDEM".equals(flowCode)) {
 				continue;
@@ -7229,7 +7335,7 @@ public class BGLSRestController {
 			partTranId = partTranId.add(BigDecimal.ONE);
 		}
 
-		String acct_num = "4100004110";
+		String acct_num = loanaccountnumber;
 		Chart_Acc_Entity leasydebit = chart_Acc_Rep.getaedit(acct_num);
 		LOAN_ACT_MST_ENTITY loanDetails1 = lOAN_ACT_MST_REPO.getLoanView(transactions.get(0).get("loan_acct_no"));
 
@@ -7256,7 +7362,7 @@ public class BGLSRestController {
 		transactionList.add(debitTrm);
 		partTranId = partTranId.add(BigDecimal.ONE);
 
-		String acct_num1 = "4200004230";
+		String acct_num1 = loanaccountnumber1;
 		Chart_Acc_Entity leasydebit1 = chart_Acc_Rep.getaedit(acct_num1);
 		TRAN_MAIN_TRM_WRK_ENTITY debitTrm1 = new TRAN_MAIN_TRM_WRK_ENTITY();
 		debitTrm1.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
@@ -7435,6 +7541,10 @@ public class BGLSRestController {
 		List<LOAN_REPAYMENT_ENTITY> demandRecordsList1 = Optional
 				.ofNullable(lOAN_REPAYMENT_REPO.getLoanFlowsValueDatas21(encodedKey)).orElse(Collections.emptyList());
 
+		String loanaccountnumber = null;
+
+		Transaction_accounts_entity account_numbervalues = null;
+
 		for (Map<String, String> transaction : transactions) {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 			Date flowDate = dateFormat.parse(transaction.get("flow_date"));
@@ -7449,6 +7559,20 @@ public class BGLSRestController {
 
 			String accountNo = transaction.get("loan_acct_no");
 			String flowDateKey = transaction.get("flow_date");
+
+			String productname = lOAN_ACT_MST_REPO.getLoanproductnames(accountNo);
+			System.out.println("THE PASSED LOAN ACCOUNT NUMBER FOR PRODUCT NAME " + accountNo);
+			System.out.println("THE GETTING DATABASE PRODUCT NAME IS " + productname);
+
+			// ✅ If product name is "Customer Loan Product", convert to "Credit Facility"
+			if ("Customer Loan Product".equalsIgnoreCase(productname)) {
+				productname = "Credit Facility";
+			}
+
+			account_numbervalues = transaction_accounts_Rep.getLoanView(productname);
+			System.out.println(
+					"the getting interest recivable account is " + account_numbervalues.getLoan_parking_account());
+			loanaccountnumber = account_numbervalues.getLoan_parking_account();
 
 			LOAN_ACT_MST_ENTITY loanDetails = lOAN_ACT_MST_REPO.getLoanView(accountNo);
 
@@ -7532,7 +7656,7 @@ public class BGLSRestController {
 				.add(totalPendem.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add));
 
 		if (totalTranAmt.compareTo(BigDecimal.ZERO) > 0) {
-			String acct_num = "2700002750";
+			String acct_num = loanaccountnumber;
 			Chart_Acc_Entity leasydebit = chart_Acc_Rep.getaedit(acct_num);
 			LOAN_ACT_MST_ENTITY loanDetails1 = lOAN_ACT_MST_REPO.getLoanView(transactions.get(0).get("loan_acct_no"));
 
@@ -7654,8 +7778,26 @@ public class BGLSRestController {
 				debitTrm.setDel_flg("N");
 				tRAN_MAIN_TRM_WRK_REP.save(debitTrm);
 
+				String productname = lOAN_ACT_MST_REPO.getLoanproductnames(account_no);
+				System.out.println("THE PASSED LOAN ACCOUNT NUMBER FOR PRODUCT NAME " + account_no);
+				System.out.println("THE GETTING DATABASE PRODUCT NAME IS " + productname);
+
+				// ✅ If product name is "Customer Loan Product", convert to "Credit Facility"
+				if ("Customer Loan Product".equalsIgnoreCase(productname)) {
+					productname = "Credit Facility";
+				}
+
+				Transaction_accounts_entity account_numbervalues = transaction_accounts_Rep.getLoanView(productname);
+				System.out.println(
+						"the getting interest recivable account is " + account_numbervalues.getInterest_recivable());
+				System.out.println(
+						"the getting interest collected account is " + account_numbervalues.getInterest_income());
+
 				// --- Second Transaction - Office Loan Interest Credit ---
-				Chart_Acc_Entity leaseDebit = chart_Acc_Rep.getaedit("4100004110");
+				// Credit account from database
+				String acct_num1 = account_numbervalues.getInterest_income();
+
+				Chart_Acc_Entity leaseDebit = chart_Acc_Rep.getaedit(acct_num1);
 				TRAN_MAIN_TRM_WRK_ENTITY creditTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
 				creditTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
 				creditTrm.setTran_id(tranId);
@@ -7679,7 +7821,10 @@ public class BGLSRestController {
 				tRAN_MAIN_TRM_WRK_REP.save(creditTrm);
 
 				// --- Third Transaction - Interest Receivable Credit ---
-				Chart_Acc_Entity leaseDebit1 = chart_Acc_Rep.getaedit("1291700001");
+				// Debit account from database
+				String acct_num = account_numbervalues.getInterest_recivable();
+
+				Chart_Acc_Entity leaseDebit1 = chart_Acc_Rep.getaedit(acct_num);
 				TRAN_MAIN_TRM_WRK_ENTITY creditTrm1 = new TRAN_MAIN_TRM_WRK_ENTITY();
 				creditTrm1.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
 				creditTrm1.setTran_id(tranId);
@@ -9309,6 +9454,45 @@ public class BGLSRestController {
 				}
 			}
 
+			
+			String productname = formEntity.getProduct();
+			String interest_recivable = formEntity.getInterestreceived();
+			String interest_income = formEntity.getInterestincome();
+			String fees_income = formEntity.getFeeincome();
+			String penalty_income = formEntity.getPenaltyincome();
+			String collection_income = formEntity.getPrinciplecollection();
+			String loan_parking_income = formEntity.getPrincipleparking();
+
+
+			Transaction_accounts_entity datasvalue = transaction_accounts_Rep.getLoanView(productname);
+
+			Transaction_accounts_entity datasvaluedata = new Transaction_accounts_entity();
+			datasvaluedata.setId(datasvalue.getId());
+			datasvaluedata.setGl_code(datasvalue.getGl_code());
+			datasvaluedata.setGl_desc(datasvalue.getGl_desc());
+			datasvaluedata.setGlsh_code(datasvalue.getGlsh_code());
+			datasvaluedata.setGlsh_desc(datasvalue.getGlsh_desc());
+			datasvaluedata.setSchm_code(datasvalue.getSchm_code());
+			datasvaluedata.setSchm_desc(datasvalue.getSchm_desc());
+			datasvaluedata.setInterest_recivable(interest_recivable);
+			datasvaluedata.setInterest_income(interest_income);
+			datasvaluedata.setFees_income(fees_income);
+			datasvaluedata.setPenalty_income(penalty_income);
+			datasvaluedata.setCollection_account(collection_income);
+			datasvaluedata.setLoan_parking_account(loan_parking_income);
+			datasvaluedata.setEntry_user(datasvalue.getEntry_user());
+			datasvaluedata.setModify_user(datasvalue.getModify_user());
+			datasvaluedata.setVerify_user(datasvalue.getVerify_user());
+			datasvaluedata.setEntry_time(datasvalue.getEntry_time());
+			datasvaluedata.setVerify_time(datasvalue.getVerify_time());
+			datasvaluedata.setEntity_flg(datasvalue.getEntity_flg());
+			datasvaluedata.setModify_flg(datasvalue.getModify_flg());
+			datasvaluedata.setVerify_flg(datasvalue.getVerify_flg());
+			datasvaluedata.setDel_flg(datasvalue.getDel_flg());
+			datasvaluedata.setProduct_key(datasvalue.getProduct_key());
+
+			transaction_accounts_Rep.save(datasvaluedata);
+
 			// Always update lastModifiedDate
 //			existing.setLastModifiedDate(new Date());
 
@@ -9858,9 +10042,24 @@ public class BGLSRestController {
 		map.put("loanEncodedKey", row[6] != null ? row[6].toString() : "");
 		flowData.add(map);
 
+		String account_numbers = row[4] != null ? row[4].toString() : "";
 		// --- First DEBIT ---
-		String debitAcctNum = "2700002750";
-		Chart_Acc_Entity debitAccount = chart_Acc_Rep.getaedit(debitAcctNum);
+		String productname = lOAN_ACT_MST_REPO.getLoanproductnames(account_numbers);
+		System.out.println("THE PASSED LOAN ACCOUNT NUMBER FOR PRODUCT NAME " + account_numbers);
+		System.out.println("THE GETTING DATABASE PRODUCT NAME IS " + productname);
+		
+		// ✅ If product name is "Customer Loan Product", convert to "Credit Facility"
+		if ("Customer Loan Product".equalsIgnoreCase(productname)) {
+		    productname = "Credit Facility";
+		}
+
+		Transaction_accounts_entity account_numbervalues = transaction_accounts_Rep.getLoanView(productname);
+		System.out.println("the getting interest recivable account is " + account_numbervalues.getInterest_recivable());
+		System.out.println("the getting interest collected account is " + account_numbervalues.getInterest_income());
+
+		// Debit account from database
+		String acct_num = account_numbervalues.getLoan_parking_account();
+		Chart_Acc_Entity debitAccount = chart_Acc_Rep.getaedit(acct_num);
 
 		TRAN_MAIN_TRM_WRK_ENTITY debitTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
 		debitTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
@@ -10049,9 +10248,8 @@ public class BGLSRestController {
 						secondValue.setAmount(firstValue.getAmount());
 						secondValue.setAllocated_amount(firstValue.getAmount());
 						secondValue.setTrans_time(firstValue.getTrans_time());
-						String updatedStatus = "UNALLOCATED".equalsIgnoreCase(firstValue.getStatus()) ? "ALLOCATED"
-								: firstValue.getStatus();
-						secondValue.setStatus(updatedStatus);
+						String frontendStatusValue = firstValue.getStatus(); // get status from Excel/frontend
+						secondValue.setStatus(frontendStatusValue); // directly set the same value
 						secondValue.setAuth_flg(firstValue.getAuth_flg());
 						secondValue.setAuth_time(firstValue.getAuth_time());
 						secondValue.setAuth_user(firstValue.getAuth_user());
@@ -10125,9 +10323,24 @@ public class BGLSRestController {
 		map.put("loanEncodedKey", row[6] != null ? row[6].toString() : "");
 		flowData.add(map);
 
+		String account_numbers = row[4] != null ? row[4].toString() : "";
 		// --- First DEBIT ---
-		String debitAcctNum = "2700002750";
-		Chart_Acc_Entity debitAccount = chart_Acc_Rep.getaedit(debitAcctNum);
+		String productname = lOAN_ACT_MST_REPO.getLoanproductnames(account_numbers);
+		System.out.println("THE PASSED LOAN ACCOUNT NUMBER FOR PRODUCT NAME " + account_numbers);
+		System.out.println("THE GETTING DATABASE PRODUCT NAME IS " + productname);
+		
+		// ✅ If product name is "Customer Loan Product", convert to "Credit Facility"
+		if ("Customer Loan Product".equalsIgnoreCase(productname)) {
+		    productname = "Credit Facility";
+		}
+
+		Transaction_accounts_entity account_numbervalues = transaction_accounts_Rep.getLoanView(productname);
+		System.out.println("the getting interest recivable account is " + account_numbervalues.getInterest_recivable());
+		System.out.println("the getting interest collected account is " + account_numbervalues.getInterest_income());
+
+		// Debit account from database
+		String acct_num = account_numbervalues.getLoan_parking_account();
+		Chart_Acc_Entity debitAccount = chart_Acc_Rep.getaedit(acct_num);
 
 		TRAN_MAIN_TRM_WRK_ENTITY debitTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
 		debitTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
@@ -10144,6 +10357,7 @@ public class BGLSRestController {
 		debitTrm.setValue_date(dueDateObj);
 		debitTrm.setFlow_code("RECOVERY");
 		debitTrm.setFlow_date(dueDateObj);
+		debitTrm.setAcct_crncy(debitAccount.getAcct_crncy());
 		debitTrm.setTran_status("ENTERED");
 		debitTrm.setEntry_user(userid);
 		debitTrm.setModify_user(userid);
@@ -10313,6 +10527,21 @@ public class BGLSRestController {
 				String accountName = row.get("acct_name");
 				String encoded_key = row.get("encoded_key");
 
+				String productname = lOAN_ACT_MST_REPO.getLoanproductnames(account_no);
+				System.out.println("THE PASSED LOAN ACCOUNT NUMBER FOR PRODUCT NAME " + account_no);
+				System.out.println("THE GETTING DATABASE PRODUCT NAME IS " + productname);
+
+				// ✅ If product name is "Customer Loan Product", convert to "Credit Facility"
+				if ("Customer Loan Product".equalsIgnoreCase(productname)) {
+					productname = "Credit Facility";
+				}
+
+				Transaction_accounts_entity account_numbervalues = transaction_accounts_Rep.getLoanView(productname);
+				System.out
+						.println("the getting interest recivable account is " + account_numbervalues.getFees_income());
+				System.out.println(
+						"the getting interest collected account is " + account_numbervalues.getInterest_income());
+
 				// Parse flow_date
 				SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 				Date flow_date = sdf.parse(flow_date_str);
@@ -10364,7 +10593,8 @@ public class BGLSRestController {
 
 					/* Second Transaction - office Loan Account Debit */
 					/* this account already existed in COA */
-					String acct_num = "4200004210";
+					// Debit account from database
+					String acct_num = account_numbervalues.getFees_income();
 					Chart_Acc_Entity leasydebit = chart_Acc_Rep.getaedit(acct_num);
 
 					TRAN_MAIN_TRM_WRK_ENTITY debitTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
@@ -10444,6 +10674,19 @@ public class BGLSRestController {
 				SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 				Date flow_date = sdf.parse(flow_date_str);
 
+				String productname = lOAN_ACT_MST_REPO.getLoanproductnames(account_no);
+				System.out.println("THE PASSED LOAN ACCOUNT NUMBER FOR PRODUCT NAME " + account_no);
+				System.out.println("THE GETTING DATABASE PRODUCT NAME IS " + productname);
+
+				// ✅ If product name is "Customer Loan Product", convert to "Credit Facility"
+				if ("Customer Loan Product".equalsIgnoreCase(productname)) {
+					productname = "Credit Facility";
+				}
+
+				Transaction_accounts_entity account_numbervalues = transaction_accounts_Rep.getLoanView(productname);
+				System.out.println(
+						"the getting interest recivable account is " + account_numbervalues.getPenalty_income());
+
 				// Convert flow_amount to BigDecimal
 				BigDecimal flowAmountBD = (flow_amount_str != null) ? new BigDecimal(flow_amount_str) : BigDecimal.ZERO;
 
@@ -10491,7 +10734,8 @@ public class BGLSRestController {
 
 					/* Second Transaction - office Loan Account Debit */
 					/* this account already existed in COA */
-					String acct_num = "4200004230";
+					// Debit account from database
+					String acct_num = account_numbervalues.getPenalty_income();
 					Chart_Acc_Entity leasydebit = chart_Acc_Rep.getaedit(acct_num);
 
 					TRAN_MAIN_TRM_WRK_ENTITY debitTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
