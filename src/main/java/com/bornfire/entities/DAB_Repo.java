@@ -83,4 +83,13 @@ public interface DAB_Repo extends CrudRepository<DAB_Entity, String> {
 			+ "WHERE b.ACCT_NUM = a.depo_actno AND :deposit_period BETWEEN TRAN_DATE AND END_TRAN_DATE", nativeQuery = true)
 	List<Object[]> getDepositBal(@Param("deposit_period") Date deposit_period);
 
+    @Query(value = " SELECT  TRAN_DATE, " +
+            "       ACCT_NUM," +
+            "       ACCT_NAME," +
+            "       TRAN_DR_BAL," +
+            "       TRAN_CR_BAL," +
+            "       TRAN_TOT_NET" +
+            " FROM bgls_daily_acct_bal " +
+            " WHERE TRUNC(TRAN_DATE) = TO_DATE(:dueDate, 'DD-MM-YYYY') ",nativeQuery = true)
+    List<Object[]> findTranDate(@Param("dueDate") String dueDate);
 }

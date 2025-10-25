@@ -1161,4 +1161,57 @@ public class ExelDownloadService {
 	        return new byte[0];
 	    }
 	}
+
+    public byte[] generateDABExcel(List<Object[]> rawData, String dueDate) {
+        if (rawData == null || rawData.isEmpty()) {
+            System.out.println("No raw data found for due date: " + dueDate);
+            return new byte[0];
+        }
+
+        Collection<Map<String, ?>> mappedData = new ArrayList<>();
+        for (Object[] row : rawData) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("TRAN_DATE", row[0]);
+            map.put("ACCT_NUM", row[1]);
+            map.put("ACCT_NAME", row[2]);
+            map.put("TRAN_DR_BAL", row[3]);
+            map.put("TRAN_CR_BAL", row[4]);
+            map.put("TRAN_TOT_NET", row[5]);
+            mappedData.add(map);
+        }
+
+        try (InputStream jasperStream = getClass().getResourceAsStream("/static/jasper/DAB.jrxml")) {
+            JasperReport jasperReport = JasperCompileManager.compileReport(jasperStream);
+
+            // Data source for Jasper
+            JRMapCollectionDataSource dataSource = new JRMapCollectionDataSource(mappedData);
+
+            // Pass parameters if any
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("TRAN_DATE", dueDate); // optional, only if used in jrxml
+
+            // Fill report
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+
+            // Export to Excel
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            JRXlsxExporter exporter = new JRXlsxExporter();
+            exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+            exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(baos));
+
+            SimpleXlsxReportConfiguration configuration = new SimpleXlsxReportConfiguration();
+            configuration.setOnePagePerSheet(false);
+            configuration.setDetectCellType(true);
+            configuration.setCollapseRowSpan(false);
+            exporter.setConfiguration(configuration);
+
+            exporter.exportReport();
+            System.out.println("✅ Excel generated with " + mappedData.size() + " rows.");
+            return baos.toByteArray();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new byte[0];
+        }
+    }
 }

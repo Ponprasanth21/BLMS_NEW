@@ -115,6 +115,10 @@ public class BGLSRestController {
 //	@Autowired
 //	Organization_Branch_Rep organization_Branch_Rep;
 
+    @Autowired
+    DAB_Repo dab_repo;
+
+
 	@Autowired
 	BglsLmsSchemesRepo bgls_lms_scheme_repo;
 
@@ -10451,6 +10455,25 @@ public class BGLSRestController {
 
 		return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
 	}
+
+    @GetMapping("/downloadDAB")
+    public ResponseEntity<byte[]> downloadDAB(@RequestParam("dueDate") String dueDate) {
+
+        List<Object[]> rawData = dab_repo.findTranDate(dueDate);
+        byte[] excelData = exelDownloadService.generateDABExcel(rawData, dueDate);
+
+        if (excelData == null || excelData.length == 0) {
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(new byte[0]);
+        }
+
+        String fileName = "DAB_EXCEL_" + dueDate + ".xlsx"; // Correct filename
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+        return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+    }
 
 	@GetMapping("loanflowDetailspenalty")
 	public List<Map<String, Object>> loanflowDetailspenalty(

@@ -101,6 +101,8 @@ public class Access_Role_Entity {
 	private String batch_job_execution;
 	private String batch_job;
 	private String balance_sheets;
+    private String dab;
+
 
     private String end_of_month_report;
     private String credit_facility_report;
@@ -111,6 +113,14 @@ public class Access_Role_Entity {
 	private Date modify_time;
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date auth_time;
+
+    public String getDab() {
+        return dab;
+    }
+
+    public void setDab(String dab) {
+        this.dab = dab;
+    }
 
     public String getEnd_of_month_report() {
         return end_of_month_report;

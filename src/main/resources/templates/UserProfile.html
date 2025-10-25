@@ -311,7 +311,8 @@
 					$("#profit_and_loss_account_i").prop("checked", true);
 					$("#balance_sheet").prop("checked", true);
 					$("#end_of_month_report").prop("checked", true);
-					$("#credit_facility_report").prop("checked", true);
+					$("#dab_report").prop("checked", true);
+					$("#credit_facility_report1").prop("checked", true);
 				} else {
 					$("#account_balance_inq").prop("checked", false);
 					$("#interset_summary_inq").prop("checked", false);
@@ -322,7 +323,8 @@
 					$("#profit_and_loss_account_i").prop("checked", false);
 					$("#balance_sheet").prop("checked", false);
 					$("#end_of_month_report").prop("checked", false);
-					$("#credit_facility_report").prop("checked", false);
+					$("#dab_report").prop("checked", false);
+					$("#credit_facility_report1").prop("checked", false);
 				}
 			}
 		}
@@ -627,7 +629,8 @@
 				} else {
 					var accountExpiryDate = "";
 				}
-
+				// console.log($('#dab_report').is(":checked"))
+				console.log($('#dab_report').is(":checked"))
 				var userProfile = {
 
 					userid: $('#userid').val(),
@@ -713,7 +716,8 @@
 					journal_book: $('#journal_book').is(':checked') ? 'Y' : 'N',
 					account_balance_inq: $('#account_balance_inq').is(':checked') ? 'Y' : 'N',
 					end_of_month_report: $('#end_of_month_report').is(':checked') ? 'Y' : 'N',
-					credit_facility_report: $('#credit_facility_report').is(':checked') ? 'Y' : 'N',
+					dab: $('#dab_report').is(':checked') ? 'Y' : 'N',
+					credit_facility_report: $('#credit_facility_report1').is(':checked') ? 'Y' : 'N',
 					interset_summary_inq: $('#interset_summary_inq').is(':checked') ? 'Y' : 'N',
 					account_ledgers_i: $('#account_ledgers_i').is(':checked') ? 'Y' : 'N',
 					trial_balance_i: $('#trial_balance_i').is(':checked') ? 'Y' : 'N',
@@ -848,8 +852,8 @@
 				} else {
 					var accountExpiryDate = "";
 				}
-				console.log($('#day_end_operation_user').val() + " -----------###########;")
-				console.log($('#day_end_operation_user').is(':checked') + " ------@@@@@@@@@@@;")
+				console.log($('#dab_report').val() + " -----------###########;")
+				console.log($('#dab_report').is(':checked') + " ------@@@@@@@@@@@;")
 				var userProfile = {
 
 					userid: $('#userid').val(),
@@ -936,7 +940,8 @@
 					journal_book: $('#journal_book').is(':checked') ? 'Y' : 'N',
 					account_balance_inq: $('#account_balance_inq').is(':checked') ? 'Y' : 'N',
 					end_of_month_report: $('#end_of_month_report').is(':checked') ? 'Y' : 'N',
-					credit_facility_report: $('#credit_facility_report').is(':checked') ? 'Y' : 'N',
+					dab: $('#dab_report').is(':checked') ? 'Y' : 'N',
+					credit_facility_report: $('#credit_facility_report1').is(':checked') ? 'Y' : 'N',
 					interset_summary_inq: $('#interset_summary_inq').is(':checked') ? 'Y' : 'N',
 					account_ledgers_i: $('#account_ledgers_i').is(':checked') ? 'Y' : 'N',
 					trial_balance_i: $('#trial_balance_i').is(':checked') ? 'Y' : 'N',
@@ -4308,11 +4313,11 @@
 								Balance
 							</label></li>
 
-						<li><input type="checkbox" id="credit_facility_report" name="credit_facility_report"
+						<li><input type="checkbox" id="credit_facility_report1" name="credit_facility_report1"
 								th:disabled="${formmode != 'add' and formmode != 'modify'}"
 								th:checked="${access?.credit_facility_report == 'Y'}"
 								style="margin-right: 10px; margin-top: 10px" /> <label
-								for="credit_facility_report">Credit Facility Report
+								for="credit_facility_report1">Credit Facility Report
 							</label></li>
 
 						<li><input type="checkbox" id="end_of_month_report" name="end_of_month_report"
@@ -4320,6 +4325,12 @@
 								th:checked="${access?.end_of_month_report == 'Y'}"
 								style="margin-right: 10px; margin-top: 10px" /> <label for="end_of_month_report">End Of
 								Month Report
+							</label></li>
+
+						<li><input type="checkbox" id="dab_report" name="dab_report"
+								th:disabled="${formmode != 'add' and formmode != 'modify'}"
+								th:checked="${access?.dab == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="dab_report">DAB Report
 							</label></li>
 
 						<li><input type="checkbox" id="interset_summary_inq" name="interset_summary_inq"
