@@ -2762,14 +2762,19 @@ public class BGLSNavigationController {
     @RequestMapping(value = "Doatransactionpush", method = RequestMethod.POST)
     @ResponseBody
     public String VerifyScreens(Model md, HttpServletRequest rq, @ModelAttribute DAB_Entity DAB_Entity,
-                                @RequestParam("trndate") String trndate) {
+                                @RequestParam("trndate") String trndate) throws java.text.ParseException {
         // Get TRANDATE from session as a String
 
-        Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
+        //Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
+        //System.out.println("TRANDATE: " + TRANDATE);
+        //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+       // String formattedDate = dateFormat.format(TRANDATE);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date TRANDATE = sdf.parse("2025-10-01");  // manually assigned date
         System.out.println("TRANDATE: " + TRANDATE);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = dateFormat.format(TRANDATE);
 
+        String formattedDate = sdf.format(TRANDATE);
+        System.out.println("Formatted Date: " + formattedDate);
         System.out.println("formattedDate"+formattedDate);
         List<Object[]> debitCreditData = tRAN_MAIN_TRM_WRK_REP.getNetDebitCreditWithCountForCurrentDate(formattedDate);
         // List<Object[]> debitCreditData =
@@ -2803,8 +2808,15 @@ public class BGLSNavigationController {
         System.out.println("Total Credits: " + totalCredits);
         System.out.println("Total Debits: " + totalDebits);
 
+        List<Chart_Acc_Entity> allAccounts = new ArrayList<>();
+        int batchSize = 1000;
+        for (int i = 0; i < accountNumbers.size(); i += batchSize) {
+            List<String> batch = accountNumbers.subList(i, Math.min(i + batchSize, accountNumbers.size()));
+            allAccounts.addAll(chart_Acc_Rep.getcoaaccunt_num(batch));
+        }
+        List<Chart_Acc_Entity> exist = allAccounts;
         // Step 2: Fetch GL details for these account numbers
-        List<Chart_Acc_Entity> exist = chart_Acc_Rep.getcoaaccunt_num(accountNumbers);
+        //List<Chart_Acc_Entity> exist = chart_Acc_Rep.getcoaaccunt_num(accountNumbers);
 
         // Step 3: Create a map to store GL details for each account number
         Map<String, Chart_Acc_Entity> glDetailsMap = new HashMap<>();
@@ -2884,12 +2896,21 @@ public class BGLSNavigationController {
     public String insertOrUpdateAccountBalances(Model md, HttpServletRequest rq, List<String> accountNumbers,
                                                 List<String> netAmounts, List<String> glshCodes, List<String> glshDescs, List<String> glCodes,
                                                 List<String> glDescs, List<String> accunt_name, List<BigDecimal> totalCredits, List<BigDecimal> totalDebits,
-                                                String TRANDATE) {
+                                                String TRANDATE) throws java.text.ParseException {
         // TRANDATE is now a String and will be used in the queries
-        Date TRANDATE1 = (Date) rq.getSession().getAttribute("TRANDATE");
-        System.out.println(TRANDATE1 + "TRANDATE");
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = dateFormat.format(TRANDATE1);
+		/*
+		 * Date TRANDATE1 = (Date) rq.getSession().getAttribute("TRANDATE");
+		 * System.out.println(TRANDATE1 + "TRANDATE"); SimpleDateFormat dateFormat = new
+		 * SimpleDateFormat("yyyy-MM-dd"); String formattedDate =
+		 * dateFormat.format(TRAND1ATE1);
+		 */
+    	  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+          Date TRANDATE1 = sdf.parse("2025-10-01");  // manually assigned date
+          System.out.println("TRANDATE: " + TRANDATE1);
+
+          String formattedDate = sdf.format(TRANDATE1);
+          System.out.println("Formatted Date: " + formattedDate);
+        
         for (int i = 0; i < accountNumbers.size(); i++) {
             String accountNum = accountNumbers.get(i);
             BigDecimal netAmount = new BigDecimal(netAmounts.get(i));

@@ -23,8 +23,8 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 			+ "WHERE acct_num = :accountNum AND TRAN_DATE = TO_DATE(:tranDate, 'YYYY-MM-DD')", nativeQuery = true)
 	int checkTransactionDateExists(@Param("accountNum") String accountNum, @Param("tranDate") String tranDate);
 
-	@Query(value = "SELECT TRAN_DATE_BAL FROM BGLS_DAILY_ACCT_BAL " + "WHERE ACCT_NUM = :accountNum "
-			+ "AND TRAN_DATE = (SELECT MAX(TRAN_DATE) FROM BGLS_DAILY_ACCT_BAL WHERE ACCT_NUM = :accountNum AND ROWNUM <= 1)", nativeQuery = true)
+	@Query(value = "SELECT TRAN_DATE_BAL FROM BGLS_DAILY_ACCT_BAL  " + "WHERE ACCT_NUM = :accountNum "
+			+ "AND TRAN_DATE = (SELECT MAX(TRAN_DATE) FROM BGLS_DAILY_ACCT_BAL  WHERE ACCT_NUM = :accountNum AND ROWNUM <= 1)", nativeQuery = true)
 	List<BigDecimal> findLatestTRAN_DATE_BALByAccountNumber(@Param("accountNum") String accountNum);
 
 	@Modifying
@@ -48,7 +48,7 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 
 	@Modifying
 	@Transactional
-	@Query(value = "INSERT INTO BGLS_DAILY_ACCT_BAL"
+	@Query(value = "INSERT INTO BGLS_DAILY_ACCT_BAL "
 			+ "(GL_CODE, GL_DESC, GLSH_CODE, GLSH_DESC, ACCT_NUM, ACCT_NAME, ACCT_CRNCY, "
 			+ "TRAN_DR_BAL, TRAN_CR_BAL, TRAN_DATE_BAL, TRAN_DATE, TRAN_TOT_NET, END_TRAN_DATE, "
 			+ "ENTRY_USER_ID, ENTRY_TIME, DEL_FLG) "
@@ -64,7 +64,7 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 	
 	@Modifying
 	@Transactional
-	@Query(value = "INSERT INTO BGLS_DAILY_ACCT_BAL"
+	@Query(value = "INSERT INTO BGLS_DAILY_ACCT_BAL "
 			+ "(GL_CODE, GL_DESC, GLSH_CODE, GLSH_DESC, ACCT_NUM, ACCT_NAME, ACCT_CRNCY, "
 			+ "TRAN_DR_BAL, TRAN_CR_BAL, TRAN_DATE_BAL, TRAN_DATE, TRAN_TOT_NET, END_TRAN_DATE, "
 			+ "ENTRY_USER_ID, ENTRY_TIME, DEL_FLG) "
