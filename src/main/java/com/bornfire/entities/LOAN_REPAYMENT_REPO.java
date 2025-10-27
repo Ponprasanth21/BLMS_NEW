@@ -88,37 +88,17 @@ public interface LOAN_REPAYMENT_REPO extends JpaRepository<LOAN_REPAYMENT_ENTITY
 			+ "WHERE U.flow_amt > 0 " + "ORDER BY U.due_date, flow_id", nativeQuery = true)
 	List<Object[]> getloanflowsvaluedatas(String accountNum);
 
-	@Query(value = "SELECT B.due_date, '1' AS flow_id, 'FEEDEM' AS flow_code, (B.FEE_EXP - B.FEE_PAID) AS flow_amt, "
-			+ "       A.ID AS loan_acct_no, C.first_name || ' ' || C.last_name AS acct_name, A.ENCODED_KEY "
+	@Query(value = "SELECT B.due_date, " + "       (B.FEE_EXP - B.FEE_PAID) AS fee_flow, "
+			+ "       (B.INTEREST_EXP - B.INTEREST_PAID) AS int_flow, "
+			+ "       (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) AS pr_flow, "
+			+ "       (B.PENALTY_EXP - B.PENALTY_PAID) AS pen_flow, " + "       A.ID AS loan_acct_no, "
+			+ "       C.first_name || ' ' || C.last_name AS acct_name, " + "       A.ENCODED_KEY "
 			+ "FROM LOAN_ACCOUNT_MASTER_TBL A " + "JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY "
 			+ "JOIN CLIENT_MASTER_TBL C ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY "
-			+ "WHERE B.DUE_DATE <= :toDate AND A.ID = :accountNum AND (B.FEE_EXP - B.FEE_PAID) > 0 " +
-
-			"UNION ALL " +
-
-			"SELECT B.due_date, '2' AS flow_id, 'INDEM' AS flow_code, (B.INTEREST_EXP - B.INTEREST_PAID) AS flow_amt, "
-			+ "       A.ID AS loan_acct_no, C.first_name || ' ' || C.last_name AS acct_name, A.ENCODED_KEY "
-			+ "FROM LOAN_ACCOUNT_MASTER_TBL A " + "JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY "
-			+ "JOIN CLIENT_MASTER_TBL C ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY "
-			+ "WHERE B.DUE_DATE <= :toDate AND A.ID = :accountNum AND (B.INTEREST_EXP - B.INTEREST_PAID) > 0 " +
-
-			"UNION ALL " +
-
-			"SELECT B.due_date, '3' AS flow_id, 'PRDEM' AS flow_code, (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) AS flow_amt, "
-			+ "       A.ID AS loan_acct_no, C.first_name || ' ' || C.last_name AS acct_name, A.ENCODED_KEY "
-			+ "FROM LOAN_ACCOUNT_MASTER_TBL A " + "JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY "
-			+ "JOIN CLIENT_MASTER_TBL C ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY "
-			+ "WHERE B.DUE_DATE <= :toDate AND A.ID = :accountNum AND (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) > 0 " +
-
-			"UNION ALL " +
-
-			"SELECT B.due_date, '4' AS flow_id, 'PENDEM' AS flow_code, (B.PENALTY_EXP - B.PENALTY_PAID) AS flow_amt, "
-			+ "       A.ID AS loan_acct_no, C.first_name || ' ' || C.last_name AS acct_name, A.ENCODED_KEY "
-			+ "FROM LOAN_ACCOUNT_MASTER_TBL A " + "JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY "
-			+ "JOIN CLIENT_MASTER_TBL C ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY "
-			+ "WHERE B.DUE_DATE <= :toDate AND A.ID = :accountNum AND (B.PENALTY_EXP - B.PENALTY_PAID) > 0 " +
-
-			"ORDER BY due_date, flow_id", nativeQuery = true)
+			+ "WHERE B.DUE_DATE <= :toDate AND A.ID = :accountNum "
+			+ "AND ((B.FEE_EXP - B.FEE_PAID) > 0 OR (B.INTEREST_EXP - B.INTEREST_PAID) > 0 "
+			+ "     OR (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) > 0 OR (B.PENALTY_EXP - B.PENALTY_PAID) > 0) "
+			+ "ORDER BY B.due_date", nativeQuery = true)
 	List<Object[]> getLoanFlowsValueData(@Param("toDate") Date toDate, @Param("accountNum") String accountNum);
 
 	@Query(value = "SELECT * FROM LOAN_REPAYMENT_TBL WHERE PARENT_ACCOUNT_KEY = :accountNum AND DUE_DATE IN (:flowDates)", nativeQuery = true)
@@ -128,30 +108,26 @@ public interface LOAN_REPAYMENT_REPO extends JpaRepository<LOAN_REPAYMENT_ENTITY
 	@Query(value = "SELECT * FROM LOAN_REPAYMENT_TBL WHERE PARENT_ACCOUNT_KEY = ?1 AND DUE_DATE =?2", nativeQuery = true)
 	LOAN_REPAYMENT_ENTITY getLoanFlowsValueDatas11(String encodedkey, String flow_date);
 
-	@Query(value = "SELECT " + "    U.due_date, " + "    CASE "
-			+ "        WHEN U.flow_type = 'FEE_EXP' THEN '1'         " + // Fees First
-			"        WHEN U.flow_type = 'INTEREST_EXP' THEN '2'    " + // Interest Second
-			"        WHEN U.flow_type = 'PRINCIPAL_EXP' THEN '3'   " + // Principal Third
-			"        WHEN U.flow_type = 'PENALTY_EXP' THEN '4'     " + // Penalty Last
-			"    END AS flow_id, " + "    CASE " + "        WHEN U.flow_type = 'FEE_EXP' THEN 'FEEDEM' "
+	@Query(value = "SELECT " + "    U.due_date, " + "    CASE  " + "        WHEN U.flow_type = 'PENALTY_EXP' THEN '1' "
+			+ "        WHEN U.flow_type = 'FEE_EXP' THEN '2' " + "        WHEN U.flow_type = 'INTEREST_EXP' THEN '3' "
+			+ "        WHEN U.flow_type = 'PRINCIPAL_EXP' THEN '4' " + "    END AS flow_id, " + "    CASE  "
+			+ "        WHEN U.flow_type = 'PENALTY_EXP' THEN 'PENDEM' "
+			+ "        WHEN U.flow_type = 'FEE_EXP' THEN 'FEEDEM' "
 			+ "        WHEN U.flow_type = 'INTEREST_EXP' THEN 'INDEM' "
-			+ "        WHEN U.flow_type = 'PRINCIPAL_EXP' THEN 'PRDEM' "
-			+ "        WHEN U.flow_type = 'PENALTY_EXP' THEN 'PENALTY' " + "    END AS flow_code, " + "    U.flow_amt, "
-			+ "    U.loan_acct_no, " + "    U.acct_name, " + "    U.encoded_key " + "FROM ( " + "    SELECT "
+			+ "        WHEN U.flow_type = 'PRINCIPAL_EXP' THEN 'PRDEM' " + "    END AS flow_code, " + "    U.flow_amt, "
+			+ "    U.loan_acct_no, " + "    U.acct_name, " + "    U.encoded_key " + "FROM ( " + "    SELECT  "
 			+ "        B.due_date, " + "        A.ID AS loan_acct_no, " + "        A.LOAN_NAME AS acct_name, "
 			+ "        A.ENCODED_KEY, " + "        (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) AS PRINCIPAL_EXP, "
 			+ "        (B.INTEREST_EXP - B.INTEREST_PAID) AS INTEREST_EXP, "
 			+ "        (B.FEE_EXP - B.FEE_PAID) AS FEE_EXP, "
 			+ "        (B.PENALTY_EXP - B.PENALTY_PAID) AS PENALTY_EXP " + "    FROM LOAN_ACCOUNT_MASTER_TBL A "
-			+ "    JOIN LOAN_REPAYMENT_TBL B " + "        ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY "
-			+ "    WHERE B.PARENT_ACCOUNT_KEY = :accountNum " + "      AND B.payment_state = 'PENDING' " + ") P "
-			+ "UNPIVOT ( " + "    flow_amt FOR flow_type IN ( " + "        PRINCIPAL_EXP AS 'PRINCIPAL_EXP', "
-			+ "        INTEREST_EXP AS 'INTEREST_EXP', " + "        FEE_EXP AS 'FEE_EXP', "
-			+ "        PENALTY_EXP AS 'PENALTY_EXP' " + "    ) " + ") U " + "WHERE U.flow_amt > 0 "
-			+ "ORDER BY U.due_date, " + "         CASE " + "            WHEN U.flow_type = 'FEE_EXP' THEN 1 "
-			+ "            WHEN U.flow_type = 'INTEREST_EXP' THEN 2 "
-			+ "            WHEN U.flow_type = 'PRINCIPAL_EXP' THEN 3 "
-			+ "            WHEN U.flow_type = 'PENALTY_EXP' THEN 4 " + "         END", nativeQuery = true)
+			+ "    JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY "
+			+ "    WHERE B.PARENT_ACCOUNT_KEY = :accountNum " + ")  " + "UNPIVOT ( "
+			+ "    flow_amt FOR flow_type IN ( " + "        PRINCIPAL_EXP, " + "        INTEREST_EXP, "
+			+ "        FEE_EXP, " + "        PENALTY_EXP " + "    ) " + ") U " + "WHERE U.flow_amt > 0 " + "ORDER BY  "
+			+ "    U.due_date, " + "    CASE  " + "        WHEN U.flow_type = 'PENALTY_EXP' THEN 1 "
+			+ "        WHEN U.flow_type = 'FEE_EXP' THEN 2 " + "        WHEN U.flow_type = 'INTEREST_EXP' THEN 3 "
+			+ "        WHEN U.flow_type = 'PRINCIPAL_EXP' THEN 4 " + "    END", nativeQuery = true)
 	List<Object[]> getloanupdateList(@Param("accountNum") String accountNum);
 
 	@Query(value = "WITH ControlDate AS ( " + "    SELECT MAX(TRAN_DATE) AS TRAN_DATE " + "    FROM BGLS_CONTROL_TABLE "
@@ -431,39 +407,30 @@ public interface LOAN_REPAYMENT_REPO extends JpaRepository<LOAN_REPAYMENT_ENTITY
 			+ "    SELECT LD.DUE_DATE, '1', 'PENDEM', LD.PENDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key FROM LoanDataAfter LD WHERE LD.PENDEM_TOTAL > 0 "
 			+ ") FinalResult " + "ORDER BY due_date, TO_NUMBER(flow_id)", nativeQuery = true)
 	List<Object[]> getLoanFlowsWithCustomer(@Param("accountNum") String accountNum);
-	
-	
-	@Query(value = 
-			"WITH LoanData AS ( " +
-			"    SELECT B.DUE_DATE, " +
-			"           SUM(NVL(B.PRINCIPAL_EXP,0) - NVL(B.PRINCIPAL_PAID,0)) AS PRDEM_TOTAL, " +
-			"           MAX(NVL(B.INTEREST_EXP,0) - NVL(B.INTEREST_PAID,0)) AS INDEM_TOTAL, " +
-			"           MAX(NVL(B.FEE_EXP,0) - NVL(B.FEE_PAID,0)) AS FEEDEM_TOTAL, " +
-			"           MAX(NVL(B.PENALTY_EXP,0) - NVL(B.PENALTY_PAID,0)) AS PENDEM_TOTAL, " +
-			"           A.ID AS loan_acct_no, " +
-			"           CM.FIRST_NAME || ' ' || CM.LAST_NAME AS acct_name, " +
-			"           A.ENCODED_KEY AS encoded_key " +
-			"    FROM LOAN_ACCOUNT_MASTER_TBL A " +
-			"    JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY " +
-			"    JOIN CLIENT_MASTER_TBL CM ON CM.ENCODED_KEY = A.ACCOUNT_HOLDERKEY " +
-			"    JOIN BGLS_CONTROL_TABLE C ON B.DUE_DATE = C.TRAN_DATE " + // ✅ Only matching TRAN_DATE rows
-			"    WHERE A.ID = :accountNum " +
-			"      AND B.DEL_FLG = 'N' " +
-			"      AND B.payment_state IN ('PENDING','PARTIALLY_PAID','LATE') " +
-			"    GROUP BY B.DUE_DATE, A.ID, A.LOAN_NAME, A.ENCODED_KEY, CM.FIRST_NAME, CM.LAST_NAME " +
-			") " +
-			"SELECT * FROM ( " +
-			"    SELECT LD.DUE_DATE, '4' AS flow_id, 'PRDEM', LD.PRDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key FROM LoanData LD WHERE LD.PRDEM_TOTAL > 0 " +
-			"    UNION ALL " +
-			"    SELECT LD.DUE_DATE, '3', 'INDEM', LD.INDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key FROM LoanData LD WHERE LD.INDEM_TOTAL > 0 " +
-			"    UNION ALL " +
-			"    SELECT LD.DUE_DATE, '2', 'FEEDEM', LD.FEEDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key FROM LoanData LD WHERE LD.FEEDEM_TOTAL > 0 " +
-			"    UNION ALL " +
-			"    SELECT LD.DUE_DATE, '1', 'PENDEM', LD.PENDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key FROM LoanData LD WHERE LD.PENDEM_TOTAL > 0 " +
-			") FinalResult " +
-			"ORDER BY DUE_DATE, TO_NUMBER(flow_id)", nativeQuery = true)
-			List<Object[]> getLoanFlowsWithCustomermatched(@Param("accountNum") String accountNum);
 
+	@Query(value = "WITH LoanData AS ( " + "    SELECT B.DUE_DATE, "
+			+ "           SUM(NVL(B.PRINCIPAL_EXP,0) - NVL(B.PRINCIPAL_PAID,0)) AS PRDEM_TOTAL, "
+			+ "           MAX(NVL(B.INTEREST_EXP,0) - NVL(B.INTEREST_PAID,0)) AS INDEM_TOTAL, "
+			+ "           MAX(NVL(B.FEE_EXP,0) - NVL(B.FEE_PAID,0)) AS FEEDEM_TOTAL, "
+			+ "           MAX(NVL(B.PENALTY_EXP,0) - NVL(B.PENALTY_PAID,0)) AS PENDEM_TOTAL, "
+			+ "           A.ID AS loan_acct_no, " + "           CM.FIRST_NAME || ' ' || CM.LAST_NAME AS acct_name, "
+			+ "           A.ENCODED_KEY AS encoded_key " + "    FROM LOAN_ACCOUNT_MASTER_TBL A "
+			+ "    JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY "
+			+ "    JOIN CLIENT_MASTER_TBL CM ON CM.ENCODED_KEY = A.ACCOUNT_HOLDERKEY "
+			+ "    JOIN BGLS_CONTROL_TABLE C ON B.DUE_DATE = C.TRAN_DATE " + // ✅ Only matching TRAN_DATE rows
+			"    WHERE A.ID = :accountNum " + "      AND B.DEL_FLG = 'N' "
+			+ "      AND B.payment_state IN ('PENDING','PARTIALLY_PAID','LATE') "
+			+ "    GROUP BY B.DUE_DATE, A.ID, A.LOAN_NAME, A.ENCODED_KEY, CM.FIRST_NAME, CM.LAST_NAME " + ") "
+			+ "SELECT * FROM ( "
+			+ "    SELECT LD.DUE_DATE, '4' AS flow_id, 'PRDEM', LD.PRDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key FROM LoanData LD WHERE LD.PRDEM_TOTAL > 0 "
+			+ "    UNION ALL "
+			+ "    SELECT LD.DUE_DATE, '3', 'INDEM', LD.INDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key FROM LoanData LD WHERE LD.INDEM_TOTAL > 0 "
+			+ "    UNION ALL "
+			+ "    SELECT LD.DUE_DATE, '2', 'FEEDEM', LD.FEEDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key FROM LoanData LD WHERE LD.FEEDEM_TOTAL > 0 "
+			+ "    UNION ALL "
+			+ "    SELECT LD.DUE_DATE, '1', 'PENDEM', LD.PENDEM_TOTAL, LD.loan_acct_no, LD.acct_name, LD.encoded_key FROM LoanData LD WHERE LD.PENDEM_TOTAL > 0 "
+			+ ") FinalResult " + "ORDER BY DUE_DATE, TO_NUMBER(flow_id)", nativeQuery = true)
+	List<Object[]> getLoanFlowsWithCustomermatched(@Param("accountNum") String accountNum);
 
 	@Query(value = "SELECT \r\n" + "    B.due_date AS due_date,\r\n" + "    '1' AS flow_id,\r\n"
 			+ "    'INDEM' AS flow_code,\r\n" + "    (B.interest_exp - B.interest_paid) AS flow_amt,\r\n"
@@ -558,7 +525,7 @@ public interface LOAN_REPAYMENT_REPO extends JpaRepository<LOAN_REPAYMENT_ENTITY
 
 	@Query(value = "select due_date from LOAN_REPAYMENT_TBL where parent_account_key = ?1", nativeQuery = true)
 	List<Object[]> getPenaltyDemFlowsDatavalue(String accountNum);
-	
+
 	@Transactional
 	@Modifying
 	@Query(value = "UPDATE LOAN_REPAYMENT_TBL SET DEL_FLG = 'Y' WHERE PARENT_ACCOUNT_KEY = :encodedKey AND DUE_DATE = :dueDate", nativeQuery = true)

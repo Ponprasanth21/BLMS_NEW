@@ -507,4 +507,7 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 					@Transactional
 					@Query(value = "CALL UPDATE_DAILY_PENALTY_ALL(:MIG_DATE)", nativeQuery = true)
 					void runPenaltyAccural(@Param("MIG_DATE") String MIG_DATE);
+					
+					@Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS WHERE tran_id=?1", nativeQuery = true)
+					List<TRAN_MAIN_TRM_WRK_ENTITY> findByjournaldatas(String tran_id);
 }
