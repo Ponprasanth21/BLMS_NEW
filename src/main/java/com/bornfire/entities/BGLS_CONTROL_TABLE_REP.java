@@ -56,6 +56,9 @@ public interface BGLS_CONTROL_TABLE_REP extends JpaRepository<BGLS_Control_Table
 	  @Query(value = "SELECT DCP_STATUS FROM BGLS_CONTROL_TABLE", nativeQuery = true)
 	  String getDcpStatus();
 	  
+	  @Query(value = "SELECT INTEREST_ACCURAL FROM BGLS_CONTROL_TABLE", nativeQuery = true)
+	  String getinterestAccurual();
+	  
 	  
 	  
 	    @Query(value = "SELECT JOURNAL_CONS, LEDGER_CONS, ACCT_CONS, HOL_CHECK, MOV_DAC, MOV_JOURNAL FROM BGLS_CONTROL_TABLE", nativeQuery = true)

@@ -2691,6 +2691,8 @@ public class BGLSNavigationController {
         model.addAttribute("FeeDemand",bGLS_CONTROL_TABLE_REP.getFeeDemand());
         model.addAttribute("Penalty",bGLS_CONTROL_TABLE_REP.getPenalty());
         model.addAttribute("dcpstatus",bGLS_CONTROL_TABLE_REP.getDcpStatus());
+        model.addAttribute("interestAccurual",bGLS_CONTROL_TABLE_REP.getinterestAccurual());
+        
         System.out.println("dcpstatus"+bGLS_CONTROL_TABLE_REP.getDcpStatus());
         return "Day_end_Operation.html";
     }
