@@ -29,12 +29,20 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 
 	@Modifying
 	@Transactional
-	@Query(value = "UPDATE BGLS_DAILY_ACCT_BAL SET end_tran_date = TO_DATE(:endDate, 'YYYY-MM-DD') "
+	@Query(value = "UPDATE BGLS_DAILY_ACCT_BAL SET end_tran_date=:endDate "
 			+ "WHERE ACCT_NUM = :accountNum AND END_TRAN_DATE = TO_DATE('2099-12-31', 'YYYY-MM-DD')", nativeQuery = true)
 	void updateEndDateToYesterday1(@Param("accountNum") String accountNum, @Param("endDate") LocalDate endDate);
 	
-	@Query(value = "SELECT TRAN_DATE_BAL FROM BGLS_DAILY_ACCT_BAL WHERE ACCT_NUM = :accountNum AND END_TRAN_DATE = TO_DATE(:endDate, 'YYYY-MM-DD')", nativeQuery = true)
-	BigDecimal getTrandateBal(@Param("accountNum") String accountNum, @Param("endDate") LocalDate endDate);
+	/*
+	 * @Query(value =
+	 * "SELECT TRAN_DATE_BAL FROM BGLS_DAILY_ACCT_BAL WHERE ACCT_NUM = :accountNum AND TRAN_DATE = TO_DATE(:endDate, 'YYYY-MM-DD')"
+	 * , nativeQuery = true) BigDecimal getTrandateBal(@Param("accountNum") String
+	 * accountNum, @Param("endDate") LocalDate endDate);
+	 */
+	
+	@Query(value = "SELECT TRAN_DATE_BAL FROM BGLS_DAILY_ACCT_BAL WHERE ACCT_NUM = :accountNum  AND TRUNC(TRAN_DATE) = :endDate", nativeQuery = true)
+    BigDecimal getTrandateBal(@Param("accountNum") String accountNum, @Param("endDate") LocalDate endDate);
+
 
 	@Modifying
 	@Transactional
@@ -51,32 +59,32 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 	@Query(value = "INSERT INTO BGLS_DAILY_ACCT_BAL "
 			+ "(GL_CODE, GL_DESC, GLSH_CODE, GLSH_DESC, ACCT_NUM, ACCT_NAME, ACCT_CRNCY, "
 			+ "TRAN_DR_BAL, TRAN_CR_BAL, TRAN_DATE_BAL, TRAN_DATE, TRAN_TOT_NET, END_TRAN_DATE, "
-			+ "ENTRY_USER_ID, ENTRY_TIME, DEL_FLG) "
+			+ "ENTRY_USER_ID, ENTRY_TIME, DEL_FLG,OPENING_BAL) "
 			+ "VALUES (:glCode, :glDesc, :glshCode, :glshDesc, :accountNum, :acctName, :acctCrncy, "
-			+ ":totalDebit, :totalCredit, :tranDateBal, TO_DATE(:tranDate, 'YYYY-MM-DD'), :netAmount, TO_DATE('2099-12-31', 'YYYY-MM-DD'), 'SYSTEM', SYSDATE, 'N')", nativeQuery = true)
+			+ ":totalDebit, :totalCredit, :tranDateBal, TO_DATE(:tranDate, 'YYYY-MM-DD'), :netAmount, TO_DATE('2099-12-31', 'YYYY-MM-DD'), 'SYSTEM', SYSDATE, 'N',:updatedOpenBal)", nativeQuery = true)
 	void UpdateExsistAccountBalance(@Param("glCode") String glCode, @Param("glDesc") String glDesc,
 			@Param("glshCode") String glshCode, @Param("glshDesc") String glshDesc,
 			@Param("accountNum") String accountNum, @Param("acctName") String acctName,
 			@Param("acctCrncy") String acctCrncy, @Param("tranDateBal") BigDecimal tranDateBal,
 			@Param("tranDate") String tranDate, // Corrected parameter name
 			@Param("netAmount") BigDecimal netAmount, @Param("totalDebit") BigDecimal totalDebit,
-			@Param("totalCredit") BigDecimal totalCredit);
+			@Param("totalCredit") BigDecimal totalCredit,@Param("updatedOpenBal") BigDecimal updatedOpenBal);
 	
 	@Modifying
 	@Transactional
 	@Query(value = "INSERT INTO BGLS_DAILY_ACCT_BAL "
 			+ "(GL_CODE, GL_DESC, GLSH_CODE, GLSH_DESC, ACCT_NUM, ACCT_NAME, ACCT_CRNCY, "
 			+ "TRAN_DR_BAL, TRAN_CR_BAL, TRAN_DATE_BAL, TRAN_DATE, TRAN_TOT_NET, END_TRAN_DATE, "
-			+ "ENTRY_USER_ID, ENTRY_TIME, DEL_FLG) "
+			+ "ENTRY_USER_ID, ENTRY_TIME, DEL_FLG,OPENING_BAL) "
 			+ "VALUES (:glCode, :glDesc, :glshCode, :glshDesc, :accountNum, :acctName, :acctCrncy, "
-			+ ":totalDebit, :totalCredit, :tranDateBal, TO_DATE(:tranDate, 'YYYY-MM-DD'), :netAmount, TO_DATE('2099-12-31', 'YYYY-MM-DD'), 'SYSTEM', SYSDATE, 'N')", nativeQuery = true)
+			+ ":totalDebit, :totalCredit, :tranDateBal, TO_DATE(:tranDate, 'YYYY-MM-DD'), :netAmount, TO_DATE('2099-12-31', 'YYYY-MM-DD'), 'SYSTEM', SYSDATE, 'N',:openbal)", nativeQuery = true)
 	void insertNewAccountBalance(@Param("glCode") String glCode, @Param("glDesc") String glDesc,
 			@Param("glshCode") String glshCode, @Param("glshDesc") String glshDesc,
 			@Param("accountNum") String accountNum, @Param("acctName") String acctName,
 			@Param("acctCrncy") String acctCrncy, @Param("tranDateBal") BigDecimal tranDateBal,
 			@Param("tranDate") String tranDate, // Corrected parameter name
 			@Param("netAmount") BigDecimal netAmount, @Param("totalDebit") BigDecimal totalDebit,
-			@Param("totalCredit") BigDecimal totalCredit);
+			@Param("totalCredit") BigDecimal totalCredit,@Param("openbal") BigDecimal openbal);
 
 	@Modifying
 	@Transactional

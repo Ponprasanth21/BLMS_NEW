@@ -35,6 +35,8 @@ public class DAB_Entity {
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date entry_time;
 	private String del_flg;
+	private BigDecimal opening_bal;
+	
 	public String getGl_code() {
 		return gl_code;
 	}
@@ -130,6 +132,14 @@ public class DAB_Entity {
 	}
 	public void setDel_flg(String del_flg) {
 		this.del_flg = del_flg;
+	}
+	
+	
+	public BigDecimal getOpening_bal() {
+		return opening_bal;
+	}
+	public void setOpening_bal(BigDecimal opening_bal) {
+		this.opening_bal = opening_bal;
 	}
 	public DAB_Entity() {
 		super();

@@ -2765,16 +2765,19 @@ public class BGLSNavigationController {
                                 @RequestParam("trndate") String trndate) throws java.text.ParseException {
         // Get TRANDATE from session as a String
 
-        //Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
-        //System.out.println("TRANDATE: " + TRANDATE);
-        //SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-       // String formattedDate = dateFormat.format(TRANDATE);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date TRANDATE = sdf.parse("2025-10-01");  // manually assigned date
+    	System.out.println("Trndate"+trndate);
+        Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
         System.out.println("TRANDATE: " + TRANDATE);
-
-        String formattedDate = sdf.format(TRANDATE);
-        System.out.println("Formatted Date: " + formattedDate);
+       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = dateFormat.format(TRANDATE);
+		/*
+		 * SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); Date TRANDATE =
+		 * sdf.parse("2025-10-27"); // manually assigned date
+		 * System.out.println("TRANDATE: " + TRANDATE);
+		 * 
+		 * String formattedDate = sdf.format(TRANDATE);
+		 */
+        
         System.out.println("formattedDate"+formattedDate);
         List<Object[]> debitCreditData = tRAN_MAIN_TRM_WRK_REP.getNetDebitCreditWithCountForCurrentDate(formattedDate);
         // List<Object[]> debitCreditData =
@@ -2898,17 +2901,18 @@ public class BGLSNavigationController {
                                                 List<String> glDescs, List<String> accunt_name, List<BigDecimal> totalCredits, List<BigDecimal> totalDebits,
                                                 String TRANDATE) throws java.text.ParseException {
         // TRANDATE is now a String and will be used in the queries
+		
+		  Date TRANDATE1 = (Date) rq.getSession().getAttribute("TRANDATE");
+		 System.out.println(TRANDATE1 + "TRANDATE"); 
+		 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
+		 String formattedDate =dateFormat.format(TRANDATE1);
 		/*
-		 * Date TRANDATE1 = (Date) rq.getSession().getAttribute("TRANDATE");
-		 * System.out.println(TRANDATE1 + "TRANDATE"); SimpleDateFormat dateFormat = new
-		 * SimpleDateFormat("yyyy-MM-dd"); String formattedDate =
-		 * dateFormat.format(TRAND1ATE1);
+		 * SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); Date TRANDATE1 =
+		 * sdf.parse("2025-10-27"); // manually assigned date
+		 * System.out.println("TRANDATE: " + TRANDATE1);
+		 * 
+		 * String formattedDate = sdf.format(TRANDATE1);
 		 */
-    	  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-          Date TRANDATE1 = sdf.parse("2025-10-01");  // manually assigned date
-          System.out.println("TRANDATE: " + TRANDATE1);
-
-          String formattedDate = sdf.format(TRANDATE1);
           System.out.println("Formatted Date: " + formattedDate);
         
         for (int i = 0; i < accountNumbers.size(); i++) {
@@ -2945,7 +2949,8 @@ public class BGLSNavigationController {
 
             List<BigDecimal> existingBalances = tRAN_MAIN_TRM_WRK_REP
                     .findLatestTRAN_DATE_BALByAccountNumber(accountNum);
-
+            
+            BigDecimal openbal = BigDecimal.ZERO;
             //BigDecimal TrandateBal = BigDecimal.ZERO;
             if (!existingBalances.isEmpty()) {
                 System.out.println("Account " + accountNum + " exists. Updating END_TRAN_DATE to yesterday.");
@@ -2955,6 +2960,8 @@ public class BGLSNavigationController {
                     LocalDate tranDate = LocalDate.parse(formattedDate);
                     // Call the update method with the date minus one day
                     tRAN_MAIN_TRM_WRK_REP.updateEndDateToYesterday1(accountNum, tranDate.minusDays(1));
+                    openbal=tRAN_MAIN_TRM_WRK_REP.getTrandateBal(accountNum, tranDate.minusDays(1));
+                    
                     //TrandateBal=tRAN_MAIN_TRM_WRK_REP.getTrandateBal(accountNum, tranDate.minusDays(1));
                 } catch (DateTimeParseException e) {
                     // Handle parsing error (e.g., log the error or set a default value)
@@ -2967,6 +2974,14 @@ public class BGLSNavigationController {
                 // Calculate new TRAN_DATE_BAL
                 BigDecimal latestBalance = existingBalances.get(0);
                 BigDecimal newTRAN_DATE_BAL = latestBalance.add(netAmount);
+                
+                //BigDecimal updatedOpenBal=openbal.add(netAmount);
+                
+                BigDecimal updatedOpenBal = (openbal == null ? BigDecimal.ZERO : openbal).add(netAmount == null ? BigDecimal.ZERO : netAmount);
+
+                
+                
+                
 
                 System.out.println("Existing Balance: " + latestBalance);
                 System.out.println("New TRAN_DATE_BAL: " + newTRAN_DATE_BAL);
@@ -2978,7 +2993,7 @@ public class BGLSNavigationController {
                         // is in the
                         // correct
                         // format
-                        netAmount, totalDebit, totalCredit);
+                        netAmount, totalDebit, totalCredit,updatedOpenBal);
 
             } else {
                 // Insert new row with netAmount as TRAN_DATE_BAL
@@ -2987,7 +3002,7 @@ public class BGLSNavigationController {
                 tRAN_MAIN_TRM_WRK_REP.insertNewAccountBalance(currentGlCode, currentGlDesc, currentGlshCode,
                         currentGlshDesc, accountNum, accountName, "KES", netAmount, TRANDATE, // Ensure TRANDATE is in
                         // the correct format
-                        netAmount, totalDebit, totalCredit);
+                        netAmount, totalDebit, totalCredit,openbal);
 
             }
         }
