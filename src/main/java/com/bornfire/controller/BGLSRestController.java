@@ -11068,4 +11068,11 @@ public class BGLSRestController {
 
 		return tranId;
 	}
+	
+	@GetMapping("/getDabAcctList")
+    public List<DAB_Entity> getDabAcctList() {
+        List<DAB_Entity> acctList = new ArrayList<>();
+        dab_repo.findAll().forEach(acctList::add);
+        return acctList;
+    }
 }
