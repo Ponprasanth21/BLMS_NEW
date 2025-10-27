@@ -356,8 +356,8 @@ public class BGLSNavigationController {
 
     @Autowired
     AuditConfigure audit;
-    
-    
+
+
 
     public String getPagesize() {
         return pagesize;
@@ -2624,8 +2624,8 @@ public class BGLSNavigationController {
     public String day_end_operation(@RequestParam(required = false) String formmode, Model model,
                                     HttpServletRequest request) throws java.text.ParseException {
         // Journal
-    	Date TRANDATE = (Date) request.getSession().getAttribute("TRANDATE");
-       
+        Date TRANDATE = (Date) request.getSession().getAttribute("TRANDATE");
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String formattedDate = dateFormat.format(TRANDATE);
 
@@ -2765,19 +2765,19 @@ public class BGLSNavigationController {
                                 @RequestParam("trndate") String trndate) throws java.text.ParseException {
         // Get TRANDATE from session as a String
 
-    	System.out.println("Trndate"+trndate);
+        System.out.println("Trndate"+trndate);
         Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
         System.out.println("TRANDATE: " + TRANDATE);
-       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String formattedDate = dateFormat.format(TRANDATE);
-		/*
-		 * SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); Date TRANDATE =
-		 * sdf.parse("2025-10-27"); // manually assigned date
-		 * System.out.println("TRANDATE: " + TRANDATE);
-		 * 
-		 * String formattedDate = sdf.format(TRANDATE);
-		 */
-        
+        /*
+         * SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); Date TRANDATE =
+         * sdf.parse("2025-10-27"); // manually assigned date
+         * System.out.println("TRANDATE: " + TRANDATE);
+         *
+         * String formattedDate = sdf.format(TRANDATE);
+         */
+
         System.out.println("formattedDate"+formattedDate);
         List<Object[]> debitCreditData = tRAN_MAIN_TRM_WRK_REP.getNetDebitCreditWithCountForCurrentDate(formattedDate);
         // List<Object[]> debitCreditData =
@@ -2901,20 +2901,20 @@ public class BGLSNavigationController {
                                                 List<String> glDescs, List<String> accunt_name, List<BigDecimal> totalCredits, List<BigDecimal> totalDebits,
                                                 String TRANDATE) throws java.text.ParseException {
         // TRANDATE is now a String and will be used in the queries
-		
-		  Date TRANDATE1 = (Date) rq.getSession().getAttribute("TRANDATE");
-		 System.out.println(TRANDATE1 + "TRANDATE"); 
-		 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); 
-		 String formattedDate =dateFormat.format(TRANDATE1);
-		/*
-		 * SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); Date TRANDATE1 =
-		 * sdf.parse("2025-10-27"); // manually assigned date
-		 * System.out.println("TRANDATE: " + TRANDATE1);
-		 * 
-		 * String formattedDate = sdf.format(TRANDATE1);
-		 */
-          System.out.println("Formatted Date: " + formattedDate);
-        
+
+        Date TRANDATE1 = (Date) rq.getSession().getAttribute("TRANDATE");
+        System.out.println(TRANDATE1 + "TRANDATE");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate =dateFormat.format(TRANDATE1);
+        /*
+         * SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); Date TRANDATE1 =
+         * sdf.parse("2025-10-27"); // manually assigned date
+         * System.out.println("TRANDATE: " + TRANDATE1);
+         *
+         * String formattedDate = sdf.format(TRANDATE1);
+         */
+        System.out.println("Formatted Date: " + formattedDate);
+
         for (int i = 0; i < accountNumbers.size(); i++) {
             String accountNum = accountNumbers.get(i);
             BigDecimal netAmount = new BigDecimal(netAmounts.get(i));
@@ -2949,7 +2949,7 @@ public class BGLSNavigationController {
 
             List<BigDecimal> existingBalances = tRAN_MAIN_TRM_WRK_REP
                     .findLatestTRAN_DATE_BALByAccountNumber(accountNum);
-            
+
             BigDecimal openbal = BigDecimal.ZERO;
             //BigDecimal TrandateBal = BigDecimal.ZERO;
             if (!existingBalances.isEmpty()) {
@@ -2961,27 +2961,27 @@ public class BGLSNavigationController {
                     // Call the update method with the date minus one day
                     tRAN_MAIN_TRM_WRK_REP.updateEndDateToYesterday1(accountNum, tranDate.minusDays(1));
                     openbal=tRAN_MAIN_TRM_WRK_REP.getTrandateBal(accountNum, tranDate.minusDays(1));
-                    
+
                     //TrandateBal=tRAN_MAIN_TRM_WRK_REP.getTrandateBal(accountNum, tranDate.minusDays(1));
                 } catch (DateTimeParseException e) {
                     // Handle parsing error (e.g., log the error or set a default value)
                     System.err.println("Invalid date format for TRANDATE: " + TRANDATE);
                 }
-                
-               // BigDecimal updatedTrandateBal = netAmount.subtract(TrandateBal);
+
+                // BigDecimal updatedTrandateBal = netAmount.subtract(TrandateBal);
 
 
                 // Calculate new TRAN_DATE_BAL
                 BigDecimal latestBalance = existingBalances.get(0);
                 BigDecimal newTRAN_DATE_BAL = latestBalance.add(netAmount);
-                
+
                 //BigDecimal updatedOpenBal=openbal.add(netAmount);
-                
+
                 BigDecimal updatedOpenBal = (openbal == null ? BigDecimal.ZERO : openbal).add(netAmount == null ? BigDecimal.ZERO : netAmount);
 
-                
-                
-                
+
+
+
 
                 System.out.println("Existing Balance: " + latestBalance);
                 System.out.println("New TRAN_DATE_BAL: " + newTRAN_DATE_BAL);
@@ -3125,8 +3125,8 @@ public class BGLSNavigationController {
     }
 
     /* Praveen */
-    @RequestMapping(value = "interestBatchJob", method = { RequestMethod.GET, RequestMethod.POST })
-    public String interestBatchJob(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
+    @RequestMapping(value = "interestBatchJob_test", method = { RequestMethod.GET, RequestMethod.POST })
+    public String interestBatchJob_test(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
 
         Date TRANDATE = (Date) req.getSession().getAttribute("TRANDATE");
         if (formmode == null || formmode.equals("list")) {
@@ -3140,6 +3140,82 @@ public class BGLSNavigationController {
         }
         return "InterestBatchJob";
     }
+
+    @RequestMapping(value = "interestBatchJob", method = { RequestMethod.GET, RequestMethod.POST })
+    public String interestBatchJob(@RequestParam(required = false) String formmode, Model model,
+                                   HttpServletRequest request) throws java.text.ParseException {
+        // Journal
+        Date TRANDATE = (Date) request.getSession().getAttribute("TRANDATE");
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = dateFormat.format(TRANDATE);
+
+        String Userid = (String) request.getSession().getAttribute("USERID");
+
+        model.addAttribute("Userid", Userid);
+
+        model.addAttribute("Valuesfordebit", tRAN_MAIN_TRM_WRK_REP.getwofordebitvalues());
+        model.addAttribute("ValuesforCredit", tRAN_MAIN_TRM_WRK_REP.getwoforcreditvalues());
+        model.addAttribute("Valuesfornotransaction", tRAN_MAIN_TRM_WRK_REP.getTransactionValues());
+
+        model.addAttribute("ValuesforDel", tRAN_MAIN_TRM_WRK_REP.getdelvalues());
+        model.addAttribute("Valuesforunpost", tRAN_MAIN_TRM_WRK_REP.getunpostedvalues());
+
+        model.addAttribute("Valuesforaccbalance", chart_Acc_Rep.getaccbalance());
+
+
+        // ACCOUNT BALANCE
+        model.addAttribute("Valuesforaccopen", chart_Acc_Rep.getacctbalcredit());
+        model.addAttribute("Valuesforacclose", chart_Acc_Rep.getacctbaldebit());
+
+        // GL BALANCE
+        model.addAttribute("Valuesforgldebit", chart_Acc_Rep.getGLbaldebit());
+        model.addAttribute("Valuesforglcredit", chart_Acc_Rep.getGLbalcredit());
+
+        // day end balance
+        model.addAttribute("getWoforDebitValues", tRAN_MAIN_TRM_WRK_REP.getWoforDebitValues());
+        model.addAttribute("getWoforcreditValues", tRAN_MAIN_TRM_WRK_REP.getWoforcreditValues());
+        model.addAttribute("getWofortotalValues", tRAN_MAIN_TRM_WRK_REP.getWoforTotalValues());
+
+        List<Object[]> debitCreditData = tRAN_MAIN_TRM_WRK_REP.getNetDebitCreditWithCountForCurrentDate(formattedDate);
+
+        if (debitCreditData.size() > 3) {
+            Object[] elementAtFour = debitCreditData.get(3);
+            System.out.println(Arrays.toString(elementAtFour) + " debitCreditData");
+        } else {
+            System.out.println("The list does not contain enough elements.");
+        }
+        // System.out.println(debitCreditData.get(3)+"debitCreditData");
+        model.addAttribute("debitCreditData", debitCreditData);
+        // model.addAttribute("getNetDebitCreditForCurrentDate",tRAN_MAIN_TRM_WRK_REP.getNetDebitCreditWithCountForCurrentDate());
+
+        BigDecimal getTotalValues = tRAN_MAIN_TRM_WRK_REP.getTotalValues(formattedDate);
+        model.addAttribute("totalamount", getTotalValues);
+        // model.addAttribute("gettotalValues",tRAN_MAIN_TRM_WRK_REP.getTotalValues());
+
+        Object totalTransactionCount = tRAN_MAIN_TRM_WRK_REP.getTotalTransactionCount(formattedDate);
+        model.addAttribute("totaltransaction", totalTransactionCount);
+
+        model.addAttribute("getTotalCredit", tRAN_MAIN_TRM_WRK_REP.getTotalCredit(formattedDate));
+        model.addAttribute("getTotalDebit", tRAN_MAIN_TRM_WRK_REP.getTotalDebit(formattedDate));
+
+
+        model.addAttribute("Journal",bGLS_CONTROL_TABLE_REP.getJournal());
+        System.out.println("Journal"+bGLS_CONTROL_TABLE_REP.getJournal());
+        model.addAttribute("AccountLedger",bGLS_CONTROL_TABLE_REP.getAccountLedger());
+        model.addAttribute("HolidayCheck",bGLS_CONTROL_TABLE_REP.getHolidayCheck());
+        model.addAttribute("DAB",bGLS_CONTROL_TABLE_REP.getDAB());
+        model.addAttribute("ConsistencyCheck",bGLS_CONTROL_TABLE_REP.getConsistencyCheck());
+        model.addAttribute("MovementofTransaction",bGLS_CONTROL_TABLE_REP.getMovementofTransaction());
+        model.addAttribute("GlConsolidation",bGLS_CONTROL_TABLE_REP.getGlConsolidation());
+        model.addAttribute("InterestDemand",bGLS_CONTROL_TABLE_REP.getInterestDemand());
+        model.addAttribute("FeeDemand",bGLS_CONTROL_TABLE_REP.getFeeDemand());
+        model.addAttribute("Penalty",bGLS_CONTROL_TABLE_REP.getPenalty());
+        model.addAttribute("dcpstatus",bGLS_CONTROL_TABLE_REP.getDcpStatus());
+        System.out.println("dcpstatus"+bGLS_CONTROL_TABLE_REP.getDcpStatus());
+        return "Batch_job_Day_end_Operation.html";
+    }
+
 
     //SURIYA
     @PostMapping("/uploadatatogled")
@@ -4258,7 +4334,7 @@ public class BGLSNavigationController {
             System.out.println("Session date: " + sessionTranDate);
 
             // Example: call service here
-             return DateChangeService.dateChange(nxtDate, tranDate, rq);
+            return DateChangeService.dateChange(nxtDate, tranDate, rq);
 
 //            return "Success";
 
@@ -4336,7 +4412,7 @@ public class BGLSNavigationController {
         controlTable.setInterest_demand_gen("PENDING");
         controlTable.setFee_demand_gen("PENDING");
         controlTable.setPenalty("PENDING");
-        
+
         controlTable.setDcp_start_time(new Date());
         controlTable.setDcp_flg("N");
         controlTable.setDcp_status("CLOSE");
@@ -4418,7 +4494,7 @@ public class BGLSNavigationController {
 
 //		md.addAttribute("refdetails",reference_code_Rep.getRefById(id) );
 //		md.addAttribute("refType", reference_code_Rep.getReferenceType());
-    	md.addAttribute("principle",chart_Acc_Rep.getListoffice1());
+        md.addAttribute("principle",chart_Acc_Rep.getListoffice1());
 
         return "BACP/PARAMETERADD";
     }

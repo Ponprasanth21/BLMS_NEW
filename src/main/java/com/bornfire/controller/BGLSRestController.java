@@ -10431,6 +10431,14 @@ public class BGLSRestController {
 		return bglsorgbranch.getAllBranchCodes();
 	}
 
+    @GetMapping("/getDabAcctList")
+    public List<DAB_Entity> getDabAcctList() {
+        List<DAB_Entity> acctList = new ArrayList<>();
+        dab_repo.findAll().forEach(acctList::add);
+        return acctList;
+    }
+
+
 	@ResponseBody
 	@RequestMapping(value = "/getBranchNameByKey", method = RequestMethod.POST)
 	public String getBranchNameByKey(@RequestParam String branch_key) {
