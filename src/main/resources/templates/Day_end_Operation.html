@@ -605,7 +605,7 @@
 				$("#journalModal8 .modal-body").html(tableHtml);
 
 				// Validation messages
-				if (res.custcheck1[0][0] === res.custcheck2[0][0]) {
+				if (res.custcheck1[0][0] && res.custcheck2[0][0] && res.custcheck3[0][0]) {
 					$("#journalModal8 .modal-body").append('<div style="text-align:center; margin-top:10px;"><h4 style="color:green;">Validation Success &#9989;</h4></div>');
 				} else {
 					$("#journalModal8 .modal-body").append('<div style="text-align:center; margin-top:10px;"><h4 style="color:red;">Validation Failed &#10060;</h4></div>');

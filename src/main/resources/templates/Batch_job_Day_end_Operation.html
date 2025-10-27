@@ -265,7 +265,7 @@
 			success: function (res) {
 				let Acct_Id_List = '<option>--Select--</option>'
 				res.forEach(item=>{
-					Acct_Id_List += '<option value="'+item.acct_num+'" data-acct_name="'+item.acct_name+'" >'+item.acct_num+" ["+item.acct_name+']</option>'
+					Acct_Id_List += '<option value="'+item.acct_num+'" data-acct_name="'+item.acct_name+'" >'+item.acct_num+" - "+item.acct_name+'</option>'
 				})
 				var tableHtml = `
                 <div>

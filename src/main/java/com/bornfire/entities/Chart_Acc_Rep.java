@@ -99,7 +99,7 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 	@Query(value = "SELECT acct_bal FROM BGLS_CHART_OF_ACCOUNTS aa WHERE aa.acct_num = ?1", nativeQuery = true)
 	BigDecimal getbal(String acct_num);
 
-	@Query(value = "SELECT SUM(CR_AMT) as TRANAMT, SUM(DR_AMT) as TRANAMT1 FROM BGLS_CHART_OF_ACCOUNTS", nativeQuery = true)
+	@Query(value = "SELECT SUM(CR_AMT) as TRANAMT, SUM(DR_AMT) as TRANAMT1 FROM BGLS_CHART_OF_ACCOUNTS WHERE OWN_TYPE IN('C','O') ", nativeQuery = true)
 	Object[] getcheck2();
 
 	@Query(value = "SELECT * FROM BGLS_CHART_OF_ACCOUNTS WHERE GLSH_CODE=?1", nativeQuery = true)
