@@ -229,13 +229,17 @@
 	</style>
 </head>
 <script>
+	$(document).on("click","#batchjob_consitency_check",function(){
+		ConsistencyCheck();
+	});
+
 
 	$(document).on("click","#holiday_date_selection",function(){
 		var tableHtml = `
                 <div>
 					<div style="display:flex;" >
 						<lable style="width:100px" ><b>From Date : </b> </lable>
-						<input style="width:250px" id="holiday_from_date" type="date" class="form-control" >
+						<input style="width:250px" id="holiday_from_date" type="date" class="form-control" readonly >
 					</div>
 					<div style="display:flex;margin-top: 10px;" >
 						<lable style="width:100px" ><b>To Date : </b></lable>
@@ -257,7 +261,7 @@
 
 	$(document).on("click","#dab_date_selection",function(){
 		
-				document.getElementById('loadingModal').style.display = 'flex';
+		document.getElementById('loadingModal').style.display = 'flex';
 		$.ajax({
 			url: "getDabAcctList",  // ✅ backend Spring Boot endpoint
 			type: 'GET',
@@ -304,6 +308,10 @@
 
 		
 	});
+
+	$(document).on('click','#holidayDaySelectSubmit',function(){
+		HolidayCheckValidate();
+	})
 
 	/* function Refresh() {
 		window.location.reload();
@@ -631,32 +639,17 @@
 	}
 
 	function ConsistencyCheck() {
-		// alert("ConsistencyCheck");
-		$("#play8").hide();
-		$('#td8').remove();
-		// $('#journalModal8').modal('show');
-
-		// Append loader
-		$('#tr8').append('<td width="205px;" id="td8" style="text-align: center; padding-left:80px;"><div class="loader"></div></td>');
-
 		var trndate = $("#current_date").val();
 		console.log("Selected Date:", trndate);
 
 		$.ajax({
-			url: "/ASPIRA/consistencyCheck",
+			url: "/ASPIRA/BatchJobconsistencyCheck",
 			type: "POST",
 			data: { trndate: trndate },
 			dataType: "json",
 			success: function (res) {
 				console.log("ConsistencyCheck Response:", res);
 
-
-				$('#td8').remove();
-				$('#tr8').append('<td style="text-align:center; font-size:20px;">&#9989;</td>');
-
-
-
-				// Build table dynamically with formatted amounts
 				var tableHtml = '<table class="table table-bordered table-hover">' +
 					'<thead><tr><th>VALIDATION</th><th>CREDIT AMOUNT</th><th>DEBIT AMOUNT</th></tr></thead><tbody>';
 
@@ -687,8 +680,6 @@
 
 			},
 			error: function () {
-				$('#td8').remove();
-				$('#tr8').append('<td style="text-align:center; font-size:20px;">&#9989;</td>');
 				$('#journalModal8').modal('show');
 			}
 		});
@@ -770,52 +761,26 @@
 	}
 
 
+
 	function HolidayCheckValidate() {
-		// Hide the start button
-		$("#play6").hide();
-
-		// Remove any existing loader cell
-		$('#td6').remove();
-
-		// Append loader while waiting
-		$('#tr6').append('<td width="205px;" id="td6" style="text-align: center; padding-left:80px;"><div class="loader"></div></td>');
-
-		var trndate = $("#nxtdate").val();
-		console.log("Selected Date:", trndate);
+		var trndate = $("#holiday_to_date").val();
 
 		// Show modal with loader
 		$('#holidayModalBody').html('<div class="text-center my-3"><div class="loader"></div><p class="mt-2">Checking for holiday...</p></div>');
-		// $('#holidayModal').modal('show');
 
 		// AJAX request
 		$.ajax({
-			url: "holidayCheck",
+			url: "holidayCheckBatchJob",
 			type: 'POST',
 			data: { trndate: trndate },
 			dataType: "text",
 			success: function (res) {
-				console.log("HolidayCheck Response:", res);
-
-				// Remove loader from table row
-				$('#td6').remove();
-
 				// Replace modal body content with result
 				$('#holidayModalBody').html('<h5 class="text-center">' + res + '</h5>');
-
-				// Show ✅ or ❌ based on response
-				// if (res.includes("Holiday") || res.includes("Weekend")) {
-				//     $('#tr6').append('<td style="text-align:center; font-size:20px;">&#9989;</td>');
-				// } else {
-				$('#tr6').append('<td style="text-align:center; font-size:20px;">&#9989;</td>');
 				$('#holidayModal').modal('show');
-				// }
 			},
 			error: function (xhr, status, error) {
-				console.error("HolidayCheck Error:", error);
-				$('#td6').remove();
-
 				$('#holidayModalBody').html('<h5 class="text-center text-danger">❌ An error occurred while processing your request.</h5>');
-				$('#tr6').append('<td style="text-align:center; font-size:20px;">&#10060;</td>');
 				$('#holidayModal').modal('show');
 			}
 		});
@@ -1637,7 +1602,7 @@
 						</tr> -->
 						<tr id="tr6">
 							<!-- <td style="padding: 2px;"><b>Validation</b></td> -->
-							<td style="padding-left: 5px;" id="holiday_date_selection" >Holiday Check</td>
+							<td style="padding-left: 5px;cursor: pointer;" id="holiday_date_selection"  >Holiday Check</td>
 							<!-- <td width="205px;" id="td6"
 								style="text-align: center; vertical-align: middle;padding: 2px;"><button type="button"
 									class="btn-primary big-btn" id="play6">Start</button>
@@ -1645,7 +1610,7 @@
 						</tr>
 						<tr id="tr7">
 							<!-- <td style="padding: 2px;"><b>Steps</b></td> -->
-							<td style="padding-left: 5px;" id="dab_date_selection" >Daily Account Balance</td>
+							<td style="padding-left: 5px;cursor: pointer;" id="dab_date_selection" >Daily Account Balance</td>
 							<!-- <td width="205px;" id="td7"
 								style="text-align: center; vertical-align: middle;padding: 2px;">
 								<button type="button" class="btn-primary big-btn" value="Start"
@@ -1654,7 +1619,7 @@
 						</tr>
 						<tr id="tr8">
 							<!-- <td style="padding: 2px;"></td> -->
-							<td style="padding-left: 5px;">Consistency Check</td>
+							<td style="padding-left: 5px;cursor: pointer;" id="batchjob_consitency_check" >Consistency Check</td>
 							<!-- <td width="205px;" id="td8"
 								style="text-align: center; vertical-align: middle;padding: 2px;"><button type="button"
 									class="btn-primary big-btn" value="Start" id="play8">Start</button>
@@ -1678,7 +1643,7 @@
 						</tr> -->
 						<tr id="tr11">
 							<!-- <td style="padding: 2px;"></td> -->
-							<td style="padding-left: 5px;">Date Change Process</td>
+							<td style="padding-left: 5px;cursor: pointer;">Date Change Process</td>
 							<!-- <td width="205px;" id="td11"
 								style="text-align: center; vertical-align: middle;padding: 2px;"><button type="button"
 									class="btn-primary big-btn" value="Start" id="play11">Start</button>
@@ -1690,7 +1655,7 @@
 						<tr id="tr9">
 							<!-- <td style="padding: 2px;"><b>Batch Job</b></td> -->
 							
-							<td style="padding-left: 5px;">GL Updation</td>
+							<td style="padding-left: 5px;cursor: pointer;">GL Updation</td>
 							<!-- <td width="205px;" id="td9"
 								style="text-align: center; vertical-align: middle;padding: 2px;"><button type="button"
 									class="btn-primary big-btn" value="Start" id="play9">Start</button>
@@ -1699,7 +1664,7 @@
 
 						<tr id="tr1" style="height: 25px;">
 							<!-- <td style="padding: 2px;"></td> -->
-							<td style="padding-left: 5px;">Interest Accural</td>
+							<td style="padding-left: 5px;cursor: pointer;">Interest Accural</td>
 							<!-- <td width="205px;" id="td1"
 								style="text-align: center; vertical-align: middle; padding: 2px;">
 								<button type="button" class="btn-primary big-btn" value="Start" id="play1" onclick="InterestAccural()">
@@ -1722,7 +1687,7 @@
 
 						<tr id="tr2">
 							<!-- <td style="padding: 2px;"></td> -->
-							<td style="padding-left: 5px;">Interest Demand Generation</td>
+							<td style="padding-left: 5px;cursor: pointer;">Interest Demand Generation</td>
 							<!-- <td width="205px;" id="td2"
 								style="text-align: center; vertical-align: middle; padding: 2px;"><button type="button"
 									class="btn-primary big-btn" value="Start" id="play2"
@@ -1731,7 +1696,7 @@
 						</tr>
 						<tr id="tr12">
 							<!-- <td style="padding: 2px;"></td> -->
-							<td style="padding-left: 5px;">Fee Demand Generation</td>
+							<td style="padding-left: 5px;cursor: pointer;">Fee Demand Generation</td>
 							<!-- <td width="205px;" id="td12"
 								style="text-align: center; vertical-align: middle; padding: 2px;"><button type="button"
 									class="btn-primary big-btn" value="Start" id="play12"
@@ -1740,7 +1705,7 @@
 						</tr>
 						<tr id="tr13">
 							<!-- <td style="padding: 2px;"></td> -->
-							<td style="padding-left: 5px;">Penalty</td>
+							<td style="padding-left: 5px;cursor: pointer;">Penalty</td>
 							<!-- <td width="205px;" id="td13"
 								style="text-align: center; vertical-align: middle; padding: 2px;"><button type="button"
 									class="btn-primary big-btn" value="Start" id="play13"
@@ -1749,7 +1714,7 @@
 						</tr>
 						<tr id="tr3">
 							<!-- <td style="padding: 2px;"></td> -->
-							<td style="padding-left: 5px;">Other Batch Job</td>
+							<td style="padding-left: 5px;cursor: pointer;">Other Batch Job</td>
 							<!-- <td width="205px;" id="td1"
 								style="text-align: center; vertical-align: middle; padding: 2px;"><button type="button"
 									class="btn-primary big-btn" value="Start" id="play1" onclick="handleotherbatch()">Start</button>
@@ -1886,7 +1851,7 @@
 			<div class="modal-content" style="width: 700px;">
 
 				<div class="modal-header">
-					<h5 class="modal-title text-center">Holiday Date Selection</h5>
+					<h5 class="modal-title text-center">Holiday Check</h5>
 				</div>
 
 				<div class="modal-body" id="holidaySubmitModalBody" style="margin: auto;">

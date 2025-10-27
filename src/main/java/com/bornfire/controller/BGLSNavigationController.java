@@ -4301,6 +4301,32 @@ public class BGLSNavigationController {
     }
 
 
+    @PostMapping("BatchJobconsistencyCheck")
+    @ResponseBody
+    public Map<String, Object> BatchJobconsistencyCheck(@RequestParam("trndate") String trndate) {
+        System.out.println("Received trndate from frontend: " + trndate);
+
+        Object[] obj1 = tRAN_MAIN_TRM_WRK_REP.getcheck1();
+        Object[] obj2 = chart_Acc_Rep.getcheck2();
+        Object[] obj3 = dAB_Repo.getcheck3();
+
+        BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+        if (existingRecord != null) {
+            existingRecord.setAcct_cons("Completed");
+            existingRecord.setDcp_status("PRE-DCP-4");
+            bGLS_CONTROL_TABLE_REP.save(existingRecord);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("custcheck1", obj1);
+        response.put("custcheck2", obj2);
+        response.put("custcheck3", obj3);
+
+        return response;
+    }
+
+
+
     @RequestMapping(value = "dateChageProcess", method = RequestMethod.POST)
     @ResponseBody
     public String dateChangeProcess(
@@ -4481,6 +4507,53 @@ public class BGLSNavigationController {
         if (cnt > 0) {
             System.out.println("Holiday/Weekend detected");
             return "Holiday/Weekend - Updation Done";
+        } else {
+            return "Working Day";
+        }
+    }
+
+    @RequestMapping(value = "holidayCheckBatchJob", method = RequestMethod.POST)
+    @ResponseBody
+    public String holidayCheckBatchJob(Model md,
+                               @RequestParam("trndate") String trndate) throws java.text.ParseException {
+
+        System.out.println("Incoming Holiday Check");
+        System.out.println(trndate + " trndate");
+
+        // ✅ Convert trndate string to java.util.Date
+        Date TRANDATE = null;
+        try {
+            // Match the input format "dd-MM-yyyy"
+            TRANDATE = new SimpleDateFormat("yyyy-MM-dd").parse(trndate);
+
+            System.out.println("Holiday TRANDATE"+TRANDATE);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "Invalid Date Format";
+        }
+
+        // Step 1: Check if holiday exists in HMT
+        int holidayCount = bglsHolidayMasterRep.countByRecordDateAndDelFlg(TRANDATE);
+        System.out.println("holidayCount: " + holidayCount);
+
+        int cnt = holidayCount;
+
+        // Step 2: If not found, check if weekend
+        if (cnt == 0) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(TRANDATE);
+            int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+
+            if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+                cnt = 1; // weekend = holiday
+            }
+            System.out.println("dayOfWeek"+dayOfWeek);
+        }
+
+        // Step 3: Return based on holiday/weekend
+        if (cnt > 0) {
+            System.out.println("Holiday/Weekend detected");
+            return "Holiday/Weekend";
         } else {
             return "Working Day";
         }
