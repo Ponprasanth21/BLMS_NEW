@@ -530,4 +530,37 @@ public interface LOAN_REPAYMENT_REPO extends JpaRepository<LOAN_REPAYMENT_ENTITY
 	@Modifying
 	@Query(value = "UPDATE LOAN_REPAYMENT_TBL SET DEL_FLG = 'Y' WHERE PARENT_ACCOUNT_KEY = :encodedKey AND DUE_DATE = :dueDate", nativeQuery = true)
 	void updateDelFlag(@Param("encodedKey") String encodedKey, @Param("dueDate") String dueDate);
+
+	@Query(value = "SELECT B.due_date, " + "       (B.FEE_EXP - B.FEE_PAID) AS fee_flow, "
+			+ "       (B.INTEREST_EXP - B.INTEREST_PAID) AS int_flow, "
+			+ "       (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) AS pr_flow, "
+			+ "       (B.PENALTY_EXP - B.PENALTY_PAID) AS pen_flow, " + "       A.ID AS loan_acct_no, "
+			+ "       C.first_name || ' ' || C.last_name AS acct_name, " + "       A.ENCODED_KEY "
+			+ "FROM LOAN_ACCOUNT_MASTER_TBL A " + "JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY "
+			+ "JOIN CLIENT_MASTER_TBL C ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY "
+			+ "WHERE B.DUE_DATE <= :toDate AND A.ID = :accountNum "
+			+ "AND ((B.FEE_EXP - B.FEE_PAID) > 0 OR (B.INTEREST_EXP - B.INTEREST_PAID) > 0 "
+			+ "     OR (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) > 0 OR (B.PENALTY_EXP - B.PENALTY_PAID) > 0) "
+			+ "ORDER BY B.due_date", nativeQuery = true)
+	List<Object[]> getLoanFlowsValueData1(@Param("toDate") String toDate, @Param("accountNum") String accountNum);
+
+	@Query(value = "SELECT " + "   U.due_date, " + "   CASE " + "       WHEN U.flow_type = 'INTEREST_EXP' THEN '3' "
+			+ "       WHEN U.flow_type = 'PRINCIPAL_EXP' THEN '4' " + "   END AS flow_id, " + "   CASE "
+			+ "       WHEN U.flow_type = 'INTEREST_EXP' THEN 'INDEM' "
+			+ "       WHEN U.flow_type = 'PRINCIPAL_EXP' THEN 'PRDEM' " + "   END AS flow_code, " + "   U.flow_amt, "
+			+ "   U.loan_acct_no, " + "   U.acct_name, " + "   U.encoded_key " + "FROM ( " + "   SELECT  "
+			+ "       B.due_date, " + "       A.ID AS loan_acct_no, "
+			+ "       CM.FIRST_NAME || ' ' || CM.LAST_NAME AS acct_name, " + "       A.ENCODED_KEY, "
+			+ "       (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) AS PRINCIPAL_EXP, "
+			+ "       (B.INTEREST_EXP - B.INTEREST_PAID) AS INTEREST_EXP " + "   FROM LOAN_ACCOUNT_MASTER_TBL A "
+			+ "   JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY "
+			+ "   JOIN CLIENT_MASTER_TBL CM ON CM.ENCODED_KEY = A.ACCOUNT_HOLDERKEY "
+			+ "   WHERE A.ID = :accountNumber " + ") " + "UNPIVOT ( " + "   flow_amt FOR flow_type IN ( "
+			+ "       PRINCIPAL_EXP, " + "       INTEREST_EXP " + "   ) " + ") U " + "WHERE U.flow_amt > 0 "
+			+ "  AND TRUNC(U.due_date) > TO_DATE(:toDate, 'DD-MON-YYYY') " + "ORDER BY " + "   U.due_date, "
+			+ "   CASE " + "       WHEN U.flow_type = 'PRINCIPAL_EXP' THEN 1 " + // ✅ PRDEM first
+			"       WHEN U.flow_type = 'INTEREST_EXP' THEN 2 " + // ✅ INDEM second
+			"   END", nativeQuery = true)
+	List<Object[]> getLoanUpdateList1(@Param("accountNumber") String accountNumber, @Param("toDate") String toDate);
+
 }

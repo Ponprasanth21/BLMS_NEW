@@ -1731,163 +1731,29 @@
 	</script>
 	<script>
 		function updateTableValueSequentially() {
-			let balanceValue = parseFloat(document.getElementById("acct_balancedatas").value.replace(/,/g, '')) || 0;
-			let flowAmtFields = document.getElementsByName("flow_amt");
-			let tranAmtFields = document.getElementsByName("tran_amt");
-			let flowCodeFields = document.getElementsByName("flow_code");
-			let remainingBalance = balanceValue;
+		    let balanceValue = parseFloat($("#acct_balancedatas").val().replace(/,/g, "")) || 0;
+		    let todate = $("#transactiondates").val();
+		    let accountNumber = $("#acct_num123").val();
 
-			console.log("Initial Balance: " + balanceValue.toLocaleString());
+		    console.log("Sending to backend:", { balanceValue, todate, accountNumber });
 
-			// Priority order
-			const priorityOrder = ["PENDEM", "FEEDEM", "INDEM", "PRDEM"];
-
-			// Step 1: Create array of rows
-			let rows = [];
-			for (let i = 0; i < flowCodeFields.length; i++) {
-				rows.push({
-					index: i,
-					code: flowCodeFields[i].value.trim(),
-					flowAmtField: flowAmtFields[i],
-					tranAmtField: tranAmtFields[i],
-					flowValue: parseFloat(flowAmtFields[i].value.replace(/,/g, "")) || 0
-				});
-			}
-
-			// Step 2: Sort rows by priority order
-			rows.sort((a, b) => {
-				const indexA = priorityOrder.indexOf(a.code);
-				const indexB = priorityOrder.indexOf(b.code);
-				if (indexA === -1 && indexB === -1) return a.index - b.index;
-				if (indexA === -1) return 1;
-				if (indexB === -1) return -1;
-				return indexA - indexB;
-			});
-
-			// Step 3: Allocate amounts sequentially based on sorted priority
-			for (let row of rows) {
-				let flowValue = row.flowValue;
-
-				if (remainingBalance <= 0) {
-					row.tranAmtField.value = "0.00";
-					continue;
-				}
-
-				if (flowValue <= 0) {
-					row.tranAmtField.value = "0.00";
-					continue;
-				}
-
-				if (flowValue > remainingBalance) {
-					row.tranAmtField.value = remainingBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-					remainingBalance = 0;
-				} else {
-					row.tranAmtField.value = flowValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-					remainingBalance -= flowValue;
-				}
-
-				console.log(`Adjusted ${row.code}: ${row.tranAmtField.value} | Remaining Balance: ${remainingBalance.toLocaleString()}`);
-			}
-
-			// Step 4: Update rows that are not part of the priority (if any)
-			for (let row of rows) {
-				if (!priorityOrder.includes(row.code)) {
-					if (remainingBalance > 0) {
-						let flowValue = row.flowValue;
-						if (flowValue > remainingBalance) {
-							row.tranAmtField.value = remainingBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-							remainingBalance = 0;
-						} else {
-							row.tranAmtField.value = flowValue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-							remainingBalance -= flowValue;
-						}
-					} else {
-						row.tranAmtField.value = "0.00";
-					}
-				}
-			}
-
-			// Step 5: Update remaining balance display
-			let balanceDisplay = document.getElementById("remaining_balance");
-			if (balanceDisplay) {
-				balanceDisplay.textContent = `Remaining Balance: ${remainingBalance.toLocaleString(undefined, {
-					minimumFractionDigits: 2,
-					maximumFractionDigits: 2
-				})}`;
-				console.log(`Final Remaining Balance: ${remainingBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`);
-			}
-
-			// Step 6: Perform AJAX if balance still remains
-			if (remainingBalance > 0) {
-				let acct_num = $("#acct_num123").val();
-				let selectElement = document.getElementById("acct_num123");
-				let selectedOption = selectElement.options[selectElement.selectedIndex];
-				let acctName = selectedOption.getAttribute("data-acct-name") || "";
-				let operationType = "CollectionRouting";
-
-				$.ajax({
-					type: 'GET',
-					url: './loanflowDetailsupdate',
-					data: {id: acct_num, amount: balanceValue},
-					success: function (data) {
-						var tHTML = "";
-						if ($("#flowIdTable thead tr th").length === 7) {
-							$("#flowIdTable thead tr th").eq(3).after("<th style='text-align:center;'>Tran Amt</th>");
-						}
-
-						if (Array.isArray(data.loanFlowDetails) && data.loanFlowDetails.length > 0) {
-							$.each(data.loanFlowDetails, function (index, entity) {
-								var flowDate = entity.flow_date ? formatDate(entity.flow_date) : "";
-								var flowId = entity.flow_id ? entity.flow_id : "";
-								var flowCode = entity.flow_code ? entity.flow_code : "";
-								var flowAmount = entity.flow_amt ? formatNumberWithCommas(entity.flow_amt) : "0.00";
-								var tranAmount = entity.tran_amt ? formatNumberWithCommas(entity.tran_amt) : "0.00";
-								var acctNo = entity.loan_acct_no ? entity.loan_acct_no : "";
-								var acctName = entity.acct_name ? entity.acct_name : "";
-								var encodedKey = entity.encoded_key ? entity.encoded_key : "";
-
-								tHTML += "<tr>"
-									+ "<td><input type='text' name='flow_date' value='" + flowDate + "' readonly class='border-0 p-0 m-0' style='width:100%;' /></td>"
-									+ "<td><input type='text' name='flow_id' value='" + flowId + "' readonly class='border-0 p-0 m-0' style='width:100%;' /></td>"
-									+ "<td><input type='text' name='flow_code' value='" + flowCode + "' readonly class='border-0 p-0 m-0' style='width:100%;' /></td>"
-									+ "<td><input type='text' name='flow_amt' value='" + flowAmount + "' readonly class='border-0 p-0 m-0 text-end' style='width:100%;' /></td>"
-									+ "<td><input type='text' name='tran_amt' value='" + tranAmount + "' readonly class='border-0 p-0 m-0 text-end' style='width:100%;' /></td>"
-									+ "<td><input type='text' name='loan_acct_no' value='" + acctNo + "' readonly class='border-0 p-0 m-0' style='width:100%;' /></td>"
-									+ "<td><input type='text' name='acct_name' value='" + acctName + "' readonly class='border-0 p-0 m-0' style='width:100%;' /></td>"
-									+ "<td class='text-center'><input type='radio' name='und_pct_radio' data-operation='" + operationType + "' data-encoded_key='" + encodedKey + "' " + (parseFloat(tranAmount) > 0 ? "checked" : "") + " /></td>"
-									+ "</tr>";
-							});
-						} else {
-							tHTML += "<tr><td colspan='8'>No records available</td></tr>";
-						}
-
-						$("#flowIdTbody").empty().append(tHTML);
-
-						if (acctName && acctName.trim() !== "") {
-							$.ajax({
-								type: 'GET',
-								url: './fetchacctbalance',
-								data: {acctnum: acctName},
-								success: function (balanceData) {
-									var balance = parseFloat(balanceData);
-									var formattedBalance = isNaN(balance)
-										? "0.00"
-										: balance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-									document.getElementById("acct_balance").value = formattedBalance;
-								},
-								error: function (error) {
-									console.error("Error fetching account balance:", error);
-								}
-							});
-						}
-					},
-					error: function (xhr, status, error) {
-						console.error("Error occurred:", error);
-					}
-				});
-			}
+		    $.ajax({
+		        type: "POST",
+		        url: "./updateFlowAllocation",
+		        data: {
+		            remainingBalance: balanceValue,
+		            todate: todate,
+		            accountNumber: accountNumber
+		        },
+		        success: function (response) {
+		            console.log("✅ Updated response:", response);
+		            $("#collectionflowIdTbodyvalue").html(response);
+		        },
+		        error: function (xhr, status, error) {
+		            console.error("❌ Error:", error);
+		        }
+		    });
 		}
-
 
 		// Extra message if balance is not fully utilized
 

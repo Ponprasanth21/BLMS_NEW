@@ -1536,24 +1536,21 @@ public class BGLSRestController {
 						break;
 					}
 
-					BigDecimal principalDiff = demandRecord.getPrincipal_exp().subtract(demandRecord.getPrincipal_paid());
+					BigDecimal principalDiff = demandRecord.getPrincipal_exp()
+							.subtract(demandRecord.getPrincipal_paid());
 					BigDecimal interestDiff = demandRecord.getInterest_exp().subtract(demandRecord.getInterest_paid());
 					BigDecimal feeDiff = demandRecord.getFee_exp().subtract(demandRecord.getFee_paid());
 					BigDecimal penaltyDiff = demandRecord.getPenalty_exp().subtract(demandRecord.getPenalty_paid());
 
-					if (principalDiff.compareTo(BigDecimal.ZERO) == 0
-					        && interestDiff.compareTo(BigDecimal.ZERO) == 0
-					        && feeDiff.compareTo(BigDecimal.ZERO) == 0
-					        && penaltyDiff.compareTo(BigDecimal.ZERO) == 0) {
-					    demandRecord.setPayment_state("PAID");
-					    demandRecord.setRepaid_date(entity.getTran_date());
+					if (principalDiff.compareTo(BigDecimal.ZERO) == 0 && interestDiff.compareTo(BigDecimal.ZERO) == 0
+							&& feeDiff.compareTo(BigDecimal.ZERO) == 0 && penaltyDiff.compareTo(BigDecimal.ZERO) == 0) {
+						demandRecord.setPayment_state("PAID");
+						demandRecord.setRepaid_date(entity.getTran_date());
 					} else {
-					    demandRecord.setPayment_state("PENDING");
-					    demandRecord.setLast_paid_date(entity.getTran_date());
+						demandRecord.setPayment_state("PENDING");
+						demandRecord.setLast_paid_date(entity.getTran_date());
 					}
 
-					
-					
 					lOAN_REPAYMENT_REPO.save(demandRecord);
 				}
 			}
@@ -10347,7 +10344,7 @@ public class BGLSRestController {
 				custSummary.put("totalCreditAmount", totalCreditAmount);
 				custSummary.put("transactionId", tranId);
 				summaryPerCustomer.add(custSummary);
-				
+
 				totalCustomerCount++;
 				totalAccountsCount += custTransactions.size();
 				totalTransactionAmountAll += totalCreditAmount;
@@ -10857,11 +10854,275 @@ public class BGLSRestController {
 
 		return tranId;
 	}
-	
+
 	@GetMapping("/getDabAcctList")
-    public List<DAB_Entity> getDabAcctList() {
-        List<DAB_Entity> acctList = new ArrayList<>();
-        dab_repo.findAll().forEach(acctList::add);
-        return acctList;
-    }
+	public List<DAB_Entity> getDabAcctList() {
+		List<DAB_Entity> acctList = new ArrayList<>();
+		dab_repo.findAll().forEach(acctList::add);
+		return acctList;
+	}
+
+	@PostMapping("/updateFlowAllocation")
+	@ResponseBody
+	public String updateFlowAllocation(@RequestParam("remainingBalance") BigDecimal remainingBalance,
+			@RequestParam("todate") String todate, @RequestParam("accountNumber") String accountNumber,
+			HttpServletRequest rq) {
+
+		// ✅ Convert date format (dd-MM-yyyy → dd-MMM-yyyy)
+		DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy", Locale.ENGLISH);
+		LocalDate parsedDate = LocalDate.parse(todate, inputFormatter);
+		String formattedDate = parsedDate.format(outputFormatter).toUpperCase();
+		System.out.println("✅ Converted Date (for DB): " + formattedDate);
+
+		// ✅ Step 1: Fetch DB data
+		List<Object[]> loanFlowRecords1 = lOAN_REPAYMENT_REPO.getLoanFlowsValueData1(formattedDate, accountNumber);
+
+		List<Object[]> loanFlowRecords = lOAN_REPAYMENT_REPO.getLoanUpdateList1(accountNumber, formattedDate);
+
+		double totalLoanFlow1 = 0.0;
+
+		// ✅ Step 2: Calculate totalLoanFlow1 properly
+		if (loanFlowRecords1 != null && !loanFlowRecords1.isEmpty()) {
+			System.out.println("✅ loanFlowRecords1 found: " + loanFlowRecords1.size());
+			for (Object[] record : loanFlowRecords1) {
+				System.out.println("Record: " + Arrays.toString(record));
+
+				double feeFlow = record.length > 1 && record[1] != null ? ((Number) record[1]).doubleValue() : 0.0;
+				double intFlow = record.length > 2 && record[2] != null ? ((Number) record[2]).doubleValue() : 0.0;
+				double prFlow = record.length > 3 && record[3] != null ? ((Number) record[3]).doubleValue() : 0.0;
+				double penFlow = record.length > 4 && record[4] != null ? ((Number) record[4]).doubleValue() : 0.0;
+
+				double rowTotal = feeFlow + intFlow + prFlow + penFlow;
+				totalLoanFlow1 += rowTotal;
+
+				System.out.println("Row Total: " + rowTotal + " → Running Total: " + totalLoanFlow1);
+			}
+		} else {
+			System.out.println("⚠️ loanFlowRecords1 is null or empty!");
+		}
+
+		// ✅ Step 3: Log total after processing
+		BigDecimal totalFlowBD = BigDecimal.valueOf(totalLoanFlow1);
+		BigDecimal totrembalfrntend = remainingBalance;
+
+		// 🟢 Show main values first
+		System.out.println("🧾 Total Flow Amount (Backend): " + totalFlowBD);
+		System.out.println("💰 Remaining Balance (Frontend): " + totrembalfrntend);
+		int cmp1 = totalFlowBD.compareTo(totrembalfrntend);
+
+		if (cmp1 == 0) {
+		    System.out.println("⚖️ THE PASSED VALUES ARE SAME → " + remainingBalance);
+		} else if (cmp1 < 0) {
+		    System.out.println("📉 THE PASSED VALUE (totalFlowBD) IS LESSER THAN remainingBalance → " + remainingBalance);
+		} else {
+		    System.out.println("💰 THE PASSED VALUE (totalFlowBD) IS GREATER THAN remainingBalance → " + remainingBalance);
+		}
+
+		
+
+		// ✅ Step 4: Compare totals
+		BigDecimal difference = totalFlowBD.subtract(remainingBalance);
+		if (difference.compareTo(BigDecimal.ZERO) == 0) {
+			System.out.println("✅ Flow amount and Remaining balance are SAME");
+		} else if (difference.compareTo(BigDecimal.ZERO) > 0) {
+			System.out.println("🔼 EXTRA AMOUNT: " + difference);
+		} else {
+			System.out.println("🔽 LESS AMOUNT: " + difference.abs());
+		}
+
+		// ✅ Step 5: Decide dataset
+		List<Object[]> selectedRecords = (loanFlowRecords1 != null && !loanFlowRecords1.isEmpty()) ? loanFlowRecords1
+				: loanFlowRecords;
+
+		if (selectedRecords == null || selectedRecords.isEmpty()) {
+			return "<tr><td colspan='7' style='color:red;text-align:center;'>No flow records found</td></tr>";
+		}
+
+		// ✅ Step 6: Build flow list
+		List<Map<String, Object>> flowList = new ArrayList<>();
+		for (Object[] record : selectedRecords) {
+			Date dueDate = (Date) record[0];
+			double feeFlow = record[1] != null ? ((Number) record[1]).doubleValue() : 0.0;
+			double intFlow = record[2] != null ? ((Number) record[2]).doubleValue() : 0.0;
+			double prFlow = record[3] != null ? ((Number) record[3]).doubleValue() : 0.0;
+			double penFlow = record[4] != null ? ((Number) record[4]).doubleValue() : 0.0;
+			String acctNo = (String) record[5];
+			String acctName = (String) record[6];
+
+			if (penFlow > 0)
+				flowList.add(createFlow("PENDEM", BigDecimal.valueOf(penFlow), dueDate, acctNo, acctName, "1"));
+			if (feeFlow > 0)
+				flowList.add(createFlow("FEEDEM", BigDecimal.valueOf(feeFlow), dueDate, acctNo, acctName, "2"));
+			if (intFlow > 0)
+				flowList.add(createFlow("INDEM", BigDecimal.valueOf(intFlow), dueDate, acctNo, acctName, "3"));
+			if (prFlow > 0)
+				flowList.add(createFlow("PRDEM", BigDecimal.valueOf(prFlow), dueDate, acctNo, acctName, "4"));
+		}
+
+		// ✅ Step 7: Sort ascending for allocation
+		flowList.sort((a, b) -> {
+			Date d1 = (Date) a.get("due_date");
+			Date d2 = (Date) b.get("due_date");
+			int cmp = d1.compareTo(d2);
+			if (cmp != 0)
+				return cmp;
+			return ((String) a.get("flow_id")).compareTo((String) b.get("flow_id"));
+		});
+
+		// ✅ Step 8: Allocate transaction amounts
+		BigDecimal remaining = remainingBalance.add(difference); // combine both
+
+		for (Map<String, Object> flow : flowList) {
+			BigDecimal flowAmt = (BigDecimal) flow.get("flow_amt");
+			BigDecimal tranAmt = BigDecimal.ZERO;
+
+			if (remaining.compareTo(BigDecimal.ZERO) > 0) {
+				if (flowAmt.compareTo(remaining) > 0) {
+					tranAmt = remaining;
+					remaining = BigDecimal.ZERO;
+				} else {
+					tranAmt = flowAmt;
+					remaining = remaining.subtract(flowAmt);
+				}
+			}
+
+			flow.put("tran_amt", tranAmt);
+		}
+
+		// ✅ Step 9: Adjustment or future row addition
+		if (difference.compareTo(BigDecimal.ZERO) > 0) {
+			// 🔼 EXTRA AMOUNT → Adjust from existing rows
+			BigDecimal adjustAmt = difference;
+
+			flowList.sort((a, b) -> {
+				Date d1 = (Date) a.get("due_date");
+				Date d2 = (Date) b.get("due_date");
+				int cmp = d2.compareTo(d1);
+				if (cmp != 0)
+					return cmp;
+				return ((String) a.get("flow_id")).compareTo((String) b.get("flow_id"));
+			});
+
+			for (Map<String, Object> flow : flowList) {
+				if (adjustAmt.compareTo(BigDecimal.ZERO) <= 0)
+					break;
+				BigDecimal tranAmt = (BigDecimal) flow.get("tran_amt");
+				if (tranAmt.compareTo(BigDecimal.ZERO) > 0) {
+					BigDecimal reduceAmt = adjustAmt.min(tranAmt);
+					flow.put("tran_amt", tranAmt.subtract(reduceAmt));
+					adjustAmt = adjustAmt.subtract(reduceAmt);
+				}
+			}
+
+		} else if (difference.compareTo(BigDecimal.ZERO) < 0) {
+		    BigDecimal remainingShortAmt = difference.abs();
+
+		    if (loanFlowRecords == null || loanFlowRecords.isEmpty()) {
+		        return "<tr><td colspan='7' style='color:red;text-align:center;'>No flow records found</td></tr>";
+		    }
+
+		    // ✅ Group by DUE_DATE (preserving order)
+		    Map<Date, List<Object[]>> groupedByDate = loanFlowRecords.stream()
+		            .collect(Collectors.groupingBy(
+		                    record -> (Date) record[0],
+		                    LinkedHashMap::new,
+		                    Collectors.toList()
+		            ));
+
+		    for (Map.Entry<Date, List<Object[]>> entry : groupedByDate.entrySet()) {
+		        Date dueDate = entry.getKey();
+		        List<Object[]> recordsForDate = entry.getValue();
+
+		        // ✅ Sort PRDEM first, then INDEM
+		        recordsForDate.sort((a, b) -> {
+		            String flowA = String.valueOf(a[2]);
+		            String flowB = String.valueOf(b[2]);
+		            if ("PRDEM".equals(flowA) && "INDEM".equals(flowB)) return -1;
+		            if ("INDEM".equals(flowA) && "PRDEM".equals(flowB)) return 1;
+		            return 0;
+		        });
+
+		        for (Object[] record : recordsForDate) {
+		            String flowCode = String.valueOf(record[2]);
+		            BigDecimal flowAmt = (BigDecimal) record[3];
+		            String acctNo = String.valueOf(record[4]);
+		            String acctName = String.valueOf(record[5]);
+		            String flowId = String.valueOf(record[1]);
+
+		            flowList.add(createFlow(flowCode, flowAmt, dueDate, acctNo, acctName, flowId));
+
+		            if (remainingShortAmt.compareTo(BigDecimal.ZERO) > 0) {
+		                BigDecimal reduceAmt = remainingShortAmt.min(flowAmt);
+		                remainingShortAmt = remainingShortAmt.subtract(reduceAmt);
+		            }
+
+		            if (remainingShortAmt.compareTo(BigDecimal.ZERO) <= 0)
+		                break; // stop distributing once done
+		        }
+
+		        if (remainingShortAmt.compareTo(BigDecimal.ZERO) <= 0)
+		            break;
+		    }
+
+		    if (remainingShortAmt.compareTo(BigDecimal.ZERO) > 0) {
+		        return "<script>alert('⚠️ Extra Shortfall Not Adjusted: ₹" + remainingShortAmt + "');</script>";
+		    } else {
+		        System.out.println("✅ All shortfall distributed successfully. Remaining: ₹0.00");
+		    }
+		}
+
+		// ✅ Step 9.1: FINAL sort in ascending order by due_date
+		flowList.sort((a, b) -> {
+			Date d1 = (Date) a.get("due_date");
+			Date d2 = (Date) b.get("due_date");
+			int cmp = d1.compareTo(d2);
+			if (cmp != 0)
+				return cmp;
+			return ((String) a.get("flow_id")).compareTo((String) b.get("flow_id"));
+		});
+
+		// ✅ Step 10: Build HTML
+		StringBuilder html = new StringBuilder();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		for (Map<String, Object> flow : flowList) {
+			String formattedDueDate = sdf.format(flow.get("due_date"));
+			html.append("<tr>").append("<td><input type='text' name='flow_date' value='").append(formattedDueDate)
+					.append("' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>")
+					.append("<td><input type='text' name='flow_id' value='").append(flow.get("flow_id"))
+					.append("' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>")
+					.append("<td><input type='text' name='flow_code' value='").append(flow.get("flow_code"))
+					.append("' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>")
+					.append("<td><input type='text' name='flow_amt' value='")
+					.append(formatAmt((BigDecimal) flow.get("flow_amt")))
+					.append("' readonly class='border-0 p-0 m-0 text-right' style='width:100%;'/></td>")
+					.append("<td><input type='text' name='tran_amt' value='")
+					.append(formatAmt((BigDecimal) flow.get("tran_amt")))
+					.append("' readonly class='border-0 p-0 m-0 text-right' style='width:100%;'/></td>")
+					.append("<td><input type='text' name='loan_acct_no' value='").append(flow.get("acct_no"))
+					.append("' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>")
+					.append("<td><input type='text' name='acct_name' value='").append(flow.get("acct_name"))
+					.append("' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>").append("</tr>");
+		}
+		return html.toString();
+	}
+
+	// ✅ Helper methods
+	private Map<String, Object> createFlow(String code, BigDecimal amt, Date dueDate, String acctNo, String acctName,
+			String flowId) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("flow_code", code);
+		map.put("flow_amt", amt);
+		map.put("due_date", dueDate);
+		map.put("acct_no", acctNo);
+		map.put("acct_name", acctName);
+		map.put("flow_id", flowId);
+		map.put("tran_amt", BigDecimal.ZERO);
+		return map;
+	}
+
+	private String formatAmt(BigDecimal amt) {
+		return String.format("%,.2f", amt != null ? amt : BigDecimal.ZERO);
+	}
+
 }
