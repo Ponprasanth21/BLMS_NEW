@@ -4824,6 +4824,16 @@ public class BGLSNavigationController {
 
         return "Successfully Updated";
     }
+    
+    
+    @RequestMapping(value = "ConsolidatedLoanReport", method = { RequestMethod.GET, RequestMethod.POST })
+    public String ConsolidatedLoanReport(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
+        if (formmode == null || formmode.equals("list")) {
+            md.addAttribute("formmode", "list");
+            md.addAttribute("date", bGLS_CONTROL_TABLE_REP.getCurrentTranDate());
+        }
+        return "ConsolidatedLoanReport.html";
+    }
 
 
 }

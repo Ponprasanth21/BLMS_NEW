@@ -324,7 +324,7 @@ function downloadReport() {
     const formattedDate = `${day}-${month}-${year}`;
 
     $.ajax({
-        url: './downloadDAB',
+        url: './ConsolidatedLoanReportDownload',
         type: 'GET',
         data: { dueDate: formattedDate },
         xhrFields: {
@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const today = new Date();
 
     // Initialize input with today's date
-    dueDateInput.value = formatDateLocal(today);
+    // dueDateInput.value = formatDateLocal(today);
 
     function getLastDayOfMonth(date) {
         return new Date(date.getFullYear(), date.getMonth() + 1, 0);
@@ -451,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function () {
 						<div
 							class="card-header float-left"
 							style="background-color: #f5f5f5; border-bottom: 1px solid #ddd;">
-							<h5 class="mb-0 fw-semibold text-dark">DAB - REPORTS</h5>
+							<h5 class="mb-0 fw-semibold text-dark">Consolidated Loan - Reports</h5>
 						</div>
 
 						<!-- Card Body -->
@@ -465,13 +465,14 @@ document.addEventListener('DOMContentLoaded', function () {
 								</button> -->
 
 								<!-- Date Picker -->
-								<label for="DUEDate" class="me-2 mb-0 fw-semibold" style="font-size: 15px;min-width: 70px;"> Date </label>
+								<label for="DUEDate" class="me-2 mb-0 fw-semibold" style="font-size: 15px;min-width: 70px;"> Ason Date </label>
 
 								<div class="input-group input-group-sm shadow-sm rounded mx-2 "
 									style="max-width: 200px;">
 									<input type="date" id="DUEDate" name="due_date"
+                                    th:value=${date}
 										class="form-control"
-										style="border: 1px solid #ced4da; border-radius: 4px; padding: 0.375rem 0.75rem;" />
+										style="border: 1px solid #ced4da; border-radius: 4px; padding: 0.375rem 0.75rem;" readonly/>
 
 									<!--                     <span class="input-group-text bg-white border-1">
                         <i class="fas fa-calendar-alt"></i>

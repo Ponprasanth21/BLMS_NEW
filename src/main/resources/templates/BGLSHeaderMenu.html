@@ -806,7 +806,9 @@ a {
 					<li class="nav-item" th:if="${session.SCREEN_ACCESS_END_OF_MONTH_REPORT} == 'Y' " ><a class="nav-link" id="end_of_month"
 						href="#" onclick="contentLoad(this)"> End Of Month Report</a></li>
 					<li class="nav-item" th:if="${session.SCREEN_ACCESS_DAB} == 'Y' " ><a class="nav-link" id="dab"
-						href="#" onclick="contentLoad(this)"> DAB </a></li>
+						href="#" onclick="contentLoad(this)"> DAB Reports</a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_DAB} == 'Y' " ><a class="nav-link" id="ConsolidatedLoanReport"
+						href="#" onclick="contentLoad(this)"> Consolidated Loan Reports </a></li>
 					<li class="nav-item" th:if="${session.SCREEN_ACCESS_INTERSET_SUMMARY_INQ} == 'Y' " ><a class="nav-link" id="interest_summary"
 						href="#" onclick="contentLoad(this)"> Interest Summary </a></li>
 					<li class="nav-item"  th:if="${session.SCREEN_ACCESS_JOURNAL_BOOK} == 'Y' "  ><a class="nav-link" id="journalbook"

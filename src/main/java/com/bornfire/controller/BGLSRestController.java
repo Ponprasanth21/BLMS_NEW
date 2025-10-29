@@ -11150,5 +11150,45 @@ public class BGLSRestController {
 	private String formatAmt(BigDecimal amt) {
 		return String.format("%,.2f", amt != null ? amt : BigDecimal.ZERO);
 	}
+	
+	
+//	@GetMapping("/downloadTransactions")
+//	public ResponseEntity<byte[]> downloadTransactions(@RequestParam("dueDate") String dueDate) {
+//
+//		List<Object[]> rawData = chart_Acc_Rep.findLoanAccountsByDueDate(dueDate);
+//		byte[] excelData = exelDownloadService.generateDABExcel(rawData, dueDate);
+//
+//		if (excelData == null || excelData.length == 0) {
+//			return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM).body(new byte[0]);
+//		}
+//
+//		String fileName = "TRANSACTION_EXCEL_" + dueDate + ".xlsx"; // Correct filename
+//
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+//		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+//
+//		return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+//	}
+	
+	
+	@GetMapping("/ConsolidatedLoanReportDownload")
+    public ResponseEntity<byte[]> downloadTransactions(@RequestParam("dueDate") String dueDate) {
+
+        List<Object[]> rawData = chart_Acc_Rep.findLoanAccountsByDueDate();
+        byte[] excelData = exelDownloadService.generateTransactionExcel(rawData, dueDate);
+
+        if (excelData == null || excelData.length == 0) {
+            return ResponseEntity.noContent().build();
+        }
+
+        String fileName = "CONSOLIDATED_LOAN_REPORT_" + dueDate + ".xlsx";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+        return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+    }
 
 }

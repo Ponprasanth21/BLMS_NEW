@@ -138,5 +138,45 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 	@Query(value = "SELECT * " + "FROM BGLS_CHART_OF_ACCOUNTS " + "WHERE del_flg = 'N' " + "  AND OWN_TYPE IN ('C') "
 			+ "ORDER BY ACCT_NUM, CLASSIFICATION ASC", nativeQuery = true)
 	List<Chart_Acc_Entity> getListofCustomer();
+	
+	
+	@Query(value =
+		    "SELECT " +
+		    " b.account_state AS ACCOUNT_STATE, " +
+		    " a.customer_id AS CUSTOMER_ID, " +
+		    " a.customer_name AS CUSTOMER_NAME, " +
+		    " b.id AS ID, " +
+		    " b.total_product_price AS TOTAL_PRODUCT_PRICE, " +
+		    " b.loan_amount AS LOAN_AMOUNT, " +
+		    " b.interest_rate AS INTEREST_RATE, " +
+		    " b.repayment_installments AS REPAYMENT_INSTALLMENTS, " +
+		    " b.principal_balance AS PRINCIPAL_BALANCE, " +
+		    " b.interest_balance AS INTEREST_BALANCE, " +
+		    " b.fees_balance AS FEE_BALANCE, " +
+		    " b.penalty_balance AS PENALTY_BALANCE, " +
+		    " (b.principal_balance + b.interest_balance + b.fees_balance + b.penalty_balance) AS TOTAL_BALANCE, " +
+		    " a.acct_bal AS ACCT_BAL, " +
+		    " b.principal_paid AS PRINCIPAL_PAID, " +
+		    " b.interest_paid AS INTEREST_PAID, " +
+		    " b.fee_paid AS FEE_PAID, " +
+		    " b.penalty_paid AS PENALTY_PAID, " +
+		    " b.days_late AS DAYS_LATE, " +
+		    " SUM(c.principal_paid) AS TOTAL_PRINCIPAL_PAID, " +
+		    " SUM(c.interest_paid) AS TOTAL_INTEREST_PAID, " +
+		    " SUM(c.fee_paid) AS TOTAL_FEE_PAID, " +
+		    " SUM(c.penalty_paid) AS TOTAL_PENALTY_PAID " +
+		    "FROM BGLS_CHART_OF_ACCOUNTS a " +
+		    "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.encoded_key = b.encoded_key " +
+		    "LEFT JOIN LOAN_REPAYMENT_TBL c ON b.encoded_key = c.parent_account_key " +
+		    "WHERE a.own_type = 'C' " +
+		    "GROUP BY b.account_state, a.customer_id, a.customer_name, b.id, " +
+		    " b.total_product_price, b.loan_amount, b.interest_rate, b.repayment_installments, " +
+		    " b.principal_balance, b.interest_balance, b.fees_balance, b.penalty_balance, " +
+		    " b.principal_paid, b.interest_paid, b.fee_paid, b.penalty_paid, b.days_late, a.acct_bal " +
+		    "ORDER BY b.account_state, b.id",
+		    nativeQuery = true)
+		List<Object[]> findLoanAccountsByDueDate();
+
+
 
 }
