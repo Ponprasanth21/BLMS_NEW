@@ -92,13 +92,16 @@ public interface DAB_Repo extends CrudRepository<DAB_Entity, String> {
             " FROM bgls_daily_acct_bal " +
             " WHERE TRUNC(TRAN_DATE) = TO_DATE(:dueDate, 'DD-MM-YYYY') ",nativeQuery = true)
     List<Object[]> findTranDate(@Param("dueDate") String dueDate);
-    
- // Dynamic search by column and keyword
-    @Query(value = "SELECT acct_num, acct_name FROM BGLS_DAILY_ACCT_BAL " +
+
+    // Dynamic search by column and keyword
+    @Query(value = "SELECT DISTINCT acct_num, acct_name FROM dab_demo " +
             "WHERE (:columnName = 'acct_num' AND LOWER(acct_num) LIKE LOWER('%' || :keyword || '%')) " +
             "   OR (:columnName = 'acct_name' AND LOWER(acct_name) LIKE LOWER('%' || :keyword || '%'))",
             nativeQuery = true)
     List<Object[]> searchDabAcctList(@Param("columnName") String columnName, @Param("keyword") String keyword);
+
+    @Query(value = "SELECT * FROM BGLS_DAILY_ACCT_BAL FETCH FIRST 200 ROWS ONLY", nativeQuery = true)
+    List<DAB_Entity> dabdata();
 
 
 

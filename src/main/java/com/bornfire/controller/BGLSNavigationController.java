@@ -2692,7 +2692,7 @@ public class BGLSNavigationController {
         model.addAttribute("Penalty",bGLS_CONTROL_TABLE_REP.getPenalty());
         model.addAttribute("dcpstatus",bGLS_CONTROL_TABLE_REP.getDcpStatus());
         model.addAttribute("interestAccurual",bGLS_CONTROL_TABLE_REP.getinterestAccurual());
-        
+
         System.out.println("dcpstatus"+bGLS_CONTROL_TABLE_REP.getDcpStatus());
         return "Day_end_Operation.html";
     }
@@ -2760,6 +2760,102 @@ public class BGLSNavigationController {
      * return "Successfully"; }
      *
      */
+
+    @RequestMapping(value = "DoatransactionpushBatchJob", method = RequestMethod.POST)
+    @ResponseBody
+    public String DoatransactionpushBatchJob(Model md, HttpServletRequest rq, @ModelAttribute DAB_Entity DAB_Entity,
+                                             @RequestParam("to_date") String to_date,@RequestParam("acct_num") String Acct_num,
+                                             @RequestParam("from_date") String from_date) throws java.text.ParseException {
+        // Get TRANDATE from session as a String
+        System.out.println("Trndate"+to_date);
+        Date toDateDAB = (Date) rq.getSession().getAttribute("TRANDATE");
+        System.out.println("TRANDATE: " + toDateDAB);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = dateFormat.format(toDateDAB);
+
+        System.out.println("formattedDate"+formattedDate);
+        List<Object[]> debitCreditData = tRAN_MAIN_TRM_WRK_REP.getNetDebitCreditWithCountForCurrentDateByAcctNum(from_date,to_date,Acct_num);
+
+        List<String> accountNumbers = new ArrayList<>();
+        List<Date>acctTranDate = new ArrayList<>();
+        List<String> netAmounts = new ArrayList<>();
+        List<String> accountNames = new ArrayList<>();
+
+        // Lists for each field
+        List<String> glshCodes = new ArrayList<>();
+        List<String> glshDescs = new ArrayList<>();
+        List<String> glCodes = new ArrayList<>();
+        List<String> glDescs = new ArrayList<>();
+        List<BigDecimal> totalCredits = new ArrayList<>();
+        List<BigDecimal> totalDebits = new ArrayList<>();
+
+        // Step 1: Get all account numbers from `debitCreditData`
+        for (Object[] record : debitCreditData) {
+            accountNumbers.add(record[0].toString()); // acct_num
+            accountNames.add(record[1].toString()); // acct_name
+            netAmounts.add(record[5].toString()); // NETAMT
+            totalCredits.add((BigDecimal) record[3]); // TOTAL_CREDIT
+            totalDebits.add((BigDecimal) record[4]); // TOTAL_DEBIT
+            acctTranDate.add((Date) record[6]);
+        }
+
+        // Print accountNumbers, accountNames, netAmounts, totalCredits, and totalDebits
+        System.out.println("Account Numbers: " + accountNumbers);
+        System.out.println("Account Names: " + accountNames);
+        System.out.println("Net Amounts: " + netAmounts);
+        System.out.println("Total Credits: " + totalCredits);
+        System.out.println("Total Debits: " + totalDebits);
+
+        List<Chart_Acc_Entity> allAccounts = new ArrayList<>();
+        int batchSize = 1000;
+        for (int i = 0; i < accountNumbers.size(); i += batchSize) {
+            List<String> batch = accountNumbers.subList(i, Math.min(i + batchSize, accountNumbers.size()));
+            allAccounts.addAll(chart_Acc_Rep.getcoaaccunt_num(batch));
+        }
+        List<Chart_Acc_Entity> exist = allAccounts;
+
+        // Step 3: Create a map to store GL details for each account number
+        Map<String, Chart_Acc_Entity> glDetailsMap = new HashMap<>();
+        for (Chart_Acc_Entity up1 : exist) {
+            glDetailsMap.put(up1.getAcct_num(), up1);
+        }
+
+        // Step 4: Retrieve GL details in the same order as `accountNumbers`
+        for (int i = 0; i < accountNumbers.size(); i++) {
+            String acctNum = accountNumbers.get(i);
+            String acctName = accountNames.get(i);
+
+            Chart_Acc_Entity glDetails = glDetailsMap.get(acctNum);
+            if (glDetails != null) {
+                glshCodes.add(glDetails.getGlsh_code());
+                glshDescs.add(glDetails.getGlsh_desc());
+                glCodes.add(glDetails.getGl_code());
+                glDescs.add(glDetails.getGl_desc());
+
+                // Print account number, account name, and corresponding GL details
+                System.out.println("Account Number: " + acctNum + ", Account Name: " + acctName + ", GL Code: "
+                        + glDetails.getGl_code() + ", GLSH Code: " + glDetails.getGlsh_code() + ", GL Description: "
+                        + glDetails.getGl_desc() + ", GLSH Description: " + glDetails.getGlsh_desc());
+            } else {
+//                 Handle cases where no GL details are found for the account number
+                glshCodes.add(null);
+                glshDescs.add(null);
+                glCodes.add(null);
+                glDescs.add(null);
+
+                // Print account number and name with a message for missing GL details
+                System.out.println(
+                        "Account Number: " + acctNum + ", Account Name: " + acctName + " - No GL details found.");
+            }
+        }
+        System.out.println("sdfdsf ---- "+accountNumbers+" ---- "+acctTranDate);
+        String result = insertOrUpdateAccountBalancesBatchJob(md, rq, accountNumbers, netAmounts, glshCodes, glshDescs, glCodes,
+                glDescs, accountNames, totalCredits, totalDebits, formattedDate,acctTranDate);
+
+        // Return the result of the insertOrUpdateAccountBalances
+        return result;
+    }
+
 
     @RequestMapping(value = "Doatransactionpush", method = RequestMethod.POST)
     @ResponseBody
@@ -3023,6 +3119,83 @@ public class BGLSNavigationController {
         }
         return "Account balances successfully inserted";
     }
+
+
+    @Transactional
+    public String insertOrUpdateAccountBalancesBatchJob(Model md, HttpServletRequest rq, List<String> accountNumbers,
+                                                        List<String> netAmounts, List<String> glshCodes, List<String> glshDescs, List<String> glCodes,
+                                                        List<String> glDescs, List<String> accunt_name, List<BigDecimal> totalCredits, List<BigDecimal> totalDebits,
+                                                        String TRANDATE2,List<Date> acctTranDate) throws java.text.ParseException {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        for (int i = 0; i < accountNumbers.size(); i++) {
+            Date trandate = acctTranDate.get(i);
+            String formattedDate =dateFormat.format(trandate);
+            String accountNum = accountNumbers.get(i);
+            BigDecimal netAmount = new BigDecimal(netAmounts.get(i));
+            BigDecimal totalCredit = totalCredits.get(i);
+            BigDecimal totalDebit = totalDebits.get(i);
+
+            String currentGlshCode = glshCodes.get(i);
+            String currentGlshDesc = glshDescs.get(i);
+            String currentGlCode = glCodes.get(i);
+            String currentGlDesc = glDescs.get(i);
+            String accountName = accunt_name.get(i);
+
+            System.out.println("Processing Account: " + accountNum);
+            System.out.println(
+                    "Net Amount: " + netAmount + ", Total Credit: " + totalCredit + ", Total Debit: " + totalDebit);
+            System.out.println("GLSH Code: " + currentGlshCode + ", GLSH Desc: " + currentGlshDesc);
+            System.out.println("GL Code: " + currentGlCode + ", GL Desc: " + currentGlDesc);
+            System.out.println("Account Name: " + accountName);
+            LocalDate tranDate = LocalDate.parse(formattedDate);
+
+
+            SimpleDateFormat oracleFormat = new SimpleDateFormat("dd-MM-yyyy");
+            String formattedDate1 = tranDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            System.out.println("Checking if today's record exists for Account: " + accountNum+" - "+formattedDate1+" -- "+tranDate + " --- "+formattedDate);
+            List<BigDecimal> existingBalances = tRAN_MAIN_TRM_WRK_REP.findLatestTRAN_DATE_BALByAccountNumberBatchJob(accountNum,formattedDate1);
+
+            System.out.println("After Result : "+existingBalances.isEmpty());
+            BigDecimal openbal = BigDecimal.ZERO;
+            if (!existingBalances.isEmpty()) {
+                System.out.println("Account " + accountNum + " exists. Updating END_TRAN_DATE to yesterday.");
+
+
+                // Update END_TRAN_DATE of the latest record to yesterday
+                try {
+
+                    openbal=tRAN_MAIN_TRM_WRK_REP.getTrandateBalBatchJob(accountNum, formattedDate1);
+
+                    //TrandateBal=tRAN_MAIN_TRM_WRK_REP.getTrandateBal(accountNum, tranDate.minusDays(1));
+                } catch (DateTimeParseException e) {
+                    // Handle parsing error (e.g., log the error or set a default value)
+                    System.err.println("Invalid date format for TRANDATE: " + tranDate);
+                }
+
+                // BigDecimal updatedTrandateBal = netAmount.subtract(TrandateBal);
+
+
+                // Calculate new TRAN_DATE_BAL
+                BigDecimal latestBalance = existingBalances.get(0);
+                BigDecimal newTRAN_DATE_BAL = latestBalance.add(netAmount);
+
+                //BigDecimal updatedOpenBal=openbal.add(netAmount);
+//                BigDecimal updatedOpenBal = (openbal == null ? BigDecimal.ZERO : openbal).add(netAmount == null ? BigDecimal.ZERO : netAmount);
+
+                System.out.println("Existing Balance: " + latestBalance);
+                System.out.println("New TRAN_DATE_BAL: " + newTRAN_DATE_BAL);
+
+                // Insert new account balance with debit and credit columns
+                System.out.println("Inserting updated balance record for Account " + accountNum);
+                tRAN_MAIN_TRM_WRK_REP.UpdateExsistAccountBalanceBatchJob(currentGlCode, currentGlDesc, currentGlshCode,
+                        currentGlshDesc, accountNum, accountName, "KES", newTRAN_DATE_BAL, formattedDate1,
+                        netAmount, totalDebit, totalCredit,openbal);
+            }
+        }
+        return "Account balances successfully inserted";
+    }
+
 
     /*
      * @RequestMapping(value = "journalvalid", method = { RequestMethod.GET,
@@ -4467,8 +4640,8 @@ public class BGLSNavigationController {
         // ✅ Convert trndate string to java.util.Date
         Date TRANDATE = null;
         try {
-            // Match the input format "dd-MM-yyyy"
-            TRANDATE = new SimpleDateFormat("dd-MM-yyyy").parse(trndate);
+            SimpleDateFormat inputFormat = new SimpleDateFormat("dd-MM-yyyy");
+            TRANDATE = inputFormat.parse(trndate);
 
             System.out.println("Holiday TRANDATE"+TRANDATE);
         } catch (ParseException e) {
@@ -4517,7 +4690,7 @@ public class BGLSNavigationController {
     @RequestMapping(value = "holidayCheckBatchJob", method = RequestMethod.POST)
     @ResponseBody
     public String holidayCheckBatchJob(Model md,
-                               @RequestParam("trndate") String trndate) throws java.text.ParseException {
+                                       @RequestParam("trndate") String trndate) throws java.text.ParseException {
 
         System.out.println("Incoming Holiday Check");
         System.out.println(trndate + " trndate");
@@ -4824,8 +4997,7 @@ public class BGLSNavigationController {
 
         return "Successfully Updated";
     }
-    
-    
+
     @RequestMapping(value = "ConsolidatedLoanReport", method = { RequestMethod.GET, RequestMethod.POST })
     public String ConsolidatedLoanReport(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
         if (formmode == null || formmode.equals("list")) {
@@ -4834,6 +5006,5 @@ public class BGLSNavigationController {
         }
         return "ConsolidatedLoanReport.html";
     }
-
 
 }
