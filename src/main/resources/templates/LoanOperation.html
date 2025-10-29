@@ -745,13 +745,13 @@
 										var operationType = "CollectionCash";
 
 										tHTML += "<tr>"
-											+ "<td><input type='text' name='flow_date' value='" + flowDate + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
-											+ "<td><input type='text' name='flow_id' value='" + flowId + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
-											+ "<td><input type='text' name='flow_code' value='" + flowCode + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
-											+ "<td><input type='text' name='flow_amt' value='" + flowAmount + "' readonly class='border-0 p-0 m-0 text-right' style='width:100%;'/></td>"
-											+ "<td><input type='text' name='tran_amt' value='" + tranamount + "' readonly class='border-0 p-0 m-0 text-right' style='width:100%;'/></td>"
-											+ "<td><input type='text' name='loan_acct_no' value='" + acctNo + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
-											+ "<td><input type='text' name='acct_name' value='" + acctName + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td style='white-space:nowrap;'><input type='text' name='flow_date' value='" + flowDate + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td style='white-space:nowrap;'><input type='text' name='flow_id' value='" + flowId + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td style='white-space:nowrap;'><input type='text' name='flow_code' value='" + flowCode + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td style='white-space:nowrap; text-align:right;'><input type='text' name='flow_amt' value='" + flowAmount + "' readonly class='border-0 p-0 m-0 text-right' style='width:100%;'/></td>"
+											+ "<td style='white-space:nowrap; text-align:right;'><input type='text' name='tran_amt' value='" + tranamount + "' readonly class='border-0 p-0 m-0 text-right' style='width:100%;'/></td>"
+											+ "<td style='white-space:nowrap;'><input type='text' name='loan_acct_no' value='" + acctNo + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
+											+ "<td style='white-space:nowrap;'><input type='text' name='acct_name' value='" + acctName + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
 											+ "</tr>";
 									});
 									$("#collectionsubmit").show();
@@ -823,14 +823,14 @@
 										var encodedkey = entity.encoded_key || "";
 
 										tHTML += "<tr>"
-											+ "<td><input type='text' name='flow_date' value='" + flowDate + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
-											+ "<td><input type='text' name='flow_id' value='" + flowId + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
-											+ "<td><input type='text' name='flow_code' value='" + flowCode + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
-											+ "<td><input type='text' name='flow_amt' value='" + flowAmount + "' readonly class='border-0 p-0 m-0 text-right' style='width:100%;'/></td>"
-											+ "<td><input type='text' name='tran_amt' value='" + tranamount + "' readonly class='border-0 p-0 m-0 text-right' style='width:100%;'/></td>"
-											+ "<td><input type='text' name='loan_acct_no' value='" + acctNo + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
-											+ "<td><input type='text' name='acct_name' value='" + acctName + "' readonly class='border-0 p-0 m-0' style='width:100%;'/></td>"
-											+ "</tr>";
+										    + "<td style='white-space:nowrap;'><input type='text' name='flow_date' value='" + flowDate + "' readonly class='border-0 p-0 m-0' style='min-width:80px; white-space:nowrap;'/></td>"
+										    + "<td style='white-space:nowrap;'><input type='text' name='flow_id' value='" + flowId + "' readonly class='border-0 p-0 m-0' style='min-width:60px; white-space:nowrap;'/></td>"
+										    + "<td style='white-space:nowrap;'><input type='text' name='flow_code' value='" + flowCode + "' readonly class='border-0 p-0 m-0' style='min-width:70px; white-space:nowrap;'/></td>"
+										    + "<td style='white-space:nowrap; text-align:right;'><input type='text' name='flow_amt' value='" + flowAmount + "' readonly class='border-0 p-0 m-0 text-right' style='min-width:100px; text-align:right; white-space:nowrap;'/></td>"
+										    + "<td style='white-space:nowrap; text-align:right;'><input type='text' name='tran_amt' value='" + tranamount + "' readonly class='border-0 p-0 m-0 text-right' style='min-width:100px; text-align:right; white-space:nowrap;'/></td>"
+										    + "<td style='white-space:nowrap;'><input type='text' name='loan_acct_no' value='" + acctNo + "' readonly class='border-0 p-0 m-0' style='min-width:160px; white-space:nowrap;'/></td>"
+										    + "<td style='white-space:nowrap;'><input type='text' name='acct_name' value='" + acctName + "' readonly class='border-0 p-0 m-0' style='min-width:180px; white-space:nowrap;'/></td>"
+										    + "</tr>";
 									});
 									$("#collectionsubmit").show();
 								} else {
@@ -1435,21 +1435,21 @@
 
 			fetch("/ASPIRA/saveMultipleTransactions1", {
 				method: "POST",
-				headers: { "Content-Type": "application/json" },
+				headers: {"Content-Type": "application/json"},
 				body: JSON.stringify(payload)
 			})
-			.then(res => res.json()) // ✅ Expect JSON response
-			.then(data => {
-				console.log("✅ Server response:", data);
+				.then(res => res.json()) // ✅ Expect JSON response
+				.then(data => {
+					console.log("✅ Server response:", data);
 
-				if (data.status === "success") {
-					let summary = data.summaryPerCustomer || [];
-					let tranIds = summary.map(s => s.transactionId);
-					let totalCustomers = data.number_of_customers || 0;
-					let totalAccounts = data.number_of_accounts || 0;
-					let totalAmount = data.total_transaction_amount || 0;
+					if (data.status === "success") {
+						let summary = data.summaryPerCustomer || [];
+						let tranIds = summary.map(s => s.transactionId);
+						let totalCustomers = data.number_of_customers || 0;
+						let totalAccounts = data.number_of_accounts || 0;
+						let totalAmount = data.total_transaction_amount || 0;
 
-					let message = `
+						let message = `
 						<div class="text-center">
 							<h6>✅ Transactions Saved Successfully!</h6>
 							<hr>
@@ -1459,18 +1459,18 @@
 							<p><strong>Tran IDs:</strong> ${tranIds.join(", ")}</p>
 						</div>`;
 
-					$('#Successmsgpopup').html(message);
-					$('#SuccesPopUp').modal('show');
-				} else {
-					alert("❌ Error: " + (data.message || "Failed to save transactions."));
-				}
-			})
-			.catch(err => {
-				console.error("⚠️ AJAX Error:", err);
-				alert("Error saving transactions: " + err.message);
-			});
+						$('#Successmsgpopup').html(message);
+						$('#SuccesPopUp').modal('show');
+					} else {
+						alert("❌ Error: " + (data.message || "Failed to save transactions."));
+					}
+				})
+				.catch(err => {
+					console.error("⚠️ AJAX Error:", err);
+					alert("Error saving transactions: " + err.message);
+				});
 		}
-		
+
 		// Optional: close modal function if needed
 		function closeModal11() {
 			const modal = bootstrap.Modal.getInstance(document.getElementById('alert121'));
@@ -1731,28 +1731,28 @@
 	</script>
 	<script>
 		function updateTableValueSequentially() {
-		    let balanceValue = parseFloat($("#acct_balancedatas").val().replace(/,/g, "")) || 0;
-		    let todate = $("#transactiondates").val();
-		    let accountNumber = $("#acct_num123").val();
+			let balanceValue = parseFloat($("#acct_balancedatas").val().replace(/,/g, "")) || 0;
+			let todate = $("#transactiondates").val();
+			let accountNumber = $("#acct_num123").val();
 
-		    console.log("Sending to backend:", { balanceValue, todate, accountNumber });
+			console.log("Sending to backend:", {balanceValue, todate, accountNumber});
 
-		    $.ajax({
-		        type: "POST",
-		        url: "./updateFlowAllocation",
-		        data: {
-		            remainingBalance: balanceValue,
-		            todate: todate,
-		            accountNumber: accountNumber
-		        },
-		        success: function (response) {
-		            console.log("✅ Updated response:", response);
-		            $("#collectionflowIdTbodyvalue").html(response);
-		        },
-		        error: function (xhr, status, error) {
-		            console.error("❌ Error:", error);
-		        }
-		    });
+			$.ajax({
+				type: "POST",
+				url: "./updateFlowAllocation",
+				data: {
+					remainingBalance: balanceValue,
+					todate: todate,
+					accountNumber: accountNumber
+				},
+				success: function (response) {
+					console.log("✅ Updated response:", response);
+					$("#collectionflowIdTbodyvalue").html(response);
+				},
+				error: function (xhr, status, error) {
+					console.error("❌ Error:", error);
+				}
+			});
 		}
 
 		// Extra message if balance is not fully utilized

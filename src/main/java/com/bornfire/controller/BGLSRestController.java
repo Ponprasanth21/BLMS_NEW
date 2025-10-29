@@ -5915,19 +5915,19 @@ public class BGLSRestController {
 
 			// Dynamically add only non-zero flows
 			if (penFlow > 0) {
-				formattedRecords.add(createFlowMap(dueDate, "1", "PENDEM", penFlow, acctNo, acctName, encodedKey));
+				formattedRecords.add(createFlowMap(dueDate, "1", "PLREC", penFlow, acctNo, acctName, encodedKey));
 				totalFlowAmount += penFlow;
 			}
 			if (feeFlow > 0) {
-				formattedRecords.add(createFlowMap(dueDate, "2", "FEEDEM", feeFlow, acctNo, acctName, encodedKey));
+				formattedRecords.add(createFlowMap(dueDate, "2", "FEREC", feeFlow, acctNo, acctName, encodedKey));
 				totalFlowAmount += feeFlow;
 			}
 			if (intFlow > 0) {
-				formattedRecords.add(createFlowMap(dueDate, "3", "INDEM", intFlow, acctNo, acctName, encodedKey));
+				formattedRecords.add(createFlowMap(dueDate, "3", "INREC", intFlow, acctNo, acctName, encodedKey));
 				totalFlowAmount += intFlow;
 			}
 			if (prFlow > 0) {
-				formattedRecords.add(createFlowMap(dueDate, "4", "PRDEM", prFlow, acctNo, acctName, encodedKey));
+				formattedRecords.add(createFlowMap(dueDate, "4", "PRREC", prFlow, acctNo, acctName, encodedKey));
 				totalFlowAmount += prFlow;
 			}
 
@@ -6195,6 +6195,8 @@ public class BGLSRestController {
 				.ofNullable(lOAN_REPAYMENT_REPO.getLoanFlowsValueDatas1(encodedKey, formattedFlowDates))
 				.orElse(Collections.emptyList());
 
+		BigDecimal totalDebitAmt = BigDecimal.ZERO; // ✅ accumulate total debit
+
 		for (Map<String, String> transaction : transactions) {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 			Date flowDate = dateFormat.parse(transaction.get("flow_date"));
@@ -6209,13 +6211,25 @@ public class BGLSRestController {
 
 			LOAN_ACT_MST_ENTITY loanDetails = lOAN_ACT_MST_REPO.getLoanView(accountNo);
 
-			// --- CREDIT ENTRY ---
+			Object result = lOAN_ACT_MST_REPO.findAccountWithFullName(accountNo);
+			String accountName = "";
+
+			if (result instanceof Object[]) {
+				Object[] row = (Object[]) result;
+				accountName = row[1] != null ? row[1].toString() : "";
+			} else if (result != null) {
+				accountName = result.toString();
+			}
+
+			System.out.println("Account Name: " + accountName);
+
+			// --- CREDIT ENTRY (individual per flow_code) ---
 			TRAN_MAIN_TRM_WRK_ENTITY creditTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
 			creditTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
 			creditTrm.setTran_id(tranId);
 			creditTrm.setPart_tran_id(partTranId);
 			creditTrm.setAcct_num(loanDetails.getId());
-			creditTrm.setAcct_name(loanDetails.getLoan_name());
+			creditTrm.setAcct_name(accountName);
 			creditTrm.setTran_type("TRANSFER");
 			creditTrm.setPart_tran_type("Credit");
 			creditTrm.setAcct_crncy(loanDetails.getCurrency_code());
@@ -6232,24 +6246,24 @@ public class BGLSRestController {
 			creditTrm.setDel_flg("N");
 
 			switch (flowCode) {
-			case "PRDEM":
+			case "PRREC":
 				totalPrdem.merge(flowDateKey, tranAmt, BigDecimal::add);
-				creditTrm.setTran_particular(" Principal Recovery");
+				creditTrm.setTran_particular("Principal Recovery");
 				creditTrm.setTran_remarks("Principal amount recovered on " + flowDateKey);
 				break;
-			case "INDEM":
+			case "INREC":
 				totalIndem.merge(flowDateKey, tranAmt, BigDecimal::add);
-				creditTrm.setTran_particular(" Interest Recovery");
+				creditTrm.setTran_particular("Interest Recovery");
 				creditTrm.setTran_remarks("Interest amount recovered on " + flowDateKey);
 				break;
-			case "FEEDEM":
+			case "FEREC":
 				totalFeedem.merge(flowDateKey, tranAmt, BigDecimal::add);
-				creditTrm.setTran_particular(" Fee Recovery");
-				creditTrm.setTran_remarks("Fees amount recovered on " + flowDateKey);
+				creditTrm.setTran_particular("Fee Recovery");
+				creditTrm.setTran_remarks("Fee amount recovered on " + flowDateKey);
 				break;
-			case "PENDEM":
+			case "PLREC":
 				totalPendem.merge(flowDateKey, tranAmt, BigDecimal::add);
-				creditTrm.setTran_particular(" Penalty Recovery");
+				creditTrm.setTran_particular("Penalty Recovery");
 				creditTrm.setTran_remarks("Penalty amount recovered on " + flowDateKey);
 				break;
 			default:
@@ -6259,52 +6273,50 @@ public class BGLSRestController {
 
 			transactionList.add(creditTrm);
 
-			// --- DEBIT ENTRY FOR THE SAME TRANSACTION ---
-			// Office Loan Account Debit (second transaction)
-			String productname = lOAN_ACT_MST_REPO.getLoanproductnames(accountNo);
-			System.out.println("THE PASSED LOAN ACCOUNT NUMBER FOR PRODUCT NAME " + accountNo);
-			System.out.println("THE GETTING DATABASE PRODUCT NAME IS " + productname);
+			// ✅ accumulate total for single debit
+			totalDebitAmt = totalDebitAmt.add(tranAmt);
 
-			// ✅ If product name is "Customer Loan Product", convert to "Credit Facility"
+			// Increment partTranId for next credit
+			partTranId = partTranId.add(BigDecimal.ONE);
+		}
+
+		// --- SINGLE DEBIT ENTRY FOR TOTAL ---
+		if (totalDebitAmt.compareTo(BigDecimal.ZERO) > 0) {
+
+			String accountNo = transactions.get(0).get("loan_acct_no");
+			String productname = lOAN_ACT_MST_REPO.getLoanproductnames(accountNo);
 			if ("Customer Loan Product".equalsIgnoreCase(productname)) {
 				productname = "Credit Facility";
 			}
 
 			Transaction_accounts_entity account_numbervalues = transaction_accounts_Rep.getLoanView(productname);
-			System.out.println(
-					"the getting interest recivable account is " + account_numbervalues.getInterest_recivable());
-
-			// Debit account from database
 			String acct_num = account_numbervalues.getLoan_parking_account();
 			Chart_Acc_Entity debitAccount = chart_Acc_Rep.getaedit(acct_num);
 
 			TRAN_MAIN_TRM_WRK_ENTITY debitTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
 			debitTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
 			debitTrm.setTran_id(tranId);
-			debitTrm.setPart_tran_id(partTranId.add(BigDecimal.ONE)); // Increment partTranId
+			debitTrm.setPart_tran_id(partTranId);
 			debitTrm.setAcct_num(debitAccount.getAcct_num());
 			debitTrm.setAcct_name(debitAccount.getAcct_name());
 			debitTrm.setTran_type("TRANSFER");
 			debitTrm.setPart_tran_type("Debit");
 			debitTrm.setAcct_crncy(debitAccount.getAcct_crncy());
-			debitTrm.setTran_amt(tranAmt);
-			debitTrm.setTran_particular(loanDetails.getId() + " Recovery Amount");
-			debitTrm.setTran_remarks(loanDetails.getId() + " Recovery Amount");
+			debitTrm.setTran_amt(totalDebitAmt); // ✅ sum of PRREC+INREC+FEREC+PLREC
+			debitTrm.setTran_particular("Total Recovery Amount");
+			debitTrm.setTran_remarks("Total of Principal, Interest, Fee, and Penalty Recovery");
 			debitTrm.setTran_date(transactionDate);
-			debitTrm.setValue_date(flowDate);
+			debitTrm.setValue_date(transactionDate);
 			debitTrm.setFlow_code("RECOVERY");
-			debitTrm.setFlow_date(flowDate);
+			debitTrm.setFlow_date(transactionDate);
 			debitTrm.setTran_status("ENTERED");
 			debitTrm.setEntry_user(user);
-			debitTrm.setEntry_time(flowDate);
+			debitTrm.setEntry_time(transactionDate);
 			debitTrm.setModify_user(user);
-			debitTrm.setModify_time(flowDate);
+			debitTrm.setModify_time(transactionDate);
 			debitTrm.setDel_flg("N");
 
 			transactionList.add(debitTrm);
-
-			// Increment partTranId for next transaction
-			partTranId = partTranId.add(BigDecimal.valueOf(2));
 		}
 
 		tRAN_MAIN_TRM_WRK_REP.saveAll(transactionList);
@@ -9860,10 +9872,10 @@ public class BGLSRestController {
 
 		// Flow priority map
 		Map<String, Integer> priority = new HashMap<>();
-		priority.put("PENDEM", 1);
-		priority.put("FEEDEM", 2);
-		priority.put("INDEM", 3);
-		priority.put("PRDEM", 4);
+		priority.put("PLREC", 1);
+		priority.put("FEREC", 2);
+		priority.put("INREC", 3);
+		priority.put("PRREC", 4);
 
 		// Sort by due date → account → flow priority
 		results.sort((a, b) -> {
@@ -10220,7 +10232,7 @@ public class BGLSRestController {
 
 			// Flow priority within same date (you used PENDEM, FEEDEM, INDEM, PRDEM
 			// earlier)
-			List<String> flowOrder = Arrays.asList("PENDEM", "FEEDEM", "INDEM", "PRDEM");
+			List<String> flowOrder = Arrays.asList("PLREC", "FEREC", "INREC", "PRREC");
 
 			// Group incoming frontend transactions by customer identifier (acct_namedata)
 			Map<String, List<Map<String, Object>>> custMap = transactions.stream()
@@ -10459,19 +10471,19 @@ public class BGLSRestController {
 		creditTrm.setDel_flg("N");
 
 		switch (flowCode) {
-		case "PRDEM":
+		case "PRREC":
 			creditTrm.setTran_particular("Principal Recovery");
 			creditTrm.setTran_remarks("Principal recovered on " + dueDate);
 			break;
-		case "INDEM":
+		case "INREC":
 			creditTrm.setTran_particular("Interest Recovery");
 			creditTrm.setTran_remarks("Interest recovered on " + dueDate);
 			break;
-		case "FEEDEM":
+		case "FEREC":
 			creditTrm.setTran_particular("Fees Recovery");
 			creditTrm.setTran_remarks("Fees recovered on " + dueDate);
 			break;
-		case "PENDEM":
+		case "PLREC":
 			creditTrm.setTran_particular("Penalty Recovery");
 			creditTrm.setTran_remarks("Penalty recovered on " + dueDate);
 			break;
@@ -10912,14 +10924,14 @@ public class BGLSRestController {
 		int cmp1 = totalFlowBD.compareTo(totrembalfrntend);
 
 		if (cmp1 == 0) {
-		    System.out.println("⚖️ THE PASSED VALUES ARE SAME → " + remainingBalance);
+			System.out.println("⚖️ THE PASSED VALUES ARE SAME → " + remainingBalance);
 		} else if (cmp1 < 0) {
-		    System.out.println("📉 THE PASSED VALUE (totalFlowBD) IS LESSER THAN remainingBalance → " + remainingBalance);
+			System.out
+					.println("📉 THE PASSED VALUE (totalFlowBD) IS LESSER THAN remainingBalance → " + remainingBalance);
 		} else {
-		    System.out.println("💰 THE PASSED VALUE (totalFlowBD) IS GREATER THAN remainingBalance → " + remainingBalance);
+			System.out.println(
+					"💰 THE PASSED VALUE (totalFlowBD) IS GREATER THAN remainingBalance → " + remainingBalance);
 		}
-
-		
 
 		// ✅ Step 4: Compare totals
 		BigDecimal difference = totalFlowBD.subtract(remainingBalance);
@@ -10951,13 +10963,13 @@ public class BGLSRestController {
 			String acctName = (String) record[6];
 
 			if (penFlow > 0)
-				flowList.add(createFlow("PENDEM", BigDecimal.valueOf(penFlow), dueDate, acctNo, acctName, "1"));
+				flowList.add(createFlow("PLREC", BigDecimal.valueOf(penFlow), dueDate, acctNo, acctName, "1"));
 			if (feeFlow > 0)
-				flowList.add(createFlow("FEEDEM", BigDecimal.valueOf(feeFlow), dueDate, acctNo, acctName, "2"));
+				flowList.add(createFlow("FEREC", BigDecimal.valueOf(feeFlow), dueDate, acctNo, acctName, "2"));
 			if (intFlow > 0)
-				flowList.add(createFlow("INDEM", BigDecimal.valueOf(intFlow), dueDate, acctNo, acctName, "3"));
+				flowList.add(createFlow("INREC", BigDecimal.valueOf(intFlow), dueDate, acctNo, acctName, "3"));
 			if (prFlow > 0)
-				flowList.add(createFlow("PRDEM", BigDecimal.valueOf(prFlow), dueDate, acctNo, acctName, "4"));
+				flowList.add(createFlow("PRREC", BigDecimal.valueOf(prFlow), dueDate, acctNo, acctName, "4"));
 		}
 
 		// ✅ Step 7: Sort ascending for allocation
@@ -10971,12 +10983,15 @@ public class BGLSRestController {
 		});
 
 		// ✅ Step 8: Allocate transaction amounts
-		BigDecimal remaining = remainingBalance.add(difference); // combine both
+		BigDecimal remaining = remainingBalance.add(difference.abs()); // combine both
+		System.out.println(
+				"remaining_" + remaining + "difference_" + difference.abs() + "remainingBalance_" + remainingBalance);
 
 		for (Map<String, Object> flow : flowList) {
 			BigDecimal flowAmt = (BigDecimal) flow.get("flow_amt");
 			BigDecimal tranAmt = BigDecimal.ZERO;
-
+			System.out.println("flowAmt_" + flowAmt);
+			System.out.println("remaining_" + remaining);
 			if (remaining.compareTo(BigDecimal.ZERO) > 0) {
 				if (flowAmt.compareTo(remaining) > 0) {
 					tranAmt = remaining;
@@ -10984,6 +10999,7 @@ public class BGLSRestController {
 				} else {
 					tranAmt = flowAmt;
 					remaining = remaining.subtract(flowAmt);
+					System.out.println("tranAmt'tranAmt" + tranAmt);
 				}
 			}
 
@@ -11016,60 +11032,68 @@ public class BGLSRestController {
 			}
 
 		} else if (difference.compareTo(BigDecimal.ZERO) < 0) {
-		    BigDecimal remainingShortAmt = difference.abs();
+			BigDecimal remainingShortAmt = difference.abs();
+			System.out.println("remainingShortAmt_" + remainingShortAmt);
 
-		    if (loanFlowRecords == null || loanFlowRecords.isEmpty()) {
-		        return "<tr><td colspan='7' style='color:red;text-align:center;'>No flow records found</td></tr>";
-		    }
+			if (loanFlowRecords == null || loanFlowRecords.isEmpty()) {
+				return "<tr><td colspan='7' style='color:red;text-align:center;'>No flow records found</td></tr>";
+			}
 
-		    // ✅ Group by DUE_DATE (preserving order)
-		    Map<Date, List<Object[]>> groupedByDate = loanFlowRecords.stream()
-		            .collect(Collectors.groupingBy(
-		                    record -> (Date) record[0],
-		                    LinkedHashMap::new,
-		                    Collectors.toList()
-		            ));
+			// ✅ Group by DUE_DATE (preserving order)
+			Map<Date, List<Object[]>> groupedByDate = loanFlowRecords.stream().collect(
+					Collectors.groupingBy(record -> (Date) record[0], LinkedHashMap::new, Collectors.toList()));
 
-		    for (Map.Entry<Date, List<Object[]>> entry : groupedByDate.entrySet()) {
-		        Date dueDate = entry.getKey();
-		        List<Object[]> recordsForDate = entry.getValue();
+			for (Map.Entry<Date, List<Object[]>> entry : groupedByDate.entrySet()) {
+				Date dueDate = entry.getKey();
+				List<Object[]> recordsForDate = entry.getValue();
 
-		        // ✅ Sort PRDEM first, then INDEM
-		        recordsForDate.sort((a, b) -> {
-		            String flowA = String.valueOf(a[2]);
-		            String flowB = String.valueOf(b[2]);
-		            if ("PRDEM".equals(flowA) && "INDEM".equals(flowB)) return -1;
-		            if ("INDEM".equals(flowA) && "PRDEM".equals(flowB)) return 1;
-		            return 0;
-		        });
+				// ✅ Sort PRDEM first, then INDEM
+				recordsForDate.sort((a, b) -> {
+					String flowA = String.valueOf(a[2]);
+					String flowB = String.valueOf(b[2]);
+					if ("PRREC".equals(flowA) && "INREC".equals(flowB))
+						return -1;
+					if ("INREC".equals(flowA) && "PRREC".equals(flowB))
+						return 1;
+					return 0;
+				});
 
-		        for (Object[] record : recordsForDate) {
-		            String flowCode = String.valueOf(record[2]);
-		            BigDecimal flowAmt = (BigDecimal) record[3];
-		            String acctNo = String.valueOf(record[4]);
-		            String acctName = String.valueOf(record[5]);
-		            String flowId = String.valueOf(record[1]);
+				for (Object[] record : recordsForDate) {
+					String flowCode = String.valueOf(record[2]);
+					BigDecimal flowAmt = (BigDecimal) record[3];
+					String acctNo = String.valueOf(record[4]);
+					String acctName = String.valueOf(record[5]);
+					String flowId = String.valueOf(record[1]);
 
-		            flowList.add(createFlow(flowCode, flowAmt, dueDate, acctNo, acctName, flowId));
+					// Create flow map and add to list
+					Map<String, Object> flow = createFlow(flowCode, flowAmt, dueDate, acctNo, acctName, flowId);
+					flowList.add(flow);
 
-		            if (remainingShortAmt.compareTo(BigDecimal.ZERO) > 0) {
-		                BigDecimal reduceAmt = remainingShortAmt.min(flowAmt);
-		                remainingShortAmt = remainingShortAmt.subtract(reduceAmt);
-		            }
+					// ✅ New Shortfall adjustment logic only
+					if (remainingShortAmt.compareTo(BigDecimal.ZERO) > 0) {
+						BigDecimal reduceAmt = remainingShortAmt.min(flowAmt);
+						remainingShortAmt = remainingShortAmt.subtract(reduceAmt);
 
-		            if (remainingShortAmt.compareTo(BigDecimal.ZERO) <= 0)
-		                break; // stop distributing once done
-		        }
+						// Track how much was adjusted per flow
+						flow.put("tran_amt", reduceAmt);
+					} else {
+						flow.put("tran_amt", BigDecimal.ZERO);
+					}
 
-		        if (remainingShortAmt.compareTo(BigDecimal.ZERO) <= 0)
-		            break;
-		    }
+					if (remainingShortAmt.compareTo(BigDecimal.ZERO) <= 0)
+						break; // stop distributing once done
+				}
 
-		    if (remainingShortAmt.compareTo(BigDecimal.ZERO) > 0) {
-		        return "<script>alert('⚠️ Extra Shortfall Not Adjusted: ₹" + remainingShortAmt + "');</script>";
-		    } else {
-		        System.out.println("✅ All shortfall distributed successfully. Remaining: ₹0.00");
-		    }
+				if (remainingShortAmt.compareTo(BigDecimal.ZERO) <= 0)
+					break;
+			}
+
+			// ✅ After distribution check
+			if (remainingShortAmt.compareTo(BigDecimal.ZERO) > 0) {
+				return "<script>alert('⚠️ Extra Shortfall Not Adjusted: ₹" + remainingShortAmt + "');</script>";
+			} else {
+				System.out.println("✅ All shortfall distributed successfully. Remaining: ₹0.00");
+			}
 		}
 
 		// ✅ Step 9.1: FINAL sort in ascending order by due_date

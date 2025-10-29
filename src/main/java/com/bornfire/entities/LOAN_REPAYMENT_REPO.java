@@ -546,8 +546,8 @@ public interface LOAN_REPAYMENT_REPO extends JpaRepository<LOAN_REPAYMENT_ENTITY
 
 	@Query(value = "SELECT " + "   U.due_date, " + "   CASE " + "       WHEN U.flow_type = 'INTEREST_EXP' THEN '3' "
 			+ "       WHEN U.flow_type = 'PRINCIPAL_EXP' THEN '4' " + "   END AS flow_id, " + "   CASE "
-			+ "       WHEN U.flow_type = 'INTEREST_EXP' THEN 'INDEM' "
-			+ "       WHEN U.flow_type = 'PRINCIPAL_EXP' THEN 'PRDEM' " + "   END AS flow_code, " + "   U.flow_amt, "
+			+ "       WHEN U.flow_type = 'INTEREST_EXP' THEN 'INREC' "
+			+ "       WHEN U.flow_type = 'PRINCIPAL_EXP' THEN 'PRREC' " + "   END AS flow_code, " + "   U.flow_amt, "
 			+ "   U.loan_acct_no, " + "   U.acct_name, " + "   U.encoded_key " + "FROM ( " + "   SELECT  "
 			+ "       B.due_date, " + "       A.ID AS loan_acct_no, "
 			+ "       CM.FIRST_NAME || ' ' || CM.LAST_NAME AS acct_name, " + "       A.ENCODED_KEY, "

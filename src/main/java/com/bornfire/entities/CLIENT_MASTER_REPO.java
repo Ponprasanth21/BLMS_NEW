@@ -149,10 +149,10 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 	        "    SELECT " +
 	        "        B.due_date, " +
 	        "        '1' AS flow_id, " +
-	        "        'PENDEM' AS flow_code, " +
+	        "        'PLREC' AS flow_code, " +
 	        "        (B.PENALTY_EXP - B.PENALTY_PAID) AS flow_amt, " +
 	        "        A.ID AS loan_acct_no, " +
-	        "        C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name," +
+	        "        C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name, " +
 	        "        A.ENCODED_KEY, " +
 	        "        C.CUSTOMER_ID " +
 	        "    FROM CLIENT_MASTER_TBL C " +
@@ -162,10 +162,11 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 	        "      AND (B.PENALTY_EXP - B.PENALTY_PAID) > 0 " +
 
 	        "    UNION ALL " +
+
 	        "    SELECT " +
 	        "        B.due_date, " +
 	        "        '2' AS flow_id, " +
-	        "        'FEEDEM' AS flow_code, " +
+	        "        'FEREC' AS flow_code, " +
 	        "        (B.FEE_EXP - B.FEE_PAID) AS flow_amt, " +
 	        "        A.ID AS loan_acct_no, " +
 	        "        C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name, " +
@@ -182,7 +183,7 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 	        "    SELECT " +
 	        "        B.due_date, " +
 	        "        '3' AS flow_id, " +
-	        "        'INDEM' AS flow_code, " +
+	        "        'INREC' AS flow_code, " +
 	        "        (B.INTEREST_EXP - B.INTEREST_PAID) AS flow_amt, " +
 	        "        A.ID AS loan_acct_no, " +
 	        "        C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name, " +
@@ -199,7 +200,7 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 	        "    SELECT " +
 	        "        B.due_date, " +
 	        "        '4' AS flow_id, " +
-	        "        'PRDEM' AS flow_code, " +
+	        "        'PRREC' AS flow_code, " +  // ✅ Corrected from PLREC → PRREC
 	        "        (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) AS flow_amt, " +
 	        "        A.ID AS loan_acct_no, " +
 	        "        C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name, " +
@@ -212,7 +213,8 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 	        " ) " +
 	        "SELECT due_date, flow_id, flow_code, flow_amt, loan_acct_no, acct_name, encoded_key, customer_id " +
 	        "FROM LoanFlows " +
-	        "ORDER BY due_date", nativeQuery = true)
+	        "ORDER BY flow_id, due_date",  // ✅ Order by flow_id first
+	        nativeQuery = true)
 	List<Object[]> getLoanFlowsByCustomer(@Param("customerId") String customerId);
 
 //		@Query(value = "SELECT * " +

@@ -345,18 +345,18 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
 			+ "ORDER BY a.id", nativeQuery = true)
 	List<Object[]> getActNo1();
 
-	@Query(value = "SELECT DISTINCT a.id,\r\n" + "                b.first_name || ' ' || b.last_name AS full_name\r\n"
-			+ "FROM loan_account_master_tbl a\r\n" + "JOIN client_master_tbl b \r\n"
-			+ "    ON b.encoded_key = a.account_holderkey\r\n" + "JOIN loan_repayment_tbl c\r\n"
-			+ "    ON a.encoded_key = c.parent_account_key\r\n" + "WHERE (c.interest_exp - c.interest_paid) != 0\r\n"
-			+ "  AND c.due_date = ?1", nativeQuery = true)
+	@Query(value = "SELECT DISTINCT a.id, " + "       b.first_name || ' ' || b.last_name AS full_name "
+			+ "FROM loan_account_master_tbl a " + "JOIN client_master_tbl b ON b.encoded_key = a.account_holderkey "
+			+ "JOIN loan_repayment_tbl c ON a.encoded_key = c.parent_account_key "
+			+ "WHERE (c.interest_exp - c.interest_paid) != 0 " + "  AND c.due_date = ?1 "
+			+ "  AND (a.interest_demand_flg IS NULL OR a.interest_demand_flg = 'N')", nativeQuery = true)
 	List<Object[]> getActNo21(String datas);
 
 	@Query(value = "SELECT DISTINCT a.id,\r\n" + "                b.first_name || ' ' || b.last_name AS full_name\r\n"
 			+ "FROM loan_account_master_tbl a\r\n" + "JOIN client_master_tbl b \r\n"
 			+ "    ON b.encoded_key = a.account_holderkey\r\n" + "JOIN loan_repayment_tbl c\r\n"
 			+ "    ON a.encoded_key = c.parent_account_key\r\n" + "WHERE (c.fee_exp - c.fee_paid) != 0\r\n"
-			+ "  AND c.due_date = ?1", nativeQuery = true)
+			+ "  AND c.due_date = ?1 AND (a.fees_demand_flg IS NULL OR a.fees_demand_flg = 'N')", nativeQuery = true)
 	List<Object[]> getActNo31(String datas);
 
 	@Query(value = "SELECT a.id, b.FIRST_NAME || ' ' || b.LAST_NAME AS acct_name " + "FROM loan_account_master_tbl a "
@@ -375,7 +375,7 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
 			+ "FROM loan_account_master_tbl a " + "JOIN client_master_tbl b "
 			+ "   ON b.encoded_key = a.account_holderkey " + "JOIN loan_repayment_tbl c "
 			+ "   ON a.encoded_key = c.parent_account_key " + "WHERE (c.penalty_exp - c.penalty_paid) != 0 "
-			+ "  AND c.due_date = TO_DATE(?1, 'DD-MON-YYYY')", nativeQuery = true)
+			+ "  AND c.due_date = TO_DATE(?1, 'DD-MON-YYYY') AND (a.auth_flg IS NULL OR a.auth_flg = 'N')", nativeQuery = true)
 	List<Object[]> getPenaltyAccounts(String dueDate);
 
 	@Query(value = "SELECT DISTINCT " + "A.ID, " + "B.FIRST_NAME || ' ' || B.LAST_NAME AS ACCT_NAME "
@@ -394,10 +394,10 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
 			+ "JOIN CLIENT_MASTER_TBL b ON a.ACCOUNT_HOLDERKEY = b.ENCODED_KEY "
 			+ "WHERE a.id = :id", nativeQuery = true)
 	Object findAccountWithFullName(@Param("id") String id);
-	
+
 	@Query(value = "SELECT LOAN_NAME FROM LOAN_ACCOUNT_MASTER_TBL WHERE ID =?1", nativeQuery = true)
 	String getLoanproductnames(String id);
-	
+
 	@Query(value = "SELECT  currency_code FROM LOAN_ACCOUNT_MASTER_TBL WHERE ID =?1", nativeQuery = true)
 	String getLoanViewcurrency(String id);
 }
