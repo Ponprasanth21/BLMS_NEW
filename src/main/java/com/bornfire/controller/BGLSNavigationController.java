@@ -2863,18 +2863,18 @@ public class BGLSNavigationController {
                                 @RequestParam("trndate") String trndate) throws java.text.ParseException {
         // Get TRANDATE from session as a String
 
-        System.out.println("Trndate"+trndate);
-        Date TRANDATE = (Date) rq.getSession().getAttribute("TRANDATE");
-        System.out.println("TRANDATE: " + TRANDATE);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = dateFormat.format(TRANDATE);
-        /*
-         * SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); Date TRANDATE =
-         * sdf.parse("2025-10-27"); // manually assigned date
-         * System.out.println("TRANDATE: " + TRANDATE);
-         *
-         * String formattedDate = sdf.format(TRANDATE);
-         */
+		/*
+		 * System.out.println("Trndate"+trndate); Date TRANDATE = (Date)
+		 * rq.getSession().getAttribute("TRANDATE"); System.out.println("TRANDATE: " +
+		 * TRANDATE); SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		 * String formattedDate = dateFormat.format(TRANDATE);
+		 */
+        
+          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+          Date TRANDATE =sdf.parse("2025-10-02"); // manually assigned date
+          System.out.println("TRANDATE: " + TRANDATE);
+         
+          String formattedDate = sdf.format(TRANDATE);
 
         System.out.println("formattedDate"+formattedDate);
         List<Object[]> debitCreditData = tRAN_MAIN_TRM_WRK_REP.getNetDebitCreditWithCountForCurrentDate(formattedDate);
@@ -3000,17 +3000,19 @@ public class BGLSNavigationController {
                                                 String TRANDATE) throws java.text.ParseException {
         // TRANDATE is now a String and will be used in the queries
 
-        Date TRANDATE1 = (Date) rq.getSession().getAttribute("TRANDATE");
-        System.out.println(TRANDATE1 + "TRANDATE");
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate =dateFormat.format(TRANDATE1);
-        /*
-         * SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); Date TRANDATE1 =
-         * sdf.parse("2025-10-27"); // manually assigned date
-         * System.out.println("TRANDATE: " + TRANDATE1);
-         *
-         * String formattedDate = sdf.format(TRANDATE1);
-         */
+		/*
+		 * Date TRANDATE1 = (Date) rq.getSession().getAttribute("TRANDATE");
+		 * System.out.println(TRANDATE1 + "TRANDATE"); SimpleDateFormat dateFormat = new
+		 * SimpleDateFormat("yyyy-MM-dd"); String formattedDate
+		 * =dateFormat.format(TRANDATE1);
+		 */
+        
+          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
+          Date TRANDATE1 =sdf.parse("2025-10-02"); // manually assigned date
+          System.out.println("TRANDATE: " + TRANDATE1);
+         
+          String formattedDate = sdf.format(TRANDATE1);
+         
         System.out.println("Formatted Date: " + formattedDate);
 
         for (int i = 0; i < accountNumbers.size(); i++) {
@@ -3058,7 +3060,7 @@ public class BGLSNavigationController {
                     LocalDate tranDate = LocalDate.parse(formattedDate);
                     // Call the update method with the date minus one day
                     tRAN_MAIN_TRM_WRK_REP.updateEndDateToYesterday1(accountNum, tranDate.minusDays(1));
-                    openbal=tRAN_MAIN_TRM_WRK_REP.getTrandateBal(accountNum, tranDate.minusDays(1));
+                    openbal=tRAN_MAIN_TRM_WRK_REP.getTrandateBal(accountNum, tranDate);
 
                     //TrandateBal=tRAN_MAIN_TRM_WRK_REP.getTrandateBal(accountNum, tranDate.minusDays(1));
                 } catch (DateTimeParseException e) {
@@ -3075,7 +3077,7 @@ public class BGLSNavigationController {
 
                 //BigDecimal updatedOpenBal=openbal.add(netAmount);
 
-                BigDecimal updatedOpenBal = (openbal == null ? BigDecimal.ZERO : openbal).add(netAmount == null ? BigDecimal.ZERO : netAmount);
+                //BigDecimal updatedOpenBal = (openbal == null ? BigDecimal.ZERO : openbal).add(netAmount == null ? BigDecimal.ZERO : netAmount);
 
 
 
@@ -3091,7 +3093,7 @@ public class BGLSNavigationController {
                         // is in the
                         // correct
                         // format
-                        netAmount, totalDebit, totalCredit,updatedOpenBal);
+                        netAmount, totalDebit, totalCredit,openbal);
 
             } else {
                 // Insert new row with netAmount as TRAN_DATE_BAL
@@ -4544,6 +4546,7 @@ public class BGLSNavigationController {
             return "Error: Invalid date format or value (e.g., 32-01-2025)";
         }
     }
+    
 
 
 
@@ -4998,6 +5001,7 @@ public class BGLSNavigationController {
         return "Successfully Updated";
     }
 
+
     @RequestMapping(value = "ConsolidatedLoanReport", method = { RequestMethod.GET, RequestMethod.POST })
     public String ConsolidatedLoanReport(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
         if (formmode == null || formmode.equals("list")) {
@@ -5006,5 +5010,74 @@ public class BGLSNavigationController {
         }
         return "ConsolidatedLoanReport.html";
     }
+
+    
+    @RequestMapping(value = "bacthJobdateChageProcess", method = RequestMethod.POST)
+    @ResponseBody
+    public String bacthJobdateChageProcess(
+            Model md,
+            HttpServletRequest rq,
+            @RequestParam("nxtdate") String nxtdateStr,
+            @RequestParam("trndate") String trndateStr) throws java.text.ParseException {
+    	  Date sessionTranDate = (Date) rq.getSession().getAttribute("TRANDATE");
+        // Define the expected date format
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
+        // Convert String to Date
+        Date nxtdate = sdf.parse(nxtdateStr);
+        Date trndate = sdf.parse(trndateStr);
+
+        System.out.println("nxtdate"+nxtdate);
+        System.out.println("trndate"+trndate);
+        
+        
+        // (Optional) Get session transaction date
+      
+
+        // Example: call repository method with Date arguments if needed
+        int result=bGLS_CONTROL_TABLE_REP.updateTranDates(nxtdate, trndate);
+        
+        if (result > 0) {
+            return "Date Change Successfully";
+        } else {
+            return "Date Change Unsuccessful";
+        }
+    }
+
+    
+    
+    @RequestMapping(value = "DabUpdate", method = RequestMethod.POST)
+    @ResponseBody
+    public String DabUpdate(HttpServletRequest rq, @RequestParam("trndate") String trndate) throws java.text.ParseException {
+    	  Date sessionTranDate = (Date) rq.getSession().getAttribute("TRANDATE");
+       
+    	  System.out.println("trndate"+trndate);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
+        Date trndate1 = sdf.parse(trndate);
+        System.out.println("trndate1"+trndate1);
+        int updated=dAB_Repo.UpdateDab(trndate1);
+        
+        
+        BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+        if (existingRecord != null) {
+
+            // 2️⃣ Log past value
+            existingRecord.setMov_dac("Completed");
+            existingRecord.setDcp_status("DCP-1");
+            // 4️⃣ Save updated record
+            bGLS_CONTROL_TABLE_REP.save(existingRecord);
+
+        } else {
+            System.out.println("No record found in BGLS_Control_Table");
+
+        }
+      
+        return "Account balances successfully inserted";
+    }
+
+    
+    
+
 
 }

@@ -27,6 +27,7 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
             + "AND TRAN_DATE = (SELECT MAX(TRAN_DATE) FROM BGLS_DAILY_ACCT_BAL  WHERE ACCT_NUM = :accountNum AND ROWNUM <= 1)", nativeQuery = true)
     List<BigDecimal> findLatestTRAN_DATE_BALByAccountNumber(@Param("accountNum") String accountNum);
 
+
     @Query(value = "SELECT TRAN_DATE_BAL FROM BGLS_DAILY_ACCT_BAL WHERE ACCT_NUM = :accountNum "
             + " AND TRAN_DATE = ( " +
             "          SELECT MAX(TRAN_DATE) " +
@@ -49,8 +50,44 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
      * accountNum, @Param("endDate") LocalDate endDate);
      */
 
-    @Query(value = "SELECT TRAN_DATE_BAL FROM BGLS_DAILY_ACCT_BAL WHERE ACCT_NUM = :accountNum  AND TRUNC(TRAN_DATE) = :endDate", nativeQuery = true)
-    BigDecimal getTrandateBal(@Param("accountNum") String accountNum, @Param("endDate") LocalDate endDate);
+	/*
+	 * @Query(value =
+	 * "SELECT TRAN_DATE_BAL FROM BGLS_DAILY_ACCT_BAL WHERE ACCT_NUM = :accountNum  AND TRUNC(TRAN_DATE) = :endDate"
+	 * , nativeQuery = true) BigDecimal getTrandateBal(@Param("accountNum") String
+	 * accountNum, @Param("endDate") LocalDate endDate);
+	 */
+	/*
+	 * @Modifying
+	 * 
+	 * @Transactional
+	 * 
+	 * @Query(value = "UPDATE BGLS_DAILY_ACCT_BAL SET end_tran_date=:endDate " +
+	 * "WHERE ACCT_NUM = :accountNum AND END_TRAN_DATE = TO_DATE('2099-12-31', 'YYYY-MM-DD')"
+	 * , nativeQuery = true) void updateEndDateToYesterday1(@Param("accountNum")
+	 * String accountNum, @Param("endDate") LocalDate endDate);
+	 */
+	/*
+	 * @Query(value =
+	 * "SELECT TRAN_DATE_BAL FROM BGLS_DAILY_ACCT_BAL WHERE ACCT_NUM = :accountNum AND TRAN_DATE = TO_DATE(:endDate, 'YYYY-MM-DD')"
+	 * , nativeQuery = true) BigDecimal getTrandateBal(@Param("accountNum") String
+	 * accountNum, @Param("endDate") LocalDate endDate);
+	 */
+	
+	@Query(value = "SELECT TRAN_DATE_BAL " +
+            "FROM BGLS_DAILY_ACCT_BAL " +
+            "WHERE ACCT_NUM = :accountNum " +
+            "AND TRAN_DATE = ( " +
+            "    SELECT MAX(TRAN_DATE) " +
+            "    FROM BGLS_DAILY_ACCT_BAL " +
+            "    WHERE ACCT_NUM = :accountNum " +
+            "    AND TRAN_DATE < :endDate " +
+            ")", 
+    nativeQuery = true)
+BigDecimal getTrandateBal(
+ @Param("accountNum") String accountNum,
+ @Param("endDate") LocalDate endDate
+);
+
 
     @Query(value = "SELECT TRAN_DATE_BAL FROM BGLS_DAILY_ACCT_BAL WHERE ACCT_NUM = :accountNum "
             + " AND TRAN_DATE = ( " +

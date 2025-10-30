@@ -102,7 +102,10 @@ public interface DAB_Repo extends CrudRepository<DAB_Entity, String> {
 
     @Query(value = "SELECT * FROM BGLS_DAILY_ACCT_BAL FETCH FIRST 200 ROWS ONLY", nativeQuery = true)
     List<DAB_Entity> dabdata();
-
+    
+    
+    @Query(value = "BEGIN PROC_UPDATE_DAILY_BALANCE(:tranDate); END;", nativeQuery = true)
+    int UpdateDab(@Param("tranDate")Date tranDate);
 
 
 }
