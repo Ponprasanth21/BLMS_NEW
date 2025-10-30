@@ -17,4 +17,6 @@ public interface MULTIPLE_TRANSACTION_HISTORY_REPO extends JpaRepository<MULTIPL
 	@Query(value = "SELECT * FROM MULTIPLE_TRANSACTION_HISTORY_TBL WHERE STATUS = 'UNALLOCATED'", nativeQuery = true)
 	List<MULTIPLE_TRANSACTION_ENTITY> getDataValue();
 
+    @Query(value = "SELECT TRANSACTION_ID FROM MULTIPLE_TRANSACTION_HISTORY_TBL WHERE TRANSACTION_ID = ?1", nativeQuery = true)
+    List<String> getdatavalues(String tran_id);
 }

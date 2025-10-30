@@ -400,4 +400,7 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
 
 	@Query(value = "SELECT  currency_code FROM LOAN_ACCOUNT_MASTER_TBL WHERE ID =?1", nativeQuery = true)
 	String getLoanViewcurrency(String id);
+	
+	@Query(value = "SELECT encoded_key FROM LOAN_ACCOUNT_MASTER_TBL WHERE ID =?1", nativeQuery = true)
+	String getLoanView1(String id);
 }

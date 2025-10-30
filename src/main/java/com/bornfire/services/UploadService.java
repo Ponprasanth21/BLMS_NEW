@@ -7,9 +7,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -29,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bornfire.config.SequenceGenerator;
-import com.bornfire.entities.BGLSAuditTable;
 import com.bornfire.entities.BGLSAuditTable_Rep;
 import com.bornfire.entities.CLIENT_MASTER_ENTITY;
 import com.bornfire.entities.CLIENT_MASTER_REPO;
@@ -42,6 +43,7 @@ import com.bornfire.entities.LOAN_ACT_MST_REPO;
 import com.bornfire.entities.LOAN_REPAYMENT_ENTITY;
 import com.bornfire.entities.LOAN_REPAYMENT_REPO;
 import com.bornfire.entities.MULTIPLE_TRANSACTION_ENTITY;
+import com.bornfire.entities.MULTIPLE_TRANSACTION_HISTORY_REPO;
 import com.bornfire.entities.MULTIPLE_TRANSACTION_REPO;
 
 @Service
@@ -76,6 +78,9 @@ public class UploadService {
 	
 	@Autowired
 	Chart_Acc_Rep chart_Acc_Rep;
+	
+	@Autowired
+	MULTIPLE_TRANSACTION_HISTORY_REPO mULTIPLE_TRANSACTION_HISTORY_REPO;
 	
 	@Autowired
 	AuditConfigure audit;
@@ -629,83 +634,120 @@ public class UploadService {
 		return resultMap;
 	}
 //transaction upload
-	public Map<String, Object> saveTranFile(MultipartFile file, String userID, String userName,boolean overwrite ,String auditRefNo) throws SQLException {
-		int successCount = 0, failureCount = 0;
-		Map<String, Object> resultMap = new LinkedHashMap<>();
-		System.out.println("THE TRANSACTION FUNCTION UPLOAD SERVICE WORKED "+successCount);
-		logger.info("Start 1");
-		try (InputStream inputStream = file.getInputStream();
-			     Workbook workbook = WorkbookFactory.create(inputStream)) {
+	public Map<String, Object> saveTranFile(MultipartFile file, String userID, String userName, boolean overwrite, String auditRefNo) throws SQLException {
+	    Map<String, Object> resultMap = new LinkedHashMap<>();
+	    int successCount = 0, failureCount = 0;
 
-			logger.info("Start 2");
-			List<HashMap<Integer, String>> mapList = new ArrayList<>();
-			for (Sheet s : workbook) {
-			    for (Row r : s) {
-			        if (!isRowEmpty(r)) {
-			            if (r.getRowNum() < 2)
-			                continue;
+	    logger.info("Start Transaction Upload");
 
-			            HashMap<Integer, String> map = new HashMap<>();
-			            for (int j = 0; j < 50; j++) {
-			                Cell cell = r.getCell(j);
-			                DataFormatter formatter1 = new DataFormatter();
-			                String text = formatter1.formatCellValue(cell);
-			                map.put(j, text);
-			            }
-			            mapList.add(map);
-			        }
-			    }
-			}
-			logger.info("Start 3");
-			//upload start
-			for (HashMap<Integer, String> item : mapList) {
-				logger.info("Start 4");
-				try {
-					logger.info("Start 5");
-					MULTIPLE_TRANSACTION_ENTITY entity = new MULTIPLE_TRANSACTION_ENTITY();
+	    try (InputStream inputStream = file.getInputStream();
+	         Workbook workbook = WorkbookFactory.create(inputStream)) {
 
-					entity.setTransaction_id(item.get(0));    
-					entity.setNames(item.get(1));
-					String fullValue = item.get(2); // e.g., "pvt/2016/013408"
-					String[] parts = fullValue.split("/"); 
-					String reference = parts[parts.length - 1].trim(); // "013408"
-					entity.setReference(reference);
-					entity.setMobile_number(item.get(3));
-					entity.setAmount(DateParser.parseBigDecimal(item.get(4)));
-					entity.setAllocated_amount(DateParser.parseBigDecimal(item.get(5)));
-					entity.setTrans_time(DateParser.parseDateSafe(item.get(6)));
-					entity.setStatus(item.get(7));
-					entity.setSrl_no(sequence.generateRequestUUId());
-					entity.setEntity_flg("Y");
-					entity.setDel_flg("N");
-					entity.setEntry_user(userID);
-			    	entity.setEntry_time(new Date());
-			    	entity.setRef_transaction_id(null);
+	        // ✅ Step 1: Read Excel file
+	        List<HashMap<Integer, String>> mapList = new ArrayList<>();
+	        DataFormatter formatter = new DataFormatter();
 
-					logger.info("Start 7");
-					multiple_TRANSACTION_REPO.save(entity);
-					successCount++;
-					//System.out.println("FINAL COUNTS -> Succeeded: " + successCount + ", Failed: " + failureCount);
-				} catch (Exception ex) {
-					failureCount++;
-					ex.printStackTrace();
-				}
-			}
-			logger.info("Start 8");
-		} catch (Exception e) {
-			e.printStackTrace();
-			resultMap.put("status", "error");
-			resultMap.put("message", "File upload failed: " + e.getMessage());
-		}
-		logger.info("Start 9");	
-		audit.insertServiceAudit(userID, userName, "GENERAL LEDGER UPLOAD", "UPLOADED SUCCESSFULLY","BGLS_GENERAL_LED", "GENERAL LEDGER","-");
-		logger.info("Start 10");
-		resultMap.put("status", "success");
-		resultMap.put("TotalSucceeded", successCount);
-		resultMap.put("TotalFailed", failureCount);
-		resultMap.put("TotalProcessed", (successCount + failureCount));
+	        for (Sheet s : workbook) {
+	            for (Row r : s) {
+	                if (r.getRowNum() < 2) continue; // skip headers
+	                if (isRowEmpty(r)) continue;
 
-		return resultMap;
+	                HashMap<Integer, String> map = new HashMap<>();
+	                for (int j = 0; j < 50; j++) {
+	                    Cell cell = r.getCell(j);
+	                    String value = formatter.formatCellValue(cell);
+	                    map.put(j, value);
+	                }
+	                mapList.add(map);
+	            }
+	        }
+
+	        if (mapList.isEmpty()) {
+	            resultMap.put("status", "error");
+	            resultMap.put("message", "The uploaded file is empty or invalid.");
+	            return resultMap;
+	        }
+
+	        // ✅ Step 2: Check for duplicates
+	        Set<String> existingTransactionIds = new HashSet<>();
+	        for (HashMap<Integer, String> item : mapList) {
+	            String transactionId = item.get(0);
+	            if (transactionId != null && !transactionId.isEmpty()) {
+	                List<String> dbRecords = mULTIPLE_TRANSACTION_HISTORY_REPO.getdatavalues(transactionId);
+	                if (dbRecords != null && !dbRecords.isEmpty()) {
+	                    existingTransactionIds.add(transactionId);
+	                }
+	            }
+	        }
+
+	        // ✅ Step 3: Abort if duplicates found
+	        if (!existingTransactionIds.isEmpty()) {
+	            resultMap.put("status", "duplicate");
+	            resultMap.put("message", "This file already exists. Duplicate Transaction IDs found: " + existingTransactionIds);
+	            logger.warn("Upload aborted — duplicate transaction IDs found in DB: " + existingTransactionIds);
+	            return resultMap;
+	        }
+
+	        // ✅ Step 4: Proceed to save new records
+	        for (HashMap<Integer, String> item : mapList) {
+	            try {
+	                MULTIPLE_TRANSACTION_ENTITY entity = new MULTIPLE_TRANSACTION_ENTITY();
+
+	                entity.setTransaction_id(item.get(0));
+	                entity.setNames(item.get(1));
+
+	                String fullValue = item.get(2);
+	                if (fullValue != null && fullValue.contains("/")) {
+	                    String[] parts = fullValue.split("/");
+	                    entity.setReference(parts[parts.length - 1].trim());
+	                } else {
+	                    entity.setReference(fullValue);
+	                }
+
+	                entity.setMobile_number(item.get(3));
+	                entity.setAmount(DateParser.parseBigDecimal(item.get(4)));
+	                entity.setAllocated_amount(DateParser.parseBigDecimal(item.get(5)));
+	                entity.setTrans_time(DateParser.parseDateSafe(item.get(6)));
+	                entity.setStatus(item.get(7));
+	                entity.setSrl_no(sequence.generateRequestUUId());
+	                entity.setEntity_flg("Y");
+	                entity.setDel_flg("N");
+	                entity.setEntry_user(userID);
+	                entity.setEntry_time(new Date());
+	                entity.setRef_transaction_id(null);
+
+	                multiple_TRANSACTION_REPO.save(entity);
+	                successCount++;
+
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	                failureCount++;
+	            }
+	        }
+
+	        // ✅ Step 5: Audit
+	        audit.insertServiceAudit(
+	                userID, userName,
+	                "GENERAL LEDGER UPLOAD",
+	                "UPLOADED SUCCESSFULLY",
+	                "BGLS_GENERAL_LED", "GENERAL LEDGER", "-"
+	        );
+
+	        // ✅ Step 6: Final response
+	        resultMap.put("status", "success");
+	        resultMap.put("message", "File uploaded successfully");
+	        resultMap.put("TotalSucceeded", successCount);
+	        resultMap.put("TotalFailed", failureCount);
+	        resultMap.put("TotalProcessed", (successCount + failureCount));
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        resultMap.put("status", "error");
+	        resultMap.put("message", "File upload failed: " + e.getMessage());
+	    }
+
+	    logger.info("Upload complete. Success: " + successCount + ", Failed: " + failureCount);
+	    return resultMap;
 	}
 
 	private boolean isRowEmpty(Row row) {

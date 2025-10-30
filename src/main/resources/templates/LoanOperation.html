@@ -2227,52 +2227,79 @@
 		});
 
 		function submitData(file) {
-			document.getElementById('loadingModal').style.display = 'flex';
-			var form = $('#reportform_cust')[0];
-			var data = new FormData(form);
-			data.append("overwrite", false);
-			data.append("fileInput", "TRANSACTION");
-			data.append("file", file);
+		    // Show loading modal
+		    document.getElementById('loadingModal').style.display = 'flex';
 
-			$.ajax({
-				type: "POST",
-				url: "UploadFileData",
-				data: data,
-				processData: false,
-				contentType: false,
-				success: function (response) {
-					// Hide loading modal
-					document.getElementById('loadingModal').style.display = 'none';
+		    var form = $('#reportform_cust')[0];
+		    var data = new FormData(form);
+		    data.append("overwrite", false);
+		    data.append("fileInput", "TRANSACTION");
+		    data.append("file", file);
 
-					// Use response values
-					let totalSucceeded = response.TotalSucceeded || 0;
-					let totalFailed = response.TotalFailed || 0;
-					let totalProcessed = response.TotalProcessed || 0;
+		    $.ajax({
+		        type: "POST",
+		        url: "UploadFileData",
+		        data: data,
+		        processData: false,
+		        contentType: false,
+		        success: function (response) {
+		            // Hide loading spinner
+		            document.getElementById('loadingModal').style.display = 'none';
 
-					// Optional: format numbers
-					let formattedSucceeded = totalSucceeded.toLocaleString('en-US');
-					let formattedFailed = totalFailed.toLocaleString('en-US');
-					let formattedProcessed = totalProcessed.toLocaleString('en-US');
+		            // Default values
+		            let totalSucceeded = response.TotalSucceeded || 0;
+		            let totalFailed = response.TotalFailed || 0;
+		            let totalProcessed = response.TotalProcessed || 0;
 
-					let message = `
-		                <div class="text-center">
-		                    <h6>Files Upload Completed</h6>
-		                    <p>Total Records Processed: ${formattedProcessed}</p>
-		                    <p>Total Records Succeeded: ${formattedSucceeded}</p>
-		                    <p>Total Records Failed: ${formattedFailed}</p>
-		                </div>
-		            `;
+		            let formattedSucceeded = totalSucceeded.toLocaleString('en-US');
+		            let formattedFailed = totalFailed.toLocaleString('en-US');
+		            let formattedProcessed = totalProcessed.toLocaleString('en-US');
 
-					// Update modal content and show
-					$('#Successmsgpopup').html(message);
-					$('#SuccesPopUp').modal('show');
-				},
-				error: function (error) {
-					document.getElementById('loadingModal').style.display = 'none';
-					alert("Error: " + (error.responseText || "Something went wrong"));
-				}
-			});
+		            let message = "";
+
+		            // 🔴 DUPLICATE FILE HANDLING
+		            if (response.status === 'duplicate') {
+		                message = `
+		                    <div class="text-center">
+		                        <h5 style="color:red;">This File Already Exists</h5>
+		                        <p>Duplicate transaction records found. Upload cancelled.</p>
+		                    </div>
+		                `;
+		            }
+
+		            // ✅ SUCCESSFUL UPLOAD
+		            else if (response.status === 'success') {
+		                message = `
+		                    <div class="text-center">
+		                        <h5 style="color:green;">File Upload Completed</h5>
+		                        <p>Total Records Processed: ${formattedProcessed}</p>
+		                        <p>Total Records Succeeded: ${formattedSucceeded}</p>
+		                        <p>Total Records Failed: ${formattedFailed}</p>
+		                    </div>
+		                `;
+		            }
+
+		            // ⚠️ ERROR FROM SERVER
+		            else if (response.status === 'error') {
+		                message = `
+		                    <div class="text-center">
+		                        <h5 style="color:red;">Error Occurred</h5>
+		                        <p>${response.message || "Something went wrong while uploading the file."}</p>
+		                    </div>
+		                `;
+		            }
+
+		            // Update modal and show popup
+		            $('#Successmsgpopup').html(message);
+		            $('#SuccesPopUp').modal('show');
+		        },
+		        error: function (error) {
+		            document.getElementById('loadingModal').style.display = 'none';
+		            alert("Error: " + (error.responseText || "Something went wrong"));
+		        }
+		    });
 		}
+
 	});
 
 	function showResponse(response) {
