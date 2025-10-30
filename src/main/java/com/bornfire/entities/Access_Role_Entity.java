@@ -102,6 +102,8 @@ public class Access_Role_Entity {
 	private String batch_job;
 	private String balance_sheets;
     private String dab;
+    private String transaction_report;
+    private String consolidated_report;
 
 
     private String end_of_month_report;
@@ -121,8 +123,24 @@ public class Access_Role_Entity {
     public void setDab(String dab) {
         this.dab = dab;
     }
+    
+    public String getTransaction_report() {
+		return transaction_report;
+	}
 
-    public String getEnd_of_month_report() {
+	public void setTransaction_report(String transaction_report) {
+		this.transaction_report = transaction_report;
+	}
+
+	public String getConsolidated_report() {
+		return consolidated_report;
+	}
+
+	public void setConsolidated_report(String consolidated_report) {
+		this.consolidated_report = consolidated_report;
+	}
+
+	public String getEnd_of_month_report() {
         return end_of_month_report;
     }
 

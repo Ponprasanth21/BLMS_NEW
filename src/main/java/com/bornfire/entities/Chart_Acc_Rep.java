@@ -176,7 +176,45 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 		    "ORDER BY b.account_state, b.id",
 		    nativeQuery = true)
 		List<Object[]> findLoanAccountsByDueDate();
+		
+		
+		@Query(value =
+			    "SELECT " +
+			    "    b.tran_date AS TRDT, " +
+			    "    a.acct_num AS ACNO, " +
+			    "    a.acct_name AS ACNAME, " +
+			    "    INITCAP(b.tran_type) AS TT, " +
+			    "    b.tran_id AS TRID, " +
+			    "    b.part_tran_id AS PTID, " +
+			    "    INITCAP(b.part_tran_type) AS PTT, " +
+			    "    DECODE(b.part_tran_type,'Credit',b.tran_amt,0.00) AS CR, " +
+			    "    DECODE(b.part_tran_type,'Debit',b.tran_amt,0.00) AS DR, " +
+			    "    b.tran_particular AS TP " +
+			    "FROM BGLS_CHART_OF_ACCOUNTS a " +
+			    "JOIN BGLS_TRM_WRK_TRANSACTIONS b ON a.acct_num = b.acct_num " +
+			    "WHERE TO_CHAR(b.tran_date, 'DD-MM-YYYY') = :tranDate " +
+			    "ORDER BY b.tran_date, b.tran_id, b.part_tran_id",
+			    nativeQuery = true)
+			List<Object[]> getTransactionReportByDate(@Param("tranDate") String tranDate);
 
+		    @Query(value =
+		            "SELECT " +
+		            "    a.gl_desc AS GLDESC, " +
+		            "    a.acct_num AS ACNO, " +
+		            "    a.acct_name AS ACNAME, " +
+		            "    b.opening_bal AS OPBAL, " +
+		            "    b.tran_cr_bal AS CRBAL, " +
+		            "    b.tran_dr_bal AS DRBAL, " +
+		            "    b.tran_tot_net AS NET, " +
+		            "    CASE WHEN b.tran_date_bal > 0 THEN b.tran_date_bal ELSE 0 END AS ACCRBAL, " +
+		            "    CASE WHEN b.tran_date_bal < 0 THEN b.tran_date_bal ELSE 0 END AS ACDRBAL " +
+		            "FROM BGLS_CHART_OF_ACCOUNTS a " +
+		            "JOIN BGLS_DAILY_ACCT_BAL b ON a.acct_num = b.acct_num " +
+		            "WHERE TO_CHAR(b.tran_date, 'DD-MM-YYYY') = :tranDate " +
+		            "AND a.own_type IN ('C', 'O') " +
+		            "ORDER BY a.gl_desc, a.acct_num",
+		            nativeQuery = true)
+		        List<Object[]> getDabReportByDate(@Param("tranDate") String tranDate);
 
 
 }

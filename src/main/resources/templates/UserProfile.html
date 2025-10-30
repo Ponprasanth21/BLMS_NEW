@@ -312,6 +312,8 @@
 					$("#balance_sheet").prop("checked", true);
 					$("#end_of_month_report").prop("checked", true);
 					$("#dab_report").prop("checked", true);
+					$("#consolidated_report").prop("checked", true);
+					$("#transaction_report").prop("checked", true);
 					$("#credit_facility_report1").prop("checked", true);
 				} else {
 					$("#account_balance_inq").prop("checked", false);
@@ -324,6 +326,8 @@
 					$("#balance_sheet").prop("checked", false);
 					$("#end_of_month_report").prop("checked", false);
 					$("#dab_report").prop("checked", false);
+					$("#transaction_report").prop("checked", false);
+					$("#consolidated_report").prop("checked", false);
 					$("#credit_facility_report1").prop("checked", false);
 				}
 			}
@@ -717,6 +721,8 @@
 					account_balance_inq: $('#account_balance_inq').is(':checked') ? 'Y' : 'N',
 					end_of_month_report: $('#end_of_month_report').is(':checked') ? 'Y' : 'N',
 					dab: $('#dab_report').is(':checked') ? 'Y' : 'N',
+					transaction_report: $('#transaction_report').is(':checked') ? 'Y' : 'N',
+					consolidated_report: $('#consolidated_report').is(':checked') ? 'Y' : 'N',
 					credit_facility_report: $('#credit_facility_report1').is(':checked') ? 'Y' : 'N',
 					interset_summary_inq: $('#interset_summary_inq').is(':checked') ? 'Y' : 'N',
 					account_ledgers_i: $('#account_ledgers_i').is(':checked') ? 'Y' : 'N',
@@ -869,6 +875,7 @@
 					pass_exp_date: passwordExpiryDate,
 					user_status: $('#userStatus').val(),
 					login_status: $('#loginStatus').val(),
+					user_locked_flg: $('#user_locked_flg').val(),
 					role_id: $('#roleId').val(),
 					acc_exp_date: accountExpiryDate,
 					role_desc: $('#roleDesc').val(),
@@ -941,6 +948,8 @@
 					account_balance_inq: $('#account_balance_inq').is(':checked') ? 'Y' : 'N',
 					end_of_month_report: $('#end_of_month_report').is(':checked') ? 'Y' : 'N',
 					dab: $('#dab_report').is(':checked') ? 'Y' : 'N',
+					transaction_report: $('#transaction_report').is(':checked') ? 'Y' : 'N',
+					consolidated_report: $('#consolidated_report').is(':checked') ? 'Y' : 'N',
 					credit_facility_report: $('#credit_facility_report1').is(':checked') ? 'Y' : 'N',
 					interset_summary_inq: $('#interset_summary_inq').is(':checked') ? 'Y' : 'N',
 					account_ledgers_i: $('#account_ledgers_i').is(':checked') ? 'Y' : 'N',
@@ -1462,7 +1471,7 @@
 
 														<a class="dropdown-item verify-item"
 															style="border-top: 1px solid #dee2e6;"
-															th:if='${userProfile?.modify_flg == "N" and userProfile?.auth_flg == "Y" and userProfile?.entry_user != session.USERID}'
+															th:if='${userProfile?.modify_flg == "N" and userProfile?.auth_flg == "Y"}'
 															th:attr="data-userId=${userProfile?.userid}" title="Verify"
 															onclick="verifyuser(this)">Verify</a>
 
@@ -2662,12 +2671,23 @@
 
 									<div class="col-sm-1"></div>
 									<label class="col-sm-2">Login Flag</label>
-									<div class="col-sm-2">
+									<!-- <div class="col-sm-2">
 										<input id="login_flg" name="login_flg" th:value="${userProfile?.login_flg}"
 											class="form-control form-control-sm bg-white border border-dark"
 											autocomplete="off" required readonly>
 
+									</div> -->
+
+									<div class="col-sm-2">
+										<select id="user_locked_flg" name="user_locked_flg"
+											th:value="${userProfile?.user_locked_flg}"
+											class="form-control form-control-sm bg-white border border-dark"
+											required>
+											<option value="N" th:selected="${userProfile?.user_locked_flg == 'N'}">N</option>
+											<option value="Y" th:selected="${userProfile?.user_locked_flg == 'Y'}">Y</option>
+										</select>
 									</div>
+
 
 								</div>
 
@@ -4331,6 +4351,18 @@
 								th:disabled="${formmode != 'add' and formmode != 'modify'}"
 								th:checked="${access?.dab == 'Y'}"
 								style="margin-right: 10px; margin-top: 10px" /> <label for="dab_report">DAB Report
+							</label></li>
+
+						<li><input type="checkbox" id="consolidated_report" name="consolidated_report"
+								th:disabled="${formmode != 'add' and formmode != 'modify'}"
+								th:checked="${access?.consolidated_report == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="consolidated_report">Consolidated Report
+							</label></li>
+
+						<li><input type="checkbox" id="transaction_report" name="transaction_report"
+								th:disabled="${formmode != 'add' and formmode != 'modify'}"
+								th:checked="${access?.transaction_report == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label for="transaction_report">Transaction Report
 							</label></li>
 
 						<li><input type="checkbox" id="interset_summary_inq" name="interset_summary_inq"

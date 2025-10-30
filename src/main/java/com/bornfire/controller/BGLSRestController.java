@@ -11753,5 +11753,49 @@ public class BGLSRestController {
 
         return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
     }
+    
+    
+
+
+    @GetMapping("/TransactionReportDownload")
+       public ResponseEntity<byte[]> TransactionReportDownload(@RequestParam("dueDate") String dueDate) {
+
+           List<Object[]> rawData = chart_Acc_Rep.getTransactionReportByDate(dueDate);
+           byte[] excelData = exelDownloadService.generateTransactionExcelReport(rawData, dueDate);
+
+           if (excelData == null || excelData.length == 0) {
+               return ResponseEntity.noContent().build();
+           }
+
+           String fileName = "TRANSACTION_REPORT_" + dueDate + ".xlsx";
+
+           HttpHeaders headers = new HttpHeaders();
+           headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+           headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+           return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+       }
+       
+       @GetMapping("/DABReportDownload")
+       public ResponseEntity<byte[]> DABReportDownload(@RequestParam("tranDate") String tranDate) {
+
+           List<Object[]> rawData = chart_Acc_Rep.getDabReportByDate(tranDate);
+           System.out.println(tranDate);
+           byte[] excelData = exelDownloadService.generateDabExcelReport(rawData, tranDate);
+
+           if (excelData == null || excelData.length == 0) {
+               return ResponseEntity.noContent().build();
+           }
+
+           String fileName = "DAB_REPORT_" + tranDate + ".xlsx";
+
+           HttpHeaders headers = new HttpHeaders();
+           headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+           headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+           return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+       }
+
+
 
 }

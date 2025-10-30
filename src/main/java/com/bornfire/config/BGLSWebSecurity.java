@@ -301,7 +301,9 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
                 request.getSession().setAttribute("SCREEN_ACCESS_CREDIT_FACILITY_REPORT", (access_role != null && access_role.getCredit_facility_report() != null ) ? access_role.getCredit_facility_report() : 'N' );
                 request.getSession().setAttribute("SCREEN_ACCESS_END_OF_MONTH_REPORT", (access_role != null && access_role.getEnd_of_month_report() != null ) ? access_role.getEnd_of_month_report() : 'N' );
                 request.getSession().setAttribute("SCREEN_ACCESS_DAB", (access_role != null && access_role.getDab() != null ) ? access_role.getDab() : 'N' );
-				
+                request.getSession().setAttribute("SCREEN_ACCESS_CONSOLIDATED_REPORT", (access_role != null && access_role.getConsolidated_report() != null ) ? access_role.getConsolidated_report() : 'N' );
+                request.getSession().setAttribute("SCREEN_ACCESS_TRANSACTION_REPORT", (access_role != null && access_role.getTransaction_report() != null ) ? access_role.getTransaction_report() : 'N' );
+
 				audit.insertUserAudit(user.getUserid(), user.getUsername(), "LOGIN", "LOGGED IN SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "LOGIN ");
 				response.sendRedirect("Dashboard");
 			}

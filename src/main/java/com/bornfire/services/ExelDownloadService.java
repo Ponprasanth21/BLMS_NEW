@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -1287,6 +1288,7 @@ public class ExelDownloadService {
 //        }
     
     
+//    Consolidated Report
     public byte[] generateTransactionExcel(List<Object[]> rawData, String dueDate) {
         if (rawData == null || rawData.isEmpty()) {
             return new byte[0];
@@ -1446,7 +1448,306 @@ public class ExelDownloadService {
             return new byte[0];
         }
     }
-
     
+//    Transaction Report
+    public byte[] generateTransactionExcelReport(List<Object[]> rawData, String dueDate) {
+        if (rawData == null || rawData.isEmpty()) {
+            return new byte[0];
+        }
+
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet("TRANSACTION_REPORT_" + dueDate);
+
+            // 1️⃣ Title Row
+            Row titleRow = sheet.createRow(0);
+            Cell titleCell = titleRow.createCell(0);
+            titleCell.setCellValue("TRANSACTION REPORT");
+
+            CellStyle titleStyle = workbook.createCellStyle();
+            Font titleFont = workbook.createFont();
+            titleFont.setBold(true);
+            titleFont.setFontHeightInPoints((short) 12);
+            titleStyle.setFont(titleFont);
+            titleStyle.setAlignment(HorizontalAlignment.CENTER);
+            titleCell.setCellStyle(titleStyle);
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 9));
+
+            // 2️⃣ Printed Date Row
+            Row dateRow = sheet.createRow(1);
+            Cell dateCell = dateRow.createCell(0);
+            Cell dateCell2 = dateRow.createCell(1);
+            dateCell.setCellValue("Printed Date ");
+            dateCell2.setCellValue(dueDate);
+
+            CellStyle dateStyle = workbook.createCellStyle();
+            Font dateFont = workbook.createFont();
+            dateFont.setItalic(true);
+            dateFont.setFontHeightInPoints((short) 11);
+            dateStyle.setFont(dateFont);
+            dateCell.setCellStyle(dateStyle);
+            dateCell2.setCellStyle(dateStyle);
+
+            // 3️⃣ Header Row
+            Row header = sheet.createRow(3);
+            String[] headers = {
+                "TRAN_DATE", "ACCT_NUM", "ACCT_NAME", "TRAN_TYPE", "TRAN_ID",
+                "PART_TRAN_ID", "PART_TRAN_TYPE", "CREDIT", "DEBIT", "TRAN_PARTICULAR"
+            };
+
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
+            headerStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            headerStyle.setBorderBottom(BorderStyle.THIN);
+            headerStyle.setBorderTop(BorderStyle.THIN);
+            headerStyle.setBorderLeft(BorderStyle.THIN);
+            headerStyle.setBorderRight(BorderStyle.THIN);
+
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = header.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            // 4️⃣ Data Rows
+            CellStyle numberStyle = workbook.createCellStyle();
+            DataFormat format = workbook.createDataFormat();
+            numberStyle.setDataFormat(format.getFormat("#,##0.00"));
+
+            CellStyle dateCellStyle = workbook.createCellStyle();
+            dateCellStyle.setDataFormat(format.getFormat("dd-mm-yyyy")); // ✅ Set date format
+
+            CellStyle leftAlignStyle = workbook.createCellStyle();
+            leftAlignStyle.setAlignment(HorizontalAlignment.LEFT);
+
+            SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+            int rowNum = 4;
+            for (Object[] rowData : rawData) {
+                Row row = sheet.createRow(rowNum++);
+                for (int i = 0; i < rowData.length; i++) {
+                    Cell cell = row.createCell(i);
+                    Object value = rowData[i];
+
+                    if (value == null) {
+                        cell.setCellValue("");
+                        continue;
+                    }
+
+                    // ✅ Format TRAN_DATE column (index 0)
+                    if (i == 0) {
+                        try {
+                            String dateStr = value.toString();
+                            Date parsedDate = inputDateFormat.parse(dateStr);
+                            cell.setCellValue(outputDateFormat.format(parsedDate));
+                            cell.setCellStyle(dateCellStyle);
+                        } catch (Exception e) {
+                            cell.setCellValue(value.toString());
+                            cell.setCellStyle(leftAlignStyle);
+                        }
+                    }
+                    // CREDIT and DEBIT columns are numeric
+                    else if (i == 7 || i == 8) {
+                        try {
+                            double numericValue = Double.parseDouble(value.toString().replaceAll(",", ""));
+                            cell.setCellValue(numericValue);
+                            cell.setCellStyle(numberStyle);
+                        } catch (NumberFormatException e) {
+                            cell.setCellValue(value.toString());
+                            cell.setCellStyle(leftAlignStyle);
+                        }
+                    } else {
+                        cell.setCellValue(value.toString());
+                        cell.setCellStyle(leftAlignStyle);
+                    }
+                }
+            }
+
+            // 5️⃣ Total SUM Row for CREDIT & DEBIT
+            int lastDataRow = rowNum;
+            Row sumRow = sheet.createRow(rowNum + 1);
+
+            Cell sumLabel = sumRow.createCell(6);
+            sumLabel.setCellValue("TOTAL :");
+            CellStyle boldStyle = workbook.createCellStyle();
+            Font boldFont = workbook.createFont();
+            boldFont.setBold(true);
+            boldStyle.setFont(boldFont);
+            sumLabel.setCellStyle(boldStyle);
+
+            Cell crSumCell = sumRow.createCell(7);
+            crSumCell.setCellFormula("SUM(H5:H" + lastDataRow + ")");
+            crSumCell.setCellStyle(numberStyle);
+
+            Cell drSumCell = sumRow.createCell(8);
+            drSumCell.setCellFormula("SUM(I5:I" + lastDataRow + ")");
+            drSumCell.setCellStyle(numberStyle);
+
+            // 6️⃣ Auto-size Columns
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            workbook.write(out);
+            return out.toByteArray();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new byte[0];
+        }
+    }
+
+
+    public byte[] generateDabExcelReport(List<Object[]> rawData, String tranDate) {
+        if (rawData == null || rawData.isEmpty()) {
+            return new byte[0];
+        }
+
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet("DAB_REPORT_" + tranDate);
+
+            // Title Row
+            Row titleRow = sheet.createRow(0);
+            Cell titleCell = titleRow.createCell(0);
+            titleCell.setCellValue("DAILY ACCOUNT BALANCE REPORT");
+            CellStyle titleStyle = workbook.createCellStyle();
+            Font titleFont = workbook.createFont();
+            titleFont.setBold(true);
+            titleFont.setFontHeightInPoints((short) 12);
+            titleStyle.setFont(titleFont);
+            titleStyle.setAlignment(HorizontalAlignment.CENTER);
+            titleCell.setCellStyle(titleStyle);
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 8));
+
+            // Printed Date Row
+            Row dateRow = sheet.createRow(1);
+            Cell dateLabel = dateRow.createCell(0);
+            Cell dateValue = dateRow.createCell(1);
+            dateLabel.setCellValue("Printed Date");
+            dateValue.setCellValue(tranDate);
+
+            // Header Row
+            Row header = sheet.createRow(3);
+            String[] headers = {
+                "GL DESC", "ACCOUNT NO", "ACCOUNT NAME", "OPENING BAL",
+                "CR BAL", "DR BAL", "NET", "ACCR BAL", "ACDR BAL"
+            };
+
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
+            headerStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            headerStyle.setBorderBottom(BorderStyle.THIN);
+            headerStyle.setBorderTop(BorderStyle.THIN);
+            headerStyle.setBorderLeft(BorderStyle.THIN);
+            headerStyle.setBorderRight(BorderStyle.THIN);
+
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = header.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            // Data + Total Calculation
+            CellStyle numberStyle = workbook.createCellStyle();
+            DataFormat format = workbook.createDataFormat();
+            numberStyle.setDataFormat(format.getFormat("#,##0.00"));
+
+            CellStyle textStyle = workbook.createCellStyle();
+            textStyle.setAlignment(HorizontalAlignment.LEFT);
+
+            int rowNum = 4;
+            double totalOp = 0, totalCr = 0, totalDr = 0, totalNet = 0, totalAccr = 0, totalAcdr = 0;
+
+            for (Object[] rowData : rawData) {
+                Row row = sheet.createRow(rowNum++);
+                for (int i = 0; i < rowData.length; i++) {
+                    Cell cell = row.createCell(i);
+                    Object value = rowData[i];
+                    if (value == null) {
+                        cell.setCellValue("");
+                        continue;
+                    }
+
+                    // Numeric columns: 3 to 8
+                    if (i >= 3) {
+                        try {
+                            double num = Double.parseDouble(value.toString());
+                            cell.setCellValue(num);
+                            cell.setCellStyle(numberStyle);
+
+                            switch (i) {
+                            case 3:
+                                totalOp += num;
+                                break;
+                            case 4:
+                                totalCr += num;
+                                break;
+                            case 5:
+                                totalDr += num;
+                                break;
+                            case 6:
+                                totalNet += num;
+                                break;
+                            case 7:
+                                totalAccr += num;
+                                break;
+                            case 8:
+                                totalAcdr += num;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        } catch (NumberFormatException e) {
+                            cell.setCellValue(value.toString());
+                            cell.setCellStyle(textStyle);
+                        }
+                    } else {
+                        cell.setCellValue(value.toString());
+                        cell.setCellStyle(textStyle);
+                    }
+                }
+            }
+
+            // Total Row
+            Row totalRow = sheet.createRow(rowNum + 1);
+            Cell labelCell = totalRow.createCell(2);
+            labelCell.setCellValue("TOTAL:");
+            CellStyle boldStyle = workbook.createCellStyle();
+            Font boldFont = workbook.createFont();
+            boldFont.setBold(true);
+            boldStyle.setFont(boldFont);
+            labelCell.setCellStyle(boldStyle);
+
+            double[] totals = {totalOp, totalCr, totalDr, totalNet, totalAccr, totalAcdr};
+            for (int i = 0; i < totals.length; i++) {
+                Cell totalCell = totalRow.createCell(i + 3);
+                totalCell.setCellValue(totals[i]);
+                totalCell.setCellStyle(numberStyle);
+            }
+
+            // Auto size columns
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            workbook.write(out);
+            return out.toByteArray();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new byte[0];
+        }
+    }
+
 
 }

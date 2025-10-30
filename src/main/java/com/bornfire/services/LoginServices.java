@@ -185,9 +185,25 @@ public class LoginServices {
 
 		    if (up.getLogin_status().equals("Active")) {
 		        up.setUser_locked_flg("N");
+		        up.setNo_of_attmp(0);
 		    } else {
 		        up.setUser_locked_flg("Y");
 		    }
+		    
+		    System.out.println(original.getUser_locked_flg());
+	    	System.out.println(userProfile.getUser_locked_flg());
+		    if (!original.getUser_locked_flg().equalsIgnoreCase(userProfile.getUser_locked_flg())) {
+		    	System.out.println("this entered ");
+		        up.setNo_of_attmp(0);
+		        up.setUser_locked_flg(userProfile.getUser_locked_flg());
+		        // If user is locked ("Y"), mark login_status as "Inactive"
+		        if (userProfile.getUser_locked_flg().equalsIgnoreCase("Y")) {
+		            up.setLogin_status("Inactive");
+		        } else {
+		            up.setLogin_status("Active");
+		        }
+		    }
+
 
 		    if (up.getUser_status().equals("Active")) {
 		        up.setDisable_flg("N");

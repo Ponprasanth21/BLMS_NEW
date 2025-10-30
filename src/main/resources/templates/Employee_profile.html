@@ -558,7 +558,7 @@ function updateFileName() {
 															th:attr="data-empId=${EmployeeData?.employee_id}" title="View"
 															onclick="enquiryuser(this)">View</a>
 
-													<a class="dropdown-item verify-item" th:if='${EmployeeData?.modify_flg == "N" and EmployeeData?.verify_flg == "Y" and EmployeeData?.entry_user != session.USERID}'
+													<a class="dropdown-item verify-item" th:if='${EmployeeData?.modify_flg == "N" and EmployeeData?.verify_flg == "Y"}'
 														th:attr="data-resource=${EmployeeData.employee_id}" style="border-top: 1px solid #dee2e6;"
 														title="Verify" onclick="verify(this)">Verify</a>
 
@@ -652,12 +652,12 @@ function updateFileName() {
 										<div class="col-sm-2 d-flex align-items-center">Employee
 											Id</div>
 
-
+											<!-- th:value="${seq}" -->
 										<div class="col-sm-2 d-flex align-items-center">
 											<input type="text" name="employee_id" id="employee_id1"
-												th:value="${seq}"
+												
 												class="form-control form-control-sm bg-white border border-dark"
-												required readonly />
+												required />
 
 										</div>
 
