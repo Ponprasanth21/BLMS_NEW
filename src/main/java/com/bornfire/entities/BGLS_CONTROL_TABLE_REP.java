@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import javax.transaction.Transactional;
+
 @Repository
 public interface BGLS_CONTROL_TABLE_REP extends JpaRepository<BGLS_Control_Table,Date>{
 	@Query(value="SELECT * FROM BGLS_CONTROL_TABLE", nativeQuery = true)
@@ -85,8 +88,9 @@ public interface BGLS_CONTROL_TABLE_REP extends JpaRepository<BGLS_Control_Table
 	    
 	    @Query(value = "SELECT DCP_STATUS FROM BGLS_CONTROL_TABLE", nativeQuery = true)
 	    String getDcpstatus();
-	
-	    @Modifying
+
+        @Transactional
+        @Modifying
 	    @Query(value = "UPDATE BGLS_CONTROL_TABLE SET TRAN_DATE = :nxtdate, DCP_END_TIME = CURRENT_TIMESTAMP,PREVIOUS_DATE =:trndate", nativeQuery = true)
 	    int updateTranDates(@Param("nxtdate") Date nxtdate,@Param("trndate") Date trndate);
 

@@ -5038,6 +5038,8 @@ public class BGLSNavigationController {
         int result=bGLS_CONTROL_TABLE_REP.updateTranDates(nxtdate, trndate);
         
         if (result > 0) {
+            BGLS_Control_Table up1 = bGLS_CONTROL_TABLE_REP.getTranDate();
+            rq.getSession().setAttribute("TRANDATE", up1.getTran_date());
             return "Date Change Successfully";
         } else {
             return "Date Change Unsuccessful";
