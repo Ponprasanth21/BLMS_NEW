@@ -118,19 +118,6 @@
 			height: 100px;
 		}
 
-		.modal-content1 {
-			background-color: #fefefe;
-			margin: 5% auto;
-			/* Top margin smaller */
-			padding: 20px;
-			border: 1px solid #888;
-			width: 70%;
-			height: 70%;
-			/* Increase height */
-			display: flex;
-			flex-direction: column;
-		}
-
 		.modal-body {
 			flex: 1;
 			overflow-y: auto;
@@ -146,37 +133,35 @@
 	<style>
 		.modal {
 			display: none;
-			/* Hidden by default */
-			position: absolute;
-			/* Stay in place */
+			position: fixed;
 			z-index: 1;
-			/* Location of the box */
 			left: 0;
 			top: 0;
 			width: 100%;
-			/* Full width */
 			height: 100%;
-			/* Full height */
 			overflow: auto;
-			/* Enable scroll if needed */
-			background-color: rgb(0, 0, 0);
-			/* Fallback color */
 			background-color: rgba(0, 0, 0, 0.4);
-			/* Black w/ opacity */
+			margin-left: 350px;
 		}
 
-		/* Modal Content */
 		.modal-content {
 			background-color: #fefefe;
-			margin: auto;
+			margin: 15% auto;
 			padding: 20px;
 			border: 1px solid #888;
 			width: 100%;
-			box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-			-webkit-animation-name: animatetop;
-			-webkit-animation-duration: 0.4s;
-			animation-name: animatetop;
-			animation-duration: 0.4s
+			height: 25%;
+			margin-left: 200px;
+		}
+
+		.modal-content1 {
+			background-color: #fefefe;
+			margin: 10% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 70%;
+			height: 45%;
+			margin-left: 200px;
 		}
 
 		.modal-pass {
@@ -231,77 +216,6 @@
 
 		.big-btn {
 			font-size: 16px;
-		}
-
-		#serviceflowIdTable {
-			width: 100%;
-			border-collapse: collapse;
-		}
-
-		/* Make table header fixed and tbody scrollable */
-		.table-wrapper {
-			max-height: 350px;
-			overflow-y: auto;
-			display: block;
-		}
-
-		#serviceflowIdTable thead,
-		#serviceflowIdTable tbody tr {
-			display: table;
-			width: 100%;
-			table-layout: fixed;
-		}
-
-		#serviceflowIdTable thead {
-			width: calc(100% - 1em);
-			/* adjust for scrollbar width */
-		}
-	</style>
-	<style>
-		#flowIdTbodynew {
-			display: block;
-			/* Make tbody block so height can be set */
-			max-height: 370px;
-			/* Set your desired height */
-			overflow-y: auto;
-			/* Enable vertical scroll */
-		}
-
-		#serviceflowIdTable thead,
-		#serviceflowIdTable tbody tr {
-			display: table;
-			width: 100%;
-			table-layout: fixed;
-			/* Maintain column alignment */
-		}
-
-		#serviceflowIdTable thead {
-			width: calc(100% - 1em);
-			/* Adjust header width to align with scrollbar */
-		}
-
-		/* Make tbody scrollable */
-		#flowIdTbodynew1 {
-			display: block;
-			/* make tbody block so height can be set */
-			max-height: 370px;
-			/* set desired height */
-			overflow-y: auto;
-			/* enable vertical scroll */
-		}
-
-		/* Maintain table layout and column alignment */
-		#serviceflowIdTable thead,
-		#serviceflowIdTable tbody tr {
-			display: table;
-			width: 100%;
-			table-layout: fixed;
-			/* maintain column alignment */
-		}
-
-		/* Adjust header width to align with scrollbar */
-		#serviceflowIdTable thead {
-			width: calc(100% - 1em);
 		}
 	</style>
 	<script>
@@ -776,7 +690,7 @@
 				let flowAmt = row.find("input[name='flow_amt']").val() || row.find("input[name='flow_amtvals']").val();
 
 				if (!flowAmt) return true; // Skip if no amount
-				
+
 				let encodedKey = encodedKeys1[index] || '';
 
 				let rowData = {
@@ -1902,25 +1816,29 @@
 								onclick="deleteloanRow()" alt="Remove">
 						</div>
 
-						<table class="table table-bordered table-sm mt-2"
-							style="margin-bottom: 0px; font-size: initial;" id="serviceflowIdTable">
-							<thead class="thead-light">
-								<tr>
-									<th>Flow Date</th>
-									<th>Flow ID</th>
-									<th>Flow Code</th>
-									<th style="text-align: center;">Flow Amt</th>
-									<th>Acct ID</th>
-									<th>Acct Name</th>
-								</tr>
-							</thead>
-							<tbody id="flowIdTbodynew">
+						<div style="max-height: 365px; overflow-y: auto; display: block;">
+							<table class="table table-bordered table-sm mt-2"
+								style="margin-bottom: 0px; font-size: initial; width: 100%;" id="serviceflowIdTable">
+								<thead class="thead-light"
+									style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+									<tr>
+										<th>Flow Date</th>
+										<th>Flow ID</th>
+										<th>Flow Code</th>
+										<th style="text-align: center;">Flow Amt</th>
+										<th>Acct ID</th>
+										<th>Acct Name</th>
+									</tr>
+								</thead>
+								<tbody id="flowIdTbodynew">
+									<!-- dynamic rows -->
+								</tbody>
+							</table>
+						</div>
 
-							</tbody>
-						</table>
 					</div>
 
-					<div class="card-body" style="display: none;" id="closuredatas">
+					<div class="card-body border" style="display: none;" id="closuredatas">
 
 						<!-- Main Row for Transaction Type and Account Type Sections in a Single Row -->
 						<!-- Section Heading: Date Range -->
@@ -2122,7 +2040,7 @@
 
 	<div id="myModalpreclosure" class="modal" style="font-size:120%;">
 		<div class="modal-content1">
-			<!-- <div class="close text-right" onclick="closeModalpreclosure(this);">&times;</div> -->
+			<div class="close text-right" onclick="closeModalpreclosure(this);">&times;</div>
 			<div class="panel panel-primary filterable">
 
 				<!-- FILTER BUTTON -->

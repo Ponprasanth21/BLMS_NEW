@@ -146,76 +146,50 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 	List<CLIENT_MASTER_ENTITY> searchByEmailAndStatus(@Param("email") String email, @Param("status") String status);
 
 	@Query(value = "WITH LoanFlows AS ( " +
-	        "    SELECT " +
-	        "        B.due_date, " +
-	        "        '1' AS flow_id, " +
-	        "        'PLREC' AS flow_code, " +
-	        "        (B.PENALTY_EXP - B.PENALTY_PAID) AS flow_amt, " +
-	        "        A.ID AS loan_acct_no, " +
-	        "        C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name, " +
-	        "        A.ENCODED_KEY, " +
-	        "        C.CUSTOMER_ID " +
+	        "    SELECT B.due_date, '1' AS flow_id, 'PLREC' AS flow_code, " +
+	        "           (B.PENALTY_EXP - B.PENALTY_PAID) AS flow_amt, " +
+	        "           A.ID AS loan_acct_no, C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name, " +
+	        "           A.ENCODED_KEY, C.CUSTOMER_ID " +
 	        "    FROM CLIENT_MASTER_TBL C " +
 	        "    JOIN LOAN_ACCOUNT_MASTER_TBL A ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY " +
 	        "    JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY " +
 	        "    WHERE C.CUSTOMER_ID = :customerId " +
 	        "      AND (B.PENALTY_EXP - B.PENALTY_PAID) > 0 " +
-
 	        "    UNION ALL " +
-
-	        "    SELECT " +
-	        "        B.due_date, " +
-	        "        '2' AS flow_id, " +
-	        "        'FEREC' AS flow_code, " +
-	        "        (B.FEE_EXP - B.FEE_PAID) AS flow_amt, " +
-	        "        A.ID AS loan_acct_no, " +
-	        "        C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name, " +
-	        "        A.ENCODED_KEY, " +
-	        "        C.CUSTOMER_ID " +
+	        "    SELECT B.due_date, '2' AS flow_id, 'FEREC' AS flow_code, " +
+	        "           (B.FEE_EXP - B.FEE_PAID) AS flow_amt, " +
+	        "           A.ID AS loan_acct_no, C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name, " +
+	        "           A.ENCODED_KEY, C.CUSTOMER_ID " +
 	        "    FROM CLIENT_MASTER_TBL C " +
 	        "    JOIN LOAN_ACCOUNT_MASTER_TBL A ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY " +
 	        "    JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY " +
 	        "    WHERE C.CUSTOMER_ID = :customerId " +
 	        "      AND (B.FEE_EXP - B.FEE_PAID) > 0 " +
-
 	        "    UNION ALL " +
-
-	        "    SELECT " +
-	        "        B.due_date, " +
-	        "        '3' AS flow_id, " +
-	        "        'INREC' AS flow_code, " +
-	        "        (B.INTEREST_EXP - B.INTEREST_PAID) AS flow_amt, " +
-	        "        A.ID AS loan_acct_no, " +
-	        "        C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name, " +
-	        "        A.ENCODED_KEY, " +
-	        "        C.CUSTOMER_ID " +
+	        "    SELECT B.due_date, '3' AS flow_id, 'INREC' AS flow_code, " +
+	        "           (B.INTEREST_EXP - B.INTEREST_PAID) AS flow_amt, " +
+	        "           A.ID AS loan_acct_no, C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name, " +
+	        "           A.ENCODED_KEY, C.CUSTOMER_ID " +
 	        "    FROM CLIENT_MASTER_TBL C " +
 	        "    JOIN LOAN_ACCOUNT_MASTER_TBL A ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY " +
 	        "    JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY " +
 	        "    WHERE C.CUSTOMER_ID = :customerId " +
 	        "      AND (B.INTEREST_EXP - B.INTEREST_PAID) > 0 " +
-
 	        "    UNION ALL " +
-
-	        "    SELECT " +
-	        "        B.due_date, " +
-	        "        '4' AS flow_id, " +
-	        "        'PRREC' AS flow_code, " +  // ✅ Corrected from PLREC → PRREC
-	        "        (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) AS flow_amt, " +
-	        "        A.ID AS loan_acct_no, " +
-	        "        C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name, " +
-	        "        A.ENCODED_KEY, " +
-	        "        C.CUSTOMER_ID " +
+	        "    SELECT B.due_date, '4' AS flow_id, 'PRREC' AS flow_code, " +
+	        "           (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) AS flow_amt, " +
+	        "           A.ID AS loan_acct_no, C.FIRST_NAME || ' ' || C.LAST_NAME AS acct_name, " +
+	        "           A.ENCODED_KEY, C.CUSTOMER_ID " +
 	        "    FROM CLIENT_MASTER_TBL C " +
 	        "    JOIN LOAN_ACCOUNT_MASTER_TBL A ON C.ENCODED_KEY = A.ACCOUNT_HOLDERKEY " +
 	        "    JOIN LOAN_REPAYMENT_TBL B ON A.ENCODED_KEY = B.PARENT_ACCOUNT_KEY " +
 	        "    WHERE C.CUSTOMER_ID = :customerId " +
-	        " ) " +
+	        "      AND (B.PRINCIPAL_EXP - B.PRINCIPAL_PAID) > 0 " +
+	        ") " +
 	        "SELECT due_date, flow_id, flow_code, flow_amt, loan_acct_no, acct_name, encoded_key, customer_id " +
-	        "FROM LoanFlows " +
-	        "ORDER BY flow_id, due_date",  // ✅ Order by flow_id first
+	        "FROM LoanFlows ORDER BY flow_id, due_date",
 	        nativeQuery = true)
-	List<Object[]> getLoanFlowsByCustomer(@Param("customerId") String customerId);
+	List<Object[]> findLoanFlowsByCustomerId(@Param("customerId") String customerId);
 
 //		@Query(value = "SELECT * " +
 //	               "FROM CLIENT_MASTER_TBL " +
@@ -257,5 +231,8 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 //	            "FETCH FIRST 2000 ROWS ONLY",
 //		       nativeQuery = true)
 //		List<CLIENT_MASTER_ENTITY> getClientDetails();
+	
+	@Query(value = "SELECT * FROM CLIENT_MASTER_TBL where customer_id = ?1", nativeQuery = true)
+	List<CLIENT_MASTER_ENTITY> getClientDetails1(String customer_id);
 
 }

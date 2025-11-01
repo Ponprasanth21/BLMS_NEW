@@ -445,6 +445,11 @@
 
 		function getflowDetails() {
 			event.preventDefault();
+			$("#collectionsubmit").hide();
+			$("#interestsubmit").hide();
+			$("#feessubmit").hide();
+			$("#penaltysubmit").hide();
+			$("#bookingsubmit").hide();
 
 			if ($('#interest').is(':checked')) {
 				console.log("Interest option is checked.");
