@@ -1482,14 +1482,14 @@
 
 														<a class="dropdown-item modify-item"
 															style="border-top: 1px solid #dee2e6;"
-															th:if='${userProfile?.auth_flg == "N" and userProfile?.modify_flg == "Y" and userProfile?.entry_user == session.USERID}'
+															th:if='${userProfile?.auth_flg == "N" and userProfile?.modify_flg == "Y"}'
 															th:attr="data-userId=${userProfile?.userid}" title="Modify"
 															onclick="modifyuser(this)">Modify</a>
 
 
 														<a class="dropdown-item delete-item"
 															style="border-top: 1px solid #dee2e6;"
-															th:if='${userProfile?.auth_flg == "N" and userProfile?.modify_flg == "Y" and userProfile?.entry_user == session.USERID}'
+															th:if='${userProfile?.auth_flg == "N" and userProfile?.modify_flg == "Y"}'
 															th:attr="data-userId=${userProfile?.userid}" title="Delete"
 															onclick="deleteuser(this)">Delete</a>
 													</div>
