@@ -61,6 +61,7 @@ import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import javax.servlet.http.HttpServletResponse;
@@ -1414,24 +1415,105 @@ public class ExelDownloadService {
                 }
             }
 
-            // ==============================
-            // 6️⃣ Total SUM for TOTAL_BALANCE
-            // ==============================
-            int totalBalanceCol = 12; // "TOTAL_BALANCE" column index
-            int lastDataRow = rowNum;
-            Row sumRow = sheet.createRow(rowNum + 1);
-            Cell sumLabel = sumRow.createCell(totalBalanceCol - 1);
-            sumLabel.setCellValue("TOTAL BALANCE :");
-            CellStyle boldStyle = workbook.createCellStyle();
-            Font boldFont = workbook.createFont();
-            boldFont.setBold(true);
-            boldStyle.setFont(boldFont);
-            sumLabel.setCellStyle(boldStyle);
+            
+         // ==============================
+         // 6️⃣ Summary Row: Labels + Totals
+         // ==============================
 
-            Cell sumCell = sumRow.createCell(totalBalanceCol);
-            String formula = "SUM(" + "M5:M" + lastDataRow + ")";
-            sumCell.setCellFormula(formula);
-            sumCell.setCellStyle(numberStyle);
+         int lastDataRow = rowNum;
+         int labelRowIndex = rowNum + 1;  // Row for labels
+         int sumRowIndex = rowNum + 2;    // Row for SUM formulas
+
+         Row labelRow = sheet.createRow(labelRowIndex);
+         Row sumRow = sheet.createRow(sumRowIndex);
+
+         // Create turquoise header-style for specific columns
+         CellStyle turquoiseStyle = workbook.createCellStyle();
+         turquoiseStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+         turquoiseStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+         Font whiteBoldFont = workbook.createFont();
+         whiteBoldFont.setColor(IndexedColors.WHITE.getIndex());
+         whiteBoldFont.setBold(true);
+         turquoiseStyle.setFont(whiteBoldFont);
+         turquoiseStyle.setAlignment(HorizontalAlignment.CENTER);
+
+         // Normal label style for remaining cells
+         CellStyle normalStyle = workbook.createCellStyle();
+         Font normalFont = workbook.createFont();
+         normalFont.setBold(true);
+         normalStyle.setFont(normalFont);
+         normalStyle.setAlignment(HorizontalAlignment.CENTER);
+
+         // Number format for totals
+         CellStyle numberStyle1 = workbook.createCellStyle();
+         numberStyle1.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
+         numberStyle1.setAlignment(HorizontalAlignment.RIGHT);
+
+         // ==============================
+         // Define Columns
+         // ==============================
+         int principalCol = 8;     // "I"
+         int interestCol = 9;      // "J"
+         int feeCol = 10;          // "K"
+         int penaltyCol = 11;      // "L"
+         int totalBalanceCol = 12; // "M"
+         int acctBalCol = 13;      // "N"
+
+         // ==============================
+         // 1️⃣ Label Row (only specific columns colored)
+         // ==============================
+
+         labelRow.createCell(principalCol).setCellValue("PRINCIPAL");
+         labelRow.getCell(principalCol).setCellStyle(turquoiseStyle);
+
+         labelRow.createCell(interestCol).setCellValue("INTEREST");
+         labelRow.getCell(interestCol).setCellStyle(turquoiseStyle);
+
+         labelRow.createCell(feeCol).setCellValue("FEE");
+         labelRow.getCell(feeCol).setCellStyle(turquoiseStyle);
+
+         labelRow.createCell(penaltyCol).setCellValue("PENALTY");
+         labelRow.getCell(penaltyCol).setCellStyle(turquoiseStyle);
+
+         labelRow.createCell(totalBalanceCol).setCellValue("TOTAL BALANCE");
+         labelRow.getCell(totalBalanceCol).setCellStyle(turquoiseStyle);
+
+         labelRow.createCell(acctBalCol).setCellValue("ACCT BAL");
+         labelRow.getCell(acctBalCol).setCellStyle(turquoiseStyle);
+
+         // If you want to add a label at start (like "SUMMARY:"), you can:
+         Cell summaryLabel = labelRow.createCell(7); // example before principal column
+         summaryLabel.setCellValue("TOTAL :");
+         summaryLabel.setCellStyle(normalStyle);
+
+         // ==============================
+         // 2️⃣ SUM Row (Formulas)
+         // ==============================
+
+         String principalFormula = "SUM(I5:I" + lastDataRow + ")";
+         String interestFormula = "SUM(J5:J" + lastDataRow + ")";
+         String feeFormula = "SUM(K5:K" + lastDataRow + ")";
+         String penaltyFormula = "SUM(L5:L" + lastDataRow + ")";
+         String totalBalanceFormula = "SUM(M5:M" + lastDataRow + ")";
+         String acctBalFormula = "SUM(N5:N" + lastDataRow + ")";
+
+         sumRow.createCell(principalCol).setCellFormula(principalFormula);
+         sumRow.createCell(interestCol).setCellFormula(interestFormula);
+         sumRow.createCell(feeCol).setCellFormula(feeFormula);
+         sumRow.createCell(penaltyCol).setCellFormula(penaltyFormula);
+         sumRow.createCell(totalBalanceCol).setCellFormula(totalBalanceFormula);
+         sumRow.createCell(acctBalCol).setCellFormula(acctBalFormula);
+
+         // Apply number formatting
+         sumRow.getCell(principalCol).setCellStyle(numberStyle);
+         sumRow.getCell(interestCol).setCellStyle(numberStyle);
+         sumRow.getCell(feeCol).setCellStyle(numberStyle);
+         sumRow.getCell(penaltyCol).setCellStyle(numberStyle);
+         sumRow.getCell(totalBalanceCol).setCellStyle(numberStyle);
+         sumRow.getCell(acctBalCol).setCellStyle(numberStyle);
+
+
 
             // ==============================
             // 7️⃣ Auto-size Columns

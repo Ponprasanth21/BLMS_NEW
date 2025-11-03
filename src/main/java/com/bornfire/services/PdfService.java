@@ -31,11 +31,19 @@ public class PdfService {
             document.add(title);
 
             // Printed Date
+            String todayDate = new java.text.SimpleDateFormat("dd-MM-yyyy").format(new java.util.Date());
+            Font genFont = FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 12);
+            Paragraph gendate = new Paragraph("Transaction Date : " + dueDate, genFont);
+            gendate.setAlignment(Element.ALIGN_RIGHT);
+            document.add(gendate);
+            
             Font dateFont = FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 12);
-            Paragraph printedDate = new Paragraph("Printed Date: " + dueDate, dateFont);
+            Paragraph printedDate = new Paragraph("Printed Date : " + todayDate, dateFont);
             printedDate.setSpacingAfter(15);
             printedDate.setAlignment(Element.ALIGN_RIGHT);
             document.add(printedDate);
+            
+            
 
             // Table Headers
          // Table Headers
@@ -100,17 +108,23 @@ public class PdfService {
                     PdfPCell cell = new PdfPCell(new Phrase(cellValue, rowFont));
                     cell.setPadding(5);
 
-                    if (i == 7 || i == 8) { // CREDIT or DEBIT
+                    if (i == 5 || i == 7 || i == 8) { // PART_TRAN_ID, CREDIT, DEBIT → Right Align
                         cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                        try {
-                            double num = Double.parseDouble(value.toString().replace(",", ""));
-                            cell.setPhrase(new Phrase(String.format("%,.2f", num), numericFont));
-                            if (i == 7) totalCredit += num;
-                            if (i == 8) totalDebit += num;
-                        } catch (Exception ignored) {}
+
+                        // Only CREDIT/DEBIT need numeric formatting
+                        if (i == 7 || i == 8) {
+                            try {
+                                double num = Double.parseDouble(value.toString().replace(",", ""));
+                                cell.setPhrase(new Phrase(String.format("%,.2f", num), numericFont));
+                                if (i == 7) totalCredit += num;
+                                if (i == 8) totalDebit += num;
+                            } catch (Exception ignored) {}
+                        }
+
                     } else {
                         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
                     }
+
 
                     table.addCell(cell);
                 }
