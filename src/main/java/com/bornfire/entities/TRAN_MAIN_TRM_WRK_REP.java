@@ -608,4 +608,7 @@ BigDecimal getTrandateBal(
 
     @Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS WHERE TRAN_ID = ?1", nativeQuery = true)
     List<TRAN_MAIN_TRM_WRK_ENTITY> getTransactionsByTranId(String tran_id);
+    
+    @Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS WHERE TRAN_STATUS = 'POSTED' ORDER BY TRAN_DATE, TRAN_ID, PART_TRAN_ID FETCH FIRST 1000 ROWS ONLY ", nativeQuery = true)
+    List<TRAN_MAIN_TRM_WRK_ENTITY> findByjournal1();
 }

@@ -1409,6 +1409,8 @@
 		function submitAllRows1() {
 			const rows = document.querySelectorAll("#usertablemulti tr");
 			const payload = [];
+			
+			document.getElementById('loadingModal').style.display = 'flex';
 
 			rows.forEach(row => {
 				// ✅ Get and clean tran_amt
@@ -1463,6 +1465,7 @@
 							<p><strong>Tran IDs:</strong> ${tranIds.join(", ")}</p>
 						</div>`;
 
+						document.getElementById('loadingModal').style.display = 'none';
 						$('#Successmsgpopup').html(message);
 						$('#SuccesPopUp').modal('show');
 					} else {

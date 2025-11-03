@@ -1,11 +1,10 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org" th:fragment="header">
-	<link rel="stylesheet" href="/ASPIRA/css/all.min.css">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:fragment="header">
+<link rel="stylesheet" href="/ASPIRA/css/all.min.css">
 
 <head>
 
-<title>ASPIRA</title>
+	<title>ASPIRA</title>
 
 	<link rel="stylesheet" href="/ASPIRA/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/ASPIRA/css/fontawesome.min.css">
@@ -25,13 +24,13 @@
 	<!-- TOAST -->
 	<link rel="stylesheet" th:href="@{/css/jquery.toast.min.css}">
 	<script th:src="@{/js/jquery.toast.min.js}"></script>
-<style>
-body {
-	font-size: 0.8rem;
-}
+	<style>
+		body {
+			font-size: 0.8rem;
+		}
 
 
-      #loadingContent img {
+		#loadingContent img {
 			width: 100px;
 			height: 100px;
 			margin-bottom: 10px;
@@ -46,7 +45,7 @@ body {
 			background-color: none;
 			display: flex;
 			justify-content: center;
-			align-items: center; 	
+			align-items: center;
 			z-index: 9999;
 			backdrop-filter: blur(5px);
 		}
@@ -56,285 +55,290 @@ body {
 			background-color: none;
 			z-index: 10000;
 		}
-.header1 {
-	background-color: #83b5ec;
-}
 
-.dropdown-menu>li {
-	margin-left: 10px;
-}
-
-.error {
-	color: red;
-	padding-left: 10px;
-}
-
-#menu {
-	background-color: #7593b3;
-	position: absolute;
-	position: fixed;
-	width: 16.5%;
-	top: 70px;
-	left: -1px;
-	overflow-y: auto;
-	height: 100%;
-}
-
-#menu>ul>li>a {
-	display: block;
-	background-color: #2b506f;
-	color: #f1eaea;
-	font-size: 13px;
-	border-bottom-style: outset;
-}
-
-#menu>ul>li>a:hover {
-	background-color: #7593b3;
-	color: #f1eaea;
-}
-
-.sidenav>li>ul>li>a:hover {
-	color: 7593b3;
-}
-
-.sidenav>li>ul>li>a {
-	padding: .2rem .2rem !important;
-}
-
-#userdtl, #dropico {
-	float: right;
-}
-
-.submenu1>ul>li>a {
-	display: block;
-	background-color: red;
-	color: #f1eaea;
-	font-size: 13px;
-}
-
-#headerdiv {
-	top: 50%;
-	left: 20%;
-	height: 50px;
-	color: black;
-	position: absolute;
-	text-align: center;
-	margin: -20px 0 0 -0px;
-}
-
-#showmenu, #userdtl {
-	font-weight: 700;
-	font-size: larger;
-}
-
-nav {
-	background-color: #fafafa;
-}
-
-#pagetitle {
-	top: 114%;
-	left: 50%;
-	height: 50px;
-	color: #e80909;
-	position: absolute;
-	text-align: center;
-	margin: -25px 0 0 -31px;
-}
-
-#logoutmenu {
-	display: none;
-	position: absolute;
-	z-index: 1031;
-	width: 200px;
-	background-color: #dee2e6;
-	box-shadow: 3px 1px 11px 1px #888888;
-	border-radius: 5px;
-	background-color: #dee2e6;
-	right: 0px;
-	top: 70px;
-	border: 2px solid #4d8cb9;
-	position: fixed;
-}
-
-#ques {
-	margin-top: -54px;
-	float: right;
-	padding: 65px;
-}
-
-.logout {
-	color: #2e7bd0;
-}
-
-.content {
-	margin-top: 100px;
-}
-
-html {
-	zoom: 0.7;
-}
-
-label {
-	text-align: left;
-}
-
-.modal-backdrop {
-	width: 200vw;
-	height: 200vh;
-}
-
-section {
-	padding-left: 15px;
-}
-
-.form-control:focus {
-	color: #495057;
-	outline: 0;
-	box-shadow: unset !important;
-}
-
-.btn-primary.focus, .btn-primary:focus {
-	box-shadow: unset !important;
-}
-ul {
-	list-style: none
-}
-
-li a {
-	color: #fffdfdbf;
-}
-
-a {
-	text-decoration: none !important;
-}
-
-#showmenu1 {
-	width: 70px;
-	height: 60px;
-	border-radius: 50%;
-	object-fit: fill;
-}
-</style>
-<script type="text/javascript">
-	/*<![CDATA[*/
-
-	/* Re-Direction Functionality */
-
-	function contentLoad(a) {
-		location.href = "/ASPIRA/" + a.id;
-
-	}
-
-	/* LogOut Functionality */
-	function logout() {
-		$("#datalogout").modal("toggle");
-	}
-
-	$(document).ready(function() {
-		$('.nav-link-collapse').on('click', function() {
-			$('.nav-link-collapse').not(this).removeClass('nav-link-show');
-			$(this).toggleClass('nav-link-show');
-		});
-	});
-
-	function logoutfunc() {
-
-		location.href = "/ASPIRA/logoutsub";
-
-	}
-</script>
-
-<script>
-	function imageuserprofile() {
-		var userphoto = document.getElementById("userphoto").value;
-		//alert(userphoto)
-		$.ajax({
-			type : 'GET',
-			url : '/BGLS/userprofileimage?userphoto=' + userphoto, // Ensure the userphoto is URL encoded
-			success : function(response) {
-				// alert("Response received: " + response); // Initial alert to see raw response
-				console.log("Response type:", typeof response); // Check response type
-				console.log("Response content:", response); // Log response content for debugging
-
-				var element = document.getElementById("photoCapture123");
-				element.innerHTML = ''; // Clear previous images
-
-				// Check if response contains valid image data
-				if (response.startsWith("No records found")
-						|| response.startsWith("Photo content is null")) {
-					//   alert("No image found");
-					// element.innerHTML = 'No photo available.';
-					return; // Exit if no valid image
-				}
-
-				// Convert the base64 string to a Blob and create an image URL
-				const uint8Array = base64ToUint8Array(response);
-				const blob = new Blob([ uint8Array ], {
-					type : "image/jpeg"
-				});
-				const imageUrl = URL.createObjectURL(blob);
-
-				// Create and append image element
-				const img = document.createElement("img");
-				img.src = imageUrl;
-				img.style.width = "70px";
-				img.style.height = "60px";
-				img.style.borderRadius = "50%";
-				img.alt = "User Profile Image";
-
-				element.appendChild(img);
-			},
-			error : function() {
-				console.error("Error fetching image.");
-				var element = document.getElementById("photoCapture123");
-				/* element.innerHTML = 'No photo available.'; */
-			}
-		});
-	}
-
-	// Function to convert Base64 string to Uint8Array
-	function base64ToUint8Array(base64) {
-		const binaryString = window.atob(base64);
-		const len = binaryString.length;
-		const bytes = new Uint8Array(len);
-		for (let i = 0; i < len; i++) {
-			bytes[i] = binaryString.charCodeAt(i);
+		.header1 {
+			background-color: #83b5ec;
 		}
-		return bytes;
-	}
 
-	document.addEventListener("DOMContentLoaded", function() {
-		imageuserprofile();
-	});
-</script>
-<script>
-	// Function to hide the image and show photoCapture123 if the image fails to load
-	function hideImage() {
-		const imgElement = document.getElementById("showmenu1");
-		const photoCaptureElement = document.getElementById("photoCapture123");
+		.dropdown-menu>li {
+			margin-left: 10px;
+		}
 
-		imgElement.style.display = "none"; // Hide the image if not loaded
-		photoCaptureElement.style.display = "flex"; // Show the photoCapture123 div
-	}
+		.error {
+			color: red;
+			padding-left: 10px;
+		}
 
-	// On page load, check if the image has loaded successfully
-	/*         window.onload = function() {
-	 const imgElement = document.getElementById("showmenu1");
-	 const photoCaptureElement = document.getElementById("photoCapture123");
+		#menu {
+			background-color: #7593b3;
+			position: absolute;
+			position: fixed;
+			width: 16.5%;
+			top: 70px;
+			left: -1px;
+			overflow-y: auto;
+			height: 100%;
+		}
 
-	 // If image is loaded, show it and hide the photoCapture123 div
-	 imgElement.onload = function() {
-	 photoCaptureElement.style.display = "none";
-	 };
+		#menu>ul>li>a {
+			display: block;
+			background-color: #2b506f;
+			color: #f1eaea;
+			font-size: 13px;
+			border-bottom-style: outset;
+		}
 
-	 // Set display styles based on whether the image loads successfully
-	 if (imgElement.complete && imgElement.naturalHeight !== 0) {
-	 photoCaptureElement.style.display = "none"; // Hide if image loaded
-	 } else {
-	 hideImage(); // Hide image and show photoCapture123 if the image is missing
-	 }
-	 }; */
-</script>
+		#menu>ul>li>a:hover {
+			background-color: #7593b3;
+			color: #f1eaea;
+		}
+
+		.sidenav>li>ul>li>a:hover {
+			color: 7593b3;
+		}
+
+		.sidenav>li>ul>li>a {
+			padding: .2rem .2rem !important;
+		}
+
+		#userdtl,
+		#dropico {
+			float: right;
+		}
+
+		.submenu1>ul>li>a {
+			display: block;
+			background-color: red;
+			color: #f1eaea;
+			font-size: 13px;
+		}
+
+		#headerdiv {
+			top: 50%;
+			left: 20%;
+			height: 50px;
+			color: black;
+			position: absolute;
+			text-align: center;
+			margin: -20px 0 0 -0px;
+		}
+
+		#showmenu,
+		#userdtl {
+			font-weight: 700;
+			font-size: larger;
+		}
+
+		nav {
+			background-color: #fafafa;
+		}
+
+		#pagetitle {
+			top: 114%;
+			left: 50%;
+			height: 50px;
+			color: #e80909;
+			position: absolute;
+			text-align: center;
+			margin: -25px 0 0 -31px;
+		}
+
+		#logoutmenu {
+			display: none;
+			position: absolute;
+			z-index: 1031;
+			width: 200px;
+			background-color: #dee2e6;
+			box-shadow: 3px 1px 11px 1px #888888;
+			border-radius: 5px;
+			background-color: #dee2e6;
+			right: 0px;
+			top: 70px;
+			border: 2px solid #4d8cb9;
+			position: fixed;
+		}
+
+		#ques {
+			margin-top: -54px;
+			float: right;
+			padding: 65px;
+		}
+
+		.logout {
+			color: #2e7bd0;
+		}
+
+		.content {
+			margin-top: 100px;
+		}
+
+		html {
+			zoom: 0.7;
+		}
+
+		label {
+			text-align: left;
+		}
+
+		.modal-backdrop {
+			width: 200vw;
+			height: 200vh;
+		}
+
+		section {
+			padding-left: 15px;
+		}
+
+		.form-control:focus {
+			color: #495057;
+			outline: 0;
+			box-shadow: unset !important;
+		}
+
+		.btn-primary.focus,
+		.btn-primary:focus {
+			box-shadow: unset !important;
+		}
+
+		ul {
+			list-style: none
+		}
+
+		li a {
+			color: #fffdfdbf;
+		}
+
+		a {
+			text-decoration: none !important;
+		}
+
+		#showmenu1 {
+			width: 70px;
+			height: 60px;
+			border-radius: 50%;
+			object-fit: fill;
+		}
+	</style>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+
+		/* Re-Direction Functionality */
+
+		function contentLoad(a) {
+			location.href = "/ASPIRA/" + a.id;
+
+		}
+
+		/* LogOut Functionality */
+		function logout() {
+			$("#datalogout").modal("toggle");
+		}
+
+		$(document).ready(function () {
+			$('.nav-link-collapse').on('click', function () {
+				$('.nav-link-collapse').not(this).removeClass('nav-link-show');
+				$(this).toggleClass('nav-link-show');
+			});
+		});
+
+		function logoutfunc() {
+
+			location.href = "/ASPIRA/logoutsub";
+
+		}
+	</script>
+
+	<script>
+		function imageuserprofile() {
+			var userphoto = document.getElementById("userphoto").value;
+			//alert(userphoto)
+			$.ajax({
+				type: 'GET',
+				url: '/BGLS/userprofileimage?userphoto=' + userphoto, // Ensure the userphoto is URL encoded
+				success: function (response) {
+					// alert("Response received: " + response); // Initial alert to see raw response
+					console.log("Response type:", typeof response); // Check response type
+					console.log("Response content:", response); // Log response content for debugging
+
+					var element = document.getElementById("photoCapture123");
+					element.innerHTML = ''; // Clear previous images
+
+					// Check if response contains valid image data
+					if (response.startsWith("No records found")
+						|| response.startsWith("Photo content is null")) {
+						//   alert("No image found");
+						// element.innerHTML = 'No photo available.';
+						return; // Exit if no valid image
+					}
+
+					// Convert the base64 string to a Blob and create an image URL
+					const uint8Array = base64ToUint8Array(response);
+					const blob = new Blob([uint8Array], {
+						type: "image/jpeg"
+					});
+					const imageUrl = URL.createObjectURL(blob);
+
+					// Create and append image element
+					const img = document.createElement("img");
+					img.src = imageUrl;
+					img.style.width = "70px";
+					img.style.height = "60px";
+					img.style.borderRadius = "50%";
+					img.alt = "User Profile Image";
+
+					element.appendChild(img);
+				},
+				error: function () {
+					console.error("Error fetching image.");
+					var element = document.getElementById("photoCapture123");
+					/* element.innerHTML = 'No photo available.'; */
+				}
+			});
+		}
+
+		// Function to convert Base64 string to Uint8Array
+		function base64ToUint8Array(base64) {
+			const binaryString = window.atob(base64);
+			const len = binaryString.length;
+			const bytes = new Uint8Array(len);
+			for (let i = 0; i < len; i++) {
+				bytes[i] = binaryString.charCodeAt(i);
+			}
+			return bytes;
+		}
+
+		document.addEventListener("DOMContentLoaded", function () {
+			imageuserprofile();
+		});
+	</script>
+	<script>
+		// Function to hide the image and show photoCapture123 if the image fails to load
+		function hideImage() {
+			const imgElement = document.getElementById("showmenu1");
+			const photoCaptureElement = document.getElementById("photoCapture123");
+
+			imgElement.style.display = "none"; // Hide the image if not loaded
+			photoCaptureElement.style.display = "flex"; // Show the photoCapture123 div
+		}
+
+		// On page load, check if the image has loaded successfully
+		/*         window.onload = function() {
+		 const imgElement = document.getElementById("showmenu1");
+		 const photoCaptureElement = document.getElementById("photoCapture123");
+	
+		 // If image is loaded, show it and hide the photoCapture123 div
+		 imgElement.onload = function() {
+		 photoCaptureElement.style.display = "none";
+		 };
+	
+		 // Set display styles based on whether the image loads successfully
+		 if (imgElement.complete && imgElement.naturalHeight !== 0) {
+		 photoCaptureElement.style.display = "none"; // Hide if image loaded
+		 } else {
+		 hideImage(); // Hide image and show photoCapture123 if the image is missing
+		 }
+		 }; */
+	</script>
 
 
 </head>
@@ -343,13 +347,10 @@ a {
 	<input type="hidden" id="activemenu" th:value="${menu}" />
 	<nav class="navbar fixed-top navbar-expand-md navbar-dark  mb-3"
 		style="box-shadow: 6px 6px 12px #888888; height: 70px">
-		<input type="text" name="userphoto" id="userphoto"
-			th:value="${session.USERID}" hidden />
-		<div
-			class="col-sm-12 d-flex justify-content-between align-items-center">
-			<img th:src="@{/images/Image_logo.png}" class="img-fluid"
-				style="max-width: 100px; max-height: 55px;" id="showmenu"
-				alt="Bornfire">
+		<input type="text" name="userphoto" id="userphoto" th:value="${session.USERID}" hidden />
+		<div class="col-sm-12 d-flex justify-content-between align-items-center">
+			<img th:src="@{/images/Image_logo.png}" class="img-fluid" style="max-width: 100px; max-height: 55px;"
+				id="showmenu" alt="Bornfire">
 
 			<div id="headerdiv">
 				<h3>BORNFIRE LOAN MANAGEMENT SYSTEM</h3>
@@ -362,11 +363,10 @@ a {
 					class="form-control-sm-sm bg-white border border-dark" readonly />
 
 			</div>
-			<button type="button" style="margin-left: 30px"
-				class="btn btn-default d-flex align-items-center p-2" id="userdtl">
-				<img th:src="@{'/images/' + ${session.USERID} + '.jpg'}"
-					class="rounded-circle me-2" id="showmenu1" alt="Bornfire"
-					onerror="hideImage()">
+			<button type="button" style="margin-left: 30px" class="btn btn-default d-flex align-items-center p-2"
+				id="userdtl">
+				<img th:src="@{'/images/' + ${session.USERID} + '.jpg'}" class="rounded-circle me-2" id="showmenu1"
+					alt="Bornfire" onerror="hideImage()">
 			</button>
 
 			<div id="photoCapture123"></div>
@@ -385,15 +385,13 @@ a {
 				</div>
 				<div class="row formline">
 					<div class="col">
-						<span class="ms-2"
-							th:text="'USER NAME ' + '  ' + ' : ' + ${session.USERNAME}">
+						<span class="ms-2" th:text="'USER NAME ' + '  ' + ' : ' + ${session.USERNAME}">
 						</span>
 					</div>
 				</div>
 				<div class="row formline">
 					<div class="col">
-						<span class="ms-2"
-							th:text="'LOGIN TIME ' + '  ' + ' : ' + ${session.LOGIN_TIME}">
+						<span class="ms-2" th:text="'LOGIN TIME ' + '  ' + ' : ' + ${session.LOGIN_TIME}">
 						</span>
 					</div>
 				</div>
@@ -414,33 +412,30 @@ a {
        readonly /> -->
 
 
-	<div id="menu"
-		style="box-shadow: 6px 6px 12px #888888; z-index: 1000px">
+	<div id="menu" style="box-shadow: 6px 6px 12px #888888; z-index: 1000px">
 		<ul class="navbar-nav mr-auto sidenav" id="navAccordion">
-			<li class="nav-item"><a class="nav-link pl-3 pt-5"
-				id="Dashboard" href="#" onclick="contentLoad(this)">Home</a></li>
+			<li class="nav-item"><a class="nav-link pl-3 pt-5" id="Dashboard" href="#"
+					onclick="contentLoad(this)">Home</a></li>
 
 
-			<li class="nav-item" th:if="${session.SCREEN_ACCESS_ADMIN} == 'Y' " ><a class="nav-link nav-link-collapse pl-3"
-				href="#" id="hasSubItems" data-toggle="collapse"
-				data-target="#collapseSubItems1" aria-controls="collapseSubItems1"
-				aria-expanded="false">Admin</a>
+			<li class="nav-item" th:if="${session.SCREEN_ACCESS_ADMIN} == 'Y' "><a
+					class="nav-link nav-link-collapse pl-3" href="#" id="hasSubItems" data-toggle="collapse"
+					data-target="#collapseSubItems1" aria-controls="collapseSubItems1" aria-expanded="false">Admin</a>
 
-				<ul class="nav-second-level collapse" id="collapseSubItems1"
-					data-parent="#navAccordion">
+				<ul class="nav-second-level collapse" id="collapseSubItems1" data-parent="#navAccordion">
 
 
 
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_ORGNAIZATION_DETAILS} == 'Y' " ><a class="nav-link" 
-						id="organizationDetails" href="#" onclick="contentLoad(this)">Organization
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_ORGNAIZATION_DETAILS} == 'Y' "><a
+							class="nav-link" id="organizationDetails" href="#" onclick="contentLoad(this)">Organization
 							Details </a></li>
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_USER_CONTROLS} == 'Y' " ><a class="nav-link" id="userProfile" 
-						href="#" onclick="contentLoad(this)">User Control</a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_USER_CONTROLS} == 'Y' "><a class="nav-link"
+							id="userProfile" href="#" onclick="contentLoad(this)">User Control</a></li>
 					<!--<li class="nav-item"><a class="nav-link" id="employeeProfile"
 						href="#" onclick="contentLoad(this)">Employee Profile</a></li>-->
 
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_REFERENCE_CODE_MAINTENANCE} == 'Y' " ><a class="nav-link" id="refCodeMain" 
-						href="#" onclick="contentLoad(this)">Parameters</a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_REFERENCE_CODE_MAINTENANCE} == 'Y' "><a
+							class="nav-link" id="refCodeMain" href="#" onclick="contentLoad(this)">Parameters</a></li>
 					<!--<li class="nav-item"><a class="nav-link" id="chartOfAccounts"
 						href="#" onclick="contentLoad(this)">Chart of Accounts</a></li>
 
@@ -452,8 +447,8 @@ a {
 					<!-- <li class="nav-item"><a class="nav-link" id="calendermaintenance"
 						href="#" onclick="contentLoad(this)">Calender Maintenance</a></li> -->
 
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_AUDIT_TRAIL} == 'Y' " ><a class="nav-link" 
-						id="audittraildetails" href="#" onclick="contentLoad(this)">
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_AUDIT_TRAIL} == 'Y' "><a class="nav-link"
+							id="audittraildetails" href="#" onclick="contentLoad(this)">
 							Audit Trail </a></li>
 
 					<!-- <li class="nav-item"><a class="nav-link"
@@ -463,38 +458,41 @@ a {
 					<li class="nav-item"><a class="nav-link" id="documentManager"
 						href="#" onclick="contentLoad(this)">Document Manager</a></li>
  -->
-				</ul></li>
+				</ul>
+			</li>
 
 			<!-- Migration Menu -->
-			<li class="nav-item" th:if="${session.SCREEN_ACCESS_MIGRATION} == 'Y' " >
-			    <a class="nav-link nav-link-collapse pl-3"
-			       href="#" id="migrationMenu" data-toggle="collapse"
-			       data-target="#collapseMigration1" aria-controls="collapseMigration1"
-			       aria-expanded="false">Migration</a>
+			<li class="nav-item" th:if="${session.SCREEN_ACCESS_MIGRATION} == 'Y' ">
+				<a class="nav-link nav-link-collapse pl-3" href="#" id="migrationMenu" data-toggle="collapse"
+					data-target="#collapseMigration1" aria-controls="collapseMigration1"
+					aria-expanded="false">Migration</a>
 
-			    <ul class="nav-second-level collapse" id="collapseMigration1" data-parent="#navAccordion">
-			        <li class="nav-item" th:if="${session.SCREEN_ACCESS_CUSTOMER_MASTER} == 'Y' " ><a class="nav-link p-1" 
-			            id="customerMaster?module=module1" href="#"
-			            onclick="contentLoad(this)">Customer Master</a></li>
-			        <li class="nav-item" th:if="${session.SCREEN_ACCESS_LOAN_MASTER} == 'Y' " ><a class="nav-link p-1" id="loanMaster" 
-			            href="#" onclick="contentLoad(this)">Loan Master</a></li>
-			        <li class="nav-item" th:if="${session.SCREEN_ACCESS_LOAN_SCHEDULE_MIGRATION} == 'Y' " ><a class="nav-link p-1" id="loanSchedule" 
-			            href="#" onclick="contentLoad(this)">Loan Schedule</a></li>
-			        <li class="nav-item" th:if="${session.SCREEN_ACCESS_TRANSACTION_MIGRATION} == 'Y' " ><a class="nav-link p-1" id="TransactionMigration" 
-			            href="#" onclick="contentLoad(this)">Transaction</a></li>
-						<!-- <li class="nav-item" th:if="${session.SCREEN_ACCESS_BALANCE_SHEETS} == 'Y' "  ><a class="nav-link nav-link-collapse pl-3 " 
+				<ul class="nav-second-level collapse" id="collapseMigration1" data-parent="#navAccordion">
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_CUSTOMER_MASTER} == 'Y' "><a
+							class="nav-link p-1" id="customerMaster?module=module1" href="#"
+							onclick="contentLoad(this)">Customer Master</a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_LOAN_MASTER} == 'Y' "><a class="nav-link p-1"
+							id="loanMaster" href="#" onclick="contentLoad(this)">Loan Master</a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_LOAN_SCHEDULE_MIGRATION} == 'Y' "><a
+							class="nav-link p-1" id="loanSchedule" href="#" onclick="contentLoad(this)">Loan
+							Schedule</a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_TRANSACTION_MIGRATION} == 'Y' "><a
+							class="nav-link p-1" id="TransactionMigration" href="#"
+							onclick="contentLoad(this)">Transaction</a></li>
+					<!-- <li class="nav-item" th:if="${session.SCREEN_ACCESS_BALANCE_SHEETS} == 'Y' "  ><a class="nav-link nav-link-collapse pl-3 " 
 														id="balancesheet" href="#"
 														onclick="contentLoad(this)"> Balance Sheet </a></li> -->
-			    </ul>
+				</ul>
 			</li>
-			<li class="nav-item" th:if="${session.SCREEN_ACCESS_DAY_END_OPERATION_USER} == 'Y' " ><a class="nav-link nav-link-collapse pl-3 " 
-				id="day_end_operation" href="#" onclick="contentLoad(this)"> Day
+			<li class="nav-item" th:if="${session.SCREEN_ACCESS_DAY_END_OPERATION_USER} == 'Y' "><a
+					class="nav-link nav-link-collapse pl-3 " id="day_end_operation" href="#"
+					onclick="contentLoad(this)"> Day
 					End Operation </a></li>
-			<li class="nav-item" th:if="${session.SCREEN_ACCESS_CUSTOMER_MAINTENANCE} == 'Y' "  ><a class="nav-link nav-link-collapse pl-3 " 
-				id="customerMaster?formmode=list&module=module2" href="#"
-				onclick="contentLoad(this)"> Customer Maintenance </a></li>
+			<li class="nav-item" th:if="${session.SCREEN_ACCESS_CUSTOMER_MAINTENANCE} == 'Y' "><a
+					class="nav-link nav-link-collapse pl-3 " id="customerMaster?formmode=list&module=module2" href="#"
+					onclick="contentLoad(this)"> Customer Maintenance </a></li>
 
-				
+
 			<!--	<li class="nav-item"><a class="nav-link nav-link-collapse pl-3"
 				href="#" id="hasSubItems" data-toggle="collapse"
 				data-target="#collapseSubItems2" aria-controls="collapseSubItems2"
@@ -552,18 +550,21 @@ a {
 						href="#" onclick="contentLoad(this)">Customer Maintenance </a></li>
 				</ul></li>-->
 
-			<li class="nav-item" th:if="${session.SCREEN_ACCESS_LOAN_MAINTENANCE} == 'Y' "  ><a class="nav-link nav-link-collapse pl-3 " 
-				id="Loan_Maintenance" href="#" onclick="contentLoad(this)">Loan
+			<li class="nav-item" th:if="${session.SCREEN_ACCESS_LOAN_MAINTENANCE} == 'Y' "><a
+					class="nav-link nav-link-collapse pl-3 " id="Loan_Maintenance" href="#"
+					onclick="contentLoad(this)">Loan
 					Maintenance</a></li>
 
-			<li class="nav-item" th:if="${session.SCREEN_ACCESS_LOAN_OPERATION} == 'Y' " >
-				<a class="nav-link nav-link-collapse pl-3" href="#" id="hasSubItems1" data-toggle="collapse" 
+			<li class="nav-item" th:if="${session.SCREEN_ACCESS_LOAN_OPERATION} == 'Y' ">
+				<a class="nav-link nav-link-collapse pl-3" href="#" id="hasSubItems1" data-toggle="collapse"
 					data-target="#collapseSubItemsLoan" aria-controls="collapseSubItemsLoan" aria-expanded="false">
 					Loan Operation
 				</a>
 				<ul class="nav-second-level collapse" id="collapseSubItemsLoan" data-parent="#navAccordion">
-					<li th:if="${session.SCREEN_ACCESS_LOAN_OPERATION_LS} == 'Y' " class="nav-item"><a class="nav-link" id="loanOperation" href="#" onclick="contentLoad(this)">Loan Operation</a></li>
-					<li th:if="${session.SCREEN_ACCESS_LOAN_CLOSURE} == 'Y' " class="nav-item"><a class="nav-link" id="loanClosure" href="#" onclick="contentLoad(this)">Loan Closure</a></li>
+					<li th:if="${session.SCREEN_ACCESS_LOAN_OPERATION_LS} == 'Y' " class="nav-item"><a class="nav-link"
+							id="loanOperation" href="#" onclick="contentLoad(this)">Loan Operation</a></li>
+					<li th:if="${session.SCREEN_ACCESS_LOAN_CLOSURE} == 'Y' " class="nav-item"><a class="nav-link"
+							id="loanClosure" href="#" onclick="contentLoad(this)">Loan Closure</a></li>
 				</ul>
 			</li>
 
@@ -670,27 +671,26 @@ a {
 				</ul></li> -->
 
 
-			<li class="nav-item" th:if="${session.SCREEN_ACCESS_TRANSACTION_MAINTENANCE} == 'Y' " ><a class="nav-link nav-link-collapse pl-3"
-				href="#" id="hasSubItems" data-toggle="collapse"  
-				data-target="#collapseSubItems4" aria-controls="collapseSubItems4"
-				aria-expanded="false">Transaction Maintanance</a>
+			<li class="nav-item" th:if="${session.SCREEN_ACCESS_TRANSACTION_MAINTENANCE} == 'Y' "><a
+					class="nav-link nav-link-collapse pl-3" href="#" id="hasSubItems" data-toggle="collapse"
+					data-target="#collapseSubItems4" aria-controls="collapseSubItems4" aria-expanded="false">Transaction
+					Maintanance</a>
 
-				<ul class="nav-second-level collapse" id="collapseSubItems4"
-					data-parent="#navAccordion">
+				<ul class="nav-second-level collapse" id="collapseSubItems4" data-parent="#navAccordion">
 
-					<li class="nav-item"  th:if="${session.SCREEN_ACCESS_JOURNAL_ENTRIES} == 'Y' " ><a class="nav-link" id="journalEntries"   
-						href="#" onclick="contentLoad(this)">Journal Entries</a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_JOURNAL_ENTRIES} == 'Y' "><a class="nav-link"
+							id="journalEntries" href="#" onclick="contentLoad(this)">Journal Entries</a></li>
 
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_ACCOUNT_LEDGER_POSTING} == 'Y' " ><a class="nav-link"
-						id="accountLedgerPost" href="#" onclick="contentLoad(this)">Account
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_ACCOUNT_LEDGER_POSTING} == 'Y' "><a
+							class="nav-link" id="accountLedgerPost" href="#" onclick="contentLoad(this)">Account
 							Ledger Posting</a></li>
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_ACCOUNT_LEDGER} == 'Y' " ><a class="nav-link" id="accountLedger"
-						href="#" onclick="contentLoad(this)">Account ledger</a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_ACCOUNT_LEDGER} == 'Y' "><a class="nav-link"
+							id="accountLedger" href="#" onclick="contentLoad(this)">Account ledger</a></li>
 
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_TRIAL_BALANCE_T} == 'Y' " ><a class="nav-link" id="trialBalance"
-						href="#" onclick="contentLoad(this)"> Trial Balance </a></li>
-					<li class="nav-item"  th:if="${session.SCREEN_ACCESS_PROFIT_AND_LOSS_ACCOUNT_T} == 'Y' "  ><a class="nav-link"
-						id="profitAndLossAccount" href="#" onclick="contentLoad(this)">
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_TRIAL_BALANCE_T} == 'Y' "><a class="nav-link"
+							id="trialBalance" href="#" onclick="contentLoad(this)"> Trial Balance </a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_PROFIT_AND_LOSS_ACCOUNT_T} == 'Y' "><a
+							class="nav-link" id="profitAndLossAccount" href="#" onclick="contentLoad(this)">
 							Profit & Loss Account </a></li>
 					<!-- 	<li class="nav-item"><a class="nav-link"
 						id="day_end_operation" href="#" onclick="contentLoad(this)">
@@ -714,8 +714,13 @@ a {
 							Maintanace </a></li>-->
 
 
-				</ul></li>
+				</ul>
+			</li>
 
+			<li class="nav-item" th:if="${session.SCREEN_ACCESS_LOAN_MAINTENANCE} == 'Y' "><a
+					class="nav-link nav-link-collapse pl-3 " id="ReversalTransactions" href="#"
+					onclick="contentLoad(this)">Transaction
+					Reversal</a></li>
 
 			<!--<li class="nav-item"><a class="nav-link nav-link-collapse pl-3" href="#" id="hasSubItems"
 					data-toggle="collapse" data-target="#collapseSubItems3" aria-controls="collapseSubItems3"
@@ -761,79 +766,84 @@ a {
 				</ul>
 			</li>-->
 
-			<li class="nav-item" th:if="${session.SCREEN_ACCESS_COLLECTION_PROCESS} == 'Y' " ><a class="nav-link nav-link-collapse pl-3" 
-				href="#" id="hasSubItems" data-toggle="collapse"
-				data-target="#collapseSubItems15" aria-controls="collapseSubItems15"
-				aria-expanded="false">Collection Process</a>
-				<ul class="nav-second-level collapse" id="collapseSubItems15"
-					data-parent="#navAccordion">
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_PARTICIPATING_BANKS} == 'Y' " ><a class="nav-link"
-						id="participatingJobs" href="#" onclick="contentLoad(this)">Participating
+			<li class="nav-item" th:if="${session.SCREEN_ACCESS_COLLECTION_PROCESS} == 'Y' "><a
+					class="nav-link nav-link-collapse pl-3" href="#" id="hasSubItems" data-toggle="collapse"
+					data-target="#collapseSubItems15" aria-controls="collapseSubItems15"
+					aria-expanded="false">Collection Process</a>
+				<ul class="nav-second-level collapse" id="collapseSubItems15" data-parent="#navAccordion">
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_PARTICIPATING_BANKS} == 'Y' "><a
+							class="nav-link" id="participatingJobs" href="#" onclick="contentLoad(this)">Participating
 							Banks</a></li>
 
-					<li class="nav-item"  th:if="${session.SCREEN_ACCESS_LOAN_COLLECTING} == 'Y' " ><a class="nav-link"  ><a class="nav-link" id="leasecollection"
-						href="#" onclick="contentLoad(this)">Loan Collection</a></li>
-				</ul></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_LOAN_COLLECTING} == 'Y' "><a class="nav-link"><a
+								class="nav-link" id="leasecollection" href="#" onclick="contentLoad(this)">Loan
+								Collection</a></li>
+				</ul>
+			</li>
 
-			<li class="nav-item" th:if="${session.SCREEN_ACCESS_BATCH_JOB_EXECUTION} == 'Y' " ><a class="nav-link nav-link-collapse pl-3"  
-				href="#" id="hasSubItems" data-toggle="collapse"
-				data-target="#collapseSubItems12" aria-controls="collapseSubItems12"
-				aria-expanded="false">Batch Job Execution</a>
-				<ul class="nav-second-level collapse" id="collapseSubItems12"
-					data-parent="#navAccordion">
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_BATCH_JOB} == 'Y' " ><a class="nav-link" id="interestBatchJob"
-						href="#" onclick="contentLoad(this)">Batch Job</a></li>
-
-
-				</ul></li>
+			<li class="nav-item" th:if="${session.SCREEN_ACCESS_BATCH_JOB_EXECUTION} == 'Y' "><a
+					class="nav-link nav-link-collapse pl-3" href="#" id="hasSubItems" data-toggle="collapse"
+					data-target="#collapseSubItems12" aria-controls="collapseSubItems12" aria-expanded="false">Batch Job
+					Execution</a>
+				<ul class="nav-second-level collapse" id="collapseSubItems12" data-parent="#navAccordion">
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_BATCH_JOB} == 'Y' "><a class="nav-link"
+							id="interestBatchJob" href="#" onclick="contentLoad(this)">Batch Job</a></li>
 
 
-
-
+				</ul>
+			</li>
 
 
 
-			<li class="nav-item" th:if="${session.SCREEN_ACCESS_INQUIRIES_AND_REPORTS} == 'Y' " ><a class="nav-link nav-link-collapse pl-3"
-				href="#" id="hasSubItems" data-toggle="collapse"
-				data-target="#collapseSubItems7" aria-controls="collapseSubItems7"
-				aria-expanded="false">Inquiries & Reports </a>
-				<ul class="nav-second-level collapse" id="collapseSubItems7"
-					data-parent="#navAccordion">
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_ACCOUNT_BALANCE_INQ} == 'Y' " ><a class="nav-link" id="Account_Balances" 
-						href="#" onclick="contentLoad(this)"> Account Balances </a></li>
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_CREDIT_FACILITY_REPORT} == 'Y' " ><a class="nav-link" id="credit_facility_report"
-						href="#" onclick="contentLoad(this)"> Credit Facility Report </a></li>
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_END_OF_MONTH_REPORT} == 'Y' " ><a class="nav-link" id="end_of_month"
-						href="#" onclick="contentLoad(this)"> End Of Month Report</a></li>
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_DAB} == 'Y' " ><a class="nav-link" id="dab"
-						href="#" onclick="contentLoad(this)"> DAB Reports</a></li>
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_CONSOLIDATED_REPORT} == 'Y' " ><a class="nav-link" id="ConsolidatedLoanReport"
-						href="#" onclick="contentLoad(this)"> Consolidated Loan Reports </a></li>
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_TRANSACTION_REPORT} == 'Y' " ><a class="nav-link" id="TransactionReports"
-						href="#" onclick="contentLoad(this)"> Transaction Reports </a></li>
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_INTERSET_SUMMARY_INQ} == 'Y' " ><a class="nav-link" id="interest_summary"
-						href="#" onclick="contentLoad(this)"> Interest Summary </a></li>
-					<li class="nav-item"  th:if="${session.SCREEN_ACCESS_JOURNAL_BOOK} == 'Y' "  ><a class="nav-link" id="journalbook"
-						href="#" onclick="contentLoad(this)"> Journal Book </a></li>
-					<li class="nav-item"  th:if="${session.SCREEN_ACCESS_ACCOUNT_LEDGERS_I} == 'Y' "  ><a class="nav-link" id="accountLedger2"
-						href="#" onclick="contentLoad(this)"> Account Ledger </a></li>
-					<li class="nav-item"  th:if="${session.SCREEN_ACCESS_BALANCE_SHEET} == 'Y' "  ><a class="nav-link" id="Balancing_report"
-						href="#" onclick="contentLoad(this)"> Balancing Report </a></li>
+
+
+
+
+			<li class="nav-item" th:if="${session.SCREEN_ACCESS_INQUIRIES_AND_REPORTS} == 'Y' "><a
+					class="nav-link nav-link-collapse pl-3" href="#" id="hasSubItems" data-toggle="collapse"
+					data-target="#collapseSubItems7" aria-controls="collapseSubItems7" aria-expanded="false">Inquiries &
+					Reports </a>
+				<ul class="nav-second-level collapse" id="collapseSubItems7" data-parent="#navAccordion">
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_ACCOUNT_BALANCE_INQ} == 'Y' "><a
+							class="nav-link" id="Account_Balances" href="#" onclick="contentLoad(this)"> Account
+							Balances </a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_CREDIT_FACILITY_REPORT} == 'Y' "><a
+							class="nav-link" id="credit_facility_report" href="#" onclick="contentLoad(this)"> Credit
+							Facility Report </a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_END_OF_MONTH_REPORT} == 'Y' "><a
+							class="nav-link" id="end_of_month" href="#" onclick="contentLoad(this)"> End Of Month
+							Report</a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_DAB} == 'Y' "><a class="nav-link" id="dab"
+							href="#" onclick="contentLoad(this)"> DAB Reports</a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_CONSOLIDATED_REPORT} == 'Y' "><a
+							class="nav-link" id="ConsolidatedLoanReport" href="#" onclick="contentLoad(this)">
+							Consolidated Loan Reports </a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_TRANSACTION_REPORT} == 'Y' "><a class="nav-link"
+							id="TransactionReports" href="#" onclick="contentLoad(this)"> Transaction Reports </a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_INTERSET_SUMMARY_INQ} == 'Y' "><a
+							class="nav-link" id="interest_summary" href="#" onclick="contentLoad(this)"> Interest
+							Summary </a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_JOURNAL_BOOK} == 'Y' "><a class="nav-link"
+							id="journalbook" href="#" onclick="contentLoad(this)"> Journal Book </a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_ACCOUNT_LEDGERS_I} == 'Y' "><a class="nav-link"
+							id="accountLedger2" href="#" onclick="contentLoad(this)"> Account Ledger </a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_BALANCE_SHEET} == 'Y' "><a class="nav-link"
+							id="Balancing_report" href="#" onclick="contentLoad(this)"> Balancing Report </a></li>
 
 					<!-- <li class="nav-item"><a class="nav-link"
 						id="trialBalanceReports" href="#" onclick="contentLoad(this)">Trial
 							Balance </a></li> -->
-					<li class="nav-item"  th:if="${session.SCREEN_ACCESS_TRIAL_BALANCE_I} == 'Y' "  ><a class="nav-link"
-						id="trialBalanceReports2" href="#" onclick="contentLoad(this)">Trial
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_TRIAL_BALANCE_I} == 'Y' "><a class="nav-link"
+							id="trialBalanceReports2" href="#" onclick="contentLoad(this)">Trial
 							Balance </a></li>
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_GENERAL_LEDGER} == 'Y' " ><a class="nav-link" id="generalLedger"
-						href="#" onclick="contentLoad(this)"> General Ledger </a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_GENERAL_LEDGER} == 'Y' "><a class="nav-link"
+							id="generalLedger" href="#" onclick="contentLoad(this)"> General Ledger </a></li>
 
-					<li class="nav-item"  th:if="${session.SCREEN_ACCESS_PROFIT_AND_LOSS_ACCOUNT_I} == 'Y' "  ><a class="nav-link"
-						id="profitAndLossAccountReports" href="#"
-						onclick="contentLoad(this)">Profile and Loss Account </a></li>
-					<li class="nav-item"   th:if="${session.SCREEN_ACCESS_BALANCE_SHEET} == 'Y' "  ><a class="nav-link" id="balanceSheet"
-						href="#" onclick="contentLoad(this)"> Balance Sheet </a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_PROFIT_AND_LOSS_ACCOUNT_I} == 'Y' "><a
+							class="nav-link" id="profitAndLossAccountReports" href="#"
+							onclick="contentLoad(this)">Profile and Loss Account </a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_BALANCE_SHEET} == 'Y' "><a class="nav-link"
+							id="balanceSheet" href="#" onclick="contentLoad(this)"> Balance Sheet </a></li>
 
 					<!--<li class="nav-item"><a class="nav-link" id="outsytandingItems" href="#"
 							onclick="contentLoad(this)">
@@ -842,7 +852,8 @@ a {
 					<!--<li class="nav-item"><a class="nav-link" id="gstDetails" href="#" onclick="contentLoad(this)">
 							GST Details </a></li>-->
 
-				</ul></li>
+				</ul>
+			</li>
 
 			<!--<li class="nav-item"><a class="nav-link nav-link-collapse pl-3" href="#" id="hasSubItems"
 					data-toggle="collapse" data-target="#collapseSubItems7" aria-controls="collapseSubItems7"
@@ -895,19 +906,18 @@ a {
 
 
 
-			<li class="nav-item"><a class="nav-link pl-3"
-				data-toggle="collapse" href="#logout" id="logout"
-				onclick="contentLoad(this)">Logout</a></li>
+			<li class="nav-item"><a class="nav-link pl-3" data-toggle="collapse" href="#logout" id="logout"
+					onclick="contentLoad(this)">Logout</a></li>
 
 
 		</ul>
 	</div>
 	<!------------------------------------------------------------------- Loading Modal ------------------------------------------------------>
-    <div id="loadingModal" style="display: none;">
-	    <div id="loadingContent">
-		<img th:src=@{/images/Loading.gif} alt="Loading...">
-	    </div>
-   </div>
+	<div id="loadingModal" style="display: none;">
+		<div id="loadingContent">
+			<img th:src=@{/images/Loading.gif} alt="Loading...">
+		</div>
+	</div>
 </body>
 
 </html>

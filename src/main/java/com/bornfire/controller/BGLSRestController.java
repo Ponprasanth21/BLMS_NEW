@@ -12013,4 +12013,28 @@ public class BGLSRestController {
 		return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
 	}
 
+	@GetMapping("loan/statusSearchtransaction")
+	public List<Map<String, Object>> searchByStatustransaction(@RequestParam String status) {
+		List<Object[]> rows;
+		rows = lOAN_ACT_MST_REPO.getLoanActWithStatus(status); // default 200 rows
+
+		List<Map<String, Object>> result = new ArrayList<>();
+
+		for (Object[] row : rows) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("id", row[1]); // l.ID
+			map.put("account_holderkey", row[3]); // adjust index to match your query
+			map.put("loan_name", row[12]);
+			map.put("assigned_branchkey", row[14]);
+			map.put("retailer_name", row[64]);
+			map.put("retailer_branch", row[65]);
+			map.put("account_state", row[9]);
+			map.put("last_name", row[row.length - 1]);
+			map.put("mobile_phone", row[row.length - 3]);
+			map.put("first_name", row[row.length - 2]);
+			result.add(map);
+		}
+
+		return result;
+	}
 }
