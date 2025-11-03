@@ -324,7 +324,7 @@ function downloadReport() {
     const formattedDate = `${day}-${month}-${year}`;
 
     $.ajax({
-        url: './TransactionReportDownload',
+        url: './TransactionPDFReportDownload',
         type: 'GET',
         data: { dueDate: formattedDate },
         xhrFields: {

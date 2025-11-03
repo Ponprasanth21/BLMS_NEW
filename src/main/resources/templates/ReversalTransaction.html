@@ -2492,6 +2492,122 @@
 			});
 		}
 	</script>
+
+
+<!-- suresh -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+let currentPage = 1;
+const pageSize = 1000;
+
+$(document).ready(function () {
+    loadJournalEntries(currentPage);
+});
+
+// 🔹 Fetch paginated data from backend
+function loadJournalEntries(page) {
+    currentPage = page;
+    $("#placelist").html('<tr><td colspan="10" class="text-center">Loading...</td></tr>');
+
+    $.ajax({
+        url: `getJournalEntries?page=${page}&size=${pageSize}`,
+        type: "GET",
+        dataType: "json",
+        success: function (response) {
+            if (response.data && response.data.length > 0) {
+                renderTable(response.data);
+                updatePagination(page, response.totalPages);
+            } else {
+                $("#placelist").html('<tr><td colspan="10" class="text-center text-danger">No records found</td></tr>');
+                $("#pagination").empty();
+            }
+        },
+        error: function (err) {
+            console.error("Error loading journal entries:", err);
+            $("#placelist").html('<tr><td colspan="10" class="text-center text-danger">Error loading data</td></tr>');
+            $("#pagination").empty();
+        }
+    });
+}
+
+// 🔹 Render table dynamically
+function renderTable(data) {
+    let rows = "";
+
+    data.forEach(details => {
+        const tranDate = details.tran_date ? formatDate(details.tran_date) : "";
+        const tranAmt = details.tran_amt
+            ? Number(details.tran_amt).toLocaleString("en-IN", { minimumFractionDigits: 2 })
+            : "0.00";
+
+        rows += `
+        <tr>
+          <td>${tranDate}</td>
+          <td>${details.tran_id}/${details.part_tran_id}</td>
+          <td>${details.part_tran_type}</td>
+          <td>${details.acct_crncy}</td>
+          <td style="text-align:right;">${tranAmt}</td>
+          <td>${details.acct_num}</td>
+          <td>${details.acct_name}</td>
+          <td>${details.tran_particular}</td>
+          <td>${details.tran_status}</td>
+          <td>
+            <div class="dropdown action-dropdown">
+              <button class="btn btn-action dropdown-toggle" style="padding:0px" type="button" 
+                      data-toggle="dropdown" title="Action">
+                Action
+              </button>
+              <div class="dropdown-menu" style="padding:0px">
+                ${details.tran_status === 'ENTERED' ? `
+                  <a class="dropdown-item delete-item" 
+                     data-tranid="${details.tran_id}" 
+                     data-partnid="${details.part_tran_id}" 
+                     data-acctnum="${details.acct_num}"
+                     onclick="deleteuser(this)">Delete</a>
+                  <div class="dropdown-divider"></div>` : ''}
+                <a class="dropdown-item view-item" 
+                   data-tranid="${details.tran_id}" 
+                   data-partnid="${details.part_tran_id}" 
+                   data-acctnum="${details.acct_num}"
+                   onclick="enquiryuser(this)">View</a>
+              </div>
+            </div>
+          </td>
+        </tr>`;
+    });
+
+    $("#placelist").html(rows);
+}
+
+// 🔹 Updated Pagination (clean and simple)
+function updatePagination(current, total) {
+    const paginationDiv = $('#pagination');
+    paginationDiv.empty();
+
+    if (total <= 1) return;
+
+    let html = `
+        <button class="btn btn-sm btn-primary mx-1" 
+                ${current <= 1 ? 'disabled' : ''} 
+                onclick="loadJournalEntries(${current - 1})">Prev</button>
+        <span class="mx-2">Page ${current} of ${total}</span>
+        <button class="btn btn-sm btn-primary mx-1" 
+                ${current >= total ? 'disabled' : ''} 
+                onclick="loadJournalEntries(${current + 1})">Next</button>
+    `;
+
+    paginationDiv.html(html);
+}
+
+// 🔹 Helper to format date (dd-MM-yyyy)
+function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    if (isNaN(d)) return "";
+    return d.toLocaleDateString("en-GB"); // dd/MM/yyyy
+}
+</script>
+
+
 </head>
 
 
@@ -2540,7 +2656,7 @@
 											<th style="width:6%;"><input type="text"
 													class="form-control font-weight-bold" placeholder="TRAN ID"
 													disabled></th>
-											<th style="width:6%;"><input type="text"
+											<th style="width:8%;"><input type="text"
 													class="form-control font-weight-bold" placeholder="PA TRAN TY"
 													disabled></th>
 											<th style="width:6%;"><input type="text"
@@ -2567,7 +2683,7 @@
 										</tr>
 									</thead>
 									<tbody id="placelist">
-										<!--<tr th:each="details : ${jour}">
+										<!-- <tr th:each="details : ${jour}">
 
 											<td
 												th:text="${details.tran_date != null ? #dates.format(details.tran_date,'dd-MM-yyyy') : ''}">
@@ -2612,11 +2728,12 @@
 													</div>
 												</div>
 											</td>
-										</tr>-->
+										</tr> -->
 									</tbody>
 								</table>
 							</div>
 						</div>
+						<div id="pagination" class="d-flex justify-content-center my-2"></div>
 						<div class="card-footer text-center" style="background-color: #e9ecef">
 
 

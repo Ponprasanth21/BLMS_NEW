@@ -4274,12 +4274,14 @@ public class BGLSNavigationController {
             md.addAttribute("formmode", "add");
             List<Organization_Entity> organization = organization_Repo.getAllList();
             // md.addAttribute("organization", organization.get(0));
+            Date currentDate = bGLS_CONTROL_TABLE_REP.getCurrentTranDate();
             md.addAttribute("OrgBranch", organization_Branch_Rep.getbranchlist());
             md.addAttribute("disbursement", TRAN_MAIN_TRM_WRK_REP.getRepaymentDetailsvalue());
             md.addAttribute("interest", TRAN_MAIN_TRM_WRK_REP.getInterestDetailsValue());
             md.addAttribute("fees", TRAN_MAIN_TRM_WRK_REP.getFeesDetailsValue());
             md.addAttribute("penalty", TRAN_MAIN_TRM_WRK_REP.getPenaltyDetailsValue());
             md.addAttribute("recovery", TRAN_MAIN_TRM_WRK_REP.getRecoveryDetailsValue());
+            md.addAttribute("booking", loan_act_mst_repo.getLoanActDetval41(currentDate));
             md.addAttribute("OrgBranch", organization_Branch_Rep.getOrgBranch(branch_name));
 
         } else if (formmode.equals("ModifyHead")) {

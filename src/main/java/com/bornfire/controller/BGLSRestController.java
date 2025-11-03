@@ -1,5 +1,6 @@
 package com.bornfire.controller;
 
+import java.awt.print.Pageable;
 import java.io.IOException;
 
 import com.bornfire.entities.*;
@@ -74,6 +75,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11996,22 +11998,31 @@ public class BGLSRestController {
 	@GetMapping("/DABReportDownload")
 	public ResponseEntity<byte[]> DABReportDownload(@RequestParam("tranDate") String tranDate) {
 
-		List<Object[]> rawData = chart_Acc_Rep.getDabReportByDate(tranDate);
-		System.out.println(tranDate);
-		byte[] excelData = exelDownloadService.generateDabExcelReport(rawData, tranDate);
+	    List<Object[]> rawData = chart_Acc_Rep.getDabReportByDate(tranDate);
+	    System.out.println("DAB Report Request Date: " + tranDate);
 
-		if (excelData == null || excelData.length == 0) {
-			return ResponseEntity.noContent().build();
-		}
+	    // ✅ Handle if no data found
+	    if (rawData == null || rawData.isEmpty()) {
+	        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	    }
 
-		String fileName = "DAB_REPORT_" + tranDate + ".xlsx";
+	    byte[] excelData = exelDownloadService.generateDabExcelReport(rawData, tranDate);
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
-		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+	    // ✅ Handle if Excel generation failed or empty
+	    if (excelData == null || excelData.length == 0) {
+	        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	    }
 
-		return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+	    String fileName = "DAB_REPORT_" + tranDate + ".xlsx";
+
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.setContentDisposition(
+	            ContentDisposition.builder("attachment").filename(fileName).build());
+	    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+	    return new ResponseEntity<byte[]>(excelData, headers, HttpStatus.OK);
 	}
+
 
 	@GetMapping("loan/statusSearchtransaction")
 	public List<Map<String, Object>> searchByStatustransaction(@RequestParam String status) {
@@ -12037,4 +12048,57 @@ public class BGLSRestController {
 
 		return result;
 	}
+	
+	
+	
+	@Autowired
+	private PdfService pdfService;
+	
+
+@GetMapping("/TransactionPDFReportDownload")
+public ResponseEntity<byte[]> TransactionReportDownloadpdf(@RequestParam("dueDate") String dueDate) {
+    List<Object[]> rawData = chart_Acc_Rep.getTransactionReportByDate(dueDate);
+    
+    // ✅ Call the non-static method through the injected bean
+    byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate);
+
+    if (pdfData == null || pdfData.length == 0) {
+        return ResponseEntity.noContent().build();
+    }
+
+    String fileName = "TRANSACTION_REPORT_" + dueDate + ".pdf";
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+    headers.setContentType(MediaType.APPLICATION_PDF);
+
+    return new ResponseEntity<>(pdfData, headers, HttpStatus.OK);
+}
+
+@GetMapping("/getJournalEntries")
+@ResponseBody
+public Map<String, Object> getJournalEntries(
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "10") int size) {
+
+    int offset = (page - 1) * size;
+
+    // Fetch paginated records and total count
+    List<TRAN_MAIN_TRM_WRK_ENTITY> journalEntries = tRAN_MAIN_TRM_WRK_REP.findPaginatedJournal(offset, size);
+    int totalItems = tRAN_MAIN_TRM_WRK_REP.countJournalEntries();
+    int totalPages = (int) Math.ceil((double) totalItems / size);
+
+    // Prepare response
+    Map<String, Object> result = new HashMap<>();
+    result.put("data", journalEntries);
+    result.put("totalPages", totalPages);
+    result.put("currentPage", page);
+    result.put("totalItems", totalItems);
+
+    return result;
+}
+
+
+
+
+
 }

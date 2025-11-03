@@ -325,46 +325,64 @@ function downloadReport() {
 
 	// old url : /downloadDAB
 	// passing object name : dueDate instead of trandDate
-    $.ajax({
-        url: './DABReportDownload',
-        type: 'GET',
-        data: { tranDate: formattedDate },
-        xhrFields: {
-            responseType: 'blob'  // For Excel download
-        },
-        success: function(blob, status, xhr) {
-        	document.getElementById('loadingModal').style.display = 'none';
-            const filename = xhr.getResponseHeader('Content-Disposition')?.split('filename=')[1] || 'Loan_Report.xlsx';
+   $.ajax({
+    url: './DABReportDownload',
+    type: 'GET',
+    data: { tranDate: formattedDate },
+    xhrFields: { responseType: 'blob' },
+    success: function (blob, status, xhr) {
+        document.getElementById('loadingModal').style.display = 'none';
 
-            if (blob.size === 0) {
-                $.toast({
-                    heading: 'No Data',
-                    text: 'No records available for the selected date.',
-                    icon: 'info',
-                    position: { left: 1600, top: 0 },
-                    hideAfter: 3000
-                });
-                return;
-            }
-
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = filename.replace(/"/g, '');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        },
-        error: function(err) {
-        	document.getElementById('loadingModal').style.display = 'none';
+        // ✅ Handle empty blob
+        if (!blob || blob.size === 0) {
             $.toast({
-                heading: 'Error',
-                text: 'Something went wrong while generating the report.',
-                icon: 'error',
+                heading: 'No Data',
+                text: 'No records available for the selected date.',
+                icon: 'info',
                 position: { left: 1600, top: 0 },
                 hideAfter: 3000
             });
-            console.error(err);
+            return;
         }
+
+        const contentDisposition = xhr.getResponseHeader('Content-Disposition');
+        const filename = contentDisposition
+            ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+            : 'DAB_Report.xlsx';
+
+        // ✅ Download Excel file
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    },
+    error: function (xhr) {
+        document.getElementById('loadingModal').style.display = 'none';
+
+        // ✅ Check for No Content (204)
+        if (xhr.status === 204) {
+            $.toast({
+                heading: 'No Data',
+                text: 'No records found for the selected date.',
+                icon: 'info',
+                position: { left: 1600, top: 0 },
+                hideAfter: 3000
+            });
+            return;
+        }
+
+        $.toast({
+            heading: 'Error',
+            text: 'Something went wrong while generating the report.',
+            icon: 'error',
+            position: { left: 1600, top: 0 },
+            hideAfter: 3000
+        });
+
+        console.error("Error during Excel download:", xhr);
+    }
     });
 }
 </script>

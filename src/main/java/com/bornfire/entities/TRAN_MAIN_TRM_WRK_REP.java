@@ -611,4 +611,17 @@ BigDecimal getTrandateBal(
     
     @Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS WHERE TRAN_STATUS = 'POSTED' ORDER BY TRAN_DATE, TRAN_ID, PART_TRAN_ID FETCH FIRST 1000 ROWS ONLY ", nativeQuery = true)
     List<TRAN_MAIN_TRM_WRK_ENTITY> findByjournal1();
+    
+    @Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS " +
+            "WHERE TRAN_STATUS = 'POSTED' " +
+            "ORDER BY TRAN_DATE, TRAN_ID, PART_TRAN_ID " +
+            "OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY",
+    nativeQuery = true)
+List<TRAN_MAIN_TRM_WRK_ENTITY> findPaginatedJournal(@Param("offset") int offset,
+                                                 @Param("limit") int limit);
+
+@Query(value = "SELECT COUNT(*) FROM BGLS_TRM_WRK_TRANSACTIONS WHERE TRAN_STATUS = 'POSTED'",
+    nativeQuery = true)
+int countJournalEntries();
+
 }

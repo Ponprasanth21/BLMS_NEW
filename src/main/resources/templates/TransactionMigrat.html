@@ -1361,6 +1361,8 @@ th > input {
 							<button class="tablinks" onclick="openTab(event, 'tab4')"  data-flow="COLL" 
 								style="font-size: 16px; padding: 4px 8px; height: 32px;">Recovery
 								Transaction</button>
+							<button class="tablinks" onclick="openTab(event, 'tab6')"  data-flow="BOOK" 
+								style="font-size: 16px; padding: 4px 8px; height: 32px;">Booking</button>
 							
 						</div>
 
@@ -1609,8 +1611,62 @@ th > input {
 							</div>
 						</div>
 
+
+						<div id="tab6" class="tabcontent" style="display: none;">
+							<div class="card-body">
+								<div class="table-wrapper"
+									style="max-height: 340px; overflow-y: auto; display: block; border: 1px solid #ccc;">
+									<table class="table table-bordered table-hover table-sm"
+										style="margin-bottom: 0px; font-size: initial; width: 100%; table-layout: fixed;">
+										<thead class="thead-light"
+											style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+											<tr>
+												<th style="width: 9%"><input type="text" class="form-control form-control-sm  " placeholder="S.No1" disabled></th>
+												<th style="width: 9%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Id" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Date" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Code" disabled></th>
+												<th style="width: 12%"><input type="text" class="form-control form-control-sm  " placeholder="Flow Amount" disabled></th>
+												<!-- <th style="width: 9%">SRL NO</th>
+												<th style="width: 9%">FLOW ID</th>
+												<th style="width: 12%">FLOW DATE</th>
+												<th style="width: 12%">FLOW CODE</th>
+												<th style="width: 12%; text-align: center;">FLOW AMOUNT</th> -->
+												<!-- <th style="width: 23%">ACCOUNT NUMBER</th>
+												<th style="width: 23%">ACCOUNT NAME</th> -->
+												<th><input type="text" id="acctnumfilter6" class="form-control form-control-sm acctnumfilter " placeholder="Account Number" disabled></th>
+            									<th><input type="text" id="acctnamefilter6" class="form-control form-control-sm acctnamefilter " placeholder="Account Name" disabled></th>
+											</tr>
+										</thead>
+										<tbody id="placelist6">
+											<tr th:each="item, iterStat : ${booking}">
+												<td th:text="${iterStat.index + 1}"></td>
+												<td th:text="${item.id}"></td>
+												<td th:text="${#dates.format(item.disbursement_date, 'dd-MM-yyyy')}"></td>
+												<td th:text="${item.account_holdertype}"></td>
+												<td th:text="${item.loan_amount == null || item.loan_amount == 0 ? '0.00' : #numbers.formatDecimal(item.loan_amount, 0, 'COMMA', 2, 'POINT')}"
+												        style="text-align: right;"></td>
+												<td th:text="${item.loan_name}"></td>
+												<td th:text="${item.employer_name}"></td>
+											</tr>
+
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<div class="card-footer text-center" style="background-color: #e9ecef;">
+								<button class="btn-primary big-btn" onclick="Home();">Home</button>
+								<button class="btn-primary big-btn" onclick="bookingsubmit(this);">Proceed</button>
+								<button class="btn-primary big-btn" onclick="Back();">Back</button>
+							</div>
+						</div>
+
+
 					</div>
 				</div>
+
+
+
+
 				<!-- ---------------------------------------------------------------------------------------------------------------- -->
 				<div th:if="${formmode} =='addholiday'">
 					<div class="card">
