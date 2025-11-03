@@ -1483,9 +1483,7 @@ public class ExelDownloadService {
          labelRow.getCell(acctBalCol).setCellStyle(turquoiseStyle);
 
          // If you want to add a label at start (like "SUMMARY:"), you can:
-         Cell summaryLabel = labelRow.createCell(7); // example before principal column
-         summaryLabel.setCellValue("TOTAL :");
-         summaryLabel.setCellStyle(normalStyle);
+         
 
          // ==============================
          // 2️⃣ SUM Row (Formulas)
@@ -1512,6 +1510,10 @@ public class ExelDownloadService {
          sumRow.getCell(penaltyCol).setCellStyle(numberStyle);
          sumRow.getCell(totalBalanceCol).setCellStyle(numberStyle);
          sumRow.getCell(acctBalCol).setCellStyle(numberStyle);
+         
+         Cell summaryLabel = sumRow.createCell(7); // example before principal column
+         summaryLabel.setCellValue("TOTAL :");
+         summaryLabel.setCellStyle(normalStyle);
 
 
 
