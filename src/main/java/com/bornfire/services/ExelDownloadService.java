@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
@@ -1832,6 +1833,235 @@ public class ExelDownloadService {
             return new byte[0];
         }
     }
+    
+    
+//    --------------------------------------------------------------------
+   
+    public byte[] generateEndOfMonthExcel(List<Object[]> rawData, String dueDate) {
+    	
 
+    	for (Object[] rowData : rawData) {
+    	    System.out.println(Arrays.toString(rowData));
+    	}
+
+    	 
+        if (rawData == null || rawData.isEmpty()) {
+            return new byte[0];
+        }
+
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+            Sheet sheet = workbook.createSheet("END_OF_MONTH_LOAN_REPORT_" + dueDate);
+
+            // --- Constants ---
+            final int TOTAL_EXCEL_COLUMNS = 51;
+
+            // ==============================
+            // 1️⃣ Title Row
+            // ==============================
+            Row titleRow = sheet.createRow(0);
+            Cell titleCell = titleRow.createCell(0);
+            titleCell.setCellValue("END OF MONTH LOAN REPORT");
+
+            CellStyle titleStyle = workbook.createCellStyle();
+            Font titleFont = workbook.createFont();
+            titleFont.setBold(true);
+            titleFont.setFontHeightInPoints((short) 14);
+            titleStyle.setFont(titleFont);
+            titleStyle.setAlignment(HorizontalAlignment.CENTER);
+            titleCell.setCellStyle(titleStyle);
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, TOTAL_EXCEL_COLUMNS - 1));
+
+            // ==============================
+            // 2️⃣ Printed Date Row
+            // ==============================
+            Row dateRow = sheet.createRow(1);
+            dateRow.createCell(0).setCellValue("Printed Date:");
+            dateRow.createCell(1).setCellValue(dueDate);
+
+            // ==============================
+            // 3️⃣ Header Row
+            // ==============================
+            String[] headers = {
+                "Activation Date", "Relationship Manager", "Retailer", "Retailer Branch", "Processed By (Vanguard)",
+                "Sale Originated By", "Account Holder Name", "Account Holder ID", "Account ID", "Acc", "Product",
+                "Total Product Price", "Loan Amount", "App Approved Amount (Basic Limit)",
+                "Manual Override Approved Amount", "TransUnion Score", "Number of Installments",
+                "Interest Rate", "Principal Balance", "Interest Balance", "Fee Balance", "Total Balance",
+                "Completed Loan Cycles (Client)", "Email (Client)", "Mobile Phone (Client)", "Employment Status",
+                "Employer", "Sale Referred By (Old)", "Referrer Contact Number", "Current Month Target (Client)",
+                "Full Account State", "Total Paid", "Principal Paid", "Interest Paid", "Fees Paid",
+                "Vanguard Application ID", "Name", "Days Late", "Gender (Client)",
+                "Post Activation Referral (Client)", "Deposit Amount", "Birth Date (Client)",
+                "TransUnion Probability", "TransUnion Status", "ID Number (Client)",
+                "Disposal Income", "Verified Income", "Capitalized Interest", "Interest Accrued",
+                "Expiry Date", "Sale Processed For"
+            };
+
+            Row headerRow = sheet.createRow(3);
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerFont.setColor(IndexedColors.BLACK.getIndex());
+            headerStyle.setFont(headerFont);
+            headerStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            headerStyle.setBorderBottom(BorderStyle.THIN);
+            headerStyle.setBorderTop(BorderStyle.THIN);
+            headerStyle.setBorderLeft(BorderStyle.THIN);
+            headerStyle.setBorderRight(BorderStyle.THIN);
+
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            // ==============================
+            // 4️⃣ Styles
+            // ==============================
+            CellStyle textLeftStyle = workbook.createCellStyle();
+            textLeftStyle.setAlignment(HorizontalAlignment.LEFT);
+
+            CellStyle numberRightStyle = workbook.createCellStyle();
+            numberRightStyle.setAlignment(HorizontalAlignment.RIGHT);
+            numberRightStyle.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
+
+            CellStyle integerRightStyle = workbook.createCellStyle();
+            integerRightStyle.setAlignment(HorizontalAlignment.RIGHT);
+            integerRightStyle.setDataFormat(workbook.createDataFormat().getFormat("0"));
+
+            CellStyle dateStyle = workbook.createCellStyle();
+            dateStyle.setDataFormat(workbook.createDataFormat().getFormat("dd-MM-yyyy"));
+            dateStyle.setAlignment(HorizontalAlignment.CENTER);
+
+            // ==============================
+            // 5️⃣ Simple Column Mapping
+            // ==============================
+            // 👉 (-1 means static empty)
+            Map<Integer, Integer> columnMap = new LinkedHashMap<>();
+            columnMap.put(0, 0);   // Activation Date = object[0]
+            columnMap.put(1, -1);  // Relationship Manager = ""
+            columnMap.put(2, 1);   // Retailer = object[1]
+            columnMap.put(3, 2);   // Retailer Branch = object[2]
+            columnMap.put(4, 3);   // Processed By Vanguard = object[3]
+            columnMap.put(5, -1);  // Sale Originated By = ""
+            columnMap.put(6, 4);   // Account Holder Name = object[4]
+            columnMap.put(7, 5);   // Account Holder ID = object[5]
+            columnMap.put(8, 6);   // Account ID = object[6]
+            columnMap.put(9, -1);  // Acc = ""
+            columnMap.put(10, -1); // Product = ""
+            columnMap.put(11, 7);  // Total Product Price = object[7]
+            columnMap.put(12, 8);  // Loan Amount = object[8]
+            columnMap.put(13, -1); // App Approved Amount = ""
+            columnMap.put(14, 9);  // Manual Override = object[9]
+            columnMap.put(15, 10); // TransUnion Score
+            columnMap.put(16, 11); // Installments
+            columnMap.put(17, 12); // Interest Rate
+            columnMap.put(18, 13); // Principal Balance
+            columnMap.put(19, 14); // Interest Balance
+            columnMap.put(20, 15); // Fees Balance
+            columnMap.put(21, 16); // Total Balance
+            columnMap.put(22, 17); // Loan Cycles
+            columnMap.put(23, 18); // Email
+            columnMap.put(24, 19); // Mobile
+            columnMap.put(25, 20); // Employment Status
+            columnMap.put(26, 21); // Employer
+            columnMap.put(27, 22); // Sale Referred By
+            columnMap.put(28, -1); // Referrer Contact No
+            columnMap.put(29, -1); // Current Month Target
+            columnMap.put(30, 23); // Account State
+            columnMap.put(31, 24); // Total Paid
+            columnMap.put(32, 25); // Principal Paid
+            columnMap.put(33, 26); // Interest Paid
+            columnMap.put(34, 27); // Fees Paid
+            columnMap.put(35, 28); // VG App ID
+            columnMap.put(36, -1); // Name (static)
+            columnMap.put(37, 29); // Days Late
+            columnMap.put(38, 30); // Gender
+            columnMap.put(39, -1); // Post Activation Referral
+            columnMap.put(40, 31); // Deposit Amount
+            columnMap.put(41, 32); // Birth Date
+            columnMap.put(42, 33); // TU Probability
+            columnMap.put(43, -1); // TU Status
+            columnMap.put(44, -1); // ID Number
+            columnMap.put(45, 34); // Disposable Income
+            columnMap.put(46, -1); // Verified Income
+            columnMap.put(47, -1); // Capitalized Interest
+            columnMap.put(48, 35); // Interest Accrued
+            columnMap.put(49, -1); // Expiry Date
+            columnMap.put(50, 36); // Sale Processed For
+
+            // ==============================
+            // 6️⃣ Data Population
+            // ==============================
+            int rowNum = 4;
+            for (Object[] rowData : rawData) {
+                Row row = sheet.createRow(rowNum++);
+                for (Map.Entry<Integer, Integer> entry : columnMap.entrySet()) {
+                    int col = entry.getKey();
+                    int src = entry.getValue();
+                    Cell cell = row.createCell(col);
+
+                    if (src == -1) {
+                        cell.setCellValue("");
+                        cell.setCellStyle(textLeftStyle);
+                        continue;
+                    }
+
+                    Object value = rowData[src];
+                    if (value == null) {
+                        cell.setCellValue("");
+                        continue;
+                    }
+
+                    // try date format
+                    if (col == 0 || col == 41) {
+                        try {
+                            if (value instanceof java.util.Date) {
+                                cell.setCellValue((Date) value);
+                            } else {
+                                cell.setCellValue(new SimpleDateFormat("yyyy-MM-dd").parse(value.toString()));
+                            }
+                            cell.setCellStyle(dateStyle);
+                            continue;
+                        } catch (Exception e) {
+                            // not a date
+                        }
+                    }
+
+                    // try numeric
+                    if (col == 11 || col == 12 || col == 14 || col == 18 || col == 19 || col == 20 ||
+                        col == 21 || col == 31 || col == 32 || col == 33 || col == 34 || col == 40 || col == 45 || col == 48) {
+                        try {
+                            cell.setCellValue(Double.parseDouble(value.toString()));
+                            cell.setCellStyle(numberRightStyle);
+                            continue;
+                        } catch (Exception ignored) {}
+                    }
+
+                    // default text
+                    cell.setCellValue(value.toString());
+                    cell.setCellStyle(textLeftStyle);
+                }
+            }
+
+            // ==============================
+            // 7️⃣ Auto-size Columns
+            // ==============================
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            workbook.write(out);
+            return out.toByteArray();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new byte[0];
+        }
+    }
 
 }

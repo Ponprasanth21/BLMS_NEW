@@ -323,8 +323,9 @@ function downloadReport() {
     const [year, month, day] = dueDate.split("-");
     const formattedDate = `${day}-${month}-${year}`;
 
+	// old url : './downloadLoanDue'
     $.ajax({
-        url: './downloadLoanDue',
+        url: './EndOfMonthLoanReportDownload',
         type: 'GET',
         data: { dueDate: formattedDate },
         xhrFields: {

@@ -403,4 +403,55 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
 	
 	@Query(value = "SELECT encoded_key FROM LOAN_ACCOUNT_MASTER_TBL WHERE ID =?1", nativeQuery = true)
 	String getLoanView1(String id);
+	
+	
+	@Query(
+		    value = "SELECT " +
+		            "cmt.activation_date, " +
+		            "lam.retailer_name, " +
+		            "lam.RETAILER_BRANCH, " +
+		            "lam.SALE_PROCESSEDBYVGID, " +
+		            "(cmt.FIRST_NAME || ' ' || cmt.LAST_NAME) AS ACCOUNT_HOLDER_NAME, " +
+		            "cmt.CUSTOMER_ID AS ACCOUNT_HOLDER_ID, " +
+		            "lam.ID AS ACCOUNT_ID, " +
+		            "lam.TOTAL_PRODUCT_PRICE, " +
+		            "lam.loan_amount, " +
+		            "lam.MANUALOVERRIDE_AMOUNT, " +
+		            "lam.TUSCORE, " +
+		            "lam.repayment_installments, " +
+		            "lam.interest_rate, " +
+		            "lam.principal_balance, " +
+		            "lam.interest_balance, " +
+		            "lam.fees_balance, " +
+		            "(lam.principal_balance + lam.interest_balance + lam.fees_balance) AS TOTAL_BALANCE, " +
+		            "cmt.LOAN_CYCLE, " +
+		            "cmt.EMAIL_ADDRESS, " +
+		            "cmt.MOBILE_PHONE, " +
+		            "lam.EMPLOYMENT_STATUS, " +
+		            "(cmt.FIRST_NAME || ' - ' || lam.EMPLOYER_NAME) AS EMPLOYER, " +
+		            "lam.SALE_REFERREDBY, " +
+		            "lam.account_state, " +
+		            "(lam.principal_paid + lam.interest_paid + lam.fees_paid) AS total_paid, " +
+		            "lam.principal_paid, " +
+		            "lam.interest_paid, " +
+		            "lam.fees_paid, " +
+		            "lam.VG_APPLICATION_ID, " +
+		            "lam.days_late, " +
+		            "cmt.gender, " +
+		            "lam.DEPOSIT_AMOUNT, " +
+		            "cmt.birth_date, " +
+		            "lam.TUPROBABILITY, " +
+		            "lam.DISPOSABLE_INCOME, " +
+		            "lam.ACCRUED_INTEREST, " +
+		            "lam.SALE_PROCESSEDFOR " +
+		            "FROM LOAN_ACCOUNT_MASTER_TBL lam " +
+		            "JOIN CLIENT_MASTER_TBL cmt ON lam.account_holderkey = cmt.encoded_key " +
+		            "JOIN LOAN_REPAYMENT_TBL lrt ON lrt.PARENT_ACCOUNT_KEY = lam.encoded_key " +
+		            "WHERE cmt.encoded_key IS NOT NULL " +
+		            "AND TO_CHAR(lrt.DUE_DATE, 'DD-MM-YYYY') = :dueDate",
+		    nativeQuery = true
+		)
+		List<Object[]> findEndOfMonthLoanReport(@Param("dueDate") String dueDate);
+
+
 }

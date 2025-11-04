@@ -12238,4 +12238,23 @@ public List<Map<String, Object>> searchAccount_number(@RequestParam String Mobil
 	return result;
 }
 
+@GetMapping("/EndOfMonthLoanReportDownload")
+public ResponseEntity<byte[]> downloadEndOfMonthReport(@RequestParam("dueDate") String dueDate) {
+	System.out.println("End Report");
+    List<Object[]> rawData = lOAN_ACT_MST_REPO.findEndOfMonthLoanReport(dueDate);
+    byte[] excelData = exelDownloadService.generateEndOfMonthExcel(rawData, dueDate); 
+
+    if (excelData == null || excelData.length == 0) {
+        return ResponseEntity.noContent().build();
+    }
+
+    String fileName = "END_OF_MONTH_LOAN_REPORT_" + dueDate + ".xlsx";
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+    return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+}
+
 }
