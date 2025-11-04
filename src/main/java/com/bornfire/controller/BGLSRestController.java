@@ -12097,8 +12097,145 @@ public Map<String, Object> getJournalEntries(
     return result;
 }
 
+@RequestMapping("/api/Reversal")
+public Map<String, Object> getMapReversal(
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "1000") int limit) {
 
+    if (page < 1)
+        page = 1;
+    int offset = (page - 1) * limit;
 
+    // Fetch paginated transactions
+    List<TRAN_MAIN_TRM_WRK_ENTITY> rows = tRAN_MAIN_TRM_WRK_REP.findPaginatedJournal(offset, limit);
+    Long totalRecords = tRAN_MAIN_TRM_WRK_REP.getTotalLoans();
+    int totalPages = (int) Math.ceil((double) totalRecords / limit);
 
+    List<Map<String, Object>> result = new ArrayList<>();
+
+    for (TRAN_MAIN_TRM_WRK_ENTITY row : rows) {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("tran_id", row.getTran_id());
+        map.put("part_tran_id", row.getPart_tran_id());
+        map.put("part_tran_type", row.getPart_tran_type());
+        map.put("tran_date", row.getTran_date());
+        map.put("acct_crncy", row.getAcct_crncy());
+        map.put("tran_amt", row.getTran_amt());
+        map.put("acct_num", row.getAcct_num());
+        map.put("acct_name", row.getAcct_name());
+        map.put("tran_particular", row.getTran_particular());
+        map.put("tran_status", row.getTran_status());
+
+        System.out.println("tran_id = " + row.getTran_id() + " | tran_status = " + row.getTran_status());
+        result.add(map);
+    }
+
+    System.out.println("✅ Total rows fetched = " + result.size());
+
+    Map<String, Object> response = new HashMap<>();
+    response.put("data", result);
+    response.put("currentPage", page);
+    response.put("totalPages", totalPages);
+    response.put("totalRecords", totalRecords);
+
+    return response;
+}
+
+@GetMapping("Tran_date/search")
+public List<Map<String, Object>> searchTran_date(@RequestParam String loanId) {
+	System.out.println("THE GETTING TRAN_DATE IS "+loanId);
+	List<TRAN_MAIN_TRM_WRK_ENTITY> rows;
+	if (loanId == null || loanId.trim().isEmpty()) {
+		rows = tRAN_MAIN_TRM_WRK_REP.getLoanActWithtranid(0, 1000); // default 200 rows
+	} else {
+		rows = tRAN_MAIN_TRM_WRK_REP.searchByTranDate(loanId);
+	}
+
+	List<Map<String, Object>> result = new ArrayList<>();
+
+	for (TRAN_MAIN_TRM_WRK_ENTITY row : rows) {
+	    Map<String, Object> map = new HashMap<>();
+
+	    map.put("tran_id", row.getTran_id());
+	    map.put("part_tran_id", row.getPart_tran_id());
+	    map.put("part_tran_type", row.getPart_tran_type());
+	    map.put("tran_date", row.getTran_date());
+	    map.put("acct_crncy", row.getAcct_crncy());
+	    map.put("tran_amt", row.getTran_amt());
+	    map.put("acct_num", row.getAcct_num());
+	    map.put("acct_name", row.getAcct_name());
+	    map.put("tran_particular", row.getTran_particular());
+	    map.put("tran_status", row.getTran_status());
+
+	    result.add(map);
+	}
+
+	return result;
+}
+
+@GetMapping("Tran_id/search")
+public List<Map<String, Object>> searchTran_id(@RequestParam String loanType) {
+	System.out.println("THE GETTING TRAN_DATE IS "+loanType);
+	List<TRAN_MAIN_TRM_WRK_ENTITY> rows;
+	if (loanType == null || loanType.trim().isEmpty()) {
+		rows = tRAN_MAIN_TRM_WRK_REP.getLoanActWithtranid(0, 1000); // default 200 rows
+	} else {
+		rows = tRAN_MAIN_TRM_WRK_REP.searchByTranIdLike(loanType);
+	}
+
+	List<Map<String, Object>> result = new ArrayList<>();
+
+	for (TRAN_MAIN_TRM_WRK_ENTITY row : rows) {
+	    Map<String, Object> map = new HashMap<>();
+
+	    map.put("tran_id", row.getTran_id());
+	    map.put("part_tran_id", row.getPart_tran_id());
+	    map.put("part_tran_type", row.getPart_tran_type());
+	    map.put("tran_date", row.getTran_date());
+	    map.put("acct_crncy", row.getAcct_crncy());
+	    map.put("tran_amt", row.getTran_amt());
+	    map.put("acct_num", row.getAcct_num());
+	    map.put("acct_name", row.getAcct_name());
+	    map.put("tran_particular", row.getTran_particular());
+	    map.put("tran_status", row.getTran_status());
+
+	    result.add(map);
+	}
+
+	return result;
+}
+
+@GetMapping("Account_number/search")
+public List<Map<String, Object>> searchAccount_number(@RequestParam String MobileNumber) {
+	System.out.println("THE GETTING TRAN_DATE IS "+MobileNumber);
+	List<TRAN_MAIN_TRM_WRK_ENTITY> rows;
+	if (MobileNumber == null || MobileNumber.trim().isEmpty()) {
+		rows = tRAN_MAIN_TRM_WRK_REP.getLoanActWithtranid(0, 1000); // default 200 rows
+	} else {
+		rows = tRAN_MAIN_TRM_WRK_REP.searchByAcctNumLike(MobileNumber);
+	}
+
+	List<Map<String, Object>> result = new ArrayList<>();
+
+	for (TRAN_MAIN_TRM_WRK_ENTITY row : rows) {
+	    Map<String, Object> map = new HashMap<>();
+
+	    map.put("tran_id", row.getTran_id());
+	    map.put("part_tran_id", row.getPart_tran_id());
+	    map.put("part_tran_type", row.getPart_tran_type());
+	    map.put("tran_date", row.getTran_date());
+	    map.put("acct_crncy", row.getAcct_crncy());
+	    map.put("tran_amt", row.getTran_amt());
+	    map.put("acct_num", row.getAcct_num());
+	    map.put("acct_name", row.getAcct_name());
+	    map.put("tran_particular", row.getTran_particular());
+	    map.put("tran_status", row.getTran_status());
+
+	    result.add(map);
+	}
+
+	return result;
+}
 
 }

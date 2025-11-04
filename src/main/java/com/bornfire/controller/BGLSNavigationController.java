@@ -5245,6 +5245,15 @@ public class BGLSNavigationController {
             System.out.println("part_tran_id" + part_tran_id);
             md.addAttribute("maxPartTran", tRAN_MAIN_TRM_WRK_REP.maxPartranID(tran_id));
             md.addAttribute("gldetails", chart_Acc_Rep.getlistpopupvalues(acct_num));
+        }  else if (formmode.equals("view1")) {
+            md.addAttribute("formmode", "view1");
+            md.addAttribute("jour", tRAN_MAIN_TRM_WRK_REP.findByjournalvalues(tran_id));
+            md.addAttribute("Acctnum", acct_num);
+            md.addAttribute("ledgervalues", tRAN_MAIN_TRM_WRK_REP.getValuepopvalues(tran_id, acct_num, part_tran_id));
+            md.addAttribute("currentPartTran", part_tran_id);
+            System.out.println("part_tran_id" + part_tran_id);
+            md.addAttribute("maxPartTran", tRAN_MAIN_TRM_WRK_REP.maxPartranID(tran_id));
+            md.addAttribute("gldetails", chart_Acc_Rep.getlistpopupvalues(acct_num));
         } else if (formmode.equals("modify")) {
             // md.addAttribute("jour", account_Ledger_Rep.getjourform(acct_num));
             md.addAttribute("formmode", "modify");

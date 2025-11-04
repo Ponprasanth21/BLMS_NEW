@@ -221,6 +221,86 @@
 		.big-btn {
 			font-size: 16px;
 		}
+
+		/* Sticky header */
+		#usertablevalues thead th {
+			position: sticky;
+			top: 0;
+			background-color: #f8f9fa !important;
+			z-index: 5;
+		}
+
+		/* Sticky header */
+		#usertablevalues1 thead th {
+			position: sticky;
+			top: 0;
+			background-color: #f8f9fa !important;
+			z-index: 5;
+		}
+
+		/* Sticky header */
+		#usertable thead th {
+			position: sticky;
+			top: 0;
+			background-color: #e9ecef !important;
+			z-index: 5;
+		}
+
+		/* Make .table-responsive scrollable with fixed height */
+		.table-responsive.scroll-body {
+			max-height: 150px;
+			/* scroll height */
+			overflow-y: auto;
+			/* vertical scroll only */
+			overflow-x: hidden;
+			/* hide horizontal scroll */
+		}
+
+		/* Table style adjustments */
+		#usertablevalues th,
+		#usertablevalues td {
+			white-space: nowrap;
+			border: 1px solid #dee2e6;
+			vertical-align: middle;
+			font-size: 14px;
+		}
+
+		/* Table style adjustments */
+		#usertablevalues1 th,
+		#usertablevalues1 td {
+			white-space: nowrap;
+			border: 1px solid #dee2e6;
+			vertical-align: middle;
+			font-size: 14px;
+		}
+
+		/* Table style adjustments */
+		#usertablevalues th,
+		#usertablevalues td {
+			white-space: nowrap;
+			border: 1px solid #dee2e6;
+			vertical-align: middle;
+			font-size: 14px;
+		}
+
+		/* Table style adjustments */
+		#usertablevalues1 th,
+		#usertablevalues1 td {
+			white-space: nowrap;
+			border: 1px solid #dee2e6;
+			vertical-align: middle;
+			font-size: 14px;
+		}
+
+		/* Optional scrollbar customization */
+		.table-responsive.scroll-body::-webkit-scrollbar {
+			width: 14px;
+		}
+
+		.table-responsive.scroll-body::-webkit-scrollbar-thumb {
+			background-color: #aaa;
+			border-radius: 10px;
+		}
 	</style>
 
 
@@ -240,7 +320,19 @@
 			var partnId = $(element).attr('data-partnid');
 			var acctNum = $(element).attr('data-acctnum');
 
-			var url = 'journalEntries?formmode=view&tran_id=' + tranId
+			var url = 'ReversalTransactions?formmode=view&tran_id=' + tranId
+				+ '&part_tran_id=' + partnId + '&acct_num=' + acctNum;
+
+			location.href = url;
+		}
+
+
+		function reversaluser(element) {
+			var tranId = $(element).attr('data-tranid');
+			var partnId = $(element).attr('data-partnid');
+			var acctNum = $(element).attr('data-acctnum');
+
+			var url = 'ReversalTransactions?formmode=view1&tran_id=' + tranId
 				+ '&part_tran_id=' + partnId + '&acct_num=' + acctNum;
 
 			location.href = url;
@@ -269,8 +361,14 @@
 			});
 		}
 
-		function Back() {
+		function back() {
 			window.history.back();
+		}
+
+		function Back() {
+			//window.history.back();
+			$("#filterselect").val("");
+			window.location.href = 'ReversalTransactions';
 		}
 
 		$(function () {
@@ -308,6 +406,11 @@
 
 		function views() {
 			var lkg = document.getElementById("usertablevalues");
+			lkg.classList.remove('d-none'); // Remove the 'd-none' class to show the table 
+		}
+
+		function views1() {
+			var lkg = document.getElementById("usertablevalues1");
 			lkg.classList.remove('d-none'); // Remove the 'd-none' class to show the table 
 		}
 
@@ -2494,99 +2597,92 @@
 	</script>
 
 
-<!-- suresh -->
+	<!-- suresh -->
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-let currentPage = 1;
-const pageSize = 1000;
+	<script>
+		let currentPage = 1;
+		const pageSize = 1000;
 
-$(document).ready(function () {
-    loadJournalEntries(currentPage);
-});
+		$(document).ready(function () {
+			loadJournalEntries(currentPage);
+		});
 
-// 🔹 Fetch paginated data from backend
-function loadJournalEntries(page) {
-    currentPage = page;
-    $("#placelist").html('<tr><td colspan="10" class="text-center">Loading...</td></tr>');
+		// 🔹 Fetch paginated data from backend
+		function loadJournalEntries(page) {
+			currentPage = page;
+			$("#placelist").html('<tr><td colspan="10" class="text-center">Loading...</td></tr>');
 
-    $.ajax({
-        url: `getJournalEntries?page=${page}&size=${pageSize}`,
-        type: "GET",
-        dataType: "json",
-        success: function (response) {
-            if (response.data && response.data.length > 0) {
-                renderTable(response.data);
-                updatePagination(page, response.totalPages);
-            } else {
-                $("#placelist").html('<tr><td colspan="10" class="text-center text-danger">No records found</td></tr>');
-                $("#pagination").empty();
-            }
-        },
-        error: function (err) {
-            console.error("Error loading journal entries:", err);
-            $("#placelist").html('<tr><td colspan="10" class="text-center text-danger">Error loading data</td></tr>');
-            $("#pagination").empty();
-        }
-    });
-}
+			$.ajax({
+				url: `getJournalEntries?page=${page}&size=${pageSize}`,
+				type: "GET",
+				dataType: "json",
+				success: function (response) {
+					if (response.data && response.data.length > 0) {
+						renderTable(response.data);
+						updatePagination(page, response.totalPages);
+					} else {
+						$("#placelist").html('<tr><td colspan="10" class="text-center text-danger">No records found</td></tr>');
+						$("#pagination").empty();
+					}
+				},
+				error: function (err) {
+					console.error("Error loading journal entries:", err);
+					$("#placelist").html('<tr><td colspan="10" class="text-center text-danger">Error loading data</td></tr>');
+					$("#pagination").empty();
+				}
+			});
+		}
 
-// 🔹 Render table dynamically
-function renderTable(data) {
-    let rows = "";
+		// 🔹 Render table dynamically
+		function renderTable(data) {
+			let rows = "";
 
-    data.forEach(details => {
-        const tranDate = details.tran_date ? formatDate(details.tran_date) : "";
-        const tranAmt = details.tran_amt
-            ? Number(details.tran_amt).toLocaleString("en-IN", { minimumFractionDigits: 2 })
-            : "0.00";
+			data.forEach(details => {
+				const tranDate = details.tran_date ? formatDate(details.tran_date) : "";
+				const tranAmt = details.tran_amt
+					? Number(details.tran_amt).toLocaleString("en-IN", {minimumFractionDigits: 2})
+					: "0.00";
 
-        rows += `
-        <tr>
-          <td>${tranDate}</td>
-          <td>${details.tran_id}/${details.part_tran_id}</td>
-          <td>${details.part_tran_type}</td>
-          <td>${details.acct_crncy}</td>
-          <td style="text-align:right;">${tranAmt}</td>
-          <td>${details.acct_num}</td>
-          <td>${details.acct_name}</td>
-          <td>${details.tran_particular}</td>
-          <td>${details.tran_status}</td>
-          <td>
-            <div class="dropdown action-dropdown">
-              <button class="btn btn-action dropdown-toggle" style="padding:0px" type="button" 
-                      data-toggle="dropdown" title="Action">
-                Action
-              </button>
-              <div class="dropdown-menu" style="padding:0px">
-                ${details.tran_status === 'ENTERED' ? `
-                  <a class="dropdown-item delete-item" 
-                     data-tranid="${details.tran_id}" 
-                     data-partnid="${details.part_tran_id}" 
-                     data-acctnum="${details.acct_num}"
-                     onclick="deleteuser(this)">Delete</a>
-                  <div class="dropdown-divider"></div>` : ''}
-                <a class="dropdown-item view-item" 
-                   data-tranid="${details.tran_id}" 
-                   data-partnid="${details.part_tran_id}" 
-                   data-acctnum="${details.acct_num}"
-                   onclick="enquiryuser(this)">View</a>
-              </div>
-            </div>
-          </td>
-        </tr>`;
-    });
+				rows += `
+		        <tr>
+		          <td>${tranDate}</td>
+		          <td>${details.tran_id}/${details.part_tran_id}</td>
+		          <td>${details.part_tran_type}</td>
+		          <td>${details.acct_crncy}</td>
+		          <td style="text-align:right;">${tranAmt}</td>
+		          <td>
+		            <a href="#" class="text-primary" 
+		               data-tranid="${details.tran_id}" 
+		               data-partnid="${details.part_tran_id}" 
+		               data-acctnum="${details.acct_num}" 
+		               onclick="reversaluser(this)">
+		               ${details.acct_num}
+		            </a>
+		          </td>
+		          <td>${details.acct_name}</td>
+		          <td>${details.tran_particular}</td>
+		          <td>${details.tran_status}</td>
+				  <td style="text-align:center;">
+				  	            <input type="radio" name="selectRow"
+				  	                   data-tranid="${details.tran_id}" 
+				  	                   data-partnid="${details.part_tran_id}" 
+				  	                   data-acctnum="${details.acct_num}"
+				  	                   onclick="reversaluser(this)">
+				  	          </td>
+		        </tr>`;
+			});
 
-    $("#placelist").html(rows);
-}
+			$("#placelist").html(rows);
+		}
 
-// 🔹 Updated Pagination (clean and simple)
-function updatePagination(current, total) {
-    const paginationDiv = $('#pagination');
-    paginationDiv.empty();
+		// 🔹 Updated Pagination (clean and simple)
+		function updatePagination(current, total) {
+			const paginationDiv = $('#pagination');
+			paginationDiv.empty();
 
-    if (total <= 1) return;
+			if (total <= 1) return;
 
-    let html = `
+			let html = `
         <button class="btn btn-sm btn-primary mx-1" 
                 ${current <= 1 ? 'disabled' : ''} 
                 onclick="loadJournalEntries(${current - 1})">Prev</button>
@@ -2596,20 +2692,152 @@ function updatePagination(current, total) {
                 onclick="loadJournalEntries(${current + 1})">Next</button>
     `;
 
-    paginationDiv.html(html);
-}
+			paginationDiv.html(html);
+		}
 
-// 🔹 Helper to format date (dd-MM-yyyy)
-function formatDate(dateStr) {
-    const d = new Date(dateStr);
-    if (isNaN(d)) return "";
-    return d.toLocaleDateString("en-GB"); // dd/MM/yyyy
-}
-</script>
+		// 🔹 Helper to format date (dd-MM-yyyy)
+		function formatDate(dateStr) {
+			const d = new Date(dateStr);
+			if (isNaN(d)) return "";
+			return d.toLocaleDateString("en-GB"); // dd/MM/yyyy
+		}
 
+		function handleMultipleFilterChange() {
+			// Step 1: Disable all filters first
+			$("#loanIdFilter, #loanTypeFilter, #mobileFilter").prop("disabled", true).val("");
 
+			// Step 2: Get selected filter
+			let selected = $("#filterselect").val();
+
+			// Step 3: Enable selected input based on filter value
+			if (selected === "LOAN_ID") {
+				$("#loanIdFilter").prop("disabled", false).focus();
+			} else if (selected === "LOAN_TYPE") {
+				$("#loanTypeFilter").prop("disabled", false).focus();
+			} else if (selected === "MOBILE_PHONE") {
+				$("#mobileFilter").prop("disabled", false).focus();
+			} else {
+				console.warn("⚠️ Please select a valid filter option.");
+				return; // stop if "Select Filter"
+			}
+
+			// Step 4: Now fetch data (after enabling filter)
+			handleTableWithPagination(1);
+		}
+
+		$(document).ready(function () {
+			$("#loanIdFilter").on("keypress", function (e) {
+				if (e.which === 13) { // ENTER key
+					let loanId = $(this).val().trim();
+
+					if (loanId === "") {
+						handleTableWithPagination(1); // default paginated fetch
+						return;
+					}
+
+					document.getElementById('loadingModal').style.display = 'flex';
+
+					$.ajax({
+						url: "Tran_date/search",
+						type: "GET",
+						data: {loanId: loanId},
+						success: function (response) {
+							console.log(response.length);
+							if (response && response.length > 0) {
+								renderTable(response); // function to populate table rows
+							} else {
+								$("#placelist").html(
+									`<tr><td colspan="10" class="text-center text-warning">No results found</td></tr>`
+								);
+							}
+						},
+						error: function () {
+							$("#placelist").html(
+								`<tr><td colspan="10" class="text-center text-danger">Error fetching data</td></tr>`
+							);
+						},
+						complete: function () {
+							document.getElementById('loadingModal').style.display = 'none';
+						}
+					});
+				}
+			});
+
+			$("#loanTypeFilter").on("keypress", function (e) {
+				if (e.which === 13) { // ENTER key
+					let loanType = $(this).val().trim();
+
+					if (loanType === "") {
+						handleTableWithPagination(1); // default paginated fetch
+						return;
+					}
+
+					document.getElementById('loadingModal').style.display = 'flex';
+
+					$.ajax({
+						url: "Tran_id/search",
+						type: "GET",
+						data: {loanType: loanType},
+						success: function (response) {
+							if (response && response.length > 0) {
+								renderTable(response); // function to populate table rows
+							} else {
+								$("#placelist").html(
+									`<tr><td colspan="10" class="text-center text-warning">No results found</td></tr>`
+								);
+							}
+						},
+						error: function () {
+							$("#placelist").html(
+								`<tr><td colspan="10" class="text-center text-danger">Error fetching data</td></tr>`
+							);
+						},
+						complete: function () {
+							document.getElementById('loadingModal').style.display = 'none';
+						}
+					});
+				}
+			});
+
+			$("#mobileFilter").on("keypress", function (e) {
+				if (e.which === 13) { // ENTER key
+					let MobileNumber = $(this).val().trim();
+
+					if (MobileNumber === "") {
+						handleTableWithPagination(1); // default paginated fetch
+						return;
+					}
+
+					document.getElementById('loadingModal').style.display = 'flex';
+
+					$.ajax({
+						url: "Account_number/search",
+						type: "GET",
+						data: {MobileNumber: MobileNumber},
+						success: function (response) {
+							if (response && response.length > 0) {
+								renderTable(response); // function to populate table rows
+							} else {
+								$("#placelist").html(
+									`<tr><td colspan="10" class="text-center text-warning">No results found</td></tr>`
+								);
+							}
+						},
+						error: function () {
+							$("#placelist").html(
+								`<tr><td colspan="10" class="text-center text-danger">Error fetching data</td></tr>`
+							);
+						},
+						complete: function () {
+							document.getElementById('loadingModal').style.display = 'none';
+						}
+					});
+				}
+			});
+		});
+
+	</script>
 </head>
-
 
 <body>
 
@@ -2636,12 +2864,22 @@ function formatDate(dateStr) {
 						<div class="card-header" style="background-color: #e9ecef; height: 50px">
 							<div class="float-left">
 								<h6 style="font-size: 1.2rem; color: black;">
-									TRANSACTION MAINTANANCE - LIST
+									TRANSACTION REVERSAL - LIST
 								</h6>
 							</div>
-							<div class="d-flex align-items-center justify-content-end">
-								<button type="button" class="btn-primary big-btn btn-filter1">Filter</button>
+							<div class="float-right">
+								<select class="form-control-sm bg-white " id="filterselect"
+									onchange="handleMultipleFilterChange()"
+									style="background-color: #e3e3e4;width: 156px !important;">
+									<option>Select Filter</option>
+									<option value="LOAN_ID">TRAN DATE</option>
+									<option value="LOAN_TYPE">TRAN ID</option>
+									<option value="MOBILE_PHONE">ACCOUNT NUMBER</option>
+								</select>
 							</div>
+							<!--<div class="d-flex align-items-center justify-content-end">
+								<button type="button" class="btn-primary big-btn btn-filter1">Filter</button>
+							</div>-->
 						</div>
 						<div class="card-body">
 							<div class="table-responsive">
@@ -2650,10 +2888,10 @@ function formatDate(dateStr) {
 									id="usertable">
 									<thead class="thead-light">
 										<tr class="filters1">
-											<th style="width:6%;"><input type="text"
+											<th style="width:7%;"><input type="text" id="loanIdFilter"
 													class="form-control font-weight-bold" placeholder="TRAN DATE"
 													disabled></th>
-											<th style="width:6%;"><input type="text"
+											<th style="width:6%;"><input type="text" id="loanTypeFilter"
 													class="form-control font-weight-bold" placeholder="TRAN ID"
 													disabled></th>
 											<th style="width:8%;"><input type="text"
@@ -2665,10 +2903,10 @@ function formatDate(dateStr) {
 											<th style="width:6%;"><input type="text"
 													class="form-control font-weight-bold text-right"
 													placeholder="AMOUNT" disabled></thstyle="width:6%;">
-											<th style="width:18%;"><input type="text"
+											<th style="width:18%;"><input type="text" id="mobileFilter"
 													class="form-control font-weight-bold" placeholder="ACCT ID"
 													disabled></th>
-											<th style="width:18%;"><input type="text"
+											<th style="width:17%;"><input type="text"
 													class="form-control font-weight-bold" placeholder="ACCT NAME"
 													disabled></th>
 											<th style="width:18%;"><input type="text"
@@ -2677,7 +2915,7 @@ function formatDate(dateStr) {
 											<th style="width:6%;"><input type="text"
 													class="form-control font-weight-bold" placeholder="STATUS" disabled>
 											</th>
-											<th style="width:6%;"><input type="text"
+											<th style="width:6%;"><input type="text" style="text-align:center;"
 													class="form-control font-weight-bold" placeholder="SELECT" disabled>
 											</th>
 										</tr>
@@ -3440,8 +3678,6 @@ function formatDate(dateStr) {
 				</div>
 
 
-
-
 				<!-- ------------------------------------view---------------------------------- -->
 
 				<div th:if="${formmode}=='view'">
@@ -3451,7 +3687,7 @@ function formatDate(dateStr) {
 							<div class="d-flex justify-content-between align-items-center h-100">
 								<!-- Left side: Title -->
 								<div class="float-left">
-									<h6 style="font-size: 1.2rem; color: black;">JOURNAL ENTRIES-VIEW</h6>
+									<h6 style="font-size: 1.2rem; color: black;">TRANSACTION REVERSAL-VIEW</h6>
 								</div>
 
 								<!-- Right side: Date field -->
@@ -3971,45 +4207,43 @@ function formatDate(dateStr) {
 										</tbody>
 									</table>
 								</div>
-
-
-
-
 							</form>
 
-							<div class="table-responsive">
+							<div class="table-responsive scroll-body">
 								<table class="table table-bordered table-hover table-sm d-none"
 									style="margin-bottom: 0px; font-size: initial; table-layout: fixed; width: 100%;"
 									id="usertablevalues">
 									<thead class="thead-light">
 										<tr>
-											<th style="text-align: left">TRAN DATE</th>
-											<th style="text-align: left">TRAN ID</th>
-											<th style="text-align: left">PA TRAN TY</th>
-											<th style="text-align: left">CURRENCY</th>
-											<th style="text-align: right">AMOUNT</th>
-											<th style="text-align: left">ACCT ID</th>
-											<th style="text-align: left; width: 20%;">ACCT NAME</th>
-											<th style="text-align: left">STATUS</th>
-											<th style="text-align: center">SELECT</th>
+											<th style="text-align: left;white-space: nowrap;width:6%;">TRAN DATE</th>
+											<th style="text-align: left;white-space: nowrap;width:6%;">TRAN ID</th>
+											<th style="text-align: left;white-space: nowrap;width:6%;">PA TRAN TY</th>
+											<th style="text-align: left;white-space: nowrap;width:6%;">CURRENCY</th>
+											<th style="text-align: right;white-space: nowrap;width:6%;">AMOUNT</th>
+											<th style="text-align: left;white-space: nowrap;width:17%;">ACCT ID</th>
+											<th style="text-align: left; width: 20%;white-space: nowrap;width:18%;">ACCT
+												NAME</th>
+											<th style="text-align: left;white-space: nowrap;width:6%;">STATUS</th>
+											<th style="text-align: center;white-space: nowrap;width:6%;">SELECT</th>
 										</tr>
 									</thead>
-									<tbody id="placelist">
+									<tbody id="placelist11">
 										<tr th:each="details : ${jour}">
-											<td
+											<td style="white-space: nowrap;"
 												th:text="${details.tran_date != null ? #dates.format(details.tran_date,'dd-MM-yyyy') : ''}">
 											</td>
-											<td th:text="${details.tran_id} + '/' + ${details.part_tran_id}"></td>
-											<td th:text="${details.part_tran_type}"></td>
-											<td th:text="${details.acct_crncy}"></td>
-											<td style="text-align: right;"
+											<td style="white-space: nowrap;"
+												th:text="${details.tran_id} + '/' + ${details.part_tran_id}"></td>
+											<td style="white-space: nowrap;" th:text="${details.part_tran_type}"></td>
+											<td style="white-space: nowrap;" th:text="${details.acct_crncy}"></td>
+											<td style="text-align: right;white-space: nowrap;"
 												th:text="${details?.tran_amt == 0 ? '0.00' : #numbers.formatDecimal(details?.tran_amt, 0, 'COMMA', 2, 'POINT')}">
 											</td>
-											<td th:text="${details.acct_num}"></td>
-											<td th:text="${details.acct_name}"></td>
-											<td th:text="${details.tran_status}"></td>
-											<td style="text-align: center;"><input type="radio" id="radioSelect"
-													name="actionRadio"
+											<td style="white-space: nowrap;" th:text="${details.acct_num}"></td>
+											<td style="white-space: nowrap;" th:text="${details.acct_name}"></td>
+											<td style="white-space: nowrap;" th:text="${details.tran_status}"></td>
+											<td style="text-align: center;white-space: nowrap;"><input type="radio"
+													id="radioSelect" name="actionRadio"
 													th:attr="data-tranid=${details.tran_id}, data-partnid=${details.part_tran_id}, data-acctnum=${details.acct_num}"
 													onclick="selectActions(this);"></td>
 										</tr>
@@ -4089,7 +4323,650 @@ function formatDate(dateStr) {
 					</div>
 				</div>
 
+				<!-- ------------------------------------view1---------------------------------- -->
 
+				<div th:if="${formmode}=='view1'">
+
+					<div class="card w-100 border">
+						<div class="card-header" style="background-color: #e9ecef; height: 50px">
+							<div class="d-flex justify-content-between align-items-center h-100">
+								<!-- Left side: Title -->
+								<div class="float-left">
+									<h6 style="font-size: 1.2rem; color: black;">TRANSACTION REVERSAL-EDIT</h6>
+								</div>
+
+								<!-- Right side: Date field -->
+								<div class="d-flex align-items-center">
+									<!-- Date label -->
+									<div class="col-auto pr-2 mr-5">
+										<span>Date</span>
+									</div>
+
+									<!-- Date input -->
+									<div class="col-auto mr-5">
+										<input type="text" name="current" id="current"
+											th:value="${#dates.format(ledgervalues.tran_date, 'dd-MM-yyyy')}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+									</div>
+
+								</div>
+							</div>
+
+						</div>
+						<div class="card-body">
+
+							<form class=" border border-secondary" method="post" id="journaladd" autocomplete="off">
+
+								<!-- 
+								<div class="row formline" style="padding: 15px 0px 2px 50px;">
+									<div class="col-sm-6"></div>
+									<div class="col-sm-2">Date</div>
+
+
+									<div class="col-sm-2">
+										<input type="text" name="current" id="current"
+											th:value="${#dates.format(ledgervalues.tran_date, 'dd-MM-yyyy')}"
+											class="form-control form-control-sm bg-white border border-dark"
+											readonly />
+									</div>
+
+									<input type="text" name="existRowValue" id="existRowValue"
+										class="form-control form-control-sm bg-white border border-dark d-none"
+										readonly />
+
+								</div> -->
+
+
+								<div class="row formline" style="padding: 15px 0px 2px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Tran Id</div>
+
+									<div class="col-sm-2">
+										<input type="text" name="tran_id" id="tran_id"
+											th:value="${ledgervalues.tran_id}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Part Tran Id</div>
+									<div class="col-sm-2">
+
+										<input type="text" name="part_tran_id" id="part_tran_id"
+											th:value="${ledgervalues.part_tran_id}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 2px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Acct ID</div>
+
+									<div class="col-sm-2">
+										<div class="input-group">
+											<input type="text" name="acct_num" id="acct_num1"
+												class="form-control form-control-sm bg-white border border-dark"
+												th:value="${ledgervalues.acct_num}" readonly />
+											<!-- <div class="input-group-append">
+												<button type="button" th:attr="data-acct_num=${Acctnum}"
+													onclick="setAccountDetails(this)">
+													<i class="fa fa-search"></i>
+												</button>
+											</div> -->
+										</div>
+									</div>
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Acct Name</div>
+									<div class="col-sm-2">
+
+
+										<input type="text" name="acct_name" id="acct_name"
+											class="form-control form-control-sm bg-white border border-dark"
+											th:value="${ledgervalues.acct_name}" readonly />
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 2px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Tran Type</div>
+
+
+									<div class="col-sm-2">
+										<input type="text" name="tran_type" id="tran_type"
+											class="form-control form-control-sm bg-white border border-dark"
+											th:value="${ledgervalues.tran_type}" readonly />
+									</div>
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Part Tran Type</div>
+									<div class="col-sm-2">
+										<input type="text" name="part_tran_type" id="part_tran_type"
+											class="form-control form-control-sm bg-white border border-dark"
+											th:value="${ledgervalues.part_tran_type}" readonly />
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Account Currency</div>
+
+
+									<div class="col-sm-2">
+										<input type="text" name="acct_crncy" id="acct_crncy"
+											class="form-control form-control-sm bg-white border border-dark"
+											th:value="${ledgervalues.acct_crncy}" readonly />
+									</div>
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Tran Amt</div>
+									<div class="col-sm-2">
+
+										<input type="text" name="tran_amt" id="tran_amt" oninput="amountInput(this);"
+											th:value="${ledgervalues.tran_amt}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 2px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Tran Particulars</div>
+
+
+									<div class="col-sm-2">
+										<input type="text" placeholder="" name="tran_particular" id="tran_particular"
+											class="form-control form-control-sm bg-white border border-dark"
+											th:value="${ledgervalues.tran_particular}" oninput="letterOnly(this);"
+											readonly />
+
+									</div>
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Tran Remarks</div>
+									<div class="col-sm-2">
+
+										<input type="text" name="tran_remarks" id="tran_remarks"
+											class="form-control form-control-sm bg-white border border-dark"
+											th:value="${ledgervalues.tran_remarks}" oninput="letterOnly(this);"
+											readonly />
+
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 2px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Flow Code</div>
+
+
+									<div class="col-sm-2">
+										<input type="text" name="flow_code" id="gst_amount"
+											th:value="${ledgervalues.flow_code}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Flow Date</div>
+									<div class="col-sm-2">
+
+										<input type="text" placeholder="" name="flow_date" id="gst_type"
+											th:value="${#dates.format(ledgervalues.flow_date, 'dd-MM-yyyy')}"
+											oninput="letterOnly(this);"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 2px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Tran Date</div>
+
+
+									<div class="col-sm-2">
+
+										<input type="text" name="tran_date" id="tran_date"
+											th:value="${#dates.format(ledgervalues.tran_date, 'dd-MM-yyyy')}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Value Date</div>
+									<div class="col-sm-2">
+
+
+										<input type="text" name="value_date" id="value_date"
+											th:value="${#dates.format(ledgervalues.value_date, 'dd-MM-yyyy')}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 2px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Tran Code</div>
+
+
+									<div class="col-sm-2">
+										<input type="text" name="tran_code" id="tran_code"
+											th:value="${ledgervalues.tran_code}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Tran Report Code</div>
+									<div class="col-sm-2">
+
+										<input type="text" name="tran_rpt_code" id="tran_rpt_code"
+											th:value="${ledgervalues.tran_rpt_code}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 2px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Tran Ref NO</div>
+
+
+									<div class="col-sm-2">
+										<input type="text" name="tran_ref_no" id="tran_ref_no"
+											th:value="${ledgervalues.tran_ref_no}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Additional Details</div>
+									<div class="col-sm-2">
+
+										<input type="text" name="add_details" id="add_details"
+											class="form-control form-control-sm bg-white border border-dark"
+											th:value="${ledgervalues.add_details}" oninput="letterOnly(this);"
+											readonly />
+
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 2px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Partition Type</div>
+
+
+									<div class="col-sm-2">
+										<input type="text" name="partition_type" id="partition_type"
+											th:value="${ledgervalues.partition_type}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Partition Details</div>
+									<div class="col-sm-2">
+
+										<input type="text" name="partition_det" id="partition_det"
+											class="form-control form-control-sm bg-white border border-dark"
+											th:value="${ledgervalues.partition_det}" oninput="letterOnly(this);"
+											readonly />
+
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 2px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Instrument NO</div>
+
+
+									<div class="col-sm-2">
+										<input type="text" name="instr_num" id="instr_num"
+											th:value="${ledgervalues.instr_num}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Instrument Date</div>
+									<div class="col-sm-2">
+
+										<input type="text" name="instr_date" id="instr_date"
+											th:value="${#dates.format(ledgervalues.instr_date, 'dd-MM-yyyy')}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 2px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Account Currency</div>
+
+
+									<div class="col-sm-2">
+										<input type="text" name="ref_crncy" id="ref_crncy"
+											th:value="${ledgervalues.ref_crncy}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Home Currency Amount</div>
+									<div class="col-sm-2">
+
+										<input type="text" name="ref_crncy_amt" id="ref_crncy_amt"
+											oninput="amountInput(this);" th:value="${ledgervalues.ref_crncy_amt}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 2px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Rate Code</div>
+
+
+									<div class="col-sm-2">
+										<input type="text" name="rate_code" id="rate_code"
+											th:value="${ledgervalues.rate_code}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Rate</div>
+									<div class="col-sm-2">
+
+
+										<input type="text" name="rate" id="rate" th:value="${ledgervalues.rate}"
+											oninput="amountInput(this);"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 2px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Entry User</div>
+
+
+									<div class="col-sm-2">
+										<input type="text" name="entry_user" id="entry_user"
+											th:value="${ledgervalues.entry_user}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Post User</div>
+									<div class="col-sm-2">
+
+										<input type="text" placeholder="" name="post_user" id="post_user"
+											th:value="${ledgervalues.post_user}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 2px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Entry Time</div>
+
+
+									<div class="col-sm-2">
+										<input type="text" name="entry_time" id="entry_time"
+											th:value="${#dates.format(ledgervalues.entry_time, 'dd-MM-yyyy')}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Post Time</div>
+									<div class="col-sm-2">
+
+										<input type="text" name="post_time" id="post_time"
+											th:value="${#dates.format(ledgervalues.post_time, 'dd-MM-yyyy')}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+
+
+								<div class="row formline" style="padding: 0px 0px 2px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2" hidden>Modify User</div>
+
+
+									<div class="col-sm-2">
+										<input type="text" name="modify_user" id="modify_user"
+											th:value="${ledgervalues.modify_user}"
+											class="form-control form-control-sm bg-white border border-dark" hidden />
+
+									</div>
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2" hidden>Modify Time</div>
+									<div class="col-sm-2">
+
+										<input type="text" placeholder="" name="modify_time" id="modify_time"
+											th:value="${#dates.format(ledgervalues.modify_time, 'dd-MM-yyyy')}"
+											class="form-control form-control-sm bg-white border border-dark" hidden />
+
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+								<div class="row formline" style="padding: 0px 0px 10px 50px;">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Tran Status</div>
+
+
+									<div class="col-sm-2">
+										<input type="text" name="tran_status" id="tran_status"
+											th:value="${ledgervalues.tran_status}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+
+									<div class="col-sm-1"></div>
+									<div class="col-sm-2">Deleted</div>
+									<div class="col-sm-2">
+
+										<input type="text" placeholder="" name="del_flg" id="del_flg"
+											th:value="${ledgervalues.del_flg}"
+											class="form-control form-control-sm bg-white border border-dark" readonly />
+
+									</div>
+									<div class="col-sm-2"></div>
+								</div>
+
+								<div class="d-flex justify-content-end align-items-center mr-3 mb-2">
+									<button id="previous-btn" class="btn-primary big-btn me-2"
+										onclick="getPartTranRecords(this);">Previous</button>
+									<span class="mx-1" th:text="${currentPartTran}" id="currentPartTran"></span>
+									<span class="mx-1">/</span>
+									<span class="mx-1" id="maxPartTran" th:text="${maxPartTran}"></span>
+									<button id="next-btn" class="btn-primary big-btn ms-2"
+										onclick="getPartTranRecords(this);">Next</button>
+								</div>
+								<br>
+								<div class="table-responsive">
+									<table class="table  table-bordered table-sm d-none"
+										style="margin-bottom: 0px; font-size: initial; width: 100%;"
+										id="transactionaccountvalues">
+										<thead class="thead-light">
+											<tr>
+												<th style="text-align: left; width: 20%;">GENERAL
+													LEDGER</th>
+												<th style="text-align: left; width: 20%;">GL SUB HEAD</th>
+												<th style="text-align: left; width: 20%;">CRNCY</th>
+												<th style="text-align: center; width: 20%;">ACCOUNT
+													BALANCE</th>
+												<th style="text-align: left; width: 20%;">BALANCE IND</th>
+											</tr>
+										</thead>
+										<tbody id="transactionaccountvaluesbody">
+
+
+										</tbody>
+									</table>
+								</div>
+
+								<!--<div class="row formline" style="padding: 10px 0px 5px 1015px;">
+									<button class="btn-primary big-btn" onclick="uploadfiles(this);">Upload
+										Files</button>
+								</div>-->
+
+								<div class="table-responsive scroll-body">
+									<table class="table  table-bordered table-sm d-none"
+										style="margin-bottom: 0px; font-size: initial; table-layout: fixed; width: 100%;"
+										id="transactionTable">
+										<thead class="thead-light">
+
+											<tr>
+												<th style="text-align: center">TRAN DATE</th>
+												<th style="text-align: center">TRAN ID</th>
+												<th style="text-align: center">PA TRAN TY</th>
+												<th style="text-align: center">CURRENCY</th>
+												<th style="text-align: center">AMOUNT</th>
+												<th style="text-align: center">ACCT ID</th>
+												<th style="text-align: center; width: 20%;">ACCT NAME</th>
+												<th style="text-align: center; width: 20%;">TRAN
+													PARTICULAR</th>
+												<th style="text-align: center">STATUS</th>
+
+											</tr>
+										</thead>
+										<tbody id="transactionTableBody">
+
+
+										</tbody>
+									</table>
+								</div>
+							</form>
+
+							<div class="table-responsive scroll-body">
+								<table class="table table-bordered table-hover table-sm d-none"
+									style="margin-bottom: 0px; font-size: initial; table-layout: fixed; width: 100%;"
+									id="usertablevalues1">
+									<thead class="thead-light">
+										<tr>
+											<th style="text-align: left;white-space: nowrap;width:7%;">TRAN DATE</th>
+											<th style="text-align: left;white-space: nowrap;width:6%;">TRAN ID</th>
+											<th style="text-align: left;white-space: nowrap;width:6%;">PA TRAN TY</th>
+											<th style="text-align: left;white-space: nowrap;width:6%;">CURRENCY</th>
+											<th style="text-align: right;white-space: nowrap;width:6%;">AMOUNT</th>
+											<th style="text-align: left;white-space: nowrap;width:17%;">ACCT ID</th>
+											<th style="text-align: left; width: 20%;white-space: nowrap;width:17%;">ACCT
+												NAME</th>
+											<th style="text-align: left;white-space: nowrap;width:6%">STATUS</th>
+											<th style="text-align: center;white-space: nowrap;width:6%;">SELECT</th>
+										</tr>
+									</thead>
+									<tbody id="placelist21">
+										<tr th:each="details : ${jour}">
+											<td style="white-space: nowrap;"
+												th:text="${details.tran_date != null ? #dates.format(details.tran_date,'dd-MM-yyyy') : ''}">
+											</td>
+											<td style="white-space: nowrap;"
+												th:text="${details.tran_id} + '/' + ${details.part_tran_id}"></td>
+											<td style="white-space: nowrap;" th:text="${details.part_tran_type}"></td>
+											<td style="white-space: nowrap;" th:text="${details.acct_crncy}"></td>
+											<td style="text-align: right;white-space: nowrap;"
+												th:text="${details?.tran_amt == 0 ? '0.00' : #numbers.formatDecimal(details?.tran_amt, 0, 'COMMA', 2, 'POINT')}">
+											</td>
+											<td style="white-space: nowrap;" th:text="${details.acct_num}"></td>
+											<td style="white-space: nowrap;" th:text="${details.acct_name}"></td>
+											<td style="white-space: nowrap;" th:text="${details.tran_status}"></td>
+											<td style="text-align: center;white-space: nowrap;"><input type="radio"
+													id="radioSelect" name="actionRadio"
+													th:attr="data-tranid=${details.tran_id}, data-partnid=${details.part_tran_id}, data-acctnum=${details.acct_num}"
+													onclick="selectActions(this);"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="card-footer text-center" style="background-color: #e9ecef">
+
+
+							<button class="btn-primary big-btn" onclick="Home();">Home</button>
+							<button class="btn-primary big-btn" onclick="views1(this);">View</button>
+							<button class="btn-primary big-btn" onclick="Back();">Back</button>
+
+
+						</div>
+
+
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table  table-bordered  table-hover table-sm"
+									style="margin-bottom: 0px; font-size: initial;">
+									<tr>
+										<td class="col-sm-2" style="text-align: right;">
+											<font size="2"><B>Entry User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px; margin-right: 20px;">
+											<input type="text" id="entryuser" name="entry_user"
+												th:value="${ledgervalues?.entry_user}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled>
+										</td>
+										<td class="col-sm-2" style="text-align: right;">
+											<font size="2"><B>Modify User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px;"><input type="text" id="modifyuser"
+												name="modify_user" th:value="${ledgervalues?.modify_user}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled></td>
+										<td class="col-sm-2" style="text-align: right;">
+											<font size="2"><B> Verify User :</B></font>
+										</td>
+										<td class="col-sm-2" style="width: 112px;"><input type="text" id="verifyuser"
+												name="post_user" th:value="${ledgervalues?.post_user}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled></td>
+									</tr>
+									<tr>
+										<td style="text-align: right;">
+											<font size="2"><B>Entry
+													Time :</B></font>
+										</td>
+										<td style="width: 112px"><input type="text" id="entrytime" name="ub.entrytime"
+												th:value="${#dates.format(ledgervalues?.entry_time, 'dd-MM-yyyy')}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled></td>
+										<td style="text-align: right;">
+											<font size="2"><B>Modify
+													Time : </B></font>
+										</td>
+										<td style="width: 112px"><input type="text" id="modifytime" name="modify_time"
+												th:value="${#dates.format(ledgervalues?.modify_time, 'dd-MM-yyyy')}"
+												style="width: 112px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled></td>
+										<td style="text-align: right;">
+											<font size="2"><B>Verify
+													Time :</B></font>
+										</td>
+										<td style="width: 112px"><input type="text" id="verifytime" name="post_time"
+												th:value="${#dates.format(ledgervalues?.post_time, 'dd-MM-yyyy')}"
+												style="width: 115px; border: none; outline: none; background-color: transparent; font-size: 12px;"
+												disabled></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
 				<!-- ------------------------------------modify---------------------------------- -->
 
 				<div th:if="${formmode}=='modify1'">
