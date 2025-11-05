@@ -139,43 +139,45 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 			+ "ORDER BY ACCT_NUM, CLASSIFICATION ASC", nativeQuery = true)
 	List<Chart_Acc_Entity> getListofCustomer();
 	
-	
-	@Query(value =
-		    "SELECT " +
-		    " b.account_state AS ACCOUNT_STATE, " +
-		    " a.customer_id AS CUSTOMER_ID, " +
-		    " a.customer_name AS CUSTOMER_NAME, " +
-		    " b.id AS ID, " +
-		    " b.total_product_price AS TOTAL_PRODUCT_PRICE, " +
-		    " b.loan_amount AS LOAN_AMOUNT, " +
-		    " b.interest_rate AS INTEREST_RATE, " +
-		    " b.repayment_installments AS REPAYMENT_INSTALLMENTS, " +
-		    " b.principal_balance AS PRINCIPAL_BALANCE, " +
-		    " b.interest_balance AS INTEREST_BALANCE, " +
-		    " b.fees_balance AS FEE_BALANCE, " +
-		    " b.penalty_balance AS PENALTY_BALANCE, " +
-		    " (b.principal_balance + b.interest_balance + b.fees_balance + b.penalty_balance) AS TOTAL_BALANCE, " +
-		    " a.acct_bal AS ACCT_BAL, " +
-		    " b.principal_paid AS PRINCIPAL_PAID, " +
-		    " b.interest_paid AS INTEREST_PAID, " +
-		    " b.fee_paid AS FEE_PAID, " +
-		    " b.penalty_paid AS PENALTY_PAID, " +
-		    " b.days_late AS DAYS_LATE, " +
-		    " SUM(c.principal_paid) AS TOTAL_PRINCIPAL_PAID, " +
-		    " SUM(c.interest_paid) AS TOTAL_INTEREST_PAID, " +
-		    " SUM(c.fee_paid) AS TOTAL_FEE_PAID, " +
-		    " SUM(c.penalty_paid) AS TOTAL_PENALTY_PAID " +
-		    "FROM BGLS_CHART_OF_ACCOUNTS a " +
-		    "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.encoded_key = b.encoded_key " +
-		    "LEFT JOIN LOAN_REPAYMENT_TBL c ON b.encoded_key = c.parent_account_key " +
-		    "WHERE a.own_type = 'C' " +
-		    "GROUP BY b.account_state, a.customer_id, a.customer_name, b.id, " +
-		    " b.total_product_price, b.loan_amount, b.interest_rate, b.repayment_installments, " +
-		    " b.principal_balance, b.interest_balance, b.fees_balance, b.penalty_balance, " +
-		    " b.principal_paid, b.interest_paid, b.fee_paid, b.penalty_paid, b.days_late, a.acct_bal " +
-		    "ORDER BY b.account_state, b.id",
-		    nativeQuery = true)
-		List<Object[]> findLoanAccountsByDueDate();
+//	
+//	@Query(value =
+//		    "SELECT " +
+//		    " b.account_state AS ACCOUNT_STATE, " +
+//		    " a.customer_id AS CUSTOMER_ID, " +
+//		    " a.customer_name AS CUSTOMER_NAME, " +
+//		    " b.id AS ID, " +
+//		    " b.total_product_price AS TOTAL_PRODUCT_PRICE, " +
+//		    " b.loan_amount AS LOAN_AMOUNT, " +
+//		    " b.interest_rate AS INTEREST_RATE, " +
+//		    " b.repayment_installments AS REPAYMENT_INSTALLMENTS, " +
+//		    " b.principal_balance AS PRINCIPAL_BALANCE, " +
+//		    " b.interest_balance AS INTEREST_BALANCE, " +
+//		    " b.fees_balance AS FEE_BALANCE, " +
+//		    " b.penalty_balance AS PENALTY_BALANCE, " +
+//		    " (b.principal_balance + b.interest_balance + b.fees_balance + b.penalty_balance) AS TOTAL_BALANCE, " +
+//		    " a.acct_bal AS ACCT_BAL, " +
+//		    " b.principal_paid AS PRINCIPAL_PAID, " +
+//		    " b.interest_paid AS INTEREST_PAID, " +
+//		    " b.fee_paid AS FEE_PAID, " +
+//		    " b.penalty_paid AS PENALTY_PAID, " +
+//		    " b.days_late AS DAYS_LATE, " +
+//		    " SUM(c.principal_paid) AS TOTAL_PRINCIPAL_PAID, " +
+//		    " SUM(c.interest_paid) AS TOTAL_INTEREST_PAID, " +
+//		    " SUM(c.fee_paid) AS TOTAL_FEE_PAID, " +
+//		    " SUM(c.penalty_paid) AS TOTAL_PENALTY_PAID, " +
+//		    " c.last_paid_date AS LAST_PAID_DATE, " +
+//		    " b.loan_name AS PRODUCT " +
+//		    "FROM BGLS_CHART_OF_ACCOUNTS a " +
+//		    "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.encoded_key = b.encoded_key " +
+//		    "LEFT JOIN LOAN_REPAYMENT_TBL c ON b.encoded_key = c.parent_account_key " +
+//		    "WHERE a.own_type = 'C' " +
+//		    "GROUP BY b.account_state, a.customer_id, a.customer_name, b.id, " +
+//		    " b.total_product_price, b.loan_amount, b.interest_rate, b.repayment_installments, " +
+//		    " b.principal_balance, b.interest_balance, b.fees_balance, b.penalty_balance, " +
+//		    " b.principal_paid, b.interest_paid, b.fee_paid, b.penalty_paid, b.days_late, a.acct_bal, c.last_paid_date, b.loan_name " +
+//		    "ORDER BY b.account_state, b.id",
+//		    nativeQuery = true)
+//		List<Object[]> findLoanAccountsByDueDate();
 		
 		
 		@Query(value =
@@ -215,6 +217,66 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 		            "ORDER BY a.gl_desc, a.acct_num",
 		            nativeQuery = true)
 		        List<Object[]> getDabReportByDate(@Param("tranDate") String tranDate);
+		        
+		        
+		        @Query(value = "SELECT ACCT_NUM, ACCT_NAME, ACCT_TYPE, DUE_DATE, DAYS_INARREARS, " +
+		                   "INTEREST_AMT, ACCRUAL_DATE, LAST_DUE_DATE " +
+		                   "FROM LOAN_ACCRUAL_INTEREST_TBL " +
+		                   "WHERE TO_CHAR(ACCRUAL_DATE, 'DD-MM-YYYY') = :accrualDate", nativeQuery = true)
+		    List<Object[]> findLoanAccrualByDate(@Param("accrualDate") String accrualDate);
+		    
+		    @Query(
+		    	    value = "SELECT " +
+		    	            "b.account_state AS ACCOUNT_STATE, " +
+		    	            "a.customer_id AS CUSTOMER_ID, " +
+		    	            "a.customer_name AS CUSTOMER_NAME, " +
+		    	            "b.id AS ID, " +
+		    	            "b.total_product_price AS TOTAL_PRODUCT_PRICE, " +
+		    	            "b.loan_amount AS LOAN_AMOUNT, " +
+		    	            "b.interest_rate AS INTEREST_RATE, " +
+		    	            "b.repayment_installments AS REPAYMENT_INSTALLMENTS, " +
+		    	            "b.principal_balance AS PRINCIPAL_BALANCE, " +
+		    	            "b.interest_balance AS INTEREST_BALANCE, " +
+		    	            "b.fees_balance AS FEE_BALANCE, " +
+		    	            "b.penalty_balance AS PENALTY_BALANCE, " +
+		    	            "(b.principal_balance + b.interest_balance + b.fees_balance + b.penalty_balance) AS TOTAL_BALANCE, " +
+		    	            "a.acct_bal AS ACCT_BAL, " +
+		    	            "b.principal_paid AS PRINCIPAL_PAID, " +
+		    	            "b.interest_paid AS INTEREST_PAID, " +
+		    	            "b.fee_paid AS FEE_PAID, " +
+		    	            "b.penalty_paid AS PENALTY_PAID, " +
+		    	            "b.days_late AS DAYS_LATE, " +
+		    	            "NVL(c.total_principal_paid, 0) AS TOTAL_PRINCIPAL_PAID, " +
+		    	            "NVL(c.total_interest_paid, 0) AS TOTAL_INTEREST_PAID, " +
+		    	            "NVL(c.total_fee_paid, 0) AS TOTAL_FEE_PAID, " +
+		    	            "NVL(c.total_penalty_paid, 0) AS TOTAL_PENALTY_PAID, " +
+		    	            "c.last_paid_date AS LAST_PAID_DATE, " +
+		    	            "b.loan_name AS PRODUCT " +
+		    	        "FROM BGLS_CHART_OF_ACCOUNTS a " +
+		    	        "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.encoded_key = b.encoded_key " +
+		    	        "LEFT JOIN ( " +
+		    	        "    SELECT parent_account_key, " +
+		    	        "           SUM(principal_paid) AS total_principal_paid, " +
+		    	        "           SUM(interest_paid) AS total_interest_paid, " +
+		    	        "           SUM(fee_paid) AS total_fee_paid, " +
+		    	        "           SUM(penalty_paid) AS total_penalty_paid, " +
+		    	        "           MAX(last_paid_date) AS last_paid_date " +
+		    	        "    FROM LOAN_REPAYMENT_TBL " +
+		    	        "    GROUP BY parent_account_key " +
+		    	        ") c ON b.encoded_key = c.parent_account_key " +
+		    	        "WHERE a.own_type = 'C' " +
+		    	        "ORDER BY b.account_state, b.id",
+		    	    nativeQuery = true
+		    	)
+		    	List<Object[]> findLoanAccountsByDueDate();
+		    	
+		    	@Query(value = "SELECT b.id, b.LOAN_NAME, a.due_date, a.tran_date, a.no_of_days, a.penalty_per_day, " +
+		                   "a.penalty_per_month, a.tolerance_period, a.up_to_date_penalty " +
+		                   "FROM LOAN_DAILY_PENALTY_TBL a " +
+		                   "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.encoded_key = b.ENCODED_KEY " +
+		                   "WHERE TO_CHAR(a.TRAN_DATE, 'DD-MM-YYYY') = :tranDate", nativeQuery = true)
+		    List<Object[]> findLoanDailyPenaltyByDate(@Param("tranDate") String tranDate);
+
 
 
 }

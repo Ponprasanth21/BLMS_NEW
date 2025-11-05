@@ -443,15 +443,18 @@ public interface LOAN_ACT_MST_REPO extends JpaRepository<LOAN_ACT_MST_ENTITY, St
 		            "lam.TUPROBABILITY, " +
 		            "lam.DISPOSABLE_INCOME, " +
 		            "lam.ACCRUED_INTEREST, " +
-		            "lam.SALE_PROCESSEDFOR " +
+		            "lam.SALE_PROCESSEDFOR, " +
+		            "lam.LOAN_NAME AS LOAN_NAME " +
 		            "FROM LOAN_ACCOUNT_MASTER_TBL lam " +
-		            "JOIN CLIENT_MASTER_TBL cmt ON lam.account_holderkey = cmt.encoded_key " +
-		            "JOIN LOAN_REPAYMENT_TBL lrt ON lrt.PARENT_ACCOUNT_KEY = lam.encoded_key " +
-		            "WHERE cmt.encoded_key IS NOT NULL " +
-		            "AND TO_CHAR(lrt.DUE_DATE, 'DD-MM-YYYY') = :dueDate",
+		            "LEFT JOIN CLIENT_MASTER_TBL cmt " +
+		            "ON lam.account_holderkey = cmt.encoded_key " +
+		            "WHERE cmt.encoded_key IS NOT NULL",
 		    nativeQuery = true
 		)
-		List<Object[]> findEndOfMonthLoanReport(@Param("dueDate") String dueDate);
+		List<Object[]> findEndOfMonthLoanReport();
+		
+		
+
 
 
 }

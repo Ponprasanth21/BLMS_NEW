@@ -4962,6 +4962,7 @@ public class BGLSNavigationController {
     public String end_of_month(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
         if (formmode == null || formmode.equals("list")) {
             md.addAttribute("formmode", "list");
+            md.addAttribute("date", bGLS_CONTROL_TABLE_REP.getCurrentTranDate());
         }
         return "End_Of_Month";
     }
@@ -5300,6 +5301,24 @@ public class BGLSNavigationController {
         }
 
         return "ReversalTransaction.html";
+    }
+    
+    @RequestMapping(value = "InterestAccrualreport", method = { RequestMethod.GET, RequestMethod.POST })
+    public String InterestAccrualreport(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
+        if (formmode == null || formmode.equals("list")) {
+            md.addAttribute("formmode", "list");
+            md.addAttribute("date", bGLS_CONTROL_TABLE_REP.getCurrentTranDate());
+        }
+        return "InterestAccrualreport.html";
+    }
+    
+    @RequestMapping(value = "PenaltyAccrualreport", method = { RequestMethod.GET, RequestMethod.POST })
+    public String PenaltyAccrualreport(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
+        if (formmode == null || formmode.equals("list")) {
+            md.addAttribute("formmode", "list");
+            md.addAttribute("date", bGLS_CONTROL_TABLE_REP.getCurrentTranDate());
+        }
+        return "PenaltyAccrualreport.html";
     }
 
 }

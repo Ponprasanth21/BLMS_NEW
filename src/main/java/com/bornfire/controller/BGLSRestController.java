@@ -12241,7 +12241,7 @@ public List<Map<String, Object>> searchAccount_number(@RequestParam String Mobil
 @GetMapping("/EndOfMonthLoanReportDownload")
 public ResponseEntity<byte[]> downloadEndOfMonthReport(@RequestParam("dueDate") String dueDate) {
 	System.out.println("End Report");
-    List<Object[]> rawData = lOAN_ACT_MST_REPO.findEndOfMonthLoanReport(dueDate);
+    List<Object[]> rawData = lOAN_ACT_MST_REPO.findEndOfMonthLoanReport();
     byte[] excelData = exelDownloadService.generateEndOfMonthExcel(rawData, dueDate); 
 
     if (excelData == null || excelData.length == 0) {
@@ -12255,6 +12255,42 @@ public ResponseEntity<byte[]> downloadEndOfMonthReport(@RequestParam("dueDate") 
     headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
     return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+}
+
+
+@GetMapping("/LoanAccrualReportDownload")
+public ResponseEntity<byte[]> downloadAccrualReport(@RequestParam("accrualDate") String accrualDate) {
+    List<Object[]> data = chart_Acc_Rep.findLoanAccrualByDate(accrualDate);
+    byte[] excelBytes = exelDownloadService.generateAccrualExcel(data, accrualDate);
+
+    if (excelBytes == null || excelBytes.length == 0) {
+        return ResponseEntity.noContent().build();
+    }
+
+    String fileName = "LOAN_ACCRUAL_INTEREST_" + accrualDate + ".xlsx";
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+    return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+}
+
+
+@GetMapping("/LoanDailyPenaltyReportDownload")
+public ResponseEntity<byte[]> downloadLoanDailyPenaltyReport(@RequestParam("tranDate") String tranDate) {
+    List<Object[]> data = chart_Acc_Rep.findLoanDailyPenaltyByDate(tranDate);
+    byte[] excelBytes = exelDownloadService.generatePenaltyExcel(data, tranDate);
+
+    if (excelBytes == null || excelBytes.length == 0) {
+        return ResponseEntity.noContent().build();
+    }
+
+    String fileName = "LOAN_DAILY_PENALTY_" + tranDate + ".xlsx";
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+    return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
 }
 
 }

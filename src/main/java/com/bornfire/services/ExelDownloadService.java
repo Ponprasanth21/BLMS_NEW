@@ -1314,7 +1314,7 @@ public class ExelDownloadService {
             titleStyle.setAlignment(HorizontalAlignment.CENTER);
             titleCell.setCellStyle(titleStyle);
 
-            int totalColumns = 23; // total columns
+            int totalColumns = 23;
             sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, totalColumns - 1));
 
             // ==============================
@@ -1344,7 +1344,7 @@ public class ExelDownloadService {
                 "FEE_BALANCE", "PENALTY_BALANCE", "TOTAL_BALANCE", "ACCT_BAL",
                 "PRINCIPAL_PAID", "INTEREST_PAID", "FEE_PAID", "PENALTY_PAID",
                 "DAYS_LATE", "TOTAL_PRINCIPAL_PAID", "TOTAL_INTEREST_PAID",
-                "TOTAL_FEE_PAID", "TOTAL_PENALTY_PAID"
+                "TOTAL_FEE_PAID", "TOTAL_PENALTY_PAID", "LAST_PAID_DATE", "PRODUCT"
             };
 
             CellStyle headerStyle = workbook.createCellStyle();
@@ -1367,15 +1367,24 @@ public class ExelDownloadService {
             }
 
             // ==============================
-            // 4️⃣ Data Styles
+            // 4️⃣ Styles
             // ==============================
             CellStyle numberStyle = workbook.createCellStyle();
-            DataFormat format = workbook.createDataFormat();
-            numberStyle.setDataFormat(format.getFormat("#,##0.00"));
+            numberStyle.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
+            numberStyle.setAlignment(HorizontalAlignment.RIGHT);
+
+            CellStyle integerRightStyle = workbook.createCellStyle();
+            integerRightStyle.setAlignment(HorizontalAlignment.RIGHT);
+            integerRightStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
             CellStyle textLeftStyle = workbook.createCellStyle();
             textLeftStyle.setAlignment(HorizontalAlignment.LEFT);
             textLeftStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+            CellStyle dateCellStyle = workbook.createCellStyle();
+            CreationHelper creationHelper = workbook.getCreationHelper();
+            dateCellStyle.setDataFormat(creationHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+            dateCellStyle.setAlignment(HorizontalAlignment.CENTER);
 
             // ==============================
             // 5️⃣ Data Rows
@@ -1383,6 +1392,7 @@ public class ExelDownloadService {
             int rowNum = 4;
             for (Object[] rowData : rawData) {
                 Row row = sheet.createRow(rowNum++);
+
                 for (int i = 0; i < rowData.length; i++) {
                     Cell cell = row.createCell(i);
                     Object value = rowData[i];
@@ -1392,14 +1402,56 @@ public class ExelDownloadService {
                         continue;
                     }
 
-                    // CUSTOMER_ID (column index = 1) → Left aligned text
+                    // CUSTOMER_ID → Left aligned text
                     if (i == 1) {
                         cell.setCellValue(value.toString());
                         cell.setCellStyle(textLeftStyle);
                         continue;
                     }
 
-                    // Detect numeric values for others
+                    // REPAYMENT_INSTALLMENTS → Integer, right aligned
+                    if (i == 7) {
+                        try {
+                            cell.setCellValue(Integer.parseInt(value.toString()));
+                        } catch (NumberFormatException e) {
+                            cell.setCellValue(value.toString());
+                        }
+                        cell.setCellStyle(integerRightStyle);
+                        continue;
+                    }
+                    
+                    
+
+                    // DAYS_LATE → Integer, right aligned
+                    if (i == 18) {
+                        try {
+                            cell.setCellValue(Integer.parseInt(value.toString()));
+                        } catch (NumberFormatException e) {
+                            cell.setCellValue(value.toString());
+                        }
+                        cell.setCellStyle(integerRightStyle);
+                        continue;
+                    }
+
+                    // LAST_PAID_DATE → format dd-MM-yyyy
+                    if (i == 23) {
+                        try {
+                            if (value instanceof java.util.Date) {
+                                cell.setCellValue((Date) value);
+                            } else {
+                                // Try to parse manually if it's a string date
+                                SimpleDateFormat parseFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                cell.setCellValue(parseFormat.parse(value.toString()));
+                            }
+                            cell.setCellStyle(dateCellStyle);
+                        } catch (Exception e) {
+                            cell.setCellValue(value.toString());
+                            cell.setCellStyle(textLeftStyle);
+                        }
+                        continue;
+                    }
+
+                    // Default numeric or text handling
                     if (value instanceof Number) {
                         cell.setCellValue(((Number) value).doubleValue());
                         cell.setCellStyle(numberStyle);
@@ -1416,111 +1468,80 @@ public class ExelDownloadService {
                 }
             }
 
+
+            // ==============================
+            // 6️⃣ Summary Row
+            // ==============================
+            int lastDataRow = rowNum;
+            int labelRowIndex = rowNum + 1;
+            int sumRowIndex = rowNum + 2;
+
+            Row labelRow = sheet.createRow(labelRowIndex);
+            Row sumRow = sheet.createRow(sumRowIndex);
+
+            CellStyle turquoiseStyle = workbook.createCellStyle();
+            turquoiseStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+            turquoiseStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            turquoiseStyle.setAlignment(HorizontalAlignment.CENTER);
+            Font boldFont = workbook.createFont();
+            boldFont.setBold(true);
+            turquoiseStyle.setFont(boldFont);
+
+            CellStyle numberStyle1 = workbook.createCellStyle();
+            numberStyle1.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
+            numberStyle1.setAlignment(HorizontalAlignment.RIGHT);
+
+            int principalCol = 8;     // "I"
+            int interestCol = 9;      // "J"
+            int feeCol = 10;          // "K"
+            int penaltyCol = 11;      // "L"
+            int totalBalanceCol = 12; // "M"
+            int acctBalCol = 13;      // "N"
+
+            labelRow.createCell(principalCol).setCellValue("PRINCIPAL");
+            labelRow.getCell(principalCol).setCellStyle(turquoiseStyle);
+
+            labelRow.createCell(interestCol).setCellValue("INTEREST");
+            labelRow.getCell(interestCol).setCellStyle(turquoiseStyle);
+
+            labelRow.createCell(feeCol).setCellValue("FEE");
+            labelRow.getCell(feeCol).setCellStyle(turquoiseStyle);
+
+            labelRow.createCell(penaltyCol).setCellValue("PENALTY");
+            labelRow.getCell(penaltyCol).setCellStyle(turquoiseStyle);
+
+            labelRow.createCell(totalBalanceCol).setCellValue("TOTAL BALANCE");
+            labelRow.getCell(totalBalanceCol).setCellStyle(turquoiseStyle);
+
+            labelRow.createCell(acctBalCol).setCellValue("ACCT BAL");
+            labelRow.getCell(acctBalCol).setCellStyle(turquoiseStyle);
+
+            String principalFormula = "SUM(I5:I" + lastDataRow + ")";
+            String interestFormula = "SUM(J5:J" + lastDataRow + ")";
+            String feeFormula = "SUM(K5:K" + lastDataRow + ")";
+            String penaltyFormula = "SUM(L5:L" + lastDataRow + ")";
+            String totalBalanceFormula = "SUM(M5:M" + lastDataRow + ")";
+            String acctBalFormula = "SUM(N5:N" + lastDataRow + ")";
+
+            sumRow.createCell(principalCol).setCellFormula(principalFormula);
+            sumRow.createCell(interestCol).setCellFormula(interestFormula);
+            sumRow.createCell(feeCol).setCellFormula(feeFormula);
+            sumRow.createCell(penaltyCol).setCellFormula(penaltyFormula);
+            sumRow.createCell(totalBalanceCol).setCellFormula(totalBalanceFormula);
+            sumRow.createCell(acctBalCol).setCellFormula(acctBalFormula);
+
+            sumRow.getCell(principalCol).setCellStyle(numberStyle1);
+            sumRow.getCell(interestCol).setCellStyle(numberStyle1);
+            sumRow.getCell(feeCol).setCellStyle(numberStyle1);
+            sumRow.getCell(penaltyCol).setCellStyle(numberStyle1);
+            sumRow.getCell(totalBalanceCol).setCellStyle(numberStyle1);
+            sumRow.getCell(acctBalCol).setCellStyle(numberStyle1);
+
+            Cell summaryLabel = sumRow.createCell(7);
+            summaryLabel.setCellValue("TOTAL :");
+            summaryLabel.setCellStyle(turquoiseStyle);
             
-         // ==============================
-         // 6️⃣ Summary Row: Labels + Totals
-         // ==============================
-
-         int lastDataRow = rowNum;
-         int labelRowIndex = rowNum + 1;  // Row for labels
-         int sumRowIndex = rowNum + 2;    // Row for SUM formulas
-
-         Row labelRow = sheet.createRow(labelRowIndex);
-         Row sumRow = sheet.createRow(sumRowIndex);
-
-         // Create turquoise header-style for specific columns
-         CellStyle turquoiseStyle = workbook.createCellStyle();
-         turquoiseStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
-         turquoiseStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-         Font whiteBoldFont = workbook.createFont();
-         whiteBoldFont.setColor(IndexedColors.WHITE.getIndex());
-         whiteBoldFont.setBold(true);
-         turquoiseStyle.setFont(whiteBoldFont);
-         turquoiseStyle.setAlignment(HorizontalAlignment.CENTER);
-
-         // Normal label style for remaining cells
-         CellStyle normalStyle = workbook.createCellStyle();
-         Font normalFont = workbook.createFont();
-         normalFont.setBold(true);
-         normalStyle.setFont(normalFont);
-         normalStyle.setAlignment(HorizontalAlignment.CENTER);
-
-         // Number format for totals
-         CellStyle numberStyle1 = workbook.createCellStyle();
-         numberStyle1.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
-         numberStyle1.setAlignment(HorizontalAlignment.RIGHT);
-
-         // ==============================
-         // Define Columns
-         // ==============================
-         int principalCol = 8;     // "I"
-         int interestCol = 9;      // "J"
-         int feeCol = 10;          // "K"
-         int penaltyCol = 11;      // "L"
-         int totalBalanceCol = 12; // "M"
-         int acctBalCol = 13;      // "N"
-
-         // ==============================
-         // 1️⃣ Label Row (only specific columns colored)
-         // ==============================
-
-         labelRow.createCell(principalCol).setCellValue("PRINCIPAL");
-         labelRow.getCell(principalCol).setCellStyle(turquoiseStyle);
-
-         labelRow.createCell(interestCol).setCellValue("INTEREST");
-         labelRow.getCell(interestCol).setCellStyle(turquoiseStyle);
-
-         labelRow.createCell(feeCol).setCellValue("FEE");
-         labelRow.getCell(feeCol).setCellStyle(turquoiseStyle);
-
-         labelRow.createCell(penaltyCol).setCellValue("PENALTY");
-         labelRow.getCell(penaltyCol).setCellStyle(turquoiseStyle);
-
-         labelRow.createCell(totalBalanceCol).setCellValue("TOTAL BALANCE");
-         labelRow.getCell(totalBalanceCol).setCellStyle(turquoiseStyle);
-
-         labelRow.createCell(acctBalCol).setCellValue("ACCT BAL");
-         labelRow.getCell(acctBalCol).setCellStyle(turquoiseStyle);
-
-         // If you want to add a label at start (like "SUMMARY:"), you can:
-         
-
-         // ==============================
-         // 2️⃣ SUM Row (Formulas)
-         // ==============================
-
-         String principalFormula = "SUM(I5:I" + lastDataRow + ")";
-         String interestFormula = "SUM(J5:J" + lastDataRow + ")";
-         String feeFormula = "SUM(K5:K" + lastDataRow + ")";
-         String penaltyFormula = "SUM(L5:L" + lastDataRow + ")";
-         String totalBalanceFormula = "SUM(M5:M" + lastDataRow + ")";
-         String acctBalFormula = "SUM(N5:N" + lastDataRow + ")";
-
-         sumRow.createCell(principalCol).setCellFormula(principalFormula);
-         sumRow.createCell(interestCol).setCellFormula(interestFormula);
-         sumRow.createCell(feeCol).setCellFormula(feeFormula);
-         sumRow.createCell(penaltyCol).setCellFormula(penaltyFormula);
-         sumRow.createCell(totalBalanceCol).setCellFormula(totalBalanceFormula);
-         sumRow.createCell(acctBalCol).setCellFormula(acctBalFormula);
-
-         // Apply number formatting
-         sumRow.getCell(principalCol).setCellStyle(numberStyle);
-         sumRow.getCell(interestCol).setCellStyle(numberStyle);
-         sumRow.getCell(feeCol).setCellStyle(numberStyle);
-         sumRow.getCell(penaltyCol).setCellStyle(numberStyle);
-         sumRow.getCell(totalBalanceCol).setCellStyle(numberStyle);
-         sumRow.getCell(acctBalCol).setCellStyle(numberStyle);
-         
-         Cell summaryLabel = sumRow.createCell(7); // example before principal column
-         summaryLabel.setCellValue("TOTAL :");
-         summaryLabel.setCellStyle(normalStyle);
-
-
-
-            // ==============================
-            // 7️⃣ Auto-size Columns
-            // ==============================
+            // Auto-size columns
             for (int i = 0; i < headers.length; i++) {
                 sheet.autoSizeColumn(i);
             }
@@ -1533,6 +1554,8 @@ public class ExelDownloadService {
             return new byte[0];
         }
     }
+
+
     
 //    Transaction Report
     public byte[] generateTransactionExcelReport(List<Object[]> rawData, String dueDate) {
@@ -1952,7 +1975,7 @@ public class ExelDownloadService {
             columnMap.put(7, 5);   // Account Holder ID = object[5]
             columnMap.put(8, 6);   // Account ID = object[6]
             columnMap.put(9, -1);  // Acc = ""
-            columnMap.put(10, -1); // Product = ""
+            columnMap.put(10, 37); // Product = ""
             columnMap.put(11, 7);  // Total Product Price = object[7]
             columnMap.put(12, 8);  // Loan Amount = object[8]
             columnMap.put(13, -1); // App Approved Amount = ""
@@ -2063,5 +2086,317 @@ public class ExelDownloadService {
             return new byte[0];
         }
     }
+    
+//    ---------------------------------------------------------------------------------------------------------------------------------------------
 
+    public byte[] generateAccrualExcel(List<Object[]> rawData, String accrualDate) {
+        if (rawData == null || rawData.isEmpty()) {
+            return new byte[0];
+        }
+
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet("ACCRUAL_INTEREST_" + accrualDate);
+
+            // ===================== TITLE =====================
+            Row titleRow = sheet.createRow(0);
+            Cell titleCell = titleRow.createCell(0);
+            titleCell.setCellValue("LOAN ACCRUAL INTEREST REPORT");
+
+            CellStyle titleStyle = workbook.createCellStyle();
+            Font titleFont = workbook.createFont();
+            titleFont.setBold(true);
+            titleFont.setFontHeightInPoints((short) 14);
+            titleStyle.setFont(titleFont);
+            titleStyle.setAlignment(HorizontalAlignment.CENTER);
+            titleCell.setCellStyle(titleStyle);
+
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 7));
+
+            // ===================== PRINTED DATE =====================
+            Row dateRow = sheet.createRow(1);
+            Cell label = dateRow.createCell(0);
+            Cell value = dateRow.createCell(1);
+            label.setCellValue("Printed Date:");
+            value.setCellValue(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
+
+            CellStyle dateStyle = workbook.createCellStyle();
+            Font dateFont = workbook.createFont();
+            dateFont.setItalic(true);
+            dateStyle.setFont(dateFont);
+            label.setCellStyle(dateStyle);
+            value.setCellStyle(dateStyle);
+
+            // ===================== HEADERS =====================
+            String[] headers = {
+                "Account Number", "Account Name", "Account Type", "Due Date",
+                "Days in Arrears", "Interest Amount", "Accrual Date", "Last Due Date"
+            };
+
+            Row headerRow = sheet.createRow(3);
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerFont.setColor(IndexedColors.BLACK.getIndex());
+            headerStyle.setFont(headerFont);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            headerStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyle.setBorderBottom(BorderStyle.THIN);
+            headerStyle.setBorderTop(BorderStyle.THIN);
+            headerStyle.setBorderLeft(BorderStyle.THIN);
+            headerStyle.setBorderRight(BorderStyle.THIN);
+
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            // ===================== STYLES =====================
+            CellStyle textStyle = workbook.createCellStyle();
+            textStyle.setAlignment(HorizontalAlignment.LEFT);
+
+            CellStyle numStyle = workbook.createCellStyle();
+            numStyle.setAlignment(HorizontalAlignment.RIGHT);
+            numStyle.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
+
+            CellStyle intStyle = workbook.createCellStyle();
+            intStyle.setAlignment(HorizontalAlignment.RIGHT);
+            intStyle.setDataFormat(workbook.createDataFormat().getFormat("0"));
+
+            CellStyle dateCellStyle = workbook.createCellStyle();
+            short dateFormat = workbook.createDataFormat().getFormat("dd-MM-yyyy");
+            dateCellStyle.setDataFormat(dateFormat);
+            dateCellStyle.setAlignment(HorizontalAlignment.CENTER);
+
+            // ===================== DATA ROWS =====================
+            int rowNum = 4;
+            for (Object[] rowData : rawData) {
+                Row row = sheet.createRow(rowNum++);
+                for (int i = 0; i < rowData.length; i++) {
+                    Cell cell = row.createCell(i);
+                    Object val = rowData[i];
+
+                    if (val == null) {
+                        cell.setCellValue("");
+                        continue;
+                    }
+
+                    switch (i) {
+                        case 3: // Due Date
+                        case 6: // Accrual Date
+                        case 7: // Last Due Date
+                            cell.setCellStyle(dateCellStyle);
+                            if (val instanceof Date) {
+                                cell.setCellValue((Date) val);
+                            } else {
+                                cell.setCellValue(val.toString());
+                            }
+                            break;
+
+                        case 4: // Days in Arrears (Integer)
+                            try {
+                                cell.setCellValue(Integer.parseInt(val.toString()));
+                                cell.setCellStyle(intStyle);
+                            } catch (Exception e) {
+                                cell.setCellValue(val.toString());
+                                cell.setCellStyle(textStyle);
+                            }
+                            break;
+
+                        case 5: // Interest Amount (Decimal)
+                            try {
+                                cell.setCellValue(Double.parseDouble(val.toString()));
+                                cell.setCellStyle(numStyle);
+                            } catch (Exception e) {
+                                cell.setCellValue(val.toString());
+                                cell.setCellStyle(textStyle);
+                            }
+                            break;
+
+                        default:
+                            cell.setCellValue(val.toString());
+                            cell.setCellStyle(textStyle);
+                            break;
+                    }
+                }
+            }
+
+            // ===================== AUTO SIZE =====================
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            workbook.write(out);
+            return out.toByteArray();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new byte[0];
+        }
+    }
+    
+    
+    public byte[] generatePenaltyExcel(List<Object[]> rawData, String tranDate) {
+        if (rawData == null || rawData.isEmpty()) {
+            return new byte[0];
+        }
+
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet("DAILY_PENALTY_" + tranDate);
+
+            // ===================== TITLE =====================
+            Row titleRow = sheet.createRow(0);
+            Cell titleCell = titleRow.createCell(0);
+            titleCell.setCellValue("LOAN DAILY PENALTY REPORT");
+
+            CellStyle titleStyle = workbook.createCellStyle();
+            Font titleFont = workbook.createFont();
+            titleFont.setBold(true);
+            titleFont.setFontHeightInPoints((short) 14);
+            titleStyle.setFont(titleFont);
+            titleStyle.setAlignment(HorizontalAlignment.CENTER);
+            titleCell.setCellStyle(titleStyle);
+
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 7));
+
+            // ===================== PRINTED DATE =====================
+            Row dateRow = sheet.createRow(1);
+            Cell label = dateRow.createCell(0);
+            Cell value = dateRow.createCell(1);
+            label.setCellValue("Printed Date:");
+            value.setCellValue(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
+
+            CellStyle dateStyle = workbook.createCellStyle();
+            Font dateFont = workbook.createFont();
+            dateFont.setItalic(true);
+            dateStyle.setFont(dateFont);
+            label.setCellStyle(dateStyle);
+            value.setCellStyle(dateStyle);
+
+            // ===================== HEADERS =====================
+            String[] headers = {
+                "Account ID", "Loan Name", "Due Date", "Tran Date","No of Days",
+                "Penalty Per Day", "Penalty Per Month", "Tolerance Period", "Up to Date Penalty"
+            };
+
+            Row headerRow = sheet.createRow(3);
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerFont.setColor(IndexedColors.BLACK.getIndex());
+            headerStyle.setFont(headerFont);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            headerStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyle.setBorderBottom(BorderStyle.THIN);
+            headerStyle.setBorderTop(BorderStyle.THIN);
+            headerStyle.setBorderLeft(BorderStyle.THIN);
+            headerStyle.setBorderRight(BorderStyle.THIN);
+
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            // ===================== STYLES =====================
+            CellStyle textStyle = workbook.createCellStyle();
+            textStyle.setAlignment(HorizontalAlignment.LEFT);
+
+            CellStyle rightAlignStyle = workbook.createCellStyle();
+            rightAlignStyle.setAlignment(HorizontalAlignment.RIGHT);
+
+            CellStyle numStyle = workbook.createCellStyle();
+            numStyle.setAlignment(HorizontalAlignment.RIGHT);
+            numStyle.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
+
+            CellStyle intStyle = workbook.createCellStyle();
+            intStyle.setAlignment(HorizontalAlignment.RIGHT);
+            intStyle.setDataFormat(workbook.createDataFormat().getFormat("0"));
+
+            CellStyle dateCellStyle = workbook.createCellStyle();
+            short dateFormat = workbook.createDataFormat().getFormat("dd-MM-yyyy");
+            dateCellStyle.setDataFormat(dateFormat);
+            dateCellStyle.setAlignment(HorizontalAlignment.CENTER);
+
+            // ===================== DATA ROWS =====================
+            int rowNum = 4;
+            for (Object[] rowData : rawData) {
+                Row row = sheet.createRow(rowNum++);
+                for (int i = 0; i < rowData.length; i++) {
+                    Cell cell = row.createCell(i);
+                    Object val = rowData[i];
+
+                    if (val == null) {
+                        cell.setCellValue("");
+                        continue;
+                    }
+
+                    switch (i) {
+                        case 2:
+                        case 3:// Due Date
+                            cell.setCellStyle(dateCellStyle);
+                            if (val instanceof Date) {
+                                cell.setCellValue((Date) val);
+                            } else {
+                                cell.setCellValue(val.toString());
+                            }
+                            break;
+
+                        case 4: // No of Days
+                        case 7: // Tolerance Period
+                            try {
+                                cell.setCellValue(Integer.parseInt(val.toString()));
+                                cell.setCellStyle(intStyle);
+                            } catch (Exception e) {
+                                cell.setCellValue(val.toString());
+                                cell.setCellStyle(textStyle);
+                            }
+                            break;
+
+                        case 5: // Penalty Per Day
+                        case 6: // Penalty Per Month
+                        case 8: // Up to Date Penalty
+                            try {
+                                cell.setCellValue(Double.parseDouble(val.toString()));
+                                cell.setCellStyle(numStyle);
+                            } catch (Exception e) {
+                                cell.setCellValue(val.toString());
+                                cell.setCellStyle(textStyle);
+                            }
+                            break;
+
+                        default:
+                            cell.setCellValue(val.toString());
+                            cell.setCellStyle(textStyle);
+                            break;
+                    }
+                }
+            }
+
+            // ===================== AUTO SIZE =====================
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            workbook.write(out);
+            return out.toByteArray();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new byte[0];
+        }
+    }
+
+
+    
+    
+    
+    
+    
+    
+    
 }
