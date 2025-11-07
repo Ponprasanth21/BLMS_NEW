@@ -2278,7 +2278,7 @@ public class ExelDownloadService {
             // ===================== HEADERS =====================
             String[] headers = {
                 "Account ID", "Loan Name", "Due Date", "Tran Date","No of Days",
-                "Penalty Per Day", "Penalty Per Month", "Tolerance Period", "Up to Date Penalty"
+                "Penalty Per Day", "Penalty Per Month", "Tolerance Period", "Total Penalty"
             };
 
             Row headerRow = sheet.createRow(3);
