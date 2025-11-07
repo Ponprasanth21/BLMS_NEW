@@ -10351,7 +10351,9 @@ public class BGLSRestController {
 				System.out
 						.println("Computed totalDebitAmountBD for customer " + customerId + " = " + totalDebitAmountBD);
 
-				if (backend_datas != null && !backend_datas.isEmpty()) {
+				List<Object> flow_datas = cLIENT_MASTER_REPO.getClientAccounts(customerId);
+
+				if (backend_datas != null && !backend_datas.isEmpty() && flow_datas != null && !flow_datas.isEmpty()) {
 					System.out.println("✅ Customer ID Matched: " + frontendCustomerId + " - Backend records found: "
 							+ backend_datas.size());
 
@@ -10373,6 +10375,7 @@ public class BGLSRestController {
 
 					// fetch loan flows for this customer
 					List<Object[]> flows = cLIENT_MASTER_REPO.findLoanFlowsByCustomerId(customerId);
+
 					if (flows == null) {
 						System.out.println("⚠️ No flows (null) for customer: " + customerId);
 						// still move transactions to history below and continue
@@ -10510,12 +10513,8 @@ public class BGLSRestController {
 
 						// Stage 2: future due dates (PRREC then INREC)
 						if (remainingAmt > 0) {
-                            List<Date> futureDueDates = flows.stream()
-                                    .map(r -> (Date) r[0])
-                                    .filter(d -> d != null && d.after(transactionDate))
-                                    .distinct()
-                                    .sorted()
-                                    .collect(Collectors.toList());
+							List<Date> futureDueDates = flows.stream().map(r -> (Date) r[0])
+									.filter(d -> d != null && d.after(transactionDate)).distinct().sorted().toList();
 
 							for (Date dueDateObj : futureDueDates) {
 								boolean prrecDone = false;
@@ -10627,12 +10626,22 @@ public class BGLSRestController {
 
 					BigDecimal diff = totalDebitAmountBD.subtract(computedCreditSum);
 
-					// EXREC check + create only if customer exists in DB
 					if (diff.compareTo(BigDecimal.ZERO) > 0) {
+
+						// Use default account if lastCreditAccountNo is null/empty
+						String exrecAccountNo = (lastCreditAccountNo != null && !lastCreditAccountNo.isEmpty())
+								? lastCreditAccountNo
+								: "1644000001";
+
+						// Get account name from COA
+						Chart_Acc_Entity creditAccount = chart_Acc_Rep.getaedit(exrecAccountNo);
+						String acctNameExrec = creditAccount != null ? creditAccount.getAcct_name()
+								: "Receivable Account";
+
 						List<CLIENT_MASTER_ENTITY> exrecCheck = cLIENT_MASTER_REPO.getClientDetails1(customerId);
 						if (exrecCheck != null && !exrecCheck.isEmpty()) {
-							Object[] exrecRow = new Object[] { transactionDate, "EXTRA", "EXREC", diff,
-									lastCreditAccountNo, acctName };
+							Object[] exrecRow = new Object[] { transactionDate, "EXTRA", "EXREC", diff, exrecAccountNo,
+									acctNameExrec };
 
 							partTranId = allocateCreditEntry(exrecRow, diff.doubleValue(), transactionDate, tranId,
 									userid, decimalFormatter, partTranId);
@@ -10640,8 +10649,8 @@ public class BGLSRestController {
 							Map<String, Object> exrecEntry = new HashMap<>();
 							exrecEntry.put("tran_id", tranId);
 							exrecEntry.put("part_tran_id", partTranId.get());
-							exrecEntry.put("account_no", lastCreditAccountNo);
-							exrecEntry.put("acct_name", acctName);
+							exrecEntry.put("account_no", exrecAccountNo);
+							exrecEntry.put("acct_name", acctNameExrec);
 							exrecEntry.put("flow_code", "EXREC");
 							exrecEntry.put("tran_amt", decimalFormatter.format(diff));
 							exrecEntry.put("part_tran_type", "C");
@@ -10657,12 +10666,13 @@ public class BGLSRestController {
 					} else {
 						System.out.println("✅ No EXREC needed. Debit = Credit (" + totalDebitAmountBD + ")");
 					}
-					
+
 					// ---------- Now ALL datas entries exist (D and C). Update COA balances
 					// ----------
 					for (Map<String, Object> entry1 : datas) {
 						String accountNo = entry1.get("account_no") != null ? entry1.get("account_no").toString() : "";
-						String partTranType = entry1.get("part_tran_type") != null ? entry1.get("part_tran_type").toString()
+						String partTranType = entry1.get("part_tran_type") != null
+								? entry1.get("part_tran_type").toString()
 								: "";
 						String tranAmtStr = entry1.get("tran_amt") != null
 								? entry1.get("tran_amt").toString().replace(",", "")
@@ -10709,7 +10719,8 @@ public class BGLSRestController {
 
 					// ---------- Update Loan Account Master (loanActRecord) using datas ----------
 					for (Map<String, Object> entry2 : datas) {
-						String accountNumber = entry2.get("account_no") != null ? entry2.get("account_no").toString() : "";
+						String accountNumber = entry2.get("account_no") != null ? entry2.get("account_no").toString()
+								: "";
 						String flowCode = entry2.get("flow_code") != null ? entry2.get("flow_code").toString() : "";
 						String tranAmtStr = entry2.get("tran_amt") != null
 								? entry2.get("tran_amt").toString().replace(",", "")
@@ -10749,14 +10760,15 @@ public class BGLSRestController {
 							break;
 						case "FEREC":
 							loanActRecord.setFees_paid(loanActRecord.getFees_paid().add(tranAmt));
-							loanActRecord.setFees_due(loanActRecord.getFees_due().subtract(tranAmt).max(BigDecimal.ZERO));
+							loanActRecord
+									.setFees_due(loanActRecord.getFees_due().subtract(tranAmt).max(BigDecimal.ZERO));
 							loanActRecord.setFees_balance(
 									loanActRecord.getFees_balance().subtract(tranAmt).max(BigDecimal.ZERO));
 							break;
 						case "PLREC":
 							loanActRecord.setPenalty_paid(loanActRecord.getPenalty_paid().add(tranAmt));
-							loanActRecord
-									.setPenalty_due(loanActRecord.getPenalty_due().subtract(tranAmt).max(BigDecimal.ZERO));
+							loanActRecord.setPenalty_due(
+									loanActRecord.getPenalty_due().subtract(tranAmt).max(BigDecimal.ZERO));
 							loanActRecord.setPenalty_balance(
 									loanActRecord.getPenalty_balance().subtract(tranAmt).max(BigDecimal.ZERO));
 							break;
@@ -10777,12 +10789,14 @@ public class BGLSRestController {
 					// ---------- Update LOAN_REPAYMENT demand records for credit entries only
 					// ----------
 					for (Map<String, Object> entry2 : datas) {
-						String partTranType = entry2.get("part_tran_type") != null ? entry2.get("part_tran_type").toString()
+						String partTranType = entry2.get("part_tran_type") != null
+								? entry2.get("part_tran_type").toString()
 								: "";
 						if (!"C".equalsIgnoreCase(partTranType))
 							continue;
 
-						String accountNumber = entry2.get("account_no") != null ? entry2.get("account_no").toString() : "";
+						String accountNumber = entry2.get("account_no") != null ? entry2.get("account_no").toString()
+								: "";
 						String flowCode = entry2.get("flow_code") != null ? entry2.get("flow_code").toString() : "";
 						String tranAmtStr = entry2.get("tran_amt") != null
 								? entry2.get("tran_amt").toString().replace(",", "")
@@ -10801,8 +10815,8 @@ public class BGLSRestController {
 							dbDateStr = sdfDB.format(dueDateObj);
 						}
 
-						LOAN_REPAYMENT_ENTITY demandRecord = lOAN_REPAYMENT_REPO.getLoanFlowsValueDatas(parent_account_key,
-								dbDateStr);
+						LOAN_REPAYMENT_ENTITY demandRecord = lOAN_REPAYMENT_REPO
+								.getLoanFlowsValueDatas(parent_account_key, dbDateStr);
 						if (demandRecord == null)
 							continue;
 
@@ -10811,16 +10825,19 @@ public class BGLSRestController {
 						BigDecimal interestExp = Optional.ofNullable(demandRecord.getInterest_exp())
 								.orElse(BigDecimal.ZERO);
 						BigDecimal feeExp = Optional.ofNullable(demandRecord.getFee_exp()).orElse(BigDecimal.ZERO);
-						BigDecimal penaltyExp = Optional.ofNullable(demandRecord.getPenalty_exp()).orElse(BigDecimal.ZERO);
+						BigDecimal penaltyExp = Optional.ofNullable(demandRecord.getPenalty_exp())
+								.orElse(BigDecimal.ZERO);
 
 						switch (flowCode) {
 						case "PRREC":
-							demandRecord.setPrincipal_paid(demandRecord.getPrincipal_paid().add(tranAmt).min(principalExp));
+							demandRecord
+									.setPrincipal_paid(demandRecord.getPrincipal_paid().add(tranAmt).min(principalExp));
 							demandRecord.setPrincipal_due(
 									principalExp.subtract(demandRecord.getPrincipal_paid()).max(BigDecimal.ZERO));
 							break;
 						case "INREC":
-							demandRecord.setInterest_paid(demandRecord.getInterest_paid().add(tranAmt).min(interestExp));
+							demandRecord
+									.setInterest_paid(demandRecord.getInterest_paid().add(tranAmt).min(interestExp));
 							demandRecord.setInterest_due(
 									interestExp.subtract(demandRecord.getInterest_paid()).max(BigDecimal.ZERO));
 							break;
@@ -10841,13 +10858,16 @@ public class BGLSRestController {
 						// Check fully paid
 						BigDecimal principalDiff = demandRecord.getPrincipal_exp()
 								.subtract(demandRecord.getPrincipal_paid());
-						BigDecimal interestDiff = demandRecord.getInterest_exp().subtract(demandRecord.getInterest_paid());
+						BigDecimal interestDiff = demandRecord.getInterest_exp()
+								.subtract(demandRecord.getInterest_paid());
 						BigDecimal feeDiff = demandRecord.getFee_exp().subtract(demandRecord.getFee_paid());
 						BigDecimal penaltyDiff = demandRecord.getPenalty_exp().subtract(demandRecord.getPenalty_paid());
 
 						Date latestTranDateForDemand = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
-						if (principalDiff.compareTo(BigDecimal.ZERO) == 0 && interestDiff.compareTo(BigDecimal.ZERO) == 0
-								&& feeDiff.compareTo(BigDecimal.ZERO) == 0 && penaltyDiff.compareTo(BigDecimal.ZERO) == 0) {
+						if (principalDiff.compareTo(BigDecimal.ZERO) == 0
+								&& interestDiff.compareTo(BigDecimal.ZERO) == 0
+								&& feeDiff.compareTo(BigDecimal.ZERO) == 0
+								&& penaltyDiff.compareTo(BigDecimal.ZERO) == 0) {
 
 							demandRecord.setPayment_state("PAID");
 							demandRecord.setRepaid_date(latestTranDateForDemand);
@@ -10935,7 +10955,140 @@ public class BGLSRestController {
 					totalDebitBalanceAll = totalDebitBalanceAll.add(custDebitBalance);
 					totalCreditBalanceAll = totalCreditBalanceAll.add(custCreditBalance);
 
-				} else {
+				} else if (backend_datas != null && !backend_datas.isEmpty()
+						&& (flow_datas == null || flow_datas.isEmpty())) {
+
+					System.out.println("❌ Customer ID MATCHED: " + frontendCustomerId + " - No flow records found.");
+
+					for (Map<String, Object> row : custTransactions) {
+						System.out.println("   → Frontend Row: " + row);
+
+						// 🔹 Extract frontend values
+						String acctNum = (String) row.get("acct_num");
+						String acctName = (String) row.get("acct_namedata");
+						String tranRemarks = row.get("tran_remarks") != null ? row.get("tran_remarks").toString() : "";
+						String tranAmtStr = row.get("tran_particulardata") != null
+								? row.get("tran_particulardata").toString().replace(",", "").trim()
+								: "0";
+
+						BigDecimal tranAmt = BigDecimal.ZERO;
+						try {
+							tranAmt = new BigDecimal(tranAmtStr);
+						} catch (Exception ex) {
+							System.out.println("⚠️ Invalid tran_amt for " + acctName + ": " + tranAmtStr);
+						}
+
+						// 🔹 Loan parking debit account
+						String loanparkingacct = "2700002750";
+						Chart_Acc_Entity debitAccount = chart_Acc_Rep.getaedit(loanparkingacct);
+
+						// 🔹 Transaction date from control table
+						Date tranDateObj = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
+						if (tranDateObj == null) {
+							response.put("status", "error");
+							response.put("message", "No transaction date found in control table.");
+							return response;
+						}
+						LocalDate tranDate = (tranDateObj instanceof java.sql.Date)
+								? ((java.sql.Date) tranDateObj).toLocalDate()
+								: tranDateObj.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+						Date transactionDate = Date.from(tranDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+						// ✅ DEBIT ENTRY
+						TRAN_MAIN_TRM_WRK_ENTITY debitTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
+						debitTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
+						debitTrm.setTran_id(tranId);
+						debitTrm.setPart_tran_id(BigDecimal.valueOf(1));
+						debitTrm.setAcct_num(loanparkingacct);
+						debitTrm.setAcct_name(debitAccount.getAcct_name());
+						debitTrm.setTran_type("TRANSFER");
+						debitTrm.setPart_tran_type("Debit");
+						debitTrm.setTran_particular("Receivable Failed Transaction");
+						debitTrm.setTran_remarks(tranRemarks);
+						debitTrm.setTran_amt(tranAmt);
+						debitTrm.setTran_date(transactionDate);
+						debitTrm.setValue_date(transactionDate);
+						debitTrm.setFlow_code("RECOVERY");
+						debitTrm.setFlow_date(transactionDate);
+						debitTrm.setAcct_crncy(debitAccount.getAcct_crncy());
+						debitTrm.setTran_status("POSTED");
+						debitTrm.setEntry_user(userid);
+						debitTrm.setModify_user(userid);
+						debitTrm.setEntry_time(new Date());
+						debitTrm.setModify_time(new Date());
+						debitTrm.setDel_flg("N");
+						tRAN_MAIN_TRM_WRK_REP.save(debitTrm);
+
+						// 🔹 Update Debit Account COA (Loan Parking)
+						BigDecimal debitBal = Optional.ofNullable(debitAccount.getAcct_bal()).orElse(BigDecimal.ZERO);
+						BigDecimal debitDrAmt = Optional.ofNullable(debitAccount.getDr_amt()).orElse(BigDecimal.ZERO);
+						debitBal = debitBal.subtract(tranAmt);
+						debitDrAmt = debitDrAmt.add(tranAmt);
+						debitAccount.setAcct_bal(debitBal);
+						debitAccount.setDr_amt(debitDrAmt);
+						debitAccount.setModify_time(new Date());
+						debitAccount.setModify_user(userid);
+						chart_Acc_Rep.save(debitAccount);
+
+						// 🔹 Receivable account credit
+						String receivableaccount = "1644000001";
+						Chart_Acc_Entity creditAccount = chart_Acc_Rep.getaedit(receivableaccount);
+
+						// ✅ CREDIT ENTRY
+						TRAN_MAIN_TRM_WRK_ENTITY creditTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
+						creditTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
+						creditTrm.setTran_id(tranId);
+						creditTrm.setPart_tran_id(BigDecimal.valueOf(2));
+						creditTrm.setAcct_num(receivableaccount);
+						creditTrm.setAcct_name(creditAccount.getAcct_name());
+						creditTrm.setTran_type("TRANSFER");
+						creditTrm.setPart_tran_type("Credit");
+						creditTrm.setTran_particular("Receivable Failed BACKEND NO RECORDS Transaction");
+						creditTrm.setTran_remarks(tranRemarks);
+						creditTrm.setTran_amt(tranAmt);
+						creditTrm.setTran_date(transactionDate);
+						creditTrm.setValue_date(transactionDate);
+						creditTrm.setFlow_code("FRECOVERY");
+						creditTrm.setFlow_date(transactionDate);
+						creditTrm.setAcct_crncy(creditAccount.getAcct_crncy());
+						creditTrm.setTran_status("POSTED");
+						creditTrm.setEntry_user(userid);
+						creditTrm.setModify_user(userid);
+						creditTrm.setEntry_time(new Date());
+						creditTrm.setModify_time(new Date());
+						creditTrm.setDel_flg("N");
+						tRAN_MAIN_TRM_WRK_REP.save(creditTrm);
+
+						// 🔹 Update Credit Account COA (Receivable)
+						BigDecimal creditBal = Optional.ofNullable(creditAccount.getAcct_bal()).orElse(BigDecimal.ZERO);
+						BigDecimal creditCrAmt = Optional.ofNullable(creditAccount.getCr_amt()).orElse(BigDecimal.ZERO);
+						creditBal = creditBal.add(tranAmt);
+						creditCrAmt = creditCrAmt.add(tranAmt);
+						creditAccount.setAcct_bal(creditBal);
+						creditAccount.setCr_amt(creditCrAmt);
+						creditAccount.setModify_time(new Date());
+						creditAccount.setModify_user(userid);
+						chart_Acc_Rep.save(creditAccount);
+
+						// 🔹 Verification: check if debit and credit amounts match
+						if (tranAmt.compareTo(debitDrAmt) == 0 && tranAmt.compareTo(creditCrAmt) == 0) {
+							System.out.println(
+									"✅ Debit & Credit amounts match for TRAN_ID: " + tranId + " | Amount: " + tranAmt);
+						} else {
+							System.out.println("⚠️ Mismatch detected for TRAN_ID: " + tranId);
+							System.out.println("   → Expected Amount: " + tranAmt);
+							System.out.println("   → Debit Dr Amount: " + debitDrAmt + " | Updated Debit Balance: "
+									+ debitAccount.getAcct_bal());
+							System.out.println("   → Credit Cr Amount: " + creditCrAmt + " | Updated Credit Balance: "
+									+ creditAccount.getAcct_bal());
+						}
+
+						System.out.println("🟢 Created Debit & Credit for Customer Row: " + acctName + " | TRAN_ID: "
+								+ tranId + " | Amount: " + tranAmt + " | Date: " + transactionDate);
+					}
+				} else if ((backend_datas == null || backend_datas.isEmpty())
+						&& (flow_datas == null || flow_datas.isEmpty())) {
+
 					// unmatched customer: move to history and add zeroed summary
 					System.out.println(
 							"❌ Customer ID Unmatched: " + frontendCustomerId + " - No records found in backend.");
@@ -10953,6 +11106,7 @@ public class BGLSRestController {
 						String tranAmtStr = row.get("tran_particulardata") != null
 								? row.get("tran_particulardata").toString().replace(",", "").trim()
 								: "0";
+
 						BigDecimal tranAmt = BigDecimal.ZERO;
 						try {
 							tranAmt = new BigDecimal(tranAmtStr);
@@ -10986,7 +11140,7 @@ public class BGLSRestController {
 						debitTrm.setAcct_name(debitAccount.getAcct_name());
 						debitTrm.setTran_type("TRANSFER");
 						debitTrm.setPart_tran_type("Debit");
-						debitTrm.setTran_particular("Receivable Failed Transaction ");
+						debitTrm.setTran_particular("Receivable Failed Transaction");
 						debitTrm.setTran_remarks(tranRemarks);
 						debitTrm.setTran_amt(tranAmt);
 						debitTrm.setTran_date(transactionDate);
@@ -11000,19 +11154,18 @@ public class BGLSRestController {
 						debitTrm.setEntry_time(new Date());
 						debitTrm.setModify_time(new Date());
 						debitTrm.setDel_flg("N");
-
 						tRAN_MAIN_TRM_WRK_REP.save(debitTrm);
-						
-						  // 🔹 Update Debit Account COA (Loan Parking)
-				        BigDecimal debitBal = Optional.ofNullable(debitAccount.getAcct_bal()).orElse(BigDecimal.ZERO);
-				        BigDecimal debitDrAmt = Optional.ofNullable(debitAccount.getDr_amt()).orElse(BigDecimal.ZERO);
-				        debitBal = debitBal.subtract(tranAmt);
-				        debitDrAmt = debitDrAmt.add(tranAmt);
-				        debitAccount.setAcct_bal(debitBal);
-				        debitAccount.setDr_amt(debitDrAmt);
-				        debitAccount.setModify_time(new Date());
-				        debitAccount.setModify_user(userid);
-				        chart_Acc_Rep.save(debitAccount);
+
+						// 🔹 Update Debit Account COA (Loan Parking)
+						BigDecimal debitBal = Optional.ofNullable(debitAccount.getAcct_bal()).orElse(BigDecimal.ZERO);
+						BigDecimal debitDrAmt = Optional.ofNullable(debitAccount.getDr_amt()).orElse(BigDecimal.ZERO);
+						debitBal = debitBal.subtract(tranAmt);
+						debitDrAmt = debitDrAmt.add(tranAmt);
+						debitAccount.setAcct_bal(debitBal);
+						debitAccount.setDr_amt(debitDrAmt);
+						debitAccount.setModify_time(new Date());
+						debitAccount.setModify_user(userid);
+						chart_Acc_Rep.save(debitAccount);
 
 						// 🔹 Receivable account credit
 						String receivableaccount = "1644000001";
@@ -11027,7 +11180,7 @@ public class BGLSRestController {
 						creditTrm.setAcct_name(creditAccount.getAcct_name());
 						creditTrm.setTran_type("TRANSFER");
 						creditTrm.setPart_tran_type("Credit");
-						creditTrm.setTran_particular("Receivable Failed Transaction ");
+						creditTrm.setTran_particular("Receivable Failed Transaction");
 						creditTrm.setTran_remarks(tranRemarks);
 						creditTrm.setTran_amt(tranAmt);
 						creditTrm.setTran_date(transactionDate);
@@ -11041,23 +11194,37 @@ public class BGLSRestController {
 						creditTrm.setEntry_time(new Date());
 						creditTrm.setModify_time(new Date());
 						creditTrm.setDel_flg("N");
-
-						 // 🔹 Update Credit Account COA (Receivable)
-				        BigDecimal creditBal = Optional.ofNullable(creditAccount.getAcct_bal()).orElse(BigDecimal.ZERO);
-				        BigDecimal creditCrAmt = Optional.ofNullable(creditAccount.getCr_amt()).orElse(BigDecimal.ZERO);
-				        creditBal = creditBal.add(tranAmt);
-				        creditCrAmt = creditCrAmt.add(tranAmt);
-				        creditAccount.setAcct_bal(creditBal);
-				        creditAccount.setCr_amt(creditCrAmt);
-				        creditAccount.setModify_time(new Date());
-				        creditAccount.setModify_user(userid);
-				        chart_Acc_Rep.save(creditAccount);
-				        
 						tRAN_MAIN_TRM_WRK_REP.save(creditTrm);
+
+						// 🔹 Update Credit Account COA (Receivable)
+						BigDecimal creditBal = Optional.ofNullable(creditAccount.getAcct_bal()).orElse(BigDecimal.ZERO);
+						BigDecimal creditCrAmt = Optional.ofNullable(creditAccount.getCr_amt()).orElse(BigDecimal.ZERO);
+						creditBal = creditBal.add(tranAmt);
+						creditCrAmt = creditCrAmt.add(tranAmt);
+						creditAccount.setAcct_bal(creditBal);
+						creditAccount.setCr_amt(creditCrAmt);
+						creditAccount.setModify_time(new Date());
+						creditAccount.setModify_user(userid);
+						chart_Acc_Rep.save(creditAccount);
+
+						// 🔹 Verification: check debit/credit amounts match
+						if (tranAmt.compareTo(debitDrAmt) == 0 && tranAmt.compareTo(creditCrAmt) == 0) {
+							System.out.println(
+									"✅ Debit & Credit amounts match for TRAN_ID: " + tranId + " | Amount: " + tranAmt);
+						} else {
+							System.out.println("⚠️ Mismatch detected for TRAN_ID: " + tranId);
+							System.out.println("   → Expected Amount: " + tranAmt);
+							System.out.println("   → Debit Dr Amount: " + debitDrAmt + " | Updated Debit Balance: "
+									+ debitAccount.getAcct_bal());
+							System.out.println("   → Credit Cr Amount: " + creditCrAmt + " | Updated Credit Balance: "
+									+ creditAccount.getAcct_bal());
+						}
 
 						System.out.println("🟢 Created Debit & Credit for Unmatched Customer Row: " + acctName
 								+ " | TRAN_ID: " + tranId + " | Amount: " + tranAmt + " | Date: " + transactionDate);
 					}
+				} else {
+					System.out.println("NO TRANSACTION FOUND");
 				}
 
 				// Move MULTIPLE_TRANSACTION_ENTITY -> HISTORY (unmatched)

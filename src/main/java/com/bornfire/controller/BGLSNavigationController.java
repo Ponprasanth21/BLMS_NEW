@@ -5250,6 +5250,7 @@ public class BGLSNavigationController {
         }  else if (formmode.equals("view1")) {
             md.addAttribute("formmode", "view1");
             md.addAttribute("jour", tRAN_MAIN_TRM_WRK_REP.findByjournalvalues(tran_id));
+            md.addAttribute("jour1", tRAN_MAIN_TRM_WRK_REP.findByjournalvalues(tran_id));
             md.addAttribute("Acctnum", acct_num);
             md.addAttribute("ledgervalues", tRAN_MAIN_TRM_WRK_REP.getValuepopvalues(tran_id, acct_num, part_tran_id));
             md.addAttribute("currentPartTran", part_tran_id);

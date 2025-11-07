@@ -301,6 +301,16 @@
 			background-color: #aaa;
 			border-radius: 10px;
 		}
+
+		.tran_modal {
+			margin-left: 0px !important;
+			overflow: hidden;
+
+			td,
+			th {
+				font-size: 12px;
+			}
+		}
 	</style>
 
 
@@ -429,37 +439,56 @@
 				},
 				success: function (data) {
 					console.log(data);
-					$("#tran_id").val(data.tran_id);
-					$("#part_tran_id").val(data.part_tran_id);
-					$("#acct_num").val(data.acct_num);
-					$("#acct_name").val(data.acct_name);
-					$("#tran_type").val(data.tran_type);
-					$("#part_tran_type").val(data.part_tran_type);
-					$("#acct_crncy").val(data.acct_crncy);
-					$("#tran_amt").val(data.tran_amt);
-					$("#tran_particular").val(data.tran_particular);
-					$("#tran_remarks").val(data.tran_remarks);
-					$("#gst_amount").val(data.gst_amount);
-					$("#gst_type").val(data.gst_type);
-					$("#tran_code").val(data.tran_code);
-					$("#tran_rpt_code").val(data.tran_rpt_code);
-					$("#tran_ref_no").val(data.tran_ref_no);
-					$("#add_details").val(data.add_details);
-					$("#partition_type").val(data.partition_type);
-					$("#partition_det").val(data.partition_det);
-					$("#instr_num").val(data.instr_num);
-					$("#ref_crncy").val(data.ref_crncy);
-					$("#ref_crncy_amt").val(data.ref_crncy_amt);
-					$("#rate_code").val(data.rate_code);
-					$("#rate").val(data.rate);
-					$("#entry_user").val(data.entry_user);
-					$("#post_user").val(data.post_user);
-					$("#tran_status").val(data.tran_status);
-					$("#del_flg").val(data.del_flg);
+
+					function formatDate(dateStr) {
+						if (!dateStr) return '';
+						const date = new Date(dateStr);
+						if (isNaN(date)) return dateStr;
+						const day = String(date.getDate()).padStart(2, '0');
+						const month = String(date.getMonth() + 1).padStart(2, '0');
+						const year = date.getFullYear();
+						return `${day}-${month}-${year}`;
+					}
+
+					// Assign values to modal table fields
+					$("#m_tran_id").text(data.tran_id);
+					$("#m_part_tran_id").text(data.part_tran_id);
+					$("#m_acct_num").text(data.acct_num);
+					$("#m_acct_name").text(data.acct_name);
+					$("#m_tran_type").text(data.tran_type);
+					$("#m_part_tran_type").text(data.part_tran_type);
+					$("#m_acct_crncy").text(data.acct_crncy);
+					$("#m_tran_amt").text(data.tran_amt);
+					$("#m_tran_particular").text(data.tran_particular);
+					$("#m_tran_remarks").text(data.tran_remarks);
+					$("#m_flow_code").text(data.flow_code);
+					$("#m_flow_date").text(formatDate(data.flow_date));
+					$("#m_tran_date").text(formatDate(data.tran_date));
+					$("#m_value_date").text(formatDate(data.value_date));
+					$("#m_tran_code").text(data.tran_code);
+					$("#m_tran_rpt_code").text(data.tran_rpt_code);
+					$("#m_tran_ref_no").text(data.tran_ref_no);
+					$("#m_add_details").text(data.add_details);
+					$("#m_partition_type").text(data.partition_type);
+					$("#m_partition_det").text(data.partition_det);
+					$("#m_instr_num").text(data.instr_num);
+					$("#m_instr_date").text(formatDate(data.instr_date));
+					$("#m_ref_crncy").text(data.ref_crncy);
+					$("#m_ref_crncy_amt").text(data.ref_crncy_amt);
+					$("#m_rate_code").text(data.rate_code);
+					$("#m_rate").text(data.rate);
+					$("#m_entry_user").text(data.entry_user);
+					$("#m_post_user").text(data.post_user);
+					$("#m_entry_time").text(formatDate(data.entry_time));
+					$("#m_post_time").text(formatDate(data.post_time));
+					$("#m_tran_status").text(data.tran_status);
+					$("#m_del_flg").text(data.del_flg);
+
+					// Show the modal after setting data
+					$("#transactionModal").modal("show");
 				},
 				error: function () {
-					$('#errorMessage').text('Error fetching data');
-					$('#errorModal').modal('show');
+					alert("Error fetching transaction details!");
 				}
 			});
 		}
@@ -2646,7 +2675,7 @@
 				rows += `
 		        <tr>
 		          <td>${tranDate}</td>
-		          <td>${details.tran_id}/${details.part_tran_id}</td>
+		          <td>${details.tran_id}/${details.part_tran_id}</td>selectActions
 		          <td>${details.part_tran_type}</td>
 		          <td>${details.acct_crncy}</td>
 		          <td style="text-align:right;">${tranAmt}</td>
@@ -2655,7 +2684,7 @@
 		               data-tranid="${details.tran_id}" 
 		               data-partnid="${details.part_tran_id}" 
 		               data-acctnum="${details.acct_num}" 
-		               onclick="reversaluser(this)">
+		               onclick="enquiryuser(this)">
 		               ${details.acct_num}
 		            </a>
 		          </td>
@@ -2836,6 +2865,103 @@
 			});
 		});
 
+	</script>
+	<script>
+		function addtransactions() {
+			let tableBody = $("#placelist31");
+			let lastRow = tableBody.find("tr:last");
+
+			if (lastRow.length === 0) {
+				alert("No existing rows found!");
+				return;
+			}
+
+			// Extract last row values
+			let tranIdCell = lastRow.find("td:eq(1)").text().trim();
+			if (!tranIdCell || !tranIdCell.includes("/")) {
+				alert("Invalid Tran ID format in last row");
+				return;
+			}
+
+			let lastTranId = tranIdCell.split("/")[0].trim();
+			let lastPartId = parseInt(tranIdCell.split("/")[1].trim()) || 0;
+			let newPartId = lastPartId + 1;
+			let acctNum = lastRow.find("td:eq(5)").text().trim(); // acct_num column
+			let tranDate = lastRow.find("td:eq(0)").text().trim();
+			let valueDate = tranDate; // same
+
+			console.log("Tran ID:", lastTranId, "Part Tran ID:", newPartId, "Acct Num:", acctNum);
+
+			// 🔹 Fetch details via AJAX
+			$.ajax({
+				type: "GET",
+				url: "./transactionaccountdetailsvalues",
+				data: {
+					tran_id: lastTranId,
+					part_tran_id: lastPartId,
+					acct_num: acctNum
+				},
+				success: function (data) {
+					console.log(data);
+
+					function formatDate(dateStr) {
+						if (!dateStr) return '';
+						const date = new Date(dateStr);
+						if (isNaN(date)) return dateStr;
+						const day = String(date.getDate()).padStart(2, '0');
+						const month = String(date.getMonth() + 1).padStart(2, '0');
+						const year = date.getFullYear();
+						return `${day}-${month}-${year}`;
+					}
+
+					// 🟢 Fill modal with data
+					$("#transactionModal21 #m_tran_id").html(lastTranId);
+					$("#transactionModal21 #m_part_tran_id").html(newPartId);
+					$("#transactionModal21 #m_acct_num").html(acctNum);
+					$("#transactionModal21 #m_acct_name").html(data.acct_name || '');
+					$("#transactionModal21 #m_tran_type").html(data.tran_type || '');
+					$("#transactionModal21 #m_part_tran_type").html("Credit");
+					$("#transactionModal21 #m_acct_crncy").html(data.acct_crncy || '');
+					$("#transactionModal21 #m_tran_amt").html("");
+					$("#transactionModal21 #m_tran_particular").html(data.tran_particular || '');
+					$("#transactionModal21 #m_tran_remarks").html(data.tran_remarks || '');
+					$("#transactionModal21 #m_flow_code").html("");
+					$("#transactionModal21 #m_flow_date").html("");
+					$("#transactionModal21 #m_tran_date").html(tranDate);
+					$("#transactionModal21 #m_value_date").html(valueDate);
+					$("#transactionModal21 #m_tran_code").html(data.tran_code || '');
+					$("#transactionModal21 #m_tran_rpt_code").html(data.tran_rpt_code || '');
+					$("#transactionModal21 #m_tran_ref_no").html(data.tran_ref_no || '');
+					$("#transactionModal21 #m_add_details").html(data.add_details || '');
+					$("#transactionModal21 #m_partition_type").html(data.partition_type || '');
+					$("#transactionModal21 #m_partition_det").html(data.partition_det || '');
+					$("#transactionModal21 #m_instr_num").html(data.instr_num || '');
+					$("#transactionModal21 #m_instr_date").html(formatDate(data.instr_date));
+					$("#transactionModal21 #m_ref_crncy").html(data.ref_crncy || '');
+					$("#transactionModal21 #m_ref_crncy_amt").html(data.ref_crncy_amt || '');
+					$("#transactionModal21 #m_rate_code").html(data.rate_code || '');
+					$("#transactionModal21 #m_rate").html(data.rate || '');
+					$("#transactionModal21 #m_entry_user").html(data.entry_user || '');
+					$("#transactionModal21 #m_post_user").html(data.post_user || '');
+					$("#transactionModal21 #m_entry_time").html(formatDate(data.entry_time));
+					$("#transactionModal21 #m_post_time").html(formatDate(data.post_time));
+					$("#transactionModal21 #m_tran_status").html(data.tran_status || '');
+					$("#transactionModal21 #m_del_flg").html(data.del_flg || '');
+
+					// 🟢 Make editable fields ready
+					$("#transactionModal21 td").attr("contenteditable", "false");
+					$("#transactionModal21 #m_tran_amt").attr("contenteditable", "true").html("");
+					$("#transactionModal21 #m_acct_num").attr("contenteditable", "true");
+					$("#transactionModal21 #m_flow_code").attr("contenteditable", "true");
+
+					// 🟢 Show the modal
+					$("#transactionModal21").modal("show");
+				},
+				error: function () {
+					alert("Error fetching transaction details!");
+				}
+			});
+		}
 	</script>
 </head>
 
@@ -4354,508 +4480,58 @@
 
 						</div>
 						<div class="card-body">
-
-							<form class=" border border-secondary" method="post" id="journaladd" autocomplete="off">
-
-								<!-- 
-								<div class="row formline" style="padding: 15px 0px 2px 50px;">
-									<div class="col-sm-6"></div>
-									<div class="col-sm-2">Date</div>
-
-
-									<div class="col-sm-2">
-										<input type="text" name="current" id="current"
-											th:value="${#dates.format(ledgervalues.tran_date, 'dd-MM-yyyy')}"
-											class="form-control form-control-sm bg-white border border-dark"
-											readonly />
-									</div>
-
-									<input type="text" name="existRowValue" id="existRowValue"
-										class="form-control form-control-sm bg-white border border-dark d-none"
-										readonly />
-
-								</div> -->
-
-
-								<div class="row formline" style="padding: 15px 0px 2px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Tran Id</div>
-
-									<div class="col-sm-2">
-										<input type="text" name="tran_id" id="tran_id"
-											th:value="${ledgervalues.tran_id}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Part Tran Id</div>
-									<div class="col-sm-2">
-
-										<input type="text" name="part_tran_id" id="part_tran_id"
-											th:value="${ledgervalues.part_tran_id}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-								<div class="row formline" style="padding: 0px 0px 2px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Acct ID</div>
-
-									<div class="col-sm-2">
-										<div class="input-group">
-											<input type="text" name="acct_num" id="acct_num1"
-												class="form-control form-control-sm bg-white border border-dark"
-												th:value="${ledgervalues.acct_num}" readonly />
-											<!-- <div class="input-group-append">
-												<button type="button" th:attr="data-acct_num=${Acctnum}"
-													onclick="setAccountDetails(this)">
-													<i class="fa fa-search"></i>
-												</button>
-											</div> -->
-										</div>
-									</div>
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Acct Name</div>
-									<div class="col-sm-2">
-
-
-										<input type="text" name="acct_name" id="acct_name"
-											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${ledgervalues.acct_name}" readonly />
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-								<div class="row formline" style="padding: 0px 0px 2px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Tran Type</div>
-
-
-									<div class="col-sm-2">
-										<input type="text" name="tran_type" id="tran_type"
-											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${ledgervalues.tran_type}" readonly />
-									</div>
-
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Part Tran Type</div>
-									<div class="col-sm-2">
-										<input type="text" name="part_tran_type" id="part_tran_type"
-											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${ledgervalues.part_tran_type}" readonly />
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-
-								<div class="row formline" style="padding: 0px 0px 2px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Account Currency</div>
-
-
-									<div class="col-sm-2">
-										<input type="text" name="acct_crncy" id="acct_crncy"
-											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${ledgervalues.acct_crncy}" readonly />
-									</div>
-
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Tran Amt</div>
-									<div class="col-sm-2">
-
-										<input type="text" name="tran_amt" id="tran_amt" oninput="amountInput(this);"
-											th:value="${ledgervalues.tran_amt}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-								<div class="row formline" style="padding: 0px 0px 2px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Tran Particulars</div>
-
-
-									<div class="col-sm-2">
-										<input type="text" placeholder="" name="tran_particular" id="tran_particular"
-											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${ledgervalues.tran_particular}" oninput="letterOnly(this);"
-											readonly />
-
-									</div>
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Tran Remarks</div>
-									<div class="col-sm-2">
-
-										<input type="text" name="tran_remarks" id="tran_remarks"
-											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${ledgervalues.tran_remarks}" oninput="letterOnly(this);"
-											readonly />
-
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-								<div class="row formline" style="padding: 0px 0px 2px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Flow Code</div>
-
-
-									<div class="col-sm-2">
-										<input type="text" name="flow_code" id="gst_amount"
-											th:value="${ledgervalues.flow_code}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Flow Date</div>
-									<div class="col-sm-2">
-
-										<input type="text" placeholder="" name="flow_date" id="gst_type"
-											th:value="${#dates.format(ledgervalues.flow_date, 'dd-MM-yyyy')}"
-											oninput="letterOnly(this);"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-								<div class="row formline" style="padding: 0px 0px 2px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Tran Date</div>
-
-
-									<div class="col-sm-2">
-
-										<input type="text" name="tran_date" id="tran_date"
-											th:value="${#dates.format(ledgervalues.tran_date, 'dd-MM-yyyy')}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Value Date</div>
-									<div class="col-sm-2">
-
-
-										<input type="text" name="value_date" id="value_date"
-											th:value="${#dates.format(ledgervalues.value_date, 'dd-MM-yyyy')}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-								<div class="row formline" style="padding: 0px 0px 2px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Tran Code</div>
-
-
-									<div class="col-sm-2">
-										<input type="text" name="tran_code" id="tran_code"
-											th:value="${ledgervalues.tran_code}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Tran Report Code</div>
-									<div class="col-sm-2">
-
-										<input type="text" name="tran_rpt_code" id="tran_rpt_code"
-											th:value="${ledgervalues.tran_rpt_code}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-								<div class="row formline" style="padding: 0px 0px 2px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Tran Ref NO</div>
-
-
-									<div class="col-sm-2">
-										<input type="text" name="tran_ref_no" id="tran_ref_no"
-											th:value="${ledgervalues.tran_ref_no}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Additional Details</div>
-									<div class="col-sm-2">
-
-										<input type="text" name="add_details" id="add_details"
-											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${ledgervalues.add_details}" oninput="letterOnly(this);"
-											readonly />
-
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-								<div class="row formline" style="padding: 0px 0px 2px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Partition Type</div>
-
-
-									<div class="col-sm-2">
-										<input type="text" name="partition_type" id="partition_type"
-											th:value="${ledgervalues.partition_type}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Partition Details</div>
-									<div class="col-sm-2">
-
-										<input type="text" name="partition_det" id="partition_det"
-											class="form-control form-control-sm bg-white border border-dark"
-											th:value="${ledgervalues.partition_det}" oninput="letterOnly(this);"
-											readonly />
-
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-								<div class="row formline" style="padding: 0px 0px 2px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Instrument NO</div>
-
-
-									<div class="col-sm-2">
-										<input type="text" name="instr_num" id="instr_num"
-											th:value="${ledgervalues.instr_num}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Instrument Date</div>
-									<div class="col-sm-2">
-
-										<input type="text" name="instr_date" id="instr_date"
-											th:value="${#dates.format(ledgervalues.instr_date, 'dd-MM-yyyy')}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-								<div class="row formline" style="padding: 0px 0px 2px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Account Currency</div>
-
-
-									<div class="col-sm-2">
-										<input type="text" name="ref_crncy" id="ref_crncy"
-											th:value="${ledgervalues.ref_crncy}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Home Currency Amount</div>
-									<div class="col-sm-2">
-
-										<input type="text" name="ref_crncy_amt" id="ref_crncy_amt"
-											oninput="amountInput(this);" th:value="${ledgervalues.ref_crncy_amt}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-								<div class="row formline" style="padding: 0px 0px 2px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Rate Code</div>
-
-
-									<div class="col-sm-2">
-										<input type="text" name="rate_code" id="rate_code"
-											th:value="${ledgervalues.rate_code}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Rate</div>
-									<div class="col-sm-2">
-
-
-										<input type="text" name="rate" id="rate" th:value="${ledgervalues.rate}"
-											oninput="amountInput(this);"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-								<div class="row formline" style="padding: 0px 0px 2px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Entry User</div>
-
-
-									<div class="col-sm-2">
-										<input type="text" name="entry_user" id="entry_user"
-											th:value="${ledgervalues.entry_user}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Post User</div>
-									<div class="col-sm-2">
-
-										<input type="text" placeholder="" name="post_user" id="post_user"
-											th:value="${ledgervalues.post_user}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-								<div class="row formline" style="padding: 0px 0px 2px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Entry Time</div>
-
-
-									<div class="col-sm-2">
-										<input type="text" name="entry_time" id="entry_time"
-											th:value="${#dates.format(ledgervalues.entry_time, 'dd-MM-yyyy')}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Post Time</div>
-									<div class="col-sm-2">
-
-										<input type="text" name="post_time" id="post_time"
-											th:value="${#dates.format(ledgervalues.post_time, 'dd-MM-yyyy')}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-
-
-								<div class="row formline" style="padding: 0px 0px 2px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2" hidden>Modify User</div>
-
-
-									<div class="col-sm-2">
-										<input type="text" name="modify_user" id="modify_user"
-											th:value="${ledgervalues.modify_user}"
-											class="form-control form-control-sm bg-white border border-dark" hidden />
-
-									</div>
-
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2" hidden>Modify Time</div>
-									<div class="col-sm-2">
-
-										<input type="text" placeholder="" name="modify_time" id="modify_time"
-											th:value="${#dates.format(ledgervalues.modify_time, 'dd-MM-yyyy')}"
-											class="form-control form-control-sm bg-white border border-dark" hidden />
-
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-								<div class="row formline" style="padding: 0px 0px 10px 50px;">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Tran Status</div>
-
-
-									<div class="col-sm-2">
-										<input type="text" name="tran_status" id="tran_status"
-											th:value="${ledgervalues.tran_status}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-
-									<div class="col-sm-1"></div>
-									<div class="col-sm-2">Deleted</div>
-									<div class="col-sm-2">
-
-										<input type="text" placeholder="" name="del_flg" id="del_flg"
-											th:value="${ledgervalues.del_flg}"
-											class="form-control form-control-sm bg-white border border-dark" readonly />
-
-									</div>
-									<div class="col-sm-2"></div>
-								</div>
-
-								<div class="d-flex justify-content-end align-items-center mr-3 mb-2">
-									<button id="previous-btn" class="btn-primary big-btn me-2"
-										onclick="getPartTranRecords(this);">Previous</button>
-									<span class="mx-1" th:text="${currentPartTran}" id="currentPartTran"></span>
-									<span class="mx-1">/</span>
-									<span class="mx-1" id="maxPartTran" th:text="${maxPartTran}"></span>
-									<button id="next-btn" class="btn-primary big-btn ms-2"
-										onclick="getPartTranRecords(this);">Next</button>
-								</div>
-								<br>
-								<div class="table-responsive">
-									<table class="table  table-bordered table-sm d-none"
-										style="margin-bottom: 0px; font-size: initial; width: 100%;"
-										id="transactionaccountvalues">
-										<thead class="thead-light">
-											<tr>
-												<th style="text-align: left; width: 20%;">GENERAL
-													LEDGER</th>
-												<th style="text-align: left; width: 20%;">GL SUB HEAD</th>
-												<th style="text-align: left; width: 20%;">CRNCY</th>
-												<th style="text-align: center; width: 20%;">ACCOUNT
-													BALANCE</th>
-												<th style="text-align: left; width: 20%;">BALANCE IND</th>
-											</tr>
-										</thead>
-										<tbody id="transactionaccountvaluesbody">
-
-
-										</tbody>
-									</table>
-								</div>
-
-								<!--<div class="row formline" style="padding: 10px 0px 5px 1015px;">
-									<button class="btn-primary big-btn" onclick="uploadfiles(this);">Upload
-										Files</button>
-								</div>-->
-
-								<div class="table-responsive scroll-body">
-									<table class="table  table-bordered table-sm d-none"
-										style="margin-bottom: 0px; font-size: initial; table-layout: fixed; width: 100%;"
-										id="transactionTable">
-										<thead class="thead-light">
-
-											<tr>
-												<th style="text-align: center">TRAN DATE</th>
-												<th style="text-align: center">TRAN ID</th>
-												<th style="text-align: center">PA TRAN TY</th>
-												<th style="text-align: center">CURRENCY</th>
-												<th style="text-align: center">AMOUNT</th>
-												<th style="text-align: center">ACCT ID</th>
-												<th style="text-align: center; width: 20%;">ACCT NAME</th>
-												<th style="text-align: center; width: 20%;">TRAN
-													PARTICULAR</th>
-												<th style="text-align: center">STATUS</th>
-
-											</tr>
-										</thead>
-										<tbody id="transactionTableBody">
-
-
-										</tbody>
-									</table>
-								</div>
-							</form>
-
+							<div
+								style="text-align:left; border:1px solid #dee2e6; background-color:#f8f9fa; color:#212529; padding:4px; font-weight:bold;">
+								<label style="margin:0;">ORIGINAL TRANSACTION</label>
+							</div>
 							<div class="table-responsive scroll-body">
-								<table class="table table-bordered table-hover table-sm d-none"
+								<table class="table table-bordered table-hover table-sm"
+									style="margin-bottom: 0px; font-size: initial; table-layout: fixed; width: 100%;"
+									id="usertablevalues1">
+									<thead class="thead-light">
+										<tr>
+											<th style="text-align: left;white-space: nowrap;width:7%;">TRAN DATE</th>
+											<th style="text-align: left;white-space: nowrap;width:6%;">TRAN ID</th>
+											<th style="text-align: left;white-space: nowrap;width:6%;">PA TRAN TY</th>
+											<th style="text-align: left;white-space: nowrap;width:6%;">CURRENCY</th>
+											<th style="text-align: right;white-space: nowrap;width:6%;">AMOUNT</th>
+											<th style="text-align: left;white-space: nowrap;width:17%;">ACCT ID</th>
+											<th style="text-align: left; width: 20%;white-space: nowrap;width:17%;">ACCT
+												NAME</th>
+											<th style="text-align: left;white-space: nowrap;width:6%">STATUS</th>
+											<th style="text-align: center;white-space: nowrap;width:6%;">SELECT</th>
+										</tr>
+									</thead>
+									<tbody id="placelist11">
+										<tr th:each="details : ${jour}">
+											<td style="white-space: nowrap;"
+												th:text="${details.tran_date != null ? #dates.format(details.tran_date,'dd-MM-yyyy') : ''}">
+											</td>
+											<td style="white-space: nowrap;"
+												th:text="${details.tran_id} + '/' + ${details.part_tran_id}"></td>
+											<td style="white-space: nowrap;" th:text="${details.part_tran_type}"></td>
+											<td style="white-space: nowrap;" th:text="${details.acct_crncy}"></td>
+											<td style="text-align: right;white-space: nowrap;"
+												th:text="${details?.tran_amt == 0 ? '0.00' : #numbers.formatDecimal(details?.tran_amt, 0, 'COMMA', 2, 'POINT')}">
+											</td>
+											<td style="white-space: nowrap;" th:text="${details.acct_num}"></td>
+											<td style="white-space: nowrap;" th:text="${details.acct_name}"></td>
+											<td style="white-space: nowrap;" th:text="${details.tran_status}"></td>
+											<td style="text-align: center;white-space: nowrap;"><input type="radio"
+													id="radioSelect" name="actionRadio"
+													th:attr="data-tranid=${details.tran_id}, data-partnid=${details.part_tran_id}, data-acctnum=${details.acct_num}"
+													onclick="selectActions(this);"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<br><br>
+							<div
+								style="text-align:left; border:1px solid #dee2e6; background-color:#f8f9fa; color:#212529; padding:4px; font-weight:bold;">
+								<label style="margin:0;">REVERSAL TRANSACTION</label>
+							</div>
+							<div class="table-responsive scroll-body">
+								<table class="table table-bordered table-hover table-sm"
 									style="margin-bottom: 0px; font-size: initial; table-layout: fixed; width: 100%;"
 									id="usertablevalues1">
 									<thead class="thead-light">
@@ -4879,7 +4555,9 @@
 											</td>
 											<td style="white-space: nowrap;"
 												th:text="${details.tran_id} + '/' + ${details.part_tran_id}"></td>
-											<td style="white-space: nowrap;" th:text="${details.part_tran_type}"></td>
+											<td style="white-space: nowrap;"
+												th:text="${details.part_tran_type == 'Debit' ? 'Credit' : (details.part_tran_type == 'Credit' ? 'Debit' : details.part_tran_type)}">
+											</td>
 											<td style="white-space: nowrap;" th:text="${details.acct_crncy}"></td>
 											<td style="text-align: right;white-space: nowrap;"
 												th:text="${details?.tran_amt == 0 ? '0.00' : #numbers.formatDecimal(details?.tran_amt, 0, 'COMMA', 2, 'POINT')}">
@@ -4895,15 +4573,64 @@
 									</tbody>
 								</table>
 							</div>
+							<br><br>
+							<div
+								style="display: flex; justify-content: space-between; align-items: center; border:1px solid #dee2e6; background-color:#f8f9fa; color:#212529; padding:4px; font-weight:bold;">
+								<label style="margin:0;">NEW TRANSACTION</label>
+								<button class="btn btn-primary btn-sm" onclick="addtransactions()">Add</button>
+							</div>
+							<div class="table-responsive scroll-body">
+								<table class="table table-bordered table-hover table-sm"
+									style="margin-bottom: 0px; font-size: initial; table-layout: fixed; width: 100%;"
+									id="usertablevalues1">
+									<thead class="thead-light">
+										<tr>
+											<th style="text-align: left;white-space: nowrap;width:7%;">TRAN DATE</th>
+											<th style="text-align: left;white-space: nowrap;width:6%;">TRAN ID</th>
+											<th style="text-align: left;white-space: nowrap;width:6%;">PA TRAN TY</th>
+											<th style="text-align: left;white-space: nowrap;width:6%;">CURRENCY</th>
+											<th style="text-align: right;white-space: nowrap;width:6%;">AMOUNT</th>
+											<th style="text-align: left;white-space: nowrap;width:17%;">ACCT ID</th>
+											<th style="text-align: left; width: 20%;white-space: nowrap;width:17%;">ACCT
+												NAME</th>
+											<th style="text-align: left;white-space: nowrap;width:6%">STATUS</th>
+											<th style="text-align: center;white-space: nowrap;width:6%;">SELECT</th>
+										</tr>
+									</thead>
+									<tbody id="placelist31">
+										<tr th:each="details : ${jour}">
+											<td style="white-space: nowrap;"
+												th:text="${details.tran_date != null ? #dates.format(details.tran_date,'dd-MM-yyyy') : ''}">
+											</td>
+											<td style="white-space: nowrap;"
+												th:text="${details.tran_id} + '/' + ${details.part_tran_id}">
+											</td>
+											<td style="white-space: nowrap;" th:text="${details.part_tran_type}"></td>
+											<td style="white-space: nowrap;" th:text="${details.acct_crncy}"></td>
+
+											<td style="text-align: right; white-space: nowrap;">
+												<input type="text"
+													th:value="${details?.tran_amt == 0 ? '0.00' : #numbers.formatDecimal(details?.tran_amt, 0, 'COMMA', 2, 'POINT')}"
+													style="text-align: right; width: 120px;border:none;"
+													oninput="this.value = this.value.replace(/[^0-9.]/g, '')" />
+											</td>
+
+											<td style="white-space: nowrap;" th:text="${details.acct_num}"></td>
+											<td style="white-space: nowrap;" th:text="${details.acct_name}"></td>
+											<td style="white-space: nowrap;" th:text="${details.tran_status}"></td>
+											<td style="text-align: center; white-space: nowrap;">
+												<input type="radio" id="radioSelect" name="actionRadio"
+													th:attr="data-tranid=${details.tran_id}, data-partnid=${details.part_tran_id}, data-acctnum=${details.acct_num}"
+													onclick="selectActions(this);">
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
 						</div>
 						<div class="card-footer text-center" style="background-color: #e9ecef">
-
-
 							<button class="btn-primary big-btn" onclick="Home();">Home</button>
-							<button class="btn-primary big-btn" onclick="views1(this);">View</button>
 							<button class="btn-primary big-btn" onclick="Back();">Back</button>
-
-
 						</div>
 
 
@@ -5779,9 +5506,6 @@
 											id="totalDebit">0.00</span></span>
 								</p>
 							</div>
-
-
-
 						</div>
 						<div class="row-formline"
 							style="display: flex; align-items: right; justify-content: right; margin-right: 30px; margin-top: 10px; margin-bottom: 10px;font-size:16px">
@@ -5798,10 +5522,6 @@
 
 
 					<script type="text/javascript">
-
-
-
-
 						var plusonetranValue = document
 							.getElementById("tran_id").value; // Replace 'DEFAULT_VALUE' for testing
 
@@ -6451,6 +6171,254 @@
 			</div>
 		</div>
 	</div>
+
+
+	<!-- ✅ Modal Popup -->
+	<!-- ✅ Full Transaction Details Modal -->
+	<div class="modal fade tran_modal" id="transactionModal" tabindex="-1" role="dialog"
+		aria-labelledby="transactionModalLabel" aria-hidden="true" style="overflow-y: hidden;">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" style="padding: 0px;">
+				<div class="modal-header">
+					<h5 class="modal-title w-100 text-center" id="transactionModalLabel">Transaction Details</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<div class="modal-body">
+					<table class="table table-bordered">
+						<tbody>
+							<tr>
+								<th>Tran Id</th>
+								<td id="m_tran_id"></td>
+								<th>Part Tran Id</th>
+								<td id="m_part_tran_id"></td>
+							</tr>
+							<tr>
+								<th>Acct ID</th>
+								<td id="m_acct_num"></td>
+								<th>Acct Name</th>
+								<td id="m_acct_name"></td>
+							</tr>
+							<tr>
+								<th>Tran Type</th>
+								<td id="m_tran_type"></td>
+								<th>Part Tran Type</th>
+								<td id="m_part_tran_type"></td>
+							</tr>
+							<tr>
+								<th>Account Currency</th>
+								<td id="m_acct_crncy"></td>
+								<th>Tran Amt</th>
+								<td id="m_tran_amt"></td>
+							</tr>
+							<tr>
+								<th>Tran Particulars</th>
+								<td id="m_tran_particular"></td>
+								<th>Tran Remarks</th>
+								<td id="m_tran_remarks"></td>
+							</tr>
+							<tr>
+								<th>Flow Code</th>
+								<td id="m_flow_code"></td>
+								<th>Flow Date</th>
+								<td id="m_flow_date"></td>
+							</tr>
+							<tr>
+								<th>Tran Date</th>
+								<td id="m_tran_date"></td>
+								<th>Value Date</th>
+								<td id="m_value_date"></td>
+							</tr>
+							<tr>
+								<th>Tran Code</th>
+								<td id="m_tran_code"></td>
+								<th>Tran Report Code</th>
+								<td id="m_tran_rpt_code"></td>
+							</tr>
+							<tr>
+								<th>Tran Ref NO</th>
+								<td id="m_tran_ref_no"></td>
+								<th>Additional Details</th>
+								<td id="m_add_details"></td>
+							</tr>
+							<tr>
+								<th>Partition Type</th>
+								<td id="m_partition_type"></td>
+								<th>Partition Details</th>
+								<td id="m_partition_det"></td>
+							</tr>
+							<tr>
+								<th>Instrument NO</th>
+								<td id="m_instr_num"></td>
+								<th>Instrument Date</th>
+								<td id="m_instr_date"></td>
+							</tr>
+							<tr>
+								<th>Account Currency</th>
+								<td id="m_ref_crncy"></td>
+								<th>Home Currency Amount</th>
+								<td id="m_ref_crncy_amt"></td>
+							</tr>
+							<tr>
+								<th>Rate Code</th>
+								<td id="m_rate_code"></td>
+								<th>Rate</th>
+								<td id="m_rate"></td>
+							</tr>
+							<tr>
+								<th>Entry User</th>
+								<td id="m_entry_user"></td>
+								<th>Post User</th>
+								<td id="m_post_user"></td>
+							</tr>
+							<tr>
+								<th>Entry Time</th>
+								<td id="m_entry_time"></td>
+								<th>Post Time</th>
+								<td id="m_post_time"></td>
+							</tr>
+							<tr>
+								<th>Tran Status</th>
+								<td id="m_tran_status"></td>
+								<th>Deleted</th>
+								<td id="m_del_flg"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="modal-footer justify-content-center">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade tran_modal" id="transactionModal21" tabindex="-1" role="dialog"
+		aria-labelledby="transactionModalLabel" aria-hidden="true" style="overflow-y: hidden;">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" style="padding: 0px;">
+				<div class="modal-header">
+					<h5 class="modal-title w-100 text-center" id="transactionModalLabel">Transaction Details</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<div class="modal-body">
+					<table class="table table-bordered">
+						<tbody>
+							<tr>
+								<th>Tran Id</th>
+								<td id="m_tran_id"></td>
+								<th>Part Tran Id</th>
+								<td id="m_part_tran_id"></td>
+							</tr>
+							<tr>
+								<th>Acct ID</th>
+								<td id="m_acct_num"></td>
+								<th>Acct Name</th>
+								<td id="m_acct_name"></td>
+							</tr>
+							<tr>
+								<th>Tran Type</th>
+								<td id="m_tran_type"></td>
+								<th>Part Tran Type</th>
+								<td id="m_part_tran_type"></td>
+							</tr>
+							<tr>
+								<th>Account Currency</th>
+								<td id="m_acct_crncy"></td>
+								<th>Tran Amt</th>
+								<td id="m_tran_amt"></td>
+							</tr>
+							<tr>
+								<th>Tran Particulars</th>
+								<td id="m_tran_particular"></td>
+								<th>Tran Remarks</th>
+								<td id="m_tran_remarks"></td>
+							</tr>
+							<tr>
+								<th>Flow Code</th>
+								<td id="m_flow_code"></td>
+								<th>Flow Date</th>
+								<td id="m_flow_date"></td>
+							</tr>
+							<tr>
+								<th>Tran Date</th>
+								<td id="m_tran_date"></td>
+								<th>Value Date</th>
+								<td id="m_value_date"></td>
+							</tr>
+							<tr>
+								<th>Tran Code</th>
+								<td id="m_tran_code"></td>
+								<th>Tran Report Code</th>
+								<td id="m_tran_rpt_code"></td>
+							</tr>
+							<tr>
+								<th>Tran Ref NO</th>
+								<td id="m_tran_ref_no"></td>
+								<th>Additional Details</th>
+								<td id="m_add_details"></td>
+							</tr>
+							<tr>
+								<th>Partition Type</th>
+								<td id="m_partition_type"></td>
+								<th>Partition Details</th>
+								<td id="m_partition_det"></td>
+							</tr>
+							<tr>
+								<th>Instrument NO</th>
+								<td id="m_instr_num"></td>
+								<th>Instrument Date</th>
+								<td id="m_instr_date"></td>
+							</tr>
+							<tr>
+								<th>Account Currency</th>
+								<td id="m_ref_crncy"></td>
+								<th>Home Currency Amount</th>
+								<td id="m_ref_crncy_amt"></td>
+							</tr>
+							<tr>
+								<th>Rate Code</th>
+								<td id="m_rate_code"></td>
+								<th>Rate</th>
+								<td id="m_rate"></td>
+							</tr>
+							<tr>
+								<th>Entry User</th>
+								<td id="m_entry_user"></td>
+								<th>Post User</th>
+								<td id="m_post_user"></td>
+							</tr>
+							<tr>
+								<th>Entry Time</th>
+								<td id="m_entry_time"></td>
+								<th>Post Time</th>
+								<td id="m_post_time"></td>
+							</tr>
+							<tr>
+								<th>Tran Status</th>
+								<td id="m_tran_status"></td>
+								<th>Deleted</th>
+								<td id="m_del_flg"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="modal-footer justify-content-center">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Submit</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 </body>
 
 </html>

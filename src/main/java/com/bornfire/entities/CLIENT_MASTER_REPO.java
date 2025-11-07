@@ -235,4 +235,10 @@ public interface CLIENT_MASTER_REPO extends JpaRepository<CLIENT_MASTER_ENTITY, 
 	@Query(value = "SELECT * FROM CLIENT_MASTER_TBL where customer_id = ?1", nativeQuery = true)
 	List<CLIENT_MASTER_ENTITY> getClientDetails1(String customer_id);
 
+	// Repository
+	@Query(value = "SELECT a.id FROM loan_account_master_tbl a "
+	        + "JOIN client_master_tbl b ON b.encoded_key = a.account_holderkey "
+	        + "WHERE b.customer_id = ?1", nativeQuery = true)
+	List<Object> getClientAccounts(String customerId);
+
 }
