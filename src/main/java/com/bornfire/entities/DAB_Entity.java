@@ -3,12 +3,17 @@ package com.bornfire.entities;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
+@NamedStoredProcedureQuery(
+        name = "PROC_UPDATE_DAILY_BALANCE",
+        procedureName = "PROC_UPDATE_DAILY_BALANCE",
+        parameters = {
+                @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_tran_date", type = Date.class)
+        }
+)
 
 @Entity
 @Table(name = "BGLS_DAILY_ACCT_BAL")

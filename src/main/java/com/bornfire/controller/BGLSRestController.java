@@ -4346,7 +4346,10 @@ public class BGLSRestController {
 		if (existingRecord != null) {
 			try {
 				System.out.println("Procedure Run for penalty check");
-				tranMainRep.runInterestAccural(MIG_DATE);
+                String previousDate = bGLS_CONTROL_TABLE_REP.getPreviousDateOfTranDate(MIG_DATE);
+                previousDate = previousDate.substring(0, 10);
+                System.out.println("previousDate  :  "+previousDate);
+				tranMainRep.runInterestAccural(previousDate);
 			} catch (Exception e) {
 				System.out.println(e);
 			}
@@ -4366,13 +4369,14 @@ public class BGLSRestController {
 	public String PenaltyAccural(@RequestParam(required = false) String MIG_DATE, Model model,
 			HttpServletRequest request) {
 
-//        String user = (String) request.getSession().getAttribute("USERID");
 		BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
+		
+		String df = bGLS_CONTROL_TABLE_REP.getPreviousDateOfTranDate(MIG_DATE);
 
 		if (existingRecord != null) {
 			try {
 				System.out.println("Procedure Run for penalty check");
-//				tranMainRep.runPenaltyAccural(MIG_DATE);
+				tranMainRep.runPenaltyAccural(MIG_DATE);
 			} catch (Exception e) {
 				System.out.println(e);
 			}
@@ -9972,12 +9976,16 @@ public class BGLSRestController {
 		// Check first PRREC, then INREC for the same dueDate, then move to next dueDate
 		// ---
 		if (remainingAmt > 0) {
-			List<Date> futureDueDates = results.stream().map(r -> (Date) r[0])
-					.filter(d -> d != null && d.after(transactionDate)).distinct().sorted().toList();
+            List<Date> futureDueDates = results.stream()
+                    .map(r -> (Date) r[0])
+                    .filter(d -> d != null && d.after(transactionDate))
+                    .distinct()
+                    .sorted()
+                    .collect(Collectors.toList());
 
 			for (Date dueDateObj : futureDueDates) {
 				// first PRREC, then INREC (only these)
-				for (String code : List.of("PRREC", "INREC")) {
+                for (String code : Arrays.asList("PRREC", "INREC")) {
 					for (Object[] row : results) {
 						if (remainingAmt <= 0)
 							break;
@@ -10502,8 +10510,12 @@ public class BGLSRestController {
 
 						// Stage 2: future due dates (PRREC then INREC)
 						if (remainingAmt > 0) {
-							List<Date> futureDueDates = flows.stream().map(r -> (Date) r[0])
-									.filter(d -> d != null && d.after(transactionDate)).distinct().sorted().toList();
+                            List<Date> futureDueDates = flows.stream()
+                                    .map(r -> (Date) r[0])
+                                    .filter(d -> d != null && d.after(transactionDate))
+                                    .distinct()
+                                    .sorted()
+                                    .collect(Collectors.toList());
 
 							for (Date dueDateObj : futureDueDates) {
 								boolean prrecDone = false;

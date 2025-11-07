@@ -1455,6 +1455,7 @@
 		var FeeDemand =/*[[${FeeDemand}]]*/ '';
 		var Penalty =/*[[${Penalty}]]*/ '';
 		var interestAcccurual =/*[[${interestAccurual}]]*/ '';
+		var PenaltyAccural = /*[[${PenaltyAccural}]]*/ '';
 		console.log("Journal Status: " + journalStatus);
 
 		// ✅ Replace Start button with tick if completed
@@ -1502,6 +1503,10 @@
 			$('#td1').html('<span style="font-size: 20px; text-align:center;">&#9989;</span>');
 		}
 
+		if (PenaltyAccural && PenaltyAccural.toString().toUpperCase() === "COMPLETED" && dcpstatus && dcpstatus.toString().toUpperCase() !== "OPEN") {
+			$('#td14').html('<span style="font-size: 20px; text-align:center;">&#9989;</span>');
+		}
+
 		$(document).on("click", "#play4, #play5, #play6, #play7, #play8, #play9, #play10, #play11", function () {
 			callDcpUpdate();
 
@@ -1530,6 +1535,8 @@
 				success: function (res2) {
 					if (res2.status == "success") {
 						handleJournalValidation('play4', 'tr4', 'td4', 'journalValidationModal');
+					}else{
+						alert(res2.message)
 					}
 					console.log("✅ dcpupdate Response:", res2);
 
@@ -1723,7 +1730,7 @@
 							</td>
 						</tr>
 
-						<!--<tr id="tr14" style="height: 25px;">
+						<tr id="tr14" style="height: 25px;">
 							<td style="padding: 2px;"><b></b></td>
 							<td style="padding-left: 5px;">Penalty Accural</td>
 							<td width="205px;" id="td14"
@@ -1732,8 +1739,7 @@
 									Start
 								</button>
 							</td>
-						</tr>-->
-
+						</tr>
 
 						<tr id="tr2">
 							<td style="padding: 2px;"></td>

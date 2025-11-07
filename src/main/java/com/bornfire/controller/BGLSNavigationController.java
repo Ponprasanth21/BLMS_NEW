@@ -2692,6 +2692,7 @@ public class BGLSNavigationController {
         model.addAttribute("Penalty",bGLS_CONTROL_TABLE_REP.getPenalty());
         model.addAttribute("dcpstatus",bGLS_CONTROL_TABLE_REP.getDcpStatus());
         model.addAttribute("interestAccurual",bGLS_CONTROL_TABLE_REP.getinterestAccurual());
+        model.addAttribute("PenaltyAccural",bGLS_CONTROL_TABLE_REP.getPenalty_accural());
 
         System.out.println("dcpstatus"+bGLS_CONTROL_TABLE_REP.getDcpStatus());
         return "Day_end_Operation.html";
@@ -5061,9 +5062,9 @@ public class BGLSNavigationController {
 
         Date trndate1 = sdf.parse(trndate);
         System.out.println("trndate1"+trndate1);
-        int updated=dAB_Repo.UpdateDab(trndate1);
-        
-        
+         dAB_Repo.UpdateDab(trndate1);
+
+
         BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
         if (existingRecord != null) {
 

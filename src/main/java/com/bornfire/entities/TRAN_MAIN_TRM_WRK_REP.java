@@ -519,7 +519,7 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 
 	@Modifying
 	@Transactional
-	@Query(value = "CALL DAYEND_FEE_1(:ENTRY_USER)", nativeQuery = true)
+	@Query(value = "CALL DAYEND_FEE_DEMAND_1(:ENTRY_USER)", nativeQuery = true)
 	void runFeeDemand(@Param("ENTRY_USER") String ENTRY_USER);
 
 	@Modifying
@@ -529,12 +529,12 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 
 	@Modifying
 	@Transactional
-	@Query(value = "CALL CALCULATE_DAILY_INTEREST(:MIG_DATE)", nativeQuery = true)
+	@Query(value = "CALL CALCULATE_DAILY_INTEREST(TO_DATE(:MIG_DATE, 'YYYY-MM-DD'))", nativeQuery = true)
 	void runInterestAccural(@Param("MIG_DATE") String MIG_DATE);
 
 	@Modifying
 	@Transactional
-	@Query(value = "CALL UPDATE_DAILY_PENALTY_ALL(:MIG_DATE)", nativeQuery = true)
+	@Query(value = "CALL UPDATE_DAILY_PENALTY_ALL(TO_DATE(:MIG_DATE, 'DD-MM-YYYY'))", nativeQuery = true)
 	void runPenaltyAccural(@Param("MIG_DATE") String MIG_DATE);
 
 	@Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS WHERE tran_id=?1", nativeQuery = true)

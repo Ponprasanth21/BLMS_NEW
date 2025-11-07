@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -102,10 +103,10 @@ public interface DAB_Repo extends CrudRepository<DAB_Entity, String> {
 
     @Query(value = "SELECT * FROM BGLS_DAILY_ACCT_BAL FETCH FIRST 200 ROWS ONLY", nativeQuery = true)
     List<DAB_Entity> dabdata();
-    
-    
-    @Query(value = "BEGIN PROC_UPDATE_DAILY_BALANCE(:tranDate); END;", nativeQuery = true)
-    int UpdateDab(@Param("tranDate")Date tranDate);
+
+
+    @Procedure(name = "PROC_UPDATE_DAILY_BALANCE")
+    void UpdateDab(@Param("p_tran_date") Date p_tran_date);
 
 
 }

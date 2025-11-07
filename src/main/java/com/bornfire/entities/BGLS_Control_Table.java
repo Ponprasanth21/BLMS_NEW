@@ -45,6 +45,7 @@ public class BGLS_Control_Table {
 	public String getOrg_name() {
 		return org_name;
 	}
+
 	
 	
 	

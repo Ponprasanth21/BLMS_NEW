@@ -32,6 +32,9 @@ public interface BGLS_CONTROL_TABLE_REP extends JpaRepository<BGLS_Control_Table
 	  @Query(value = "SELECT LEDGER_CONS FROM BGLS_CONTROL_TABLE", nativeQuery = true)
 	  String getAccountLedger();
 	  
+	  @Query(value = "SELECT PREVIOUS_DATE FROM BGLS_CONTROL_TABLE WHERE TRUNC(tran_date) = TRUNC(TO_DATE(?1,'dd-mm-yyyy'))", nativeQuery = true)
+	  String getPreviousDateOfTranDate(String tran_date);
+	  
 	  @Query(value = "SELECT HOL_CHECK FROM BGLS_CONTROL_TABLE", nativeQuery = true)
 	  String getHolidayCheck();
 	  
@@ -61,6 +64,9 @@ public interface BGLS_CONTROL_TABLE_REP extends JpaRepository<BGLS_Control_Table
 	  
 	  @Query(value = "SELECT INTEREST_ACCURAL FROM BGLS_CONTROL_TABLE", nativeQuery = true)
 	  String getinterestAccurual();
+
+    @Query(value = "SELECT PENALTY_ACCURAL FROM BGLS_CONTROL_TABLE", nativeQuery = true)
+    String getPenalty_accural();
 	  
 	  
 	  

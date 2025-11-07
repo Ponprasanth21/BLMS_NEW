@@ -271,7 +271,7 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 		    	List<Object[]> findLoanAccountsByDueDate();
 		    	
 		    	@Query(value = "SELECT b.id, b.LOAN_NAME, a.due_date, a.tran_date, a.no_of_days, a.penalty_per_day, " +
-		                   "a.penalty_per_month, a.tolerance_period, a.up_to_date_penalty " +
+		                   "a.penalty_per_month, a.tolerance_period, a.up_to_date_penalty, a.penalty_rate " +
 		                   "FROM LOAN_DAILY_PENALTY_TBL a " +
 		                   "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.encoded_key = b.ENCODED_KEY " +
 		                   "WHERE TO_CHAR(a.TRAN_DATE, 'DD-MM-YYYY') = :tranDate", nativeQuery = true)
