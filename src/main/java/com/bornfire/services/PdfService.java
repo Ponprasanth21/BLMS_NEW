@@ -48,8 +48,8 @@ public class PdfService {
             // Table Headers
          // Table Headers
             String[] headers = {
-                "TRAN_DATE", "ACCT_NUM", "ACCT_NAME", "TRAN_TYPE", "TRAN_ID",
-                "PART_TRAN_ID", "PART_TRAN_TYPE", "CREDIT", "DEBIT", "TRAN_PARTICULAR"
+                "TRAN DATE", "ACCT NUM", "ACCT NAME", "TYPE", "TRAN ID",
+                "PART TRAN", "IND", "CREDIT", "DEBIT", "TRAN PARTICULAR"
             };
 
             PdfPTable table = new PdfPTable(headers.length);
