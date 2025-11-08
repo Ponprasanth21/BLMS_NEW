@@ -104,12 +104,45 @@ public class Access_Role_Entity {
     private String dab;
     private String transaction_report;
     private String consolidated_report;
-
-
+    private String interest_accrual_report;
+    private String penalty_accrual_report;
+    private String recovery_report;
+    private String demand_generation;
     private String end_of_month_report;
     private String credit_facility_report;
+    
+    public String getInterest_accrual_report() {
+		return interest_accrual_report;
+	}
 
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
+	public void setInterest_accrual_report(String interest_accrual_report) {
+		this.interest_accrual_report = interest_accrual_report;
+	}
+
+	public String getPenalty_accrual_report() {
+		return penalty_accrual_report;
+	}
+
+	public void setPenalty_accrual_report(String penalty_accrual_report) {
+		this.penalty_accrual_report = penalty_accrual_report;
+	}
+
+	public String getRecovery_report() {
+		return recovery_report;
+	}
+
+	public void setRecovery_report(String recovery_report) {
+		this.recovery_report = recovery_report;
+	}
+
+	public String getDemand_generation() {
+		return demand_generation;
+	}
+
+	public void setDemand_generation(String demand_generation) {
+		this.demand_generation = demand_generation;
+	}
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date entry_time;
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date modify_time;

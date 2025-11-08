@@ -303,6 +303,10 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
                 request.getSession().setAttribute("SCREEN_ACCESS_DAB", (access_role != null && access_role.getDab() != null ) ? access_role.getDab() : 'N' );
                 request.getSession().setAttribute("SCREEN_ACCESS_CONSOLIDATED_REPORT", (access_role != null && access_role.getConsolidated_report() != null ) ? access_role.getConsolidated_report() : 'N' );
                 request.getSession().setAttribute("SCREEN_ACCESS_TRANSACTION_REPORT", (access_role != null && access_role.getTransaction_report() != null ) ? access_role.getTransaction_report() : 'N' );
+                request.getSession().setAttribute("SCREEN_ACCESS_INTEREST_ACCRUAL_REPORT", (access_role != null && access_role.getInterest_accrual_report() != null ) ? access_role.getInterest_accrual_report() : 'N' );
+                request.getSession().setAttribute("SCREEN_ACCESS_PENALTY_ACCRUAL_REPORT", (access_role != null && access_role.getPenalty_accrual_report() != null ) ? access_role.getPenalty_accrual_report() : 'N' );
+                request.getSession().setAttribute("SCREEN_ACCESS_RECOVERY_REPORT", (access_role != null && access_role.getRecovery_report() != null ) ? access_role.getRecovery_report() : 'N' );
+                request.getSession().setAttribute("SCREEN_ACCESS_DEMAND_GENERATION", (access_role != null && access_role.getDemand_generation() != null ) ? access_role.getDemand_generation() : 'N' );
 
 				audit.insertUserAudit(user.getUserid(), user.getUsername(), "LOGIN", "LOGGED IN SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "LOGIN ");
 				response.sendRedirect("Dashboard");

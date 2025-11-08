@@ -315,6 +315,10 @@
 					$("#consolidated_report").prop("checked", true);
 					$("#transaction_report").prop("checked", true);
 					$("#credit_facility_report1").prop("checked", true);
+					$("#interest_accrual_report").prop("checked", true);
+					$("#penalty_accrual_report").prop("checked", true);
+					$("#recovery_report").prop("checked", true);
+					$("#demand_generation").prop("checked", true);
 				} else {
 					$("#account_balance_inq").prop("checked", false);
 					$("#interset_summary_inq").prop("checked", false);
@@ -329,6 +333,10 @@
 					$("#transaction_report").prop("checked", false);
 					$("#consolidated_report").prop("checked", false);
 					$("#credit_facility_report1").prop("checked", false);
+					$("#interest_accrual_report").prop("checked", false);
+					$("#penalty_accrual_report").prop("checked", false);
+					$("#recovery_report").prop("checked", false);
+					$("#demand_generation").prop("checked", false);
 				}
 			}
 		}
@@ -732,7 +740,11 @@
 					balance_sheet: $('#balance_sheet').is(':checked') ? 'Y' : 'N',
 					balance_sheets: $('#balance_sheets').is(':checked') ? 'Y' : 'N',
 					batch_job_execution: $('#batch_job_execution').is(':checked') ? 'Y' : 'N',
-					batch_job: $('#batch_job_execution').is(':checked') ? 'Y' : 'N'
+					batch_job: $('#batch_job_execution').is(':checked') ? 'Y' : 'N',
+					interest_accrual_report: $('#interest_accrual_report').is(':checked') ? 'Y' : 'N',
+					penalty_accrual_report: $('#penalty_accrual_report').is(':checked') ? 'Y' : 'N',
+					recovery_report: $('#recovery_report').is(':checked') ? 'Y' : 'N',
+					demand_generation: $('#demand_generation').is(':checked') ? 'Y' : 'N'
 				};
 
 				console.log(userProfile);
@@ -959,7 +971,11 @@
 					balance_sheet: $('#balance_sheet').is(':checked') ? 'Y' : 'N',
 					balance_sheets: $('#balance_sheets').is(':checked') ? 'Y' : 'N',
 					batch_job_execution: $('#batch_job_execution').is(':checked') ? 'Y' : 'N',
-					batch_job: $('#batch_job_execution').is(':checked') ? 'Y' : 'N'
+					batch_job: $('#batch_job_execution').is(':checked') ? 'Y' : 'N',
+					interest_accrual_report : $('#interest_accrual_report').is(':checked') ? 'Y' : 'N',
+					penalty_accrual_report : $('#penalty_accrual_report').is(':checked') ? 'Y' : 'N',
+					recovery_report : $('#recovery_report').is(':checked') ? 'Y' : 'N',
+					demand_generation : $('#demand_generation').is(':checked') ? 'Y' : 'N'
 				};
 
 				console.log(userProfile);
@@ -4364,6 +4380,38 @@
 								th:checked="${access?.transaction_report == 'Y'}"
 								style="margin-right: 10px; margin-top: 10px" /> <label for="transaction_report">Transaction Report
 							</label></li>
+
+							<!-- ------ -->
+
+							<li><input type="checkbox" id="interest_accrual_report" name="interest_accrual_report"
+								th:disabled="${formmode != 'add' and formmode != 'modify'}"
+								th:checked="${access?.interest_accrual_report == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label
+								for="interest_accrual_report">Interest Accrual
+							</label></li>
+
+							<li><input type="checkbox" id="penalty_accrual_report" name="penalty_accrual_report"
+								th:disabled="${formmode != 'add' and formmode != 'modify'}"
+								th:checked="${access?.penalty_accrual_report == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label
+								for="penalty_accrual_report">Penalty Accrual
+							</label></li>
+
+							<li><input type="checkbox" id="recovery_report" name="recovery_report"
+								th:disabled="${formmode != 'add' and formmode != 'modify'}"
+								th:checked="${access?.recovery_report == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label
+								for="recovery_report">Recovery Report
+							</label></li>
+
+							<li><input type="checkbox" id="demand_generation" name="demand_generation"
+								th:disabled="${formmode != 'add' and formmode != 'modify'}"
+								th:checked="${access?.demand_generation == 'Y'}"
+								style="margin-right: 10px; margin-top: 10px" /> <label
+								for="demand_generation">Demand generation Report
+							</label></li>
+
+							<!-- ------------- -->
 
 						<li><input type="checkbox" id="interset_summary_inq" name="interset_summary_inq"
 								th:disabled="${formmode != 'add' and formmode != 'modify'}"
