@@ -4376,7 +4376,10 @@ public class BGLSRestController {
 		if (existingRecord != null) {
 			try {
 				System.out.println("Procedure Run for penalty check");
-				tranMainRep.runPenaltyAccural(MIG_DATE);
+				String previousDate = bGLS_CONTROL_TABLE_REP.getPreviousDateOfTranDate(MIG_DATE);
+				previousDate = previousDate.substring(0, 10);
+                System.out.println("previousDate  :  "+previousDate);
+				tranMainRep.runPenaltyAccural(previousDate);
 			} catch (Exception e) {
 				System.out.println(e);
 			}
