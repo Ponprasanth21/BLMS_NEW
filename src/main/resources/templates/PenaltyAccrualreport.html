@@ -334,7 +334,7 @@ function downloadReport() {
         	document.getElementById('loadingModal').style.display = 'none';
             const filename = xhr.getResponseHeader('Content-Disposition')?.split('filename=')[1] || 'Loan_Report.xlsx';
 
-            if (blob.size === 0) {
+            if (!blob || blob.size === 0) {
                 $.toast({
                     heading: 'No Data',
                     text: 'No records available for the selected date.',

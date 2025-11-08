@@ -2277,7 +2277,7 @@ public class ExelDownloadService {
 
             // ===================== HEADERS =====================
             String[] headers = {
-                "Account ID", "Loan Name", "Due Date", "Tran Date","No of Days",
+                "Account ID", "Loan Name", "Due Date", "Tran Date","No of Days","Month No Of Days",
                 "Penalty Per Day", "Penalty Per Month", "Tolerance Period", "Total Penalty", "Penalty Rate"
             };
 
@@ -2347,8 +2347,9 @@ public class ExelDownloadService {
                             break;
 
                         case 4: // No of Days
-                        case 7: // Tolerance Period
-                        case 9: // penalty Rate
+                        case 5: // Month No of Days
+                        case 8: // Tolerance Period
+                        case 10: // penalty Rate
                             try {
                                 cell.setCellValue(Integer.parseInt(val.toString()));
                                 cell.setCellStyle(intStyle);
@@ -2358,9 +2359,9 @@ public class ExelDownloadService {
                             }
                             break;
 
-                        case 5: // Penalty Per Day
-                        case 6: // Penalty Per Month
-                        case 8: // Up to Date Penalty
+                        case 6: // Penalty Per Day
+                        case 7: // Penalty Per Month
+                        case 9: // Up to Date Penalty
                             try {
                                 cell.setCellValue(Double.parseDouble(val.toString()));
                                 cell.setCellStyle(numStyle);

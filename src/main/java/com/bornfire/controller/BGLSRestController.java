@@ -12566,4 +12566,45 @@ public ResponseEntity<byte[]> downloadLoanDailyPenaltyReport(@RequestParam("tran
     return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
 }
 
+@GetMapping("/TransactionPDFReport2Download")
+public ResponseEntity<byte[]> TransactionPDFReport2Download(@RequestParam("dueDate") String dueDate) {
+    List<Object[]> rawData = chart_Acc_Rep.getTransactionReport2ByDate(dueDate);
+    
+    // ✅ Call the non-static method through the injected bean
+    byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate);
+
+    if (pdfData == null || pdfData.length == 0) {
+        return ResponseEntity.noContent().build();
+    }
+
+    String fileName = "RECOVERY_TRANSACTION_REPORT_" + dueDate + ".pdf";
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+    headers.setContentType(MediaType.APPLICATION_PDF);
+
+    return new ResponseEntity<>(pdfData, headers, HttpStatus.OK);
+}
+
+
+
+@GetMapping("/TransactionPDFReport3Download")
+public ResponseEntity<byte[]> TransactionPDFReport3Download(@RequestParam("dueDate") String dueDate) {
+    List<Object[]> rawData = chart_Acc_Rep.getTransactionReport3ByDate(dueDate);
+    
+    // ✅ Call the non-static method through the injected bean
+    byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate);
+
+    if (pdfData == null || pdfData.length == 0) {
+        return ResponseEntity.noContent().build();
+    }
+
+    String fileName = "DEMAND_GENERATION_REPORT_" + dueDate + ".pdf";
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+    headers.setContentType(MediaType.APPLICATION_PDF);
+
+    return new ResponseEntity<>(pdfData, headers, HttpStatus.OK);
+}
+
+
 }

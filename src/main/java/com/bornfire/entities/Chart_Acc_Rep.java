@@ -270,12 +270,57 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 		    	)
 		    	List<Object[]> findLoanAccountsByDueDate();
 		    	
-		    	@Query(value = "SELECT b.id, b.LOAN_NAME, a.due_date, a.tran_date, a.no_of_days, a.penalty_per_day, " +
+		    	@Query(value = "SELECT b.id, b.LOAN_NAME, a.due_date, a.tran_date, a.no_of_days, a.month_no_of_days, a.penalty_per_day, " +
 		                   "a.penalty_per_month, a.tolerance_period, a.up_to_date_penalty, a.penalty_rate " +
 		                   "FROM LOAN_DAILY_PENALTY_TBL a " +
 		                   "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.encoded_key = b.ENCODED_KEY " +
 		                   "WHERE TO_CHAR(a.TRAN_DATE, 'DD-MM-YYYY') = :tranDate", nativeQuery = true)
 		    List<Object[]> findLoanDailyPenaltyByDate(@Param("tranDate") String tranDate);
+		    
+		    
+		    
+		    @Query(value = 
+		    	    "SELECT " +
+		    	    "    b.tran_date AS TRDT, " +
+		    	    "    a.acct_num AS ACNO, " +
+		    	    "    a.acct_name AS ACNAME, " +
+		    	    "    INITCAP(b.tran_type) AS TT, " +
+		    	    "    b.tran_id AS TRID, " +
+		    	    "    b.part_tran_id AS PTID, " +
+		    	    "    INITCAP(b.part_tran_type) AS PTT, " +
+		    	    "    DECODE(b.part_tran_type, 'Credit', b.tran_amt, 0.00) AS CR, " +
+		    	    "    DECODE(b.part_tran_type, 'Debit',  b.tran_amt, 0.00) AS DR, " +
+		    	    "    b.tran_particular AS TP " +
+		    	    "FROM BGLS_CHART_OF_ACCOUNTS a " +
+		    	    "JOIN BGLS_TRM_WRK_TRANSACTIONS b ON a.acct_num = b.acct_num " +
+		    	    "WHERE TRUNC(b.tran_date) = TO_DATE(:tranDate, 'DD-MM-YYYY') " +
+		    	    "  AND b.FLOW_CODE IN ('INDEM', 'FEEDEM', 'PENDEM') " +
+		    	    "ORDER BY b.tran_date, b.tran_id, b.part_tran_id",
+		    	    nativeQuery = true)
+		    	List<Object[]> getTransactionReport3ByDate(@Param("tranDate") String tranDate);
+
+		    	
+		    	@Query(value = 
+		    		    "SELECT " +
+		    		    "    b.tran_date AS TRDT, " +
+		    		    "    a.acct_num AS ACNO, " +
+		    		    "    a.acct_name AS ACNAME, " +
+		    		    "    INITCAP(b.tran_type) AS TT, " +
+		    		    "    b.tran_id AS TRID, " +
+		    		    "    b.part_tran_id AS PTID, " +
+		    		    "    INITCAP(b.part_tran_type) AS PTT, " +
+		    		    "    DECODE(b.part_tran_type, 'Credit', b.tran_amt, 0.00) AS CR, " +
+		    		    "    DECODE(b.part_tran_type, 'Debit',  b.tran_amt, 0.00) AS DR, " +
+		    		    "    b.tran_particular AS TP " +
+		    		    "FROM BGLS_CHART_OF_ACCOUNTS a " +
+		    		    "JOIN BGLS_TRM_WRK_TRANSACTIONS b ON a.acct_num = b.acct_num " +
+		    		    "WHERE TRUNC(b.tran_date) = TO_DATE(:tranDate, 'DD-MM-YYYY') " +
+		    		    "  AND b.FLOW_CODE IN ('RECOVERY' , 'PRREC' , 'INREC', 'FEREC' , 'PLREC', 'EXREC') " +
+		    		    "ORDER BY b.tran_date, b.tran_id, b.part_tran_id",
+		    		    nativeQuery = true)
+		    		List<Object[]> getTransactionReport2ByDate(@Param("tranDate") String tranDate);
+
+
 
 
 

@@ -5322,5 +5322,26 @@ public class BGLSNavigationController {
         }
         return "PenaltyAccrualreport.html";
     }
+    
+    
+    @RequestMapping(value = "Recoveryreport", method = { RequestMethod.GET, RequestMethod.POST })
+    public String Recoveryreport(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
+        if (formmode == null || formmode.equals("list")) {
+            md.addAttribute("formmode", "list");
+            md.addAttribute("date", bGLS_CONTROL_TABLE_REP.getCurrentTranDate());
+        }
+        return "Recoveryreport.html";
+    }
+
+    
+    @RequestMapping(value = "DemandGenerationreport", method = { RequestMethod.GET, RequestMethod.POST })
+    public String DemandGenerationreport(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
+        if (formmode == null || formmode.equals("list")) {
+            md.addAttribute("formmode", "list");
+            md.addAttribute("date", bGLS_CONTROL_TABLE_REP.getCurrentTranDate());
+        }
+        return "DemandGenerationreport.html";
+    }
+
 
 }

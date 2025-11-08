@@ -820,9 +820,13 @@
 							Consolidated Loan Reports </a></li>
 					<li class="nav-item" th:if="${session.SCREEN_ACCESS_TRANSACTION_REPORT} == 'Y' "><a class="nav-link"
 							id="TransactionReports" href="#" onclick="contentLoad(this)"> Transaction Reports </a></li>
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_TRANSACTION_REPORT} == 'Y' "><a class="nav-link"
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_RECOVERY_REPORT} == 'Y' "><a class="nav-link"
+							id="Recoveryreport" href="#" onclick="contentLoad(this)"> Recovery Report </a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_DEMAND_GENERATION} == 'Y' "><a class="nav-link"
+							id="DemandGenerationreport" href="#" onclick="contentLoad(this)"> Demand generation Report </a></li>
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_INTEREST_ACCRUAL_REPORT} == 'Y' "><a class="nav-link"
 							id="InterestAccrualreport" href="#" onclick="contentLoad(this)"> Interest Accrual Report </a></li>
-					<li class="nav-item" th:if="${session.SCREEN_ACCESS_TRANSACTION_REPORT} == 'Y' "><a class="nav-link"
+					<li class="nav-item" th:if="${session.SCREEN_ACCESS_PENALTY_ACCRUAL_REPORT} == 'Y' "><a class="nav-link"
 							id="PenaltyAccrualreport" href="#" onclick="contentLoad(this)"> Penalty Accrual Report </a></li>
 					<li class="nav-item" th:if="${session.SCREEN_ACCESS_INTERSET_SUMMARY_INQ} == 'Y' "><a
 							class="nav-link" id="interest_summary" href="#" onclick="contentLoad(this)"> Interest
