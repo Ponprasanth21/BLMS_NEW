@@ -345,16 +345,6 @@ function downloadReport() {
                 return;
             }
 
-             if (response.status === 204) {
-        $.toast({
-            heading: 'No Data',
-            text: 'No records available for the selected date.',
-            icon: 'info',
-            position: { left: 1600, top: 0 },
-            hideAfter: 3000
-        });
-        return;
-    }
 
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
