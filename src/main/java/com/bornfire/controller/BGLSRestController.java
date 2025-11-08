@@ -4346,9 +4346,9 @@ public class BGLSRestController {
 		if (existingRecord != null) {
 			try {
 				System.out.println("Procedure Run for penalty check");
-                String previousDate = bGLS_CONTROL_TABLE_REP.getPreviousDateOfTranDate(MIG_DATE);
-                previousDate = previousDate.substring(0, 10);
-                System.out.println("previousDate  :  "+previousDate);
+				String previousDate = bGLS_CONTROL_TABLE_REP.getPreviousDateOfTranDate(MIG_DATE);
+				previousDate = previousDate.substring(0, 10);
+				System.out.println("previousDate  :  " + previousDate);
 				tranMainRep.runInterestAccural(previousDate);
 			} catch (Exception e) {
 				System.out.println(e);
@@ -4370,7 +4370,7 @@ public class BGLSRestController {
 			HttpServletRequest request) {
 
 		BGLS_Control_Table existingRecord = bGLS_CONTROL_TABLE_REP.findAll().get(0);
-		
+
 		String df = bGLS_CONTROL_TABLE_REP.getPreviousDateOfTranDate(MIG_DATE);
 
 		if (existingRecord != null) {
@@ -4378,7 +4378,7 @@ public class BGLSRestController {
 				System.out.println("Procedure Run for penalty check");
 				String previousDate = bGLS_CONTROL_TABLE_REP.getPreviousDateOfTranDate(MIG_DATE);
 				previousDate = previousDate.substring(0, 10);
-                System.out.println("previousDate  :  "+previousDate);
+				System.out.println("previousDate  :  " + previousDate);
 				tranMainRep.runPenaltyAccural(previousDate);
 			} catch (Exception e) {
 				System.out.println(e);
@@ -9979,16 +9979,13 @@ public class BGLSRestController {
 		// Check first PRREC, then INREC for the same dueDate, then move to next dueDate
 		// ---
 		if (remainingAmt > 0) {
-            List<Date> futureDueDates = results.stream()
-                    .map(r -> (Date) r[0])
-                    .filter(d -> d != null && d.after(transactionDate))
-                    .distinct()
-                    .sorted()
-                    .collect(Collectors.toList());
+			List<Date> futureDueDates = results.stream().map(r -> (Date) r[0])
+					.filter(d -> d != null && d.after(transactionDate)).distinct().sorted()
+					.collect(Collectors.toList());
 
 			for (Date dueDateObj : futureDueDates) {
 				// first PRREC, then INREC (only these)
-                for (String code : Arrays.asList("PRREC", "INREC")) {
+				for (String code : Arrays.asList("PRREC", "INREC")) {
 					for (Object[] row : results) {
 						if (remainingAmt <= 0)
 							break;
@@ -10355,8 +10352,9 @@ public class BGLSRestController {
 						.println("Computed totalDebitAmountBD for customer " + customerId + " = " + totalDebitAmountBD);
 
 				List<Object> flow_datas = cLIENT_MASTER_REPO.getClientAccounts(customerId);
-
-				if (backend_datas != null && !backend_datas.isEmpty() && flow_datas != null && !flow_datas.isEmpty()) {
+				List<Object[]> flows = cLIENT_MASTER_REPO.findLoanFlowsByCustomerId(customerId);
+				if (backend_datas != null && !backend_datas.isEmpty() && flow_datas != null && !flow_datas.isEmpty()
+						&& flows != null && !flows.isEmpty()) {
 					System.out.println("✅ Customer ID Matched: " + frontendCustomerId + " - Backend records found: "
 							+ backend_datas.size());
 
@@ -10377,7 +10375,6 @@ public class BGLSRestController {
 					Date transactionDate = Date.from(tranDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
 					// fetch loan flows for this customer
-					List<Object[]> flows = cLIENT_MASTER_REPO.findLoanFlowsByCustomerId(customerId);
 
 					if (flows == null) {
 						System.out.println("⚠️ No flows (null) for customer: " + customerId);
@@ -10437,7 +10434,7 @@ public class BGLSRestController {
 							simulatedCreditSum += allocateAmt;
 						}
 					}
-
+//DEBITENTRY
 					// ---------- Build datas per-customer ----------
 					List<Map<String, Object>> datas = new ArrayList<>();
 					AtomicInteger partTranId = new AtomicInteger(1);
@@ -10487,7 +10484,7 @@ public class BGLSRestController {
 							double allocatedAmt = Math.min(expAmt, remainingAmt);
 							if (allocatedAmt <= 0)
 								continue;
-
+							// CREDITENTRY
 							partTranId = allocateCreditEntry(row, allocatedAmt, transactionDate, tranId, userid,
 									decimalFormatter, partTranId);
 
@@ -10670,309 +10667,6 @@ public class BGLSRestController {
 						System.out.println("✅ No EXREC needed. Debit = Credit (" + totalDebitAmountBD + ")");
 					}
 
-					// ---------- Now ALL datas entries exist (D and C). Update COA balances
-					// ----------
-					for (Map<String, Object> entry1 : datas) {
-						String accountNo = entry1.get("account_no") != null ? entry1.get("account_no").toString() : "";
-						String partTranType = entry1.get("part_tran_type") != null
-								? entry1.get("part_tran_type").toString()
-								: "";
-						String tranAmtStr = entry1.get("tran_amt") != null
-								? entry1.get("tran_amt").toString().replace(",", "")
-								: "0";
-						BigDecimal tranAmt = BigDecimal.ZERO;
-						try {
-							tranAmt = new BigDecimal(tranAmtStr);
-						} catch (Exception ex) {
-							tranAmt = BigDecimal.ZERO;
-						}
-
-						Chart_Acc_Entity account = null;
-						if (accountNo != null && !accountNo.isEmpty()) {
-							try {
-								account = chart_Acc_Rep.getaedit(accountNo);
-							} catch (Exception ex) {
-								account = null;
-							}
-						}
-						if (account == null) {
-							System.out.println("⚠️ Account not found (COA update) : " + accountNo + " — skipping");
-							continue;
-						}
-
-						BigDecimal balance = Optional.ofNullable(account.getAcct_bal()).orElse(BigDecimal.ZERO);
-						BigDecimal crAmt = Optional.ofNullable(account.getCr_amt()).orElse(BigDecimal.ZERO);
-						BigDecimal drAmt = Optional.ofNullable(account.getDr_amt()).orElse(BigDecimal.ZERO);
-
-						if ("C".equalsIgnoreCase(partTranType) || "Credit".equalsIgnoreCase(partTranType)) {
-							balance = balance.add(tranAmt);
-							crAmt = crAmt.add(tranAmt);
-						} else if ("D".equalsIgnoreCase(partTranType) || "Debit".equalsIgnoreCase(partTranType)) {
-							balance = balance.subtract(tranAmt);
-							drAmt = drAmt.add(tranAmt);
-						}
-
-						account.setAcct_bal(balance);
-						account.setCr_amt(crAmt);
-						account.setDr_amt(drAmt);
-						account.setModify_time(new Date());
-						account.setModify_user(userid);
-						chart_Acc_Rep.save(account);
-					}
-
-					// ---------- Update Loan Account Master (loanActRecord) using datas ----------
-					for (Map<String, Object> entry2 : datas) {
-					    String accountNumber = entry2.get("account_no") != null ? entry2.get("account_no").toString() : "";
-					    String flowCode = entry2.get("flow_code") != null ? entry2.get("flow_code").toString() : "";
-					    String tranAmtStr = entry2.get("tran_amt") != null
-					            ? entry2.get("tran_amt").toString().replace(",", "")
-					            : "0";
-
-					    BigDecimal tranAmt = BigDecimal.ZERO;
-					    try {
-					        tranAmt = new BigDecimal(tranAmtStr);
-					    } catch (Exception ex) {
-					        tranAmt = BigDecimal.ZERO;
-					    }
-
-					    if (accountNumber.isEmpty()) {
-					        System.out.println("⚠️ Skipping LoanAct update: Missing Account Number.");
-					        continue;
-					    }
-
-					    LOAN_ACT_MST_ENTITY loanActRecord = lOAN_ACT_MST_REPO.getLoanView(accountNumber);
-					    if (loanActRecord == null) {
-					        System.out.println("⚠️ Loan Account not found for Account Number: " + accountNumber);
-					        continue;
-					    }
-
-					    switch (flowCode) {
-					        case "PRREC": {
-					            BigDecimal oldPaid = loanActRecord.getPrincipal_paid();
-					            BigDecimal oldBalance = loanActRecord.getPrincipal_balance();
-
-					            loanActRecord.setPrincipal_paid(oldPaid.add(tranAmt));
-
-					            BigDecimal newBalance;
-					            if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
-					                newBalance = BigDecimal.ZERO.subtract(tranAmt);
-					            } else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
-					            	newBalance = oldBalance.subtract(tranAmt.abs()); 
-					            } else {
-					                newBalance = oldBalance.subtract(tranAmt);
-					            }
-
-					            loanActRecord.setPrincipal_balance(newBalance);
-					            loanActRecord.setPrincipal_due(loanActRecord.getPrincipal_due().subtract(tranAmt));
-
-					            System.out.println("✅ [PRREC] Account: " + accountNumber
-					                    + " | Old Bal: " + oldBalance + " | TranAmt: " + tranAmt
-					                    + " | New Bal: " + newBalance);
-					            break;
-					        }
-
-					        case "INREC": {
-					            BigDecimal oldPaid = loanActRecord.getInterest_paid();
-					            BigDecimal oldBalance = loanActRecord.getInterest_balance();
-
-					            loanActRecord.setInterest_paid(oldPaid.add(tranAmt));
-
-					            BigDecimal newBalance;
-					            if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
-					                newBalance = BigDecimal.ZERO.subtract(tranAmt);
-					            } else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
-					            	 newBalance = oldBalance.subtract(tranAmt.abs());
-					            } else {
-					                newBalance = oldBalance.subtract(tranAmt);
-					            }
-
-					            loanActRecord.setInterest_balance(newBalance);
-					            loanActRecord.setInterest_due(loanActRecord.getInterest_due().subtract(tranAmt));
-
-					            System.out.println("✅ [INREC] Account: " + accountNumber
-					                    + " | Old Bal: " + oldBalance + " | TranAmt: " + tranAmt
-					                    + " | New Bal: " + newBalance);
-					            break;
-					        }
-
-					        case "FEREC": {
-					            BigDecimal oldPaid = loanActRecord.getFees_paid();
-					            BigDecimal oldBalance = loanActRecord.getFees_balance();
-
-					            loanActRecord.setFees_paid(oldPaid.add(tranAmt));
-
-					            BigDecimal newBalance;
-					            if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
-					                newBalance = BigDecimal.ZERO.subtract(tranAmt);
-					            } else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
-					            	 newBalance = oldBalance.subtract(tranAmt.abs());
-					            } else {
-					                newBalance = oldBalance.subtract(tranAmt);
-					            }
-
-					            loanActRecord.setFees_balance(newBalance);
-					            loanActRecord.setFees_due(loanActRecord.getFees_due().subtract(tranAmt));
-
-					            System.out.println("✅ [FEREC] Account: " + accountNumber
-					                    + " | Old Bal: " + oldBalance + " | TranAmt: " + tranAmt
-					                    + " | New Bal: " + newBalance);
-					            break;
-					        }
-
-					        case "PLREC": {
-					            BigDecimal oldPaid = loanActRecord.getPenalty_paid();
-					            BigDecimal oldBalance = loanActRecord.getPenalty_balance();
-
-					            loanActRecord.setPenalty_paid(oldPaid.add(tranAmt));
-
-					            BigDecimal newBalance;
-					            if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
-					                newBalance = BigDecimal.ZERO.subtract(tranAmt);
-					            } else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
-					            	newBalance = oldBalance.subtract(tranAmt.abs());
-					            } else {
-					                newBalance = oldBalance.subtract(tranAmt);
-					            }
-
-					            loanActRecord.setPenalty_balance(newBalance);
-					            loanActRecord.setPenalty_due(loanActRecord.getPenalty_due().subtract(tranAmt));
-
-					            System.out.println("✅ [PLREC] Account: " + accountNumber
-					                    + " | Old Bal: " + oldBalance + " | TranAmt: " + tranAmt
-					                    + " | New Bal: " + newBalance);
-					            break;
-					        }
-
-					        case "EXREC": {
-					            System.out.println("ℹ️ [EXREC] Extra credit transaction detected for Account: "
-					                    + accountNumber + " | TranAmt: " + tranAmt);
-
-					            BigDecimal oldBalance = loanActRecord.getPrincipal_balance();
-					            BigDecimal newBalance;
-
-					            if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
-					                newBalance = BigDecimal.ZERO.subtract(tranAmt);
-					            } else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
-					            	 newBalance = oldBalance.subtract(tranAmt.abs());
-					            } else {
-					                newBalance = oldBalance.subtract(tranAmt);
-					            }
-
-					            loanActRecord.setPrincipal_balance(newBalance);
-
-					            System.out.println("✅ [EXREC] Account: " + accountNumber
-					                    + " | Old Bal: " + oldBalance
-					                    + " | TranAmt: " + tranAmt
-					                    + " | New Bal: " + newBalance);
-					            break;
-					        }
-
-
-					        default:
-					            System.out.println("⚠️ Unknown flow code: " + flowCode + " for Account: " + accountNumber);
-					            continue;
-					    }
-
-					    loanActRecord.setLast_modified_date(transactionDate);
-					    lOAN_ACT_MST_REPO.save(loanActRecord);
-					    System.out.println("💾 Record saved for Account: " + accountNumber + " | Flow: " + flowCode);
-					}
-
-
-
-					// ---------- Update LOAN_REPAYMENT demand records for credit entries only
-					// ----------
-					for (Map<String, Object> entry2 : datas) {
-						String partTranType = entry2.get("part_tran_type") != null
-								? entry2.get("part_tran_type").toString()
-								: "";
-						if (!"C".equalsIgnoreCase(partTranType))
-							continue;
-
-						String accountNumber = entry2.get("account_no") != null ? entry2.get("account_no").toString()
-								: "";
-						String flowCode = entry2.get("flow_code") != null ? entry2.get("flow_code").toString() : "";
-						String tranAmtStr = entry2.get("tran_amt") != null
-								? entry2.get("tran_amt").toString().replace(",", "")
-								: "0";
-						BigDecimal tranAmt = BigDecimal.ZERO;
-						try {
-							tranAmt = new BigDecimal(tranAmtStr);
-						} catch (Exception ex) {
-							tranAmt = BigDecimal.ZERO;
-						}
-						Date dueDateObj = (Date) entry2.get("due_date");
-
-						String parent_account_key = lOAN_ACT_MST_REPO.getLoanView1(accountNumber);
-						String dbDateStr = null;
-						if (dueDateObj != null) {
-							dbDateStr = sdfDB.format(dueDateObj);
-						}
-
-						LOAN_REPAYMENT_ENTITY demandRecord = lOAN_REPAYMENT_REPO
-								.getLoanFlowsValueDatas(parent_account_key, dbDateStr);
-						if (demandRecord == null)
-							continue;
-
-						BigDecimal principalExp = Optional.ofNullable(demandRecord.getPrincipal_exp())
-								.orElse(BigDecimal.ZERO);
-						BigDecimal interestExp = Optional.ofNullable(demandRecord.getInterest_exp())
-								.orElse(BigDecimal.ZERO);
-						BigDecimal feeExp = Optional.ofNullable(demandRecord.getFee_exp()).orElse(BigDecimal.ZERO);
-						BigDecimal penaltyExp = Optional.ofNullable(demandRecord.getPenalty_exp())
-								.orElse(BigDecimal.ZERO);
-
-						switch (flowCode) {
-						case "PRREC":
-							demandRecord
-									.setPrincipal_paid(demandRecord.getPrincipal_paid().add(tranAmt).min(principalExp));
-							demandRecord.setPrincipal_due(
-									principalExp.subtract(demandRecord.getPrincipal_paid()).max(BigDecimal.ZERO));
-							break;
-						case "INREC":
-							demandRecord
-									.setInterest_paid(demandRecord.getInterest_paid().add(tranAmt).min(interestExp));
-							demandRecord.setInterest_due(
-									interestExp.subtract(demandRecord.getInterest_paid()).max(BigDecimal.ZERO));
-							break;
-						case "FEREC":
-							demandRecord.setFee_paid(demandRecord.getFee_paid().add(tranAmt).min(feeExp));
-							demandRecord.setFee_due(feeExp.subtract(demandRecord.getFee_paid()).max(BigDecimal.ZERO));
-							break;
-						case "PLREC":
-							demandRecord.setPenalty_paid(demandRecord.getPenalty_paid().add(tranAmt).min(penaltyExp));
-							demandRecord.setPenalty_due(
-									penaltyExp.subtract(demandRecord.getPenalty_paid()).max(BigDecimal.ZERO));
-							break;
-						case "EXREC":
-							// EXREC doesn't map to a demand field — skip or log as needed
-							break;
-						}
-
-						// Check fully paid
-						BigDecimal principalDiff = demandRecord.getPrincipal_exp()
-								.subtract(demandRecord.getPrincipal_paid());
-						BigDecimal interestDiff = demandRecord.getInterest_exp()
-								.subtract(demandRecord.getInterest_paid());
-						BigDecimal feeDiff = demandRecord.getFee_exp().subtract(demandRecord.getFee_paid());
-						BigDecimal penaltyDiff = demandRecord.getPenalty_exp().subtract(demandRecord.getPenalty_paid());
-
-						Date latestTranDateForDemand = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
-						if (principalDiff.compareTo(BigDecimal.ZERO) == 0
-								&& interestDiff.compareTo(BigDecimal.ZERO) == 0
-								&& feeDiff.compareTo(BigDecimal.ZERO) == 0
-								&& penaltyDiff.compareTo(BigDecimal.ZERO) == 0) {
-
-							demandRecord.setPayment_state("PAID");
-							demandRecord.setRepaid_date(latestTranDateForDemand);
-						} else {
-							demandRecord.setPayment_state("PENDING");
-							demandRecord.setRepaid_date(latestTranDateForDemand);
-							demandRecord.setLast_paid_date(latestTranDateForDemand);
-						}
-						lOAN_REPAYMENT_REPO.save(demandRecord);
-					}
-
 					// ---------- Move MULTIPLE_TRANSACTION_ENTITY -> HISTORY (matched case)
 					// ----------
 					for (Map<String, Object> t : custTransactions) {
@@ -11049,8 +10743,10 @@ public class BGLSRestController {
 					totalDebitBalanceAll = totalDebitBalanceAll.add(custDebitBalance);
 					totalCreditBalanceAll = totalCreditBalanceAll.add(custCreditBalance);
 
-				} else if (backend_datas != null && !backend_datas.isEmpty()
-						&& (flow_datas == null || flow_datas.isEmpty())) {
+				}
+				// condition check multiple
+				else if (backend_datas != null && !backend_datas.isEmpty() && flow_datas != null
+						&& !flow_datas.isEmpty() && (flows == null || flows.isEmpty())) {
 
 					System.out.println("❌ Customer ID MATCHED: " + frontendCustomerId + " - No flow records found.");
 
@@ -11075,8 +10771,20 @@ public class BGLSRestController {
 						// 🔹 Loan parking debit account
 						String loanparkingacct = "2700002750";
 						Chart_Acc_Entity debitAccount = chart_Acc_Rep.getaedit(loanparkingacct);
+						if (debitAccount == null) {
+							System.out.println("❌ Debit account not found for account number: " + loanparkingacct);
+							continue; // skip to next row
+						}
 
-						// 🔹 Transaction date from control table
+						// 🔹 Receivable account credit
+						String receivableaccount = "1644000001";
+						Chart_Acc_Entity creditAccount = chart_Acc_Rep.getaedit(receivableaccount);
+						if (creditAccount == null) {
+							System.out.println("❌ Credit account not found for account number: " + receivableaccount);
+							continue;
+						}
+
+						// 🔹 Transaction date
 						Date tranDateObj = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
 						if (tranDateObj == null) {
 							response.put("status", "error");
@@ -11111,22 +10819,24 @@ public class BGLSRestController {
 						debitTrm.setEntry_time(new Date());
 						debitTrm.setModify_time(new Date());
 						debitTrm.setDel_flg("N");
-						tRAN_MAIN_TRM_WRK_REP.save(debitTrm);
 
-						// 🔹 Update Debit Account COA (Loan Parking)
+						try {
+							tRAN_MAIN_TRM_WRK_REP.save(debitTrm);
+							System.out.println("✅ Debit entry saved for TRAN_ID: " + tranId);
+						} catch (Exception e) {
+							System.out.println("❌ Failed to save debit entry for TRAN_ID: " + tranId + " | Error: "
+									+ e.getMessage());
+							e.printStackTrace();
+						}
+
+						// ✅ Update Debit Account COA (Loan Parking)
 						BigDecimal debitBal = Optional.ofNullable(debitAccount.getAcct_bal()).orElse(BigDecimal.ZERO);
 						BigDecimal debitDrAmt = Optional.ofNullable(debitAccount.getDr_amt()).orElse(BigDecimal.ZERO);
-						debitBal = debitBal.subtract(tranAmt);
-						debitDrAmt = debitDrAmt.add(tranAmt);
-						debitAccount.setAcct_bal(debitBal);
-						debitAccount.setDr_amt(debitDrAmt);
+						debitAccount.setAcct_bal(debitBal.subtract(tranAmt));
+						debitAccount.setDr_amt(debitDrAmt.add(tranAmt));
 						debitAccount.setModify_time(new Date());
 						debitAccount.setModify_user(userid);
 						chart_Acc_Rep.save(debitAccount);
-
-						// 🔹 Receivable account credit
-						String receivableaccount = "1644000001";
-						Chart_Acc_Entity creditAccount = chart_Acc_Rep.getaedit(receivableaccount);
 
 						// ✅ CREDIT ENTRY
 						TRAN_MAIN_TRM_WRK_ENTITY creditTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
@@ -11151,37 +10861,170 @@ public class BGLSRestController {
 						creditTrm.setEntry_time(new Date());
 						creditTrm.setModify_time(new Date());
 						creditTrm.setDel_flg("N");
-						tRAN_MAIN_TRM_WRK_REP.save(creditTrm);
 
-						// 🔹 Update Credit Account COA (Receivable)
+						try {
+							tRAN_MAIN_TRM_WRK_REP.save(creditTrm);
+							System.out.println("✅ Credit entry saved for TRAN_ID: " + tranId);
+						} catch (Exception e) {
+							System.out.println("❌ Failed to save credit entry for TRAN_ID: " + tranId + " | Error: "
+									+ e.getMessage());
+							e.printStackTrace();
+						}
+
+						// ✅ Update Credit Account COA (Receivable)
 						BigDecimal creditBal = Optional.ofNullable(creditAccount.getAcct_bal()).orElse(BigDecimal.ZERO);
 						BigDecimal creditCrAmt = Optional.ofNullable(creditAccount.getCr_amt()).orElse(BigDecimal.ZERO);
-						creditBal = creditBal.add(tranAmt);
-						creditCrAmt = creditCrAmt.add(tranAmt);
-						creditAccount.setAcct_bal(creditBal);
-						creditAccount.setCr_amt(creditCrAmt);
+						creditAccount.setAcct_bal(creditBal.add(tranAmt));
+						creditAccount.setCr_amt(creditCrAmt.add(tranAmt));
 						creditAccount.setModify_time(new Date());
 						creditAccount.setModify_user(userid);
 						chart_Acc_Rep.save(creditAccount);
 
-						// 🔹 Verification: check if debit and credit amounts match
-						if (tranAmt.compareTo(debitDrAmt) == 0 && tranAmt.compareTo(creditCrAmt) == 0) {
-							System.out.println(
-									"✅ Debit & Credit amounts match for TRAN_ID: " + tranId + " | Amount: " + tranAmt);
-						} else {
-							System.out.println("⚠️ Mismatch detected for TRAN_ID: " + tranId);
-							System.out.println("   → Expected Amount: " + tranAmt);
-							System.out.println("   → Debit Dr Amount: " + debitDrAmt + " | Updated Debit Balance: "
-									+ debitAccount.getAcct_bal());
-							System.out.println("   → Credit Cr Amount: " + creditCrAmt + " | Updated Credit Balance: "
-									+ creditAccount.getAcct_bal());
+						System.out.println("🟢 Created Debit & Credit for Customer Row: " + acctName + " | TRAN_ID: "
+								+ tranId + " | Amount: " + tranAmt + " | Date: " + transactionDate);
+					}
+
+				} else if (backend_datas != null && !backend_datas.isEmpty()
+						&& (flow_datas == null || flow_datas.isEmpty()) && (flows == null || flows.isEmpty())) {
+
+					System.out.println("❌ Customer ID MATCHED: " + frontendCustomerId + " - No flow records found.");
+
+					for (Map<String, Object> row : custTransactions) {
+						System.out.println("   → Frontend Row: " + row);
+
+						// 🔹 Extract frontend values
+						String acctNum = (String) row.get("acct_num");
+						String acctName = (String) row.get("acct_namedata");
+						String tranRemarks = row.get("tran_remarks") != null ? row.get("tran_remarks").toString() : "";
+						String tranAmtStr = row.get("tran_particulardata") != null
+								? row.get("tran_particulardata").toString().replace(",", "").trim()
+								: "0";
+
+						BigDecimal tranAmt = BigDecimal.ZERO;
+						try {
+							tranAmt = new BigDecimal(tranAmtStr);
+						} catch (Exception ex) {
+							System.out.println("⚠️ Invalid tran_amt for " + acctName + ": " + tranAmtStr);
 						}
+
+						// 🔹 Loan parking debit account
+						String loanparkingacct = "2700002750";
+						Chart_Acc_Entity debitAccount = chart_Acc_Rep.getaedit(loanparkingacct);
+						if (debitAccount == null) {
+							System.out.println("❌ Debit account not found for account number: " + loanparkingacct);
+							continue; // skip to next row
+						}
+
+						// 🔹 Receivable account credit
+						String receivableaccount = "1644000001";
+						Chart_Acc_Entity creditAccount = chart_Acc_Rep.getaedit(receivableaccount);
+						if (creditAccount == null) {
+							System.out.println("❌ Credit account not found for account number: " + receivableaccount);
+							continue;
+						}
+
+						// 🔹 Transaction date
+						Date tranDateObj = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
+						if (tranDateObj == null) {
+							response.put("status", "error");
+							response.put("message", "No transaction date found in control table.");
+							return response;
+						}
+						LocalDate tranDate = (tranDateObj instanceof java.sql.Date)
+								? ((java.sql.Date) tranDateObj).toLocalDate()
+								: tranDateObj.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+						Date transactionDate = Date.from(tranDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+						// ✅ DEBIT ENTRY
+						TRAN_MAIN_TRM_WRK_ENTITY debitTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
+						debitTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
+						debitTrm.setTran_id(tranId);
+						debitTrm.setPart_tran_id(BigDecimal.valueOf(1));
+						debitTrm.setAcct_num(loanparkingacct);
+						debitTrm.setAcct_name(debitAccount.getAcct_name());
+						debitTrm.setTran_type("TRANSFER");
+						debitTrm.setPart_tran_type("Debit");
+						debitTrm.setTran_particular("Receivable Failed Transaction");
+						debitTrm.setTran_remarks(tranRemarks);
+						debitTrm.setTran_amt(tranAmt);
+						debitTrm.setTran_date(transactionDate);
+						debitTrm.setValue_date(transactionDate);
+						debitTrm.setFlow_code("RECOVERY");
+						debitTrm.setFlow_date(transactionDate);
+						debitTrm.setAcct_crncy(debitAccount.getAcct_crncy());
+						debitTrm.setTran_status("POSTED");
+						debitTrm.setEntry_user(userid);
+						debitTrm.setModify_user(userid);
+						debitTrm.setEntry_time(new Date());
+						debitTrm.setModify_time(new Date());
+						debitTrm.setDel_flg("N");
+
+						try {
+							tRAN_MAIN_TRM_WRK_REP.save(debitTrm);
+							System.out.println("✅ Debit entry saved for TRAN_ID: " + tranId);
+						} catch (Exception e) {
+							System.out.println("❌ Failed to save debit entry for TRAN_ID: " + tranId + " | Error: "
+									+ e.getMessage());
+							e.printStackTrace();
+						}
+
+						// ✅ Update Debit Account COA (Loan Parking)
+						BigDecimal debitBal = Optional.ofNullable(debitAccount.getAcct_bal()).orElse(BigDecimal.ZERO);
+						BigDecimal debitDrAmt = Optional.ofNullable(debitAccount.getDr_amt()).orElse(BigDecimal.ZERO);
+						debitAccount.setAcct_bal(debitBal.subtract(tranAmt));
+						debitAccount.setDr_amt(debitDrAmt.add(tranAmt));
+						debitAccount.setModify_time(new Date());
+						debitAccount.setModify_user(userid);
+						chart_Acc_Rep.save(debitAccount);
+
+						// ✅ CREDIT ENTRY
+						TRAN_MAIN_TRM_WRK_ENTITY creditTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
+						creditTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
+						creditTrm.setTran_id(tranId);
+						creditTrm.setPart_tran_id(BigDecimal.valueOf(2));
+						creditTrm.setAcct_num(receivableaccount);
+						creditTrm.setAcct_name(creditAccount.getAcct_name());
+						creditTrm.setTran_type("TRANSFER");
+						creditTrm.setPart_tran_type("Credit");
+						creditTrm.setTran_particular("Receivable Failed BACKEND NO RECORDS Transaction");
+						creditTrm.setTran_remarks(tranRemarks);
+						creditTrm.setTran_amt(tranAmt);
+						creditTrm.setTran_date(transactionDate);
+						creditTrm.setValue_date(transactionDate);
+						creditTrm.setFlow_code("FRECOVERY");
+						creditTrm.setFlow_date(transactionDate);
+						creditTrm.setAcct_crncy(creditAccount.getAcct_crncy());
+						creditTrm.setTran_status("POSTED");
+						creditTrm.setEntry_user(userid);
+						creditTrm.setModify_user(userid);
+						creditTrm.setEntry_time(new Date());
+						creditTrm.setModify_time(new Date());
+						creditTrm.setDel_flg("N");
+
+						try {
+							tRAN_MAIN_TRM_WRK_REP.save(creditTrm);
+							System.out.println("✅ Credit entry saved for TRAN_ID: " + tranId);
+						} catch (Exception e) {
+							System.out.println("❌ Failed to save credit entry for TRAN_ID: " + tranId + " | Error: "
+									+ e.getMessage());
+							e.printStackTrace();
+						}
+
+						// ✅ Update Credit Account COA (Receivable)
+						BigDecimal creditBal = Optional.ofNullable(creditAccount.getAcct_bal()).orElse(BigDecimal.ZERO);
+						BigDecimal creditCrAmt = Optional.ofNullable(creditAccount.getCr_amt()).orElse(BigDecimal.ZERO);
+						creditAccount.setAcct_bal(creditBal.add(tranAmt));
+						creditAccount.setCr_amt(creditCrAmt.add(tranAmt));
+						creditAccount.setModify_time(new Date());
+						creditAccount.setModify_user(userid);
+						chart_Acc_Rep.save(creditAccount);
 
 						System.out.println("🟢 Created Debit & Credit for Customer Row: " + acctName + " | TRAN_ID: "
 								+ tranId + " | Amount: " + tranAmt + " | Date: " + transactionDate);
 					}
+
 				} else if ((backend_datas == null || backend_datas.isEmpty())
-						&& (flow_datas == null || flow_datas.isEmpty())) {
+						&& (flow_datas == null || flow_datas.isEmpty()) && (flows == null || flows.isEmpty())) {
 
 					// unmatched customer: move to history and add zeroed summary
 					System.out.println(
@@ -11250,17 +11093,6 @@ public class BGLSRestController {
 						debitTrm.setDel_flg("N");
 						tRAN_MAIN_TRM_WRK_REP.save(debitTrm);
 
-						// 🔹 Update Debit Account COA (Loan Parking)
-						BigDecimal debitBal = Optional.ofNullable(debitAccount.getAcct_bal()).orElse(BigDecimal.ZERO);
-						BigDecimal debitDrAmt = Optional.ofNullable(debitAccount.getDr_amt()).orElse(BigDecimal.ZERO);
-						debitBal = debitBal.subtract(tranAmt);
-						debitDrAmt = debitDrAmt.add(tranAmt);
-						debitAccount.setAcct_bal(debitBal);
-						debitAccount.setDr_amt(debitDrAmt);
-						debitAccount.setModify_time(new Date());
-						debitAccount.setModify_user(userid);
-						chart_Acc_Rep.save(debitAccount);
-
 						// 🔹 Receivable account credit
 						String receivableaccount = "1644000001";
 						Chart_Acc_Entity creditAccount = chart_Acc_Rep.getaedit(receivableaccount);
@@ -11289,30 +11121,6 @@ public class BGLSRestController {
 						creditTrm.setModify_time(new Date());
 						creditTrm.setDel_flg("N");
 						tRAN_MAIN_TRM_WRK_REP.save(creditTrm);
-
-						// 🔹 Update Credit Account COA (Receivable)
-						BigDecimal creditBal = Optional.ofNullable(creditAccount.getAcct_bal()).orElse(BigDecimal.ZERO);
-						BigDecimal creditCrAmt = Optional.ofNullable(creditAccount.getCr_amt()).orElse(BigDecimal.ZERO);
-						creditBal = creditBal.add(tranAmt);
-						creditCrAmt = creditCrAmt.add(tranAmt);
-						creditAccount.setAcct_bal(creditBal);
-						creditAccount.setCr_amt(creditCrAmt);
-						creditAccount.setModify_time(new Date());
-						creditAccount.setModify_user(userid);
-						chart_Acc_Rep.save(creditAccount);
-
-						// 🔹 Verification: check debit/credit amounts match
-						if (tranAmt.compareTo(debitDrAmt) == 0 && tranAmt.compareTo(creditCrAmt) == 0) {
-							System.out.println(
-									"✅ Debit & Credit amounts match for TRAN_ID: " + tranId + " | Amount: " + tranAmt);
-						} else {
-							System.out.println("⚠️ Mismatch detected for TRAN_ID: " + tranId);
-							System.out.println("   → Expected Amount: " + tranAmt);
-							System.out.println("   → Debit Dr Amount: " + debitDrAmt + " | Updated Debit Balance: "
-									+ debitAccount.getAcct_bal());
-							System.out.println("   → Credit Cr Amount: " + creditCrAmt + " | Updated Credit Balance: "
-									+ creditAccount.getAcct_bal());
-						}
 
 						System.out.println("🟢 Created Debit & Credit for Unmatched Customer Row: " + acctName
 								+ " | TRAN_ID: " + tranId + " | Amount: " + tranAmt + " | Date: " + transactionDate);
@@ -12271,31 +12079,29 @@ public class BGLSRestController {
 	@GetMapping("/DABReportDownload")
 	public ResponseEntity<byte[]> DABReportDownload(@RequestParam("tranDate") String tranDate) {
 
-	    List<Object[]> rawData = chart_Acc_Rep.getDabReportByDate(tranDate);
-	    System.out.println("DAB Report Request Date: " + tranDate);
+		List<Object[]> rawData = chart_Acc_Rep.getDabReportByDate(tranDate);
+		System.out.println("DAB Report Request Date: " + tranDate);
 
-	    // ✅ Handle if no data found
-	    if (rawData == null || rawData.isEmpty()) {
-	        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-	    }
+		// ✅ Handle if no data found
+		if (rawData == null || rawData.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		}
 
-	    byte[] excelData = exelDownloadService.generateDabExcelReport(rawData, tranDate);
+		byte[] excelData = exelDownloadService.generateDabExcelReport(rawData, tranDate);
 
-	    // ✅ Handle if Excel generation failed or empty
-	    if (excelData == null || excelData.length == 0) {
-	        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-	    }
+		// ✅ Handle if Excel generation failed or empty
+		if (excelData == null || excelData.length == 0) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		}
 
-	    String fileName = "DAB_REPORT_" + tranDate + ".xlsx";
+		String fileName = "DAB_REPORT_" + tranDate + ".xlsx";
 
-	    HttpHeaders headers = new HttpHeaders();
-	    headers.setContentDisposition(
-	            ContentDisposition.builder("attachment").filename(fileName).build());
-	    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
-	    return new ResponseEntity<byte[]>(excelData, headers, HttpStatus.OK);
+		return new ResponseEntity<byte[]>(excelData, headers, HttpStatus.OK);
 	}
-
 
 	@GetMapping("loan/statusSearchtransaction")
 	public List<Map<String, Object>> searchByStatustransaction(@RequestParam String status) {
@@ -12321,290 +12127,280 @@ public class BGLSRestController {
 
 		return result;
 	}
-	
-	
-	
+
 	@Autowired
 	private PdfService pdfService;
-	
 
-@GetMapping("/TransactionPDFReportDownload")
-public ResponseEntity<byte[]> TransactionReportDownloadpdf(@RequestParam("dueDate") String dueDate) {
-    List<Object[]> rawData = chart_Acc_Rep.getTransactionReportByDate(dueDate);
-    
-    // ✅ Call the non-static method through the injected bean
-    byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate);
+	@GetMapping("/TransactionPDFReportDownload")
+	public ResponseEntity<byte[]> TransactionReportDownloadpdf(@RequestParam("dueDate") String dueDate) {
+		List<Object[]> rawData = chart_Acc_Rep.getTransactionReportByDate(dueDate);
 
-    if (pdfData == null || pdfData.length == 0) {
-        return ResponseEntity.noContent().build();
-    }
+		// ✅ Call the non-static method through the injected bean
+		byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate);
 
-    String fileName = "TRANSACTION_REPORT_" + dueDate + ".pdf";
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
-    headers.setContentType(MediaType.APPLICATION_PDF);
+		if (pdfData == null || pdfData.length == 0) {
+			return ResponseEntity.noContent().build();
+		}
 
-    return new ResponseEntity<>(pdfData, headers, HttpStatus.OK);
-}
+		String fileName = "TRANSACTION_REPORT_" + dueDate + ".pdf";
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+		headers.setContentType(MediaType.APPLICATION_PDF);
 
-@GetMapping("/getJournalEntries")
-@ResponseBody
-public Map<String, Object> getJournalEntries(
-        @RequestParam(defaultValue = "1") int page,
-        @RequestParam(defaultValue = "10") int size) {
-
-    int offset = (page - 1) * size;
-
-    // Fetch paginated records and total count
-    List<TRAN_MAIN_TRM_WRK_ENTITY> journalEntries = tRAN_MAIN_TRM_WRK_REP.findPaginatedJournal(offset, size);
-    int totalItems = tRAN_MAIN_TRM_WRK_REP.countJournalEntries();
-    int totalPages = (int) Math.ceil((double) totalItems / size);
-
-    // Prepare response
-    Map<String, Object> result = new HashMap<>();
-    result.put("data", journalEntries);
-    result.put("totalPages", totalPages);
-    result.put("currentPage", page);
-    result.put("totalItems", totalItems);
-
-    return result;
-}
-
-@RequestMapping("/api/Reversal")
-public Map<String, Object> getMapReversal(
-        @RequestParam(defaultValue = "1") int page,
-        @RequestParam(defaultValue = "1000") int limit) {
-
-    if (page < 1)
-        page = 1;
-    int offset = (page - 1) * limit;
-
-    // Fetch paginated transactions
-    List<TRAN_MAIN_TRM_WRK_ENTITY> rows = tRAN_MAIN_TRM_WRK_REP.findPaginatedJournal(offset, limit);
-    Long totalRecords = tRAN_MAIN_TRM_WRK_REP.getTotalLoans();
-    int totalPages = (int) Math.ceil((double) totalRecords / limit);
-
-    List<Map<String, Object>> result = new ArrayList<>();
-
-    for (TRAN_MAIN_TRM_WRK_ENTITY row : rows) {
-        Map<String, Object> map = new HashMap<>();
-
-        map.put("tran_id", row.getTran_id());
-        map.put("part_tran_id", row.getPart_tran_id());
-        map.put("part_tran_type", row.getPart_tran_type());
-        map.put("tran_date", row.getTran_date());
-        map.put("acct_crncy", row.getAcct_crncy());
-        map.put("tran_amt", row.getTran_amt());
-        map.put("acct_num", row.getAcct_num());
-        map.put("acct_name", row.getAcct_name());
-        map.put("tran_particular", row.getTran_particular());
-        map.put("tran_status", row.getTran_status());
-
-        System.out.println("tran_id = " + row.getTran_id() + " | tran_status = " + row.getTran_status());
-        result.add(map);
-    }
-
-    System.out.println("✅ Total rows fetched = " + result.size());
-
-    Map<String, Object> response = new HashMap<>();
-    response.put("data", result);
-    response.put("currentPage", page);
-    response.put("totalPages", totalPages);
-    response.put("totalRecords", totalRecords);
-
-    return response;
-}
-
-@GetMapping("Tran_date/search")
-public List<Map<String, Object>> searchTran_date(@RequestParam String loanId) {
-	System.out.println("THE GETTING TRAN_DATE IS "+loanId);
-	List<TRAN_MAIN_TRM_WRK_ENTITY> rows;
-	if (loanId == null || loanId.trim().isEmpty()) {
-		rows = tRAN_MAIN_TRM_WRK_REP.getLoanActWithtranid(0, 1000); // default 200 rows
-	} else {
-		rows = tRAN_MAIN_TRM_WRK_REP.searchByTranDate(loanId);
+		return new ResponseEntity<>(pdfData, headers, HttpStatus.OK);
 	}
 
-	List<Map<String, Object>> result = new ArrayList<>();
+	@GetMapping("/getJournalEntries")
+	@ResponseBody
+	public Map<String, Object> getJournalEntries(@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "10") int size) {
 
-	for (TRAN_MAIN_TRM_WRK_ENTITY row : rows) {
-	    Map<String, Object> map = new HashMap<>();
+		int offset = (page - 1) * size;
 
-	    map.put("tran_id", row.getTran_id());
-	    map.put("part_tran_id", row.getPart_tran_id());
-	    map.put("part_tran_type", row.getPart_tran_type());
-	    map.put("tran_date", row.getTran_date());
-	    map.put("acct_crncy", row.getAcct_crncy());
-	    map.put("tran_amt", row.getTran_amt());
-	    map.put("acct_num", row.getAcct_num());
-	    map.put("acct_name", row.getAcct_name());
-	    map.put("tran_particular", row.getTran_particular());
-	    map.put("tran_status", row.getTran_status());
+		// Fetch paginated records and total count
+		List<TRAN_MAIN_TRM_WRK_ENTITY> journalEntries = tRAN_MAIN_TRM_WRK_REP.findPaginatedJournal(offset, size);
+		int totalItems = tRAN_MAIN_TRM_WRK_REP.countJournalEntries();
+		int totalPages = (int) Math.ceil((double) totalItems / size);
 
-	    result.add(map);
+		// Prepare response
+		Map<String, Object> result = new HashMap<>();
+		result.put("data", journalEntries);
+		result.put("totalPages", totalPages);
+		result.put("currentPage", page);
+		result.put("totalItems", totalItems);
+
+		return result;
 	}
 
-	return result;
-}
+	@RequestMapping("/api/Reversal")
+	public Map<String, Object> getMapReversal(@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "1000") int limit) {
 
-@GetMapping("Tran_id/search")
-public List<Map<String, Object>> searchTran_id(@RequestParam String loanType) {
-	System.out.println("THE GETTING TRAN_DATE IS "+loanType);
-	List<TRAN_MAIN_TRM_WRK_ENTITY> rows;
-	if (loanType == null || loanType.trim().isEmpty()) {
-		rows = tRAN_MAIN_TRM_WRK_REP.getLoanActWithtranid(0, 1000); // default 200 rows
-	} else {
-		rows = tRAN_MAIN_TRM_WRK_REP.searchByTranIdLike(loanType);
+		if (page < 1)
+			page = 1;
+		int offset = (page - 1) * limit;
+
+		// Fetch paginated transactions
+		List<TRAN_MAIN_TRM_WRK_ENTITY> rows = tRAN_MAIN_TRM_WRK_REP.findPaginatedJournal(offset, limit);
+		Long totalRecords = tRAN_MAIN_TRM_WRK_REP.getTotalLoans();
+		int totalPages = (int) Math.ceil((double) totalRecords / limit);
+
+		List<Map<String, Object>> result = new ArrayList<>();
+
+		for (TRAN_MAIN_TRM_WRK_ENTITY row : rows) {
+			Map<String, Object> map = new HashMap<>();
+
+			map.put("tran_id", row.getTran_id());
+			map.put("part_tran_id", row.getPart_tran_id());
+			map.put("part_tran_type", row.getPart_tran_type());
+			map.put("tran_date", row.getTran_date());
+			map.put("acct_crncy", row.getAcct_crncy());
+			map.put("tran_amt", row.getTran_amt());
+			map.put("acct_num", row.getAcct_num());
+			map.put("acct_name", row.getAcct_name());
+			map.put("tran_particular", row.getTran_particular());
+			map.put("tran_status", row.getTran_status());
+
+			System.out.println("tran_id = " + row.getTran_id() + " | tran_status = " + row.getTran_status());
+			result.add(map);
+		}
+
+		System.out.println("✅ Total rows fetched = " + result.size());
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("data", result);
+		response.put("currentPage", page);
+		response.put("totalPages", totalPages);
+		response.put("totalRecords", totalRecords);
+
+		return response;
 	}
 
-	List<Map<String, Object>> result = new ArrayList<>();
+	@GetMapping("Tran_date/search")
+	public List<Map<String, Object>> searchTran_date(@RequestParam String loanId) {
+		System.out.println("THE GETTING TRAN_DATE IS " + loanId);
+		List<TRAN_MAIN_TRM_WRK_ENTITY> rows;
+		if (loanId == null || loanId.trim().isEmpty()) {
+			rows = tRAN_MAIN_TRM_WRK_REP.getLoanActWithtranid(0, 1000); // default 200 rows
+		} else {
+			rows = tRAN_MAIN_TRM_WRK_REP.searchByTranDate(loanId);
+		}
 
-	for (TRAN_MAIN_TRM_WRK_ENTITY row : rows) {
-	    Map<String, Object> map = new HashMap<>();
+		List<Map<String, Object>> result = new ArrayList<>();
 
-	    map.put("tran_id", row.getTran_id());
-	    map.put("part_tran_id", row.getPart_tran_id());
-	    map.put("part_tran_type", row.getPart_tran_type());
-	    map.put("tran_date", row.getTran_date());
-	    map.put("acct_crncy", row.getAcct_crncy());
-	    map.put("tran_amt", row.getTran_amt());
-	    map.put("acct_num", row.getAcct_num());
-	    map.put("acct_name", row.getAcct_name());
-	    map.put("tran_particular", row.getTran_particular());
-	    map.put("tran_status", row.getTran_status());
+		for (TRAN_MAIN_TRM_WRK_ENTITY row : rows) {
+			Map<String, Object> map = new HashMap<>();
 
-	    result.add(map);
+			map.put("tran_id", row.getTran_id());
+			map.put("part_tran_id", row.getPart_tran_id());
+			map.put("part_tran_type", row.getPart_tran_type());
+			map.put("tran_date", row.getTran_date());
+			map.put("acct_crncy", row.getAcct_crncy());
+			map.put("tran_amt", row.getTran_amt());
+			map.put("acct_num", row.getAcct_num());
+			map.put("acct_name", row.getAcct_name());
+			map.put("tran_particular", row.getTran_particular());
+			map.put("tran_status", row.getTran_status());
+
+			result.add(map);
+		}
+
+		return result;
 	}
 
-	return result;
-}
+	@GetMapping("Tran_id/search")
+	public List<Map<String, Object>> searchTran_id(@RequestParam String loanType) {
+		System.out.println("THE GETTING TRAN_DATE IS " + loanType);
+		List<TRAN_MAIN_TRM_WRK_ENTITY> rows;
+		if (loanType == null || loanType.trim().isEmpty()) {
+			rows = tRAN_MAIN_TRM_WRK_REP.getLoanActWithtranid(0, 1000); // default 200 rows
+		} else {
+			rows = tRAN_MAIN_TRM_WRK_REP.searchByTranIdLike(loanType);
+		}
 
-@GetMapping("Account_number/search")
-public List<Map<String, Object>> searchAccount_number(@RequestParam String MobileNumber) {
-	System.out.println("THE GETTING TRAN_DATE IS "+MobileNumber);
-	List<TRAN_MAIN_TRM_WRK_ENTITY> rows;
-	if (MobileNumber == null || MobileNumber.trim().isEmpty()) {
-		rows = tRAN_MAIN_TRM_WRK_REP.getLoanActWithtranid(0, 1000); // default 200 rows
-	} else {
-		rows = tRAN_MAIN_TRM_WRK_REP.searchByAcctNumLike(MobileNumber);
+		List<Map<String, Object>> result = new ArrayList<>();
+
+		for (TRAN_MAIN_TRM_WRK_ENTITY row : rows) {
+			Map<String, Object> map = new HashMap<>();
+
+			map.put("tran_id", row.getTran_id());
+			map.put("part_tran_id", row.getPart_tran_id());
+			map.put("part_tran_type", row.getPart_tran_type());
+			map.put("tran_date", row.getTran_date());
+			map.put("acct_crncy", row.getAcct_crncy());
+			map.put("tran_amt", row.getTran_amt());
+			map.put("acct_num", row.getAcct_num());
+			map.put("acct_name", row.getAcct_name());
+			map.put("tran_particular", row.getTran_particular());
+			map.put("tran_status", row.getTran_status());
+
+			result.add(map);
+		}
+
+		return result;
 	}
 
-	List<Map<String, Object>> result = new ArrayList<>();
+	@GetMapping("Account_number/search")
+	public List<Map<String, Object>> searchAccount_number(@RequestParam String MobileNumber) {
+		System.out.println("THE GETTING TRAN_DATE IS " + MobileNumber);
+		List<TRAN_MAIN_TRM_WRK_ENTITY> rows;
+		if (MobileNumber == null || MobileNumber.trim().isEmpty()) {
+			rows = tRAN_MAIN_TRM_WRK_REP.getLoanActWithtranid(0, 1000); // default 200 rows
+		} else {
+			rows = tRAN_MAIN_TRM_WRK_REP.searchByAcctNumLike(MobileNumber);
+		}
 
-	for (TRAN_MAIN_TRM_WRK_ENTITY row : rows) {
-	    Map<String, Object> map = new HashMap<>();
+		List<Map<String, Object>> result = new ArrayList<>();
 
-	    map.put("tran_id", row.getTran_id());
-	    map.put("part_tran_id", row.getPart_tran_id());
-	    map.put("part_tran_type", row.getPart_tran_type());
-	    map.put("tran_date", row.getTran_date());
-	    map.put("acct_crncy", row.getAcct_crncy());
-	    map.put("tran_amt", row.getTran_amt());
-	    map.put("acct_num", row.getAcct_num());
-	    map.put("acct_name", row.getAcct_name());
-	    map.put("tran_particular", row.getTran_particular());
-	    map.put("tran_status", row.getTran_status());
+		for (TRAN_MAIN_TRM_WRK_ENTITY row : rows) {
+			Map<String, Object> map = new HashMap<>();
 
-	    result.add(map);
+			map.put("tran_id", row.getTran_id());
+			map.put("part_tran_id", row.getPart_tran_id());
+			map.put("part_tran_type", row.getPart_tran_type());
+			map.put("tran_date", row.getTran_date());
+			map.put("acct_crncy", row.getAcct_crncy());
+			map.put("tran_amt", row.getTran_amt());
+			map.put("acct_num", row.getAcct_num());
+			map.put("acct_name", row.getAcct_name());
+			map.put("tran_particular", row.getTran_particular());
+			map.put("tran_status", row.getTran_status());
+
+			result.add(map);
+		}
+
+		return result;
 	}
 
-	return result;
-}
+	@GetMapping("/EndOfMonthLoanReportDownload")
+	public ResponseEntity<byte[]> downloadEndOfMonthReport(@RequestParam("dueDate") String dueDate) {
+		System.out.println("End Report");
+		List<Object[]> rawData = lOAN_ACT_MST_REPO.findEndOfMonthLoanReport();
+		byte[] excelData = exelDownloadService.generateEndOfMonthExcel(rawData, dueDate);
 
-@GetMapping("/EndOfMonthLoanReportDownload")
-public ResponseEntity<byte[]> downloadEndOfMonthReport(@RequestParam("dueDate") String dueDate) {
-	System.out.println("End Report");
-    List<Object[]> rawData = lOAN_ACT_MST_REPO.findEndOfMonthLoanReport();
-    byte[] excelData = exelDownloadService.generateEndOfMonthExcel(rawData, dueDate); 
+		if (excelData == null || excelData.length == 0) {
+			return ResponseEntity.noContent().build();
+		}
 
-    if (excelData == null || excelData.length == 0) {
-        return ResponseEntity.noContent().build();
-    }
+		String fileName = "END_OF_MONTH_LOAN_REPORT_" + dueDate + ".xlsx";
 
-    String fileName = "END_OF_MONTH_LOAN_REPORT_" + dueDate + ".xlsx";
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
-    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+	}
 
-    return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
-}
+	@GetMapping("/LoanAccrualReportDownload")
+	public ResponseEntity<byte[]> downloadAccrualReport(@RequestParam("accrualDate") String accrualDate) {
+		List<Object[]> data = chart_Acc_Rep.findLoanAccrualByDate(accrualDate);
+		byte[] excelBytes = exelDownloadService.generateAccrualExcel(data, accrualDate);
 
+		if (excelBytes == null || excelBytes.length == 0) {
+			return ResponseEntity.noContent().build();
+		}
 
-@GetMapping("/LoanAccrualReportDownload")
-public ResponseEntity<byte[]> downloadAccrualReport(@RequestParam("accrualDate") String accrualDate) {
-    List<Object[]> data = chart_Acc_Rep.findLoanAccrualByDate(accrualDate);
-    byte[] excelBytes = exelDownloadService.generateAccrualExcel(data, accrualDate);
+		String fileName = "LOAN_ACCRUAL_INTEREST_" + accrualDate + ".xlsx";
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
-    if (excelBytes == null || excelBytes.length == 0) {
-        return ResponseEntity.noContent().build();
-    }
+		return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+	}
 
-    String fileName = "LOAN_ACCRUAL_INTEREST_" + accrualDate + ".xlsx";
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
-    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+	@GetMapping("/LoanDailyPenaltyReportDownload")
+	public ResponseEntity<byte[]> downloadLoanDailyPenaltyReport(@RequestParam("tranDate") String tranDate) {
+		List<Object[]> data = chart_Acc_Rep.findLoanDailyPenaltyByDate(tranDate);
+		byte[] excelBytes = exelDownloadService.generatePenaltyExcel(data, tranDate);
 
-    return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
-}
+		if (excelBytes == null || excelBytes.length == 0) {
+			return ResponseEntity.noContent().build();
+		}
 
+		String fileName = "LOAN_DAILY_PENALTY_" + tranDate + ".xlsx";
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
-@GetMapping("/LoanDailyPenaltyReportDownload")
-public ResponseEntity<byte[]> downloadLoanDailyPenaltyReport(@RequestParam("tranDate") String tranDate) {
-    List<Object[]> data = chart_Acc_Rep.findLoanDailyPenaltyByDate(tranDate);
-    byte[] excelBytes = exelDownloadService.generatePenaltyExcel(data, tranDate);
+		return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+	}
 
-    if (excelBytes == null || excelBytes.length == 0) {
-        return ResponseEntity.noContent().build();
-    }
+	@GetMapping("/TransactionPDFReport2Download")
+	public ResponseEntity<byte[]> TransactionPDFReport2Download(@RequestParam("dueDate") String dueDate) {
+		List<Object[]> rawData = chart_Acc_Rep.getTransactionReport2ByDate(dueDate);
 
-    String fileName = "LOAN_DAILY_PENALTY_" + tranDate + ".xlsx";
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
-    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		// ✅ Call the non-static method through the injected bean
+		byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate);
 
-    return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
-}
+		if (pdfData == null || pdfData.length == 0) {
+			return ResponseEntity.noContent().build();
+		}
 
-@GetMapping("/TransactionPDFReport2Download")
-public ResponseEntity<byte[]> TransactionPDFReport2Download(@RequestParam("dueDate") String dueDate) {
-    List<Object[]> rawData = chart_Acc_Rep.getTransactionReport2ByDate(dueDate);
-    
-    // ✅ Call the non-static method through the injected bean
-    byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate);
+		String fileName = "RECOVERY_TRANSACTION_REPORT_" + dueDate + ".pdf";
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+		headers.setContentType(MediaType.APPLICATION_PDF);
 
-    if (pdfData == null || pdfData.length == 0) {
-        return ResponseEntity.noContent().build();
-    }
+		return new ResponseEntity<>(pdfData, headers, HttpStatus.OK);
+	}
 
-    String fileName = "RECOVERY_TRANSACTION_REPORT_" + dueDate + ".pdf";
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
-    headers.setContentType(MediaType.APPLICATION_PDF);
+	@GetMapping("/TransactionPDFReport3Download")
+	public ResponseEntity<byte[]> TransactionPDFReport3Download(@RequestParam("dueDate") String dueDate) {
+		List<Object[]> rawData = chart_Acc_Rep.getTransactionReport3ByDate(dueDate);
 
-    return new ResponseEntity<>(pdfData, headers, HttpStatus.OK);
-}
+		// ✅ Call the non-static method through the injected bean
+		byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate);
 
+		if (pdfData == null || pdfData.length == 0) {
+			return ResponseEntity.noContent().build();
+		}
 
+		String fileName = "DEMAND_GENERATION_REPORT_" + dueDate + ".pdf";
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+		headers.setContentType(MediaType.APPLICATION_PDF);
 
-@GetMapping("/TransactionPDFReport3Download")
-public ResponseEntity<byte[]> TransactionPDFReport3Download(@RequestParam("dueDate") String dueDate) {
-    List<Object[]> rawData = chart_Acc_Rep.getTransactionReport3ByDate(dueDate);
-    
-    // ✅ Call the non-static method through the injected bean
-    byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate);
-
-    if (pdfData == null || pdfData.length == 0) {
-        return ResponseEntity.noContent().build();
-    }
-
-    String fileName = "DEMAND_GENERATION_REPORT_" + dueDate + ".pdf";
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
-    headers.setContentType(MediaType.APPLICATION_PDF);
-
-    return new ResponseEntity<>(pdfData, headers, HttpStatus.OK);
-}
-
+		return new ResponseEntity<>(pdfData, headers, HttpStatus.OK);
+	}
 
 }
