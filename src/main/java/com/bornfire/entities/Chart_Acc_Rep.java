@@ -315,7 +315,7 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 		    		    "FROM BGLS_CHART_OF_ACCOUNTS a " +
 		    		    "JOIN BGLS_TRM_WRK_TRANSACTIONS b ON a.acct_num = b.acct_num " +
 		    		    "WHERE TRUNC(b.tran_date) = TO_DATE(:tranDate, 'DD-MM-YYYY') " +
-		    		    "  AND b.FLOW_CODE IN ('RECOVERY' , 'PRREC' , 'INREC', 'FEREC' , 'PLREC', 'EXREC') " +
+		    		    "  AND b.FLOW_CODE IN ('RECOVERY' , 'PRREC' , 'INREC', 'FEREC' , 'PLREC', 'EXREC', 'FRECOVERY') " +
 		    		    "ORDER BY b.tran_date, b.tran_id, b.part_tran_id",
 		    		    nativeQuery = true)
 		    		List<Object[]> getTransactionReport2ByDate(@Param("tranDate") String tranDate);
