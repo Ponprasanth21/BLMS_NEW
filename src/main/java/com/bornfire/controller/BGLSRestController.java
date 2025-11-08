@@ -10270,7 +10270,7 @@ public class BGLSRestController {
 		return partTranId;
 	}
 
-	@PostMapping(value = "/saveMultipleTransactions1", consumes = "application/json", produces = "application/json")
+@PostMapping(value = "/saveMultipleTransactions1", consumes = "application/json", produces = "application/json")
 	public Map<String, Object> saveMultipleTransactions1(@RequestBody List<Map<String, Object>> transactions,
 			HttpServletRequest rq) {
 
@@ -10743,10 +10743,10 @@ public class BGLSRestController {
 					totalDebitBalanceAll = totalDebitBalanceAll.add(custDebitBalance);
 					totalCreditBalanceAll = totalCreditBalanceAll.add(custCreditBalance);
 
-				}
-				// condition check multiple
-				else if (backend_datas != null && !backend_datas.isEmpty() && flow_datas != null
-						&& !flow_datas.isEmpty() && (flows == null || flows.isEmpty())) {
+				} 
+				//condition check multiple
+				else if (backend_datas != null && !backend_datas.isEmpty() && flow_datas != null && !flow_datas.isEmpty()
+						&& (flows == null || flows.isEmpty())) {
 
 					System.out.println("❌ Customer ID MATCHED: " + frontendCustomerId + " - No flow records found.");
 
