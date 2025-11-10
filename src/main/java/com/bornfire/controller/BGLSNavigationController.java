@@ -5062,6 +5062,23 @@ public class BGLSNavigationController {
 
         Date trndate1 = sdf.parse(trndate);
         System.out.println("trndate1"+trndate1);
+        
+        String result = tRAN_MAIN_TRM_WRK_REP.checkDemandAndRecovery(trndate);
+
+        if(result.equals("BOTH_MISSING") || result.equals("RECOVERY_MISSING") || result.equals("DEMAND_MISSING") ) {
+        	String output = "";
+        	if(result.equals("BOTH_MISSING")) {
+        		output = "Demand and Recovery was not applied";
+        	}else if(result.equals("RECOVERY_MISSING")) {
+        		output = "Recovery was not applied";
+        	}else if(result.equals("DEMAND_MISSING")) {
+        		output = "Demand was not applied";
+        	}else {
+        		output="error";
+        	}
+        			
+        	return output;
+        }
          dAB_Repo.UpdateDab(trndate1);
 
 

@@ -580,5 +580,29 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 			+ "ORDER BY TRAN_DATE, TRAN_ID, PART_TRAN_ID "
 			+ "OFFSET ?1 ROWS FETCH NEXT ?2 ROWS ONLY", nativeQuery = true)
 	List<TRAN_MAIN_TRM_WRK_ENTITY> getTransactionsPaginated(int offset, int limit);
+	
+	@Query(value =" SELECT  " +
+			"     CASE  " +
+			"         WHEN demand_cnt > 0 AND recovery_cnt > 0 THEN 'BOTH_PRESENT' " +
+			"         WHEN demand_cnt > 0 AND recovery_cnt = 0 THEN 'RECOVERY_MISSING' " +
+			"         WHEN demand_cnt = 0 AND recovery_cnt > 0 THEN 'DEMAND_MISSING' " +
+			"         ELSE 'BOTH_MISSING' " +
+			"     END AS RESULT " +
+			" FROM ( " +
+			"     SELECT " +
+			"         (SELECT COUNT(*)  " +
+			"          FROM BGLS_TRM_WRK_TRANSACTIONS " +
+			"          WHERE TRAN_DATE = TO_DATE('07-11-2025','DD-MM-YYYY') " +
+			"            AND FLOW_CODE IN ('INDEM','FEEDEM','PENDEM') " +
+			"         ) AS demand_cnt, " +
+			"         (SELECT COUNT(*)  " +
+			"          FROM BGLS_TRM_WRK_TRANSACTIONS " +
+			"          WHERE TRAN_DATE = TO_DATE('07-11-2025','DD-MM-YYYY') " +
+			"            AND FLOW_CODE IN ('RECOVERY','PRREC','INREC','FEREC','PLREC','EXREC','FRECOVERY') " +
+			"         ) AS recovery_cnt " +
+			"     FROM dual " +
+			" ) t "  
+			, nativeQuery = true)
+			String checkDemandAndRecovery(@Param("tranDate") String tranDate);
 
 }
