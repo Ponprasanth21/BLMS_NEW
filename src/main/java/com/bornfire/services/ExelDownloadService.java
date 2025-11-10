@@ -1860,14 +1860,8 @@ public class ExelDownloadService {
     
 //    --------------------------------------------------------------------
    
-    public byte[] generateEndOfMonthExcel(List<Object[]> rawData, String dueDate) {
+public byte[] generateEndOfMonthExcel(List<Object[]> rawData, String dueDate) {
     	
-
-    	for (Object[] rowData : rawData) {
-    	    System.out.println(Arrays.toString(rowData));
-    	}
-
-    	 
         if (rawData == null || rawData.isEmpty()) {
             return new byte[0];
         }
@@ -2070,6 +2064,40 @@ public class ExelDownloadService {
                     cell.setCellStyle(textLeftStyle);
                 }
             }
+            
+            
+         // ==============================
+         // 7️⃣ Add Total Row at the Bottom
+         // ==============================
+            CellStyle numberRightStyle2 = workbook.createCellStyle();
+            numberRightStyle2.setAlignment(HorizontalAlignment.RIGHT);
+            numberRightStyle2.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
+            numberRightStyle2.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+            numberRightStyle2.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            numberRightStyle2.setVerticalAlignment(VerticalAlignment.CENTER);
+            numberRightStyle2.setBorderBottom(BorderStyle.THIN);
+            numberRightStyle2.setBorderTop(BorderStyle.THIN);
+            numberRightStyle2.setBorderLeft(BorderStyle.THIN);
+            numberRightStyle2.setBorderRight(BorderStyle.THIN);
+            
+         Row totalRow = sheet.createRow(rowNum + 1);
+         Cell totalLabelCell = totalRow.createCell(0);
+         totalLabelCell.setCellValue("TOTAL");
+         totalLabelCell.setCellStyle(headerStyle);
+
+         // Columns to sum
+         int[] amountColumns = {
+             11, 12, 14, 18, 19, 20, 21, 31, 32, 33, 34, 40, 45, 48
+         };
+
+         for (int col : amountColumns) {
+             Cell cell = totalRow.createCell(col);
+             String colLetter = CellReference.convertNumToColString(col);
+             String formula = String.format("SUM(%s5:%s%d)", colLetter, colLetter, rowNum);
+             cell.setCellFormula(formula);
+             cell.setCellStyle(numberRightStyle2);
+         }
+
 
             // ==============================
             // 7️⃣ Auto-size Columns
@@ -2086,7 +2114,6 @@ public class ExelDownloadService {
             return new byte[0];
         }
     }
-    
 //    ---------------------------------------------------------------------------------------------------------------------------------------------
 
     public byte[] generateAccrualExcel(List<Object[]> rawData, String accrualDate) {
