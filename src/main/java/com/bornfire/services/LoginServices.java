@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -598,58 +599,105 @@ public class LoginServices {
 	
 	private String exportpath1 = System.getProperty("user.home") + File.separator + "exports";
 
-	public File getFileAccountLedger(String filetype, String acct_num,String fromdate, String todate) throws JRException, SQLException, IOException {
-	    System.out.println("Generating report for account: " + acct_num);
+	public File getFileAccountLedger(String filetype, String acct_num, String fromdate, String todate)
+	        throws JRException, SQLException, IOException {
+
+	    logger.info("📌 START: Generating Account Ledger Report for Account: {}", acct_num);
 
 	    File folder = new File(exportpath1);
-	    if (!folder.exists()) folder.mkdirs();
+	    if (!folder.exists()) {
+	        logger.info("Output directory does not exist. Creating directory at: {}", exportpath1);
+	        folder.mkdirs();
+	    }
 
 	    String fileName = "ACCOUNT_LEDGER_" + acct_num;
-	    File outputFile;
+	    File outputFile = null;
+
+	    Connection connection = null;
+	    InputStream jasperStream = null;
 
 	    try {
-	        // Load and compile Jasper
+	        // ✅ Get DB Connection
+	        logger.info("Establishing DB connection...");
+	        connection = srcdataSource.getConnection();
+	        logger.info("✅ DB connection established.");
+
+	        // ✅ Load JRXML template
+	        logger.info("Loading Jasper template: /static/jasper/ACCOUNT_LEDGER_CSV.jrxml");
 	        Resource resource = new ClassPathResource("/static/jasper/ACCOUNT_LEDGER_CSV.jrxml");
-	        if (!resource.exists()) throw new FileNotFoundException("Jasper file not found: " + resource.getFilename());
 
-	        InputStream jasperStream = resource.getInputStream();
+	        if (!resource.exists()) {
+	            logger.error("❌ Jasper file not found: {}", resource.getFilename());
+	            throw new FileNotFoundException("Jasper file not found: " + resource.getFilename());
+	        }
+
+	        jasperStream = resource.getInputStream();
+	        logger.info("✅ Jasper template loaded successfully.");
+
+	        // ✅ Compile report
+	        logger.info("Compiling Jasper report...");
 	        JasperReport jasperReport = JasperCompileManager.compileReport(jasperStream);
+	        logger.info("✅ Report compilation completed.");
 
-	        // Set parameters
+	        // ✅ Report parameters
 	        HashMap<String, Object> parameters = new HashMap<>();
 	        parameters.put("ACCOUNT_NO", acct_num);
-	        parameters.put("FROM_DATE", fromdate);
-	        parameters.put("TODATE", todate);
-	        // Fill report
-	        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, srcdataSource.getConnection());
 
-	        // Export
+	        logger.info("Report Parameters Set:");
+	        logger.info("ACCOUNT_NO = {}", acct_num);
+
+	        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, connection);
+	        logger.info("✅ Jasper report filled with data.");
+
+	        // ✅ Export PDF or Excel
 	        if ("pdf".equalsIgnoreCase(filetype)) {
 	            fileName += ".pdf";
 	            outputFile = new File(exportpath1, fileName);
+
+	            logger.info("Exporting PDF to: {}", outputFile.getAbsolutePath());
 	            JasperExportManager.exportReportToPdfFile(jasperPrint, outputFile.getAbsolutePath());
+	            logger.info("✅ PDF Export completed.");
+
 	        } else {
 	            fileName += ".xlsx";
 	            outputFile = new File(exportpath1, fileName);
 
+	            logger.info("Exporting XLSX to: {}", outputFile.getAbsolutePath());
+
 	            SimpleXlsxReportConfiguration reportConfig = new SimpleXlsxReportConfiguration();
-	            reportConfig.setSheetNames(new String[]{fileName});
+	            reportConfig.setSheetNames(new String[]{"Account Ledger"});
 
 	            JRXlsxExporter exporter = new JRXlsxExporter();
 	            exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
 	            exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(outputFile));
 	            exporter.setConfiguration(reportConfig);
 	            exporter.exportReport();
+
+	            logger.info("✅ XLSX Export completed.");
 	        }
 
-	        System.out.println("Report exported successfully: " + outputFile.getAbsolutePath());
+	        logger.info("🎉 Report exported successfully: {}", outputFile.getAbsolutePath());
 
 	    } catch (Exception e) {
-	        e.printStackTrace();
+	        logger.error("❌ Error occurred while generating Account Ledger report.", e);
 	        throw new JRException("Error generating Account Ledger report", e);
+
+	    } finally {
+	        // ✅ Close Streams & DB Connection
+	        if (jasperStream != null) {
+	            logger.info("Closing Jasper input stream.");
+	            jasperStream.close();
+	        }
+
+	        if (connection != null && !connection.isClosed()) {
+	            logger.info("Closing DB connection.");
+	            connection.close();
+	        }
+
+	        logger.info("🔚 END: Finished processing Account Ledger report.");
 	    }
 
 	    return outputFile;
 	}
-	
+
 }
