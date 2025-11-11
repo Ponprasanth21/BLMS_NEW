@@ -8,6 +8,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 	<script src="/ASPIRA/js/jquery.min.js"></script>
 	<script src="/ASPIRA/js/jquery-ui.min.js"></script>
 	<style>
@@ -263,7 +264,7 @@
 				onSelect: function (selected) {
 					var fromdate = $("#fromdate").val();
 					var todate = $("#todate").val();
-					alert(fromdate+todate);
+					// alert(fromdate+todate);
 					if (!fromdate) {
 						alert("Enter From date");
 					} else {
@@ -296,11 +297,7 @@
 			return `${day}-${month}-${year}`;
 		}
 
-
-
-
 		var globalBalance1 = 0.00;
-
 
 
 		function funcall() {
@@ -375,7 +372,7 @@
 							let headerHTML = `
                         <tr>
                             <td colspan="1">${previousDate}</td>
-                            <td colspan="7"><strong>Opening Balance: </strong>${openingBalance}</td>
+                            <td colspan="7" style="text-align: end;padding-right: 15rem;" ><strong>Opening Balance: </strong>${openingBalance}</td>
                         </tr>`;
 
 							// Add the header row to the table body

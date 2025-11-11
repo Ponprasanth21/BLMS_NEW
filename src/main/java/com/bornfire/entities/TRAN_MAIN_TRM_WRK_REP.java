@@ -337,7 +337,7 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 	@Query(value = "SELECT DISTINCT part_tran_id FROM BGLS_TRM_WRK_TRANSACTIONS WHERE tran_id = ?1", nativeQuery = true)
 	List<Integer> currentTableRecords(String tranId);
 
-	@Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS WHERE ACCT_NUM = ?1 AND TRAN_DATE BETWEEN TO_DATE(?2, 'YYYY-MM-DD') AND TO_DATE(?3, 'YYYY-MM-DD') AND TRAN_STATUS='POSTED' ORDER BY TRAN_ID", nativeQuery = true)
+	@Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS WHERE ACCT_NUM = ?1 AND TRAN_DATE BETWEEN TO_DATE(?2, 'DD-MON-YYYY') AND TO_DATE(?3, 'DD-MON-YYYY') AND TRAN_STATUS='POSTED' ORDER BY TRAN_ID", nativeQuery = true)
 	List<TRAN_MAIN_TRM_WRK_ENTITY> getTranList(String acct_num, String fromdate, String todate);
 
 	@Query(value = "SELECT TRAN_DATE_BAL FROM BGLS_TRM_WRK_TRANSACTIONS " + "WHERE ACCT_NUM = ?1 "

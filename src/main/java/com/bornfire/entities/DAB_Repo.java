@@ -22,7 +22,7 @@ public interface DAB_Repo extends CrudRepository<DAB_Entity, String> {
 	 * Original SQL Server: DATEADD(day, -1, CAST(?2 AS DATE))
 	 * Oracle Equivalent: ?2 - 1 (Subtracting 1 from a date results in the previous day)
 	 */
-	@Query(value = "SELECT TRAN_DATE_BAL FROM BGLS_DAILY_ACCT_BAL WHERE ACCT_NUM = ?1 AND (?2 - 1) BETWEEN TRAN_DATE AND END_TRAN_DATE", nativeQuery = true)
+	@Query(value = "SELECT TRAN_DATE_BAL FROM BGLS_DAILY_ACCT_BAL WHERE ACCT_NUM = ?1 AND (TO_DATE(?2,'DD-MON-YYYY') - 1) BETWEEN TRAN_DATE AND END_TRAN_DATE", nativeQuery = true)
 	BigDecimal getTranDateBAlance(String acct_num, String fromdateref);
 
 	@Query(value = "SELECT gl_desc AS primary_gl_desc, gl_code, gl_desc AS secondary_gl_desc, glsh_code, glsh_desc, COUNT(GLSH_CODE) as sum, acct_crncy, "
