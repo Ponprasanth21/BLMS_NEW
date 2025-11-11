@@ -10679,6 +10679,309 @@ public class BGLSRestController {
 						System.out.println("✅ No EXREC needed. Debit = Credit (" + totalDebitAmountBD + ")");
 					}
 
+					// ---------- Now ALL datas entries exist (D and C). Update COA balances
+					// ----------
+					for (Map<String, Object> entry1 : datas) {
+						String accountNo = entry1.get("account_no") != null ? entry1.get("account_no").toString() : "";
+						String partTranType = entry1.get("part_tran_type") != null
+								? entry1.get("part_tran_type").toString()
+								: "";
+						String tranAmtStr = entry1.get("tran_amt") != null
+								? entry1.get("tran_amt").toString().replace(",", "")
+								: "0";
+						BigDecimal tranAmt = BigDecimal.ZERO;
+						try {
+							tranAmt = new BigDecimal(tranAmtStr);
+						} catch (Exception ex) {
+							tranAmt = BigDecimal.ZERO;
+						}
+
+						Chart_Acc_Entity account = null;
+						if (accountNo != null && !accountNo.isEmpty()) {
+							try {
+								account = chart_Acc_Rep.getaedit(accountNo);
+							} catch (Exception ex) {
+								account = null;
+							}
+						}
+						if (account == null) {
+							System.out.println("⚠️ Account not found (COA update) : " + accountNo + " — skipping");
+							continue;
+						}
+
+						BigDecimal balance = Optional.ofNullable(account.getAcct_bal()).orElse(BigDecimal.ZERO);
+						BigDecimal crAmt = Optional.ofNullable(account.getCr_amt()).orElse(BigDecimal.ZERO);
+						BigDecimal drAmt = Optional.ofNullable(account.getDr_amt()).orElse(BigDecimal.ZERO);
+
+						if ("C".equalsIgnoreCase(partTranType) || "Credit".equalsIgnoreCase(partTranType)) {
+							balance = balance.add(tranAmt);
+							crAmt = crAmt.add(tranAmt);
+						} else if ("D".equalsIgnoreCase(partTranType) || "Debit".equalsIgnoreCase(partTranType)) {
+							balance = balance.subtract(tranAmt);
+							drAmt = drAmt.add(tranAmt);
+						}
+
+						account.setAcct_bal(balance);
+						account.setCr_amt(crAmt);
+						account.setDr_amt(drAmt);
+						account.setModify_time(new Date());
+						account.setModify_user(userid);
+						chart_Acc_Rep.save(account);
+					}
+
+					// ---------- Update Loan Account Master (loanActRecord) using datas ----------
+					for (Map<String, Object> entry2 : datas) {
+					    String accountNumber = entry2.get("account_no") != null ? entry2.get("account_no").toString() : "";
+					    String flowCode = entry2.get("flow_code") != null ? entry2.get("flow_code").toString() : "";
+					    String tranAmtStr = entry2.get("tran_amt") != null
+					            ? entry2.get("tran_amt").toString().replace(",", "")
+					            : "0";
+
+					    BigDecimal tranAmt = BigDecimal.ZERO;
+					    try {
+					        tranAmt = new BigDecimal(tranAmtStr);
+					    } catch (Exception ex) {
+					        tranAmt = BigDecimal.ZERO;
+					    }
+
+					    if (accountNumber.isEmpty()) {
+					        System.out.println("⚠️ Skipping LoanAct update: Missing Account Number.");
+					        continue;
+					    }
+
+					    LOAN_ACT_MST_ENTITY loanActRecord = lOAN_ACT_MST_REPO.getLoanView(accountNumber);
+					    if (loanActRecord == null) {
+					        System.out.println("⚠️ Loan Account not found for Account Number: " + accountNumber);
+					        continue;
+					    }
+
+					    switch (flowCode) {
+					        case "PRREC": {
+					            BigDecimal oldPaid = loanActRecord.getPrincipal_paid();
+					            BigDecimal oldBalance = loanActRecord.getPrincipal_balance();
+
+					            loanActRecord.setPrincipal_paid(oldPaid.add(tranAmt));
+
+					            BigDecimal newBalance;
+					            if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
+					                newBalance = BigDecimal.ZERO.subtract(tranAmt);
+					            } else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
+					            	newBalance = oldBalance.subtract(tranAmt.abs()); 
+					            } else {
+					                newBalance = oldBalance.subtract(tranAmt);
+					            }
+
+					            loanActRecord.setPrincipal_balance(newBalance);
+					            loanActRecord.setPrincipal_due(loanActRecord.getPrincipal_due().subtract(tranAmt));
+
+					            System.out.println("✅ [PRREC] Account: " + accountNumber
+					                    + " | Old Bal: " + oldBalance + " | TranAmt: " + tranAmt
+					                    + " | New Bal: " + newBalance);
+					            break;
+					        }
+
+					        case "INREC": {
+					            BigDecimal oldPaid = loanActRecord.getInterest_paid();
+					            BigDecimal oldBalance = loanActRecord.getInterest_balance();
+
+					            loanActRecord.setInterest_paid(oldPaid.add(tranAmt));
+
+					            BigDecimal newBalance;
+					            if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
+					                newBalance = BigDecimal.ZERO.subtract(tranAmt);
+					            } else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
+					            	 newBalance = oldBalance.subtract(tranAmt.abs());
+					            } else {
+					                newBalance = oldBalance.subtract(tranAmt);
+					            }
+
+					            loanActRecord.setInterest_balance(newBalance);
+					            loanActRecord.setInterest_due(loanActRecord.getInterest_due().subtract(tranAmt));
+
+					            System.out.println("✅ [INREC] Account: " + accountNumber
+					                    + " | Old Bal: " + oldBalance + " | TranAmt: " + tranAmt
+					                    + " | New Bal: " + newBalance);
+					            break;
+					        }
+
+					        case "FEREC": {
+					            BigDecimal oldPaid = loanActRecord.getFees_paid();
+					            BigDecimal oldBalance = loanActRecord.getFees_balance();
+
+					            loanActRecord.setFees_paid(oldPaid.add(tranAmt));
+
+					            BigDecimal newBalance;
+					            if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
+					                newBalance = BigDecimal.ZERO.subtract(tranAmt);
+					            } else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
+					            	 newBalance = oldBalance.subtract(tranAmt.abs());
+					            } else {
+					                newBalance = oldBalance.subtract(tranAmt);
+					            }
+
+					            loanActRecord.setFees_balance(newBalance);
+					            loanActRecord.setFees_due(loanActRecord.getFees_due().subtract(tranAmt));
+
+					            System.out.println("✅ [FEREC] Account: " + accountNumber
+					                    + " | Old Bal: " + oldBalance + " | TranAmt: " + tranAmt
+					                    + " | New Bal: " + newBalance);
+					            break;
+					        }
+
+					        case "PLREC": {
+					            BigDecimal oldPaid = loanActRecord.getPenalty_paid();
+					            BigDecimal oldBalance = loanActRecord.getPenalty_balance();
+
+					            loanActRecord.setPenalty_paid(oldPaid.add(tranAmt));
+
+					            BigDecimal newBalance;
+					            if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
+					                newBalance = BigDecimal.ZERO.subtract(tranAmt);
+					            } else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
+					            	newBalance = oldBalance.subtract(tranAmt.abs());
+					            } else {
+					                newBalance = oldBalance.subtract(tranAmt);
+					            }
+
+					            loanActRecord.setPenalty_balance(newBalance);
+					            loanActRecord.setPenalty_due(loanActRecord.getPenalty_due().subtract(tranAmt));
+
+					            System.out.println("✅ [PLREC] Account: " + accountNumber
+					                    + " | Old Bal: " + oldBalance + " | TranAmt: " + tranAmt
+					                    + " | New Bal: " + newBalance);
+					            break;
+					        }
+
+					        case "EXREC": {
+					            System.out.println("ℹ️ [EXREC] Extra credit transaction detected for Account: "
+					                    + accountNumber + " | TranAmt: " + tranAmt);
+
+					            BigDecimal oldBalance = loanActRecord.getPrincipal_balance();
+					            BigDecimal newBalance;
+
+					            if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
+					                newBalance = BigDecimal.ZERO.subtract(tranAmt);
+					            } else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
+					            	 newBalance = oldBalance.subtract(tranAmt.abs());
+					            } else {
+					                newBalance = oldBalance.subtract(tranAmt);
+					            }
+
+					            loanActRecord.setPrincipal_balance(newBalance);
+
+					            System.out.println("✅ [EXREC] Account: " + accountNumber
+					                    + " | Old Bal: " + oldBalance
+					                    + " | TranAmt: " + tranAmt
+					                    + " | New Bal: " + newBalance);
+					            break;
+					        }
+
+
+					        default:
+					            System.out.println("⚠️ Unknown flow code: " + flowCode + " for Account: " + accountNumber);
+					            continue;
+					    }
+
+					    loanActRecord.setLast_modified_date(transactionDate);
+					    lOAN_ACT_MST_REPO.save(loanActRecord);
+					    System.out.println("💾 Record saved for Account: " + accountNumber + " | Flow: " + flowCode);
+					}
+
+
+
+					// ---------- Update LOAN_REPAYMENT demand records for credit entries only
+					// ----------
+					for (Map<String, Object> entry2 : datas) {
+						String partTranType = entry2.get("part_tran_type") != null
+								? entry2.get("part_tran_type").toString()
+								: "";
+						if (!"C".equalsIgnoreCase(partTranType))
+							continue;
+
+						String accountNumber = entry2.get("account_no") != null ? entry2.get("account_no").toString()
+								: "";
+						String flowCode = entry2.get("flow_code") != null ? entry2.get("flow_code").toString() : "";
+						String tranAmtStr = entry2.get("tran_amt") != null
+								? entry2.get("tran_amt").toString().replace(",", "")
+								: "0";
+						BigDecimal tranAmt = BigDecimal.ZERO;
+						try {
+							tranAmt = new BigDecimal(tranAmtStr);
+						} catch (Exception ex) {
+							tranAmt = BigDecimal.ZERO;
+						}
+						Date dueDateObj = (Date) entry2.get("due_date");
+
+						String parent_account_key = lOAN_ACT_MST_REPO.getLoanView1(accountNumber);
+						String dbDateStr = null;
+						if (dueDateObj != null) {
+							dbDateStr = sdfDB.format(dueDateObj);
+						}
+
+						LOAN_REPAYMENT_ENTITY demandRecord = lOAN_REPAYMENT_REPO
+								.getLoanFlowsValueDatas(parent_account_key, dbDateStr);
+						if (demandRecord == null)
+							continue;
+
+						BigDecimal principalExp = Optional.ofNullable(demandRecord.getPrincipal_exp())
+								.orElse(BigDecimal.ZERO);
+						BigDecimal interestExp = Optional.ofNullable(demandRecord.getInterest_exp())
+								.orElse(BigDecimal.ZERO);
+						BigDecimal feeExp = Optional.ofNullable(demandRecord.getFee_exp()).orElse(BigDecimal.ZERO);
+						BigDecimal penaltyExp = Optional.ofNullable(demandRecord.getPenalty_exp())
+								.orElse(BigDecimal.ZERO);
+
+						switch (flowCode) {
+						case "PRREC":
+							demandRecord
+									.setPrincipal_paid(demandRecord.getPrincipal_paid().add(tranAmt).min(principalExp));
+							demandRecord.setPrincipal_due(
+									principalExp.subtract(demandRecord.getPrincipal_paid()).max(BigDecimal.ZERO));
+							break;
+						case "INREC":
+							demandRecord
+									.setInterest_paid(demandRecord.getInterest_paid().add(tranAmt).min(interestExp));
+							demandRecord.setInterest_due(
+									interestExp.subtract(demandRecord.getInterest_paid()).max(BigDecimal.ZERO));
+							break;
+						case "FEREC":
+							demandRecord.setFee_paid(demandRecord.getFee_paid().add(tranAmt).min(feeExp));
+							demandRecord.setFee_due(feeExp.subtract(demandRecord.getFee_paid()).max(BigDecimal.ZERO));
+							break;
+						case "PLREC":
+							demandRecord.setPenalty_paid(demandRecord.getPenalty_paid().add(tranAmt).min(penaltyExp));
+							demandRecord.setPenalty_due(
+									penaltyExp.subtract(demandRecord.getPenalty_paid()).max(BigDecimal.ZERO));
+							break;
+						case "EXREC":
+							// EXREC doesn't map to a demand field — skip or log as needed
+							break;
+						}
+
+						// Check fully paid
+						BigDecimal principalDiff = demandRecord.getPrincipal_exp()
+								.subtract(demandRecord.getPrincipal_paid());
+						BigDecimal interestDiff = demandRecord.getInterest_exp()
+								.subtract(demandRecord.getInterest_paid());
+						BigDecimal feeDiff = demandRecord.getFee_exp().subtract(demandRecord.getFee_paid());
+						BigDecimal penaltyDiff = demandRecord.getPenalty_exp().subtract(demandRecord.getPenalty_paid());
+
+						Date latestTranDateForDemand = bGLS_CONTROL_TABLE_REP.getLatestTranDate();
+						if (principalDiff.compareTo(BigDecimal.ZERO) == 0
+								&& interestDiff.compareTo(BigDecimal.ZERO) == 0
+								&& feeDiff.compareTo(BigDecimal.ZERO) == 0
+								&& penaltyDiff.compareTo(BigDecimal.ZERO) == 0) {
+
+							demandRecord.setPayment_state("PAID");
+							demandRecord.setRepaid_date(latestTranDateForDemand);
+						} else {
+							demandRecord.setPayment_state("PENDING");
+							demandRecord.setRepaid_date(latestTranDateForDemand);
+							demandRecord.setLast_paid_date(latestTranDateForDemand);
+						}
+						lOAN_REPAYMENT_REPO.save(demandRecord);
+					}
+					
 					// ---------- Move MULTIPLE_TRANSACTION_ENTITY -> HISTORY (matched case)
 					// ----------
 					for (Map<String, Object> t : custTransactions) {
