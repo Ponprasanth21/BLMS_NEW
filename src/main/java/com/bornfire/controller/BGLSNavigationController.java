@@ -4349,13 +4349,13 @@ public class BGLSNavigationController {
                                                     @RequestParam(required = false) String todate) throws IOException, SQLException, JRException {
 
         String filetype = "Excel";
-        File repfile = loginServices.getFileAccountLedger(filetype, acct_num);
+        File repfile = loginServices.getFileAccountLedger(filetype, acct_num,fromdate,todate);
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=" + repfile.getName());
 
         return new FileSystemResource(repfile);
-    }
+     }
 
     @RequestMapping(value = "customer", method = { RequestMethod.GET, RequestMethod.POST })
     public String customer(@RequestParam(required = false) String id, Model md) {

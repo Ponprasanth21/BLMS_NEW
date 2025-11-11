@@ -598,7 +598,7 @@ public class LoginServices {
 	
 	private String exportpath1 = System.getProperty("user.home") + File.separator + "exports";
 
-	public File getFileAccountLedger(String filetype, String acct_num) throws JRException, SQLException, IOException {
+	public File getFileAccountLedger(String filetype, String acct_num,String fromdate, String todate) throws JRException, SQLException, IOException {
 	    System.out.println("Generating report for account: " + acct_num);
 
 	    File folder = new File(exportpath1);
@@ -609,7 +609,7 @@ public class LoginServices {
 
 	    try {
 	        // Load and compile Jasper
-	        Resource resource = new ClassPathResource("/static/jasper/AspiraAccLedg.jrxml");
+	        Resource resource = new ClassPathResource("/static/jasper/ACCOUNT_LEDGER_CSV.jrxml");
 	        if (!resource.exists()) throw new FileNotFoundException("Jasper file not found: " + resource.getFilename());
 
 	        InputStream jasperStream = resource.getInputStream();
@@ -617,8 +617,9 @@ public class LoginServices {
 
 	        // Set parameters
 	        HashMap<String, Object> parameters = new HashMap<>();
-	        parameters.put("ACCT_NUMBER", acct_num);
-
+	        parameters.put("ACCOUNT_NO", acct_num);
+	        parameters.put("FROM_DATE", fromdate);
+	        parameters.put("TODATE", todate);
 	        // Fill report
 	        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, srcdataSource.getConnection());
 
@@ -650,7 +651,5 @@ public class LoginServices {
 
 	    return outputFile;
 	}
-
-
 	
 }

@@ -1,0 +1,858 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.5.final using JasperReports Library version 6.20.5-3efcf2e67f959db3888d79f73dde2dbd7acb4f8e  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ACCOUNT LEDGER" pageWidth="1295" pageHeight="842" columnWidth="1255" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="7f29476d-119d-4f82-a948-a8e39c97af51">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ASPIRA.jrdax"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="ACCOUNT_NO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[$P{ACCOUNT_NO}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FROM_DATE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[$P{FROM_DATE}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TODATE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[$P{TODATE}]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT 
+    TW.*, 
+    COA.*, 
+   COALESCE(
+    (SELECT SUM(
+        CASE 
+            WHEN PART_TRAN_TYPE = 'Credit' THEN TRAN_AMT 
+            WHEN PART_TRAN_TYPE = 'Debit' THEN -TRAN_AMT 
+            ELSE 0 
+        END
+    ) 
+    FROM BGLS_TRM_WRK_TRANSACTIONS 
+    WHERE acct_num = $P{ACCOUNT_NO}
+    AND TRAN_DATE < TO_DATE($P{FROM_DATE}, 'DD-MM-YYYY')), 
+    0
+) + 
+
+COALESCE(
+    (SELECT TRAN_DATE_BAL  
+     FROM (
+         SELECT TRAN_DATE_BAL
+         FROM BGLS_DAILY_ACCT_BAL
+         WHERE ACCT_NUM = $P{ACCOUNT_NO}
+         AND TO_DATE($P{FROM_DATE}, 'DD-MM-YYYY') - 1 
+             BETWEEN TRAN_DATE AND END_TRAN_DATE
+         
+         UNION ALL
+         
+         SELECT TRAN_DATE_BAL
+         FROM BGLS_DAILY_ACCT_BAL
+         WHERE ACCT_NUM = $P{ACCOUNT_NO}
+         AND TRAN_DATE_BAL IS NOT NULL
+         AND TRAN_DATE < TO_DATE($P{FROM_DATE}, 'DD-MM-YYYY')
+     ) 
+     ORDER BY TRAN_DATE DESC  
+     FETCH FIRST 1 ROW ONLY
+    ), 0
+) AS PREVIOUS_BALANCE_WITH_RUNNING
+,
+(SELECT TRAN_DATE  
+ FROM (
+     SELECT TRAN_DATE
+     FROM BGLS_DAILY_ACCT_BAL
+     WHERE ACCT_NUM = $P{ACCOUNT_NO}
+     AND TO_DATE($P{FROM_DATE}, 'DD-MM-YYYY') - 1 BETWEEN TRAN_DATE AND END_TRAN_DATE
+     
+     UNION ALL
+     
+     SELECT TRAN_DATE
+     FROM BGLS_DAILY_ACCT_BAL
+     WHERE ACCT_NUM = $P{ACCOUNT_NO}
+     AND TRAN_DATE_BAL IS NOT NULL
+     AND TRAN_DATE < TO_DATE($P{FROM_DATE}, 'DD-MM-YYYY')
+ ) 
+ ORDER BY TRAN_DATE DESC  -- Ordering should be applied here, outside UNION
+ FETCH FIRST 1 ROW ONLY
+) AS TRAN_DATE_DAO,
+
+(SELECT TRAN_DATE_BAL  
+ FROM (
+     SELECT TRAN_DATE_BAL
+     FROM BGLS_DAILY_ACCT_BAL
+     WHERE ACCT_NUM = $P{ACCOUNT_NO}
+     AND TO_DATE($P{FROM_DATE}, 'DD-MM-YYYY') - 1 BETWEEN TRAN_DATE AND END_TRAN_DATE
+     
+     UNION ALL
+     
+     SELECT TRAN_DATE_BAL
+     FROM BGLS_DAILY_ACCT_BAL
+     WHERE ACCT_NUM = $P{ACCOUNT_NO}
+     AND TRAN_DATE_BAL IS NOT NULL
+     AND TRAN_DATE < TO_DATE($P{FROM_DATE}, 'DD-MM-YYYY')
+ ) 
+ ORDER BY TRAN_DATE DESC  -- Ordering should be applied here, outside UNION
+ FETCH FIRST 1 ROW ONLY
+) AS TRAN_BAL_DAO
+
+FROM 
+    BGLS_TRM_WRK_TRANSACTIONS TW
+JOIN 
+    BGLS_CHART_OF_ACCOUNTS COA 
+ON 
+    TW.acct_num = COA.acct_num
+WHERE 
+    TW.acct_num = $P{ACCOUNT_NO} AND 
+    TRUNC(TW.TRAN_DATE) BETWEEN 
+    TO_DATE($P{FROM_DATE}, 'dd-MM-yyyy') AND
+     TO_DATE($P{TODATE}, 'dd-MM-yyyy')
+ORDER BY 
+    TW.TRAN_DATE ASC]]>
+	</queryString>
+	<field name="ACCT_CRNCY" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ACCT_CRNCY"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCT_CRNCY"/>
+	</field>
+	<field name="ACCT_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ACCT_NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCT_NAME"/>
+	</field>
+	<field name="ACCT_NUM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ACCT_NUM"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCT_NUM"/>
+	</field>
+	<field name="ACID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ACID"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACID"/>
+	</field>
+	<field name="ADD_DETAILS" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ADD_DETAILS"/>
+		<property name="com.jaspersoft.studio.field.label" value="ADD_DETAILS"/>
+	</field>
+	<field name="BRANCH_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BRANCH_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="BRANCH_ID"/>
+	</field>
+	<field name="CUST_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CUST_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="CUST_ID"/>
+	</field>
+	<field name="DEL_FLG" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DEL_FLG"/>
+		<property name="com.jaspersoft.studio.field.label" value="DEL_FLG"/>
+	</field>
+	<field name="ENTRY_TIME" class="java.util.Date">
+		<property name="com.jaspersoft.studio.field.name" value="ENTRY_TIME"/>
+		<property name="com.jaspersoft.studio.field.label" value="ENTRY_TIME"/>
+	</field>
+	<field name="ENTRY_USER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ENTRY_USER"/>
+		<property name="com.jaspersoft.studio.field.label" value="ENTRY_USER"/>
+	</field>
+	<field name="FLOW_CODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="FLOW_CODE"/>
+		<property name="com.jaspersoft.studio.field.label" value="FLOW_CODE"/>
+	</field>
+	<field name="FLOW_DATE" class="java.util.Date">
+		<property name="com.jaspersoft.studio.field.name" value="FLOW_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="FLOW_DATE"/>
+	</field>
+	<field name="INSTR_DATE" class="java.util.Date">
+		<property name="com.jaspersoft.studio.field.name" value="INSTR_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="INSTR_DATE"/>
+	</field>
+	<field name="INSTR_NUM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="INSTR_NUM"/>
+		<property name="com.jaspersoft.studio.field.label" value="INSTR_NUM"/>
+	</field>
+	<field name="MODIFY_TIME" class="java.util.Date">
+		<property name="com.jaspersoft.studio.field.name" value="MODIFY_TIME"/>
+		<property name="com.jaspersoft.studio.field.label" value="MODIFY_TIME"/>
+	</field>
+	<field name="MODIFY_USER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="MODIFY_USER"/>
+		<property name="com.jaspersoft.studio.field.label" value="MODIFY_USER"/>
+	</field>
+	<field name="PARTITION_DET" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="PARTITION_DET"/>
+		<property name="com.jaspersoft.studio.field.label" value="PARTITION_DET"/>
+	</field>
+	<field name="PARTITION_TYPE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="PARTITION_TYPE"/>
+		<property name="com.jaspersoft.studio.field.label" value="PARTITION_TYPE"/>
+	</field>
+	<field name="PART_TRAN_ID" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="PART_TRAN_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="PART_TRAN_ID"/>
+	</field>
+	<field name="PART_TRAN_TYPE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="PART_TRAN_TYPE"/>
+		<property name="com.jaspersoft.studio.field.label" value="PART_TRAN_TYPE"/>
+	</field>
+	<field name="POST_TIME" class="java.util.Date">
+		<property name="com.jaspersoft.studio.field.name" value="POST_TIME"/>
+		<property name="com.jaspersoft.studio.field.label" value="POST_TIME"/>
+	</field>
+	<field name="POST_USER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="POST_USER"/>
+		<property name="com.jaspersoft.studio.field.label" value="POST_USER"/>
+	</field>
+	<field name="RATE" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="RATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="RATE"/>
+	</field>
+	<field name="RATE_CODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="RATE_CODE"/>
+		<property name="com.jaspersoft.studio.field.label" value="RATE_CODE"/>
+	</field>
+	<field name="REF_CRNCY" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="REF_CRNCY"/>
+		<property name="com.jaspersoft.studio.field.label" value="REF_CRNCY"/>
+	</field>
+	<field name="REF_CRNCY_AMT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="REF_CRNCY_AMT"/>
+		<property name="com.jaspersoft.studio.field.label" value="REF_CRNCY_AMT"/>
+	</field>
+	<field name="SRL_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SRL_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="SRL_NO"/>
+	</field>
+	<field name="TRAN_AMT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="TRAN_AMT"/>
+		<property name="com.jaspersoft.studio.field.label" value="TRAN_AMT"/>
+	</field>
+	<field name="TRAN_CODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="TRAN_CODE"/>
+		<property name="com.jaspersoft.studio.field.label" value="TRAN_CODE"/>
+	</field>
+	<field name="TRAN_DATE" class="java.util.Date">
+		<property name="com.jaspersoft.studio.field.name" value="TRAN_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="TRAN_DATE"/>
+	</field>
+	<field name="TRAN_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="TRAN_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="TRAN_ID"/>
+	</field>
+	<field name="TRAN_PARTICULAR" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="TRAN_PARTICULAR"/>
+		<property name="com.jaspersoft.studio.field.label" value="TRAN_PARTICULAR"/>
+	</field>
+	<field name="TRAN_REF_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="TRAN_REF_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="TRAN_REF_NO"/>
+	</field>
+	<field name="TRAN_REMARKS" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="TRAN_REMARKS"/>
+		<property name="com.jaspersoft.studio.field.label" value="TRAN_REMARKS"/>
+	</field>
+	<field name="TRAN_RPT_CODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="TRAN_RPT_CODE"/>
+		<property name="com.jaspersoft.studio.field.label" value="TRAN_RPT_CODE"/>
+	</field>
+	<field name="TRAN_STATUS" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="TRAN_STATUS"/>
+		<property name="com.jaspersoft.studio.field.label" value="TRAN_STATUS"/>
+	</field>
+	<field name="TRAN_TYPE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="TRAN_TYPE"/>
+		<property name="com.jaspersoft.studio.field.label" value="TRAN_TYPE"/>
+	</field>
+	<field name="VALUE_DATE" class="java.util.Date">
+		<property name="com.jaspersoft.studio.field.name" value="VALUE_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="VALUE_DATE"/>
+	</field>
+	<field name="COLUMN_39" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ACCT_NUM"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCT_NUM"/>
+	</field>
+	<field name="ACCT_BAL" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="ACCT_BAL"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCT_BAL"/>
+	</field>
+	<field name="ACCT_CLS_DATE" class="java.util.Date">
+		<property name="com.jaspersoft.studio.field.name" value="ACCT_CLS_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCT_CLS_DATE"/>
+	</field>
+	<field name="ACCT_CLS_FLG" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ACCT_CLS_FLG"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCT_CLS_FLG"/>
+	</field>
+	<field name="COLUMN_43" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ACCT_CRNCY"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCT_CRNCY"/>
+	</field>
+	<field name="COLUMN_44" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ACCT_NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCT_NAME"/>
+	</field>
+	<field name="ACCT_OPEN_DATE" class="java.util.Date">
+		<property name="com.jaspersoft.studio.field.name" value="ACCT_OPEN_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCT_OPEN_DATE"/>
+	</field>
+	<field name="ACCT_PARTITION" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ACCT_PARTITION"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCT_PARTITION"/>
+	</field>
+	<field name="ACCT_STATUS" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ACCT_STATUS"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCT_STATUS"/>
+	</field>
+	<field name="ACCT_TYPE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ACCT_TYPE"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCT_TYPE"/>
+	</field>
+	<field name="ADD_DET_FLG" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ADD_DET_FLG"/>
+		<property name="com.jaspersoft.studio.field.label" value="ADD_DET_FLG"/>
+	</field>
+	<field name="AUTH_TIME" class="java.util.Date">
+		<property name="com.jaspersoft.studio.field.name" value="AUTH_TIME"/>
+		<property name="com.jaspersoft.studio.field.label" value="AUTH_TIME"/>
+	</field>
+	<field name="AUTH_USER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="AUTH_USER"/>
+		<property name="com.jaspersoft.studio.field.label" value="AUTH_USER"/>
+	</field>
+	<field name="BANK_ACC_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BANK_ACC_NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="BANK_ACC_NAME"/>
+	</field>
+	<field name="BANK_REMARKS" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BANK_REMARKS"/>
+		<property name="com.jaspersoft.studio.field.label" value="BANK_REMARKS"/>
+	</field>
+	<field name="COLUMN_54" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BRANCH_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="BRANCH_ID"/>
+	</field>
+	<field name="CLASSIFICATION" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CLASSIFICATION"/>
+		<property name="com.jaspersoft.studio.field.label" value="CLASSIFICATION"/>
+	</field>
+	<field name="CR_AMT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="CR_AMT"/>
+		<property name="com.jaspersoft.studio.field.label" value="CR_AMT"/>
+	</field>
+	<field name="CRNCY_CODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CRNCY_CODE"/>
+		<property name="com.jaspersoft.studio.field.label" value="CRNCY_CODE"/>
+	</field>
+	<field name="COLUMN_58" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="DEL_FLG"/>
+		<property name="com.jaspersoft.studio.field.label" value="DEL_FLG"/>
+	</field>
+	<field name="DR_AMT" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="DR_AMT"/>
+		<property name="com.jaspersoft.studio.field.label" value="DR_AMT"/>
+	</field>
+	<field name="ENTITY_FLG" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ENTITY_FLG"/>
+		<property name="com.jaspersoft.studio.field.label" value="ENTITY_FLG"/>
+	</field>
+	<field name="COLUMN_61" class="java.util.Date">
+		<property name="com.jaspersoft.studio.field.name" value="ENTRY_TIME"/>
+		<property name="com.jaspersoft.studio.field.label" value="ENTRY_TIME"/>
+	</field>
+	<field name="COLUMN_62" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ENTRY_USER"/>
+		<property name="com.jaspersoft.studio.field.label" value="ENTRY_USER"/>
+	</field>
+	<field name="GL_CODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="GL_CODE"/>
+		<property name="com.jaspersoft.studio.field.label" value="GL_CODE"/>
+	</field>
+	<field name="GL_DESC" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="GL_DESC"/>
+		<property name="com.jaspersoft.studio.field.label" value="GL_DESC"/>
+	</field>
+	<field name="GLSH_CODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="GLSH_CODE"/>
+		<property name="com.jaspersoft.studio.field.label" value="GLSH_CODE"/>
+	</field>
+	<field name="GLSH_DESC" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="GLSH_DESC"/>
+		<property name="com.jaspersoft.studio.field.label" value="GLSH_DESC"/>
+	</field>
+	<field name="GSTIN" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="GSTIN"/>
+		<property name="com.jaspersoft.studio.field.label" value="GSTIN"/>
+	</field>
+	<field name="MOBILE_NO" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="MOBILE_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="MOBILE_NO"/>
+	</field>
+	<field name="COLUMN_69" class="java.util.Date">
+		<property name="com.jaspersoft.studio.field.name" value="MODIFY_TIME"/>
+		<property name="com.jaspersoft.studio.field.label" value="MODIFY_TIME"/>
+	</field>
+	<field name="COLUMN_70" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="MODIFY_USER"/>
+		<property name="com.jaspersoft.studio.field.label" value="MODIFY_USER"/>
+	</field>
+	<field name="NATIONAL_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="NATIONAL_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="NATIONAL_ID"/>
+	</field>
+	<field name="OWN_REMARKS" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="OWN_REMARKS"/>
+		<property name="com.jaspersoft.studio.field.label" value="OWN_REMARKS"/>
+	</field>
+	<field name="OWN_TYPE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="OWN_TYPE"/>
+		<property name="com.jaspersoft.studio.field.label" value="OWN_TYPE"/>
+	</field>
+	<field name="PAN_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="PAN_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="PAN_NO"/>
+	</field>
+	<field name="PASSPORT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="PASSPORT"/>
+		<property name="com.jaspersoft.studio.field.label" value="PASSPORT"/>
+	</field>
+	<field name="REF_CODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="REF_CODE"/>
+		<property name="com.jaspersoft.studio.field.label" value="REF_CODE"/>
+	</field>
+	<field name="COLUMN_77" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="REF_CRNCY"/>
+		<property name="com.jaspersoft.studio.field.label" value="REF_CRNCY"/>
+	</field>
+	<field name="REF_CRNCY_BAL" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="REF_CRNCY_BAL"/>
+		<property name="com.jaspersoft.studio.field.label" value="REF_CRNCY_BAL"/>
+	</field>
+	<field name="REF_DESC" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="REF_DESC"/>
+		<property name="com.jaspersoft.studio.field.label" value="REF_DESC"/>
+	</field>
+	<field name="RPT_CODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="RPT_CODE"/>
+		<property name="com.jaspersoft.studio.field.label" value="RPT_CODE"/>
+	</field>
+	<field name="SCHM_CODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SCHM_CODE"/>
+		<property name="com.jaspersoft.studio.field.label" value="SCHM_CODE"/>
+	</field>
+	<field name="SCHM_TYPE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="SCHM_TYPE"/>
+		<property name="com.jaspersoft.studio.field.label" value="SCHM_TYPE"/>
+	</field>
+	<field name="VENDOR_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="VENDOR_NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="VENDOR_NAME"/>
+	</field>
+	<field name="VENDOR_TYPE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="VENDOR_TYPE"/>
+		<property name="com.jaspersoft.studio.field.label" value="VENDOR_TYPE"/>
+	</field>
+	<field name="ACCOUNT_STATE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ACCOUNT_STATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCOUNT_STATE"/>
+	</field>
+	<field name="ENCODED_KEY" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ENCODED_KEY"/>
+		<property name="com.jaspersoft.studio.field.label" value="ENCODED_KEY"/>
+	</field>
+	<field name="ACCOUNT_HOLDERKEY" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ACCOUNT_HOLDERKEY"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACCOUNT_HOLDERKEY"/>
+	</field>
+	<field name="CUSTOMER_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CUSTOMER_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="CUSTOMER_ID"/>
+	</field>
+	<field name="CUSTOMER_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CUSTOMER_NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="CUSTOMER_NAME"/>
+	</field>
+	<field name="MODIFY_FLG" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="MODIFY_FLG"/>
+		<property name="com.jaspersoft.studio.field.label" value="MODIFY_FLG"/>
+	</field>
+	<field name="VERIFY_FLG" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="VERIFY_FLG"/>
+		<property name="com.jaspersoft.studio.field.label" value="VERIFY_FLG"/>
+	</field>
+	<field name="PREVIOUS_BALANCE_WITH_RUNNING" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="PREVIOUS_BALANCE_WITH_RUNNING"/>
+		<property name="com.jaspersoft.studio.field.label" value="PREVIOUS_BALANCE_WITH_RUNNING"/>
+	</field>
+	<field name="TRAN_DATE_DAO" class="java.util.Date">
+		<property name="com.jaspersoft.studio.field.name" value="TRAN_DATE_DAO"/>
+		<property name="com.jaspersoft.studio.field.label" value="TRAN_DATE_DAO"/>
+	</field>
+	<field name="TRAN_BAL_DAO" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="TRAN_BAL_DAO"/>
+		<property name="com.jaspersoft.studio.field.label" value="TRAN_BAL_DAO"/>
+	</field>
+	<variable name="Balance" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{Balance}]]></variableExpression>
+	</variable>
+	<variable name="DebitBalance" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$F{PART_TRAN_TYPE}.equals("debit") ? $F{TRAN_AMT} : new java.math.BigDecimal("0.00")]]></variableExpression>
+	</variable>
+	<variable name="CreditBalance" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[$V{CreditBalance}]]></variableExpression>
+	</variable>
+	<variable name="RunningBalance" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[new java.math.BigDecimal(
+    ($V{RunningBalance} == null) 
+        ? (($F{TRAN_BAL_DAO} == null) 
+            ? "0.00" 
+            : $F{TRAN_BAL_DAO}.toString()
+          ) 
+        : $V{RunningBalance}.toString()
+).add(
+    ("credit".equalsIgnoreCase($F{PART_TRAN_TYPE})) 
+        ? (($F{TRAN_AMT} == null) 
+            ? new java.math.BigDecimal("0.00") 
+            : $F{TRAN_AMT})
+        : new java.math.BigDecimal("0.00")
+).subtract(
+    ("debit".equalsIgnoreCase($F{PART_TRAN_TYPE})) 
+        ? (($F{TRAN_AMT} == null) 
+            ? new java.math.BigDecimal("0.00") 
+            : $F{TRAN_AMT})
+        : new java.math.BigDecimal("0.00")
+)]]></variableExpression>
+	</variable>
+	<variable name="PreviousBalance" class="java.math.BigDecimal">
+		<variableExpression><![CDATA[($F{PREVIOUS_BALANCE_WITH_RUNNING} == null) ? new java.math.BigDecimal("0.00") : $F{PREVIOUS_BALANCE_WITH_RUNNING}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40" splitType="Stretch">
+			<staticText>
+				<reportElement x="790" y="20" width="100" height="20" uuid="3a7de3e5-e0c5-4c6c-8306-162a006a608d">
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="true"/>
+					<paragraph leftIndent="0" rightIndent="2"/>
+				</textElement>
+				<text><![CDATA[Credits]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="890" y="20" width="100" height="20" uuid="0ff0687a-f285-4377-a787-f401557ca5e9">
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="true"/>
+					<paragraph leftIndent="0" rightIndent="2"/>
+				</textElement>
+				<text><![CDATA[Balance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="230" y="20" width="360" height="20" uuid="e7ad53a8-f62e-4763-a2dd-9d8322296308">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Tran Particulars]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="690" y="20" width="100" height="20" uuid="1a376d58-e214-4a0a-924c-122f72abd460">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="true"/>
+					<paragraph leftIndent="0" rightIndent="2"/>
+				</textElement>
+				<text><![CDATA[Debits]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="990" y="20" width="100" height="20" uuid="48782e2c-3d33-46ce-9557-94794237369c">
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="true"/>
+					<paragraph leftIndent="0" rightIndent="2"/>
+				</textElement>
+				<text><![CDATA[Indicator]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="20" width="100" height="20" uuid="bfff4c68-131b-4571-b721-96fbcf2b7c27">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Tran Id]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="590" y="20" width="100" height="20" uuid="a9eda292-451a-4670-ac0c-974334049a05">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Currency]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="20" width="130" height="20" uuid="44be3337-0a4f-46e6-87e8-50626c576646">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Tran Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="130" height="20" uuid="1f327fb1-ea12-41b4-bee6-06d48ef1baba">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Account No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="590" y="0" width="200" height="20" uuid="2f7c82d2-6fc6-462e-b454-191fa77137b2">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<text><![CDATA[Account Name]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="130" y="0" width="460" height="20" uuid="380a4526-2864-43b2-869e-0e5c358999dc">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ACCT_NUM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="790" y="0" width="300" height="20" uuid="c3392404-8af2-4430-876b-9c2dad82d1dd">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ACCT_NAME}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement x="230" y="0" width="360" height="30" uuid="b1be9f2f-1018-4404-bb62-acfba4abc114">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TRAN_PARTICULAR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="890" y="0" width="100" height="30" uuid="17d3b3ee-376f-494a-820e-9830e4d882b7">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("#,##0.00").format($V{RunningBalance}.abs())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="790" y="0" width="100" height="30" uuid="75ced870-e31b-4bc5-8783-682f9b7cbb88">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PART_TRAN_TYPE}.equals("Credit") ? new java.text.DecimalFormat("#,##0.00").format($F{TRAN_AMT}) : "0.00"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="990" y="0" width="100" height="30" uuid="7f3fda39-f9bd-421b-9e07-8695b6341660">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{RunningBalance}.compareTo(java.math.BigDecimal.ZERO) < 0 ? "DR" : "CR"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="590" y="0" width="100" height="30" uuid="b6c8ba47-6806-4fdc-a051-b508ecb195fe">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ACCT_CRNCY}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="690" y="0" width="100" height="30" uuid="2e9a4d35-cd6b-43be-a241-1ea7288e92b3">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PART_TRAN_TYPE}.equals("Debit") ? new java.text.DecimalFormat("#,##0.00").format($F{TRAN_AMT}) : "0.00"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="0" width="100" height="30" uuid="dd8b8f7b-d37e-4584-aa55-0091e7e82a63">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TRAN_ID} + " / " + $F{PART_TRAN_ID}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MM-yyyy">
+				<reportElement x="0" y="0" width="130" height="30" uuid="4501bb14-9a9b-4380-b483-481182adfa4e">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TRAN_DATE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
