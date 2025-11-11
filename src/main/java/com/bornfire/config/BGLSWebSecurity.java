@@ -307,6 +307,8 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
                 request.getSession().setAttribute("SCREEN_ACCESS_PENALTY_ACCRUAL_REPORT", (access_role != null && access_role.getPenalty_accrual_report() != null ) ? access_role.getPenalty_accrual_report() : 'N' );
                 request.getSession().setAttribute("SCREEN_ACCESS_RECOVERY_REPORT", (access_role != null && access_role.getRecovery_report() != null ) ? access_role.getRecovery_report() : 'N' );
                 request.getSession().setAttribute("SCREEN_ACCESS_DEMAND_GENERATION", (access_role != null && access_role.getDemand_generation() != null ) ? access_role.getDemand_generation() : 'N' );
+                request.getSession().setAttribute("SCREEN_ACCESS_TRANSACTION_ACCOUNTS", (access_role != null && access_role.getTransaction_accounts() != null ) ? access_role.getTransaction_accounts() : 'N' );
+                request.getSession().setAttribute("SCREEN_ACCESS_TRANSACTION_REVERSAL", (access_role != null && access_role.getTransaction_reversal() != null ) ? access_role.getTransaction_reversal() : 'N' );
 
 				audit.insertUserAudit(user.getUserid(), user.getUsername(), "LOGIN", "LOGGED IN SUCCESSFULLY","BGLS_USER_PROFILE_TABLE", "LOGIN ");
 				response.sendRedirect("Dashboard");

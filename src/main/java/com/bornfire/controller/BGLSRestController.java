@@ -12880,4 +12880,84 @@ public class BGLSRestController {
 		return new ResponseEntity<>(pdfData, headers, HttpStatus.OK);
 	}
 
+	
+	
+	@Autowired
+    BglsTransactionAccountsRepo bglsTransactionAccountsRepo;
+
+
+	@PostMapping("/TransactionsAccounts/save")
+	@ResponseBody
+	public String save(@RequestBody BglsTransactionAccountsEntity account) {
+	    try {
+	        if (account.getId() != null) {
+	            Optional<BglsTransactionAccountsEntity> existingOpt = bglsTransactionAccountsRepo.findById(account.getId());
+	            if (existingOpt.isPresent()) {
+	                BglsTransactionAccountsEntity existing = existingOpt.get();
+
+	                existing.setProductKey(account.getProductKey());
+	                existing.setGlCode(account.getGlCode());
+	                existing.setGlDesc(account.getGlDesc());
+	                existing.setSchmCode(account.getSchmCode());
+	                existing.setSchmDesc(account.getSchmDesc());
+	                existing.setGlshCode(account.getGlshCode());
+	                existing.setGlshDesc(account.getGlshDesc());
+	                existing.setInterestIncome(account.getInterestIncome());
+	                existing.setInterestReceivable(account.getInterestReceivable());
+	                existing.setFeesIncome(account.getFeesIncome());
+	                existing.setPenaltyIncome(account.getPenaltyIncome());
+	                existing.setCollectionAccount(account.getCollectionAccount());
+	                existing.setLoanParkingAccount(account.getLoanParkingAccount());
+	                existing.setDelFlg("N");
+	                existing.setModifyFlg("N");
+	                existing.setVerifyFlg("N");
+
+	                bglsTransactionAccountsRepo.save(existing);
+	                return "Record updated successfully.";
+	            }
+	        }
+
+	        // Add new record
+	        account.setEntryTime(new Date());
+	        account.setDelFlg("N");
+	        account.setModifyFlg("N");
+	        account.setVerifyFlg("N");
+	        bglsTransactionAccountsRepo.save(account);
+	        return "Record added successfully.";
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return "Error: " + e.getMessage();
+	    }
+	}
+
+	
+
+    @PostMapping("/TransactionsAccounts/verify")
+    @ResponseBody
+    public String verifyTransaction(@RequestParam("id") Long id) {
+        Optional<BglsTransactionAccountsEntity> accountOpt = bglsTransactionAccountsRepo.findById(id);
+        if (accountOpt.isPresent()) {
+            BglsTransactionAccountsEntity acc = accountOpt.get();
+            acc.setModifyFlg("Y");
+            acc.setVerifyFlg("Y");
+            bglsTransactionAccountsRepo.save(acc);
+            return "Transaction verified successfully.";
+        } else {
+            return "Transaction not found.";
+        }
+    }
+
+    @PostMapping("/TransactionsAccounts/delete")
+    public String delete(@RequestParam Long id, HttpServletRequest req) {
+    	Optional<BglsTransactionAccountsEntity> optionalAccount = bglsTransactionAccountsRepo.findById(id);
+        
+        if (optionalAccount.isPresent()) {
+            BglsTransactionAccountsEntity account = optionalAccount.get();
+            account.setDelFlg("Y"); // mark as deleted
+            bglsTransactionAccountsRepo.save(account); // update record instead of deleting
+        }else {
+            return "Transaction not found.";
+        }
+        return "Transaction Deleted Successfully";
+    }
 }

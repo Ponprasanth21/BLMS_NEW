@@ -110,8 +110,28 @@ public class Access_Role_Entity {
     private String demand_generation;
     private String end_of_month_report;
     private String credit_facility_report;
+    private String transaction_accounts;
+    private String transaction_reversal;
     
-    public String getInterest_accrual_report() {
+    
+    
+    public String getTransaction_reversal() {
+		return transaction_reversal;
+	}
+
+	public void setTransaction_reversal(String transaction_reversal) {
+		this.transaction_reversal = transaction_reversal;
+	}
+
+	public String getTransaction_accounts() {
+		return transaction_accounts;
+	}
+
+	public void setTransaction_accounts(String transaction_accounts) {
+		this.transaction_accounts = transaction_accounts;
+	}
+
+	public String getInterest_accrual_report() {
 		return interest_accrual_report;
 	}
 

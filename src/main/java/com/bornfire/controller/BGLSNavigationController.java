@@ -142,6 +142,8 @@ import com.bornfire.entities.paystructureentity;
 import com.bornfire.entities.paystructurerep;
 import com.bornfire.services.*;
 import com.monitorjbl.xlsx.exceptions.ParseException;
+import com.bornfire.entities.BglsTransactionAccountsEntity;
+import com.bornfire.entities.BglsTransactionAccountsRepo;
 
 import net.sf.jasperreports.engine.JRException;
 
@@ -5359,6 +5361,40 @@ public class BGLSNavigationController {
         }
         return "DemandGenerationreport.html";
     }
+    
+    
+
+    @Autowired
+       private BglsTransactionAccountsRepo bglsTransactionAccountsRepo;
+       
+       
+       @RequestMapping(value = "TransactionsAccounts", method = { RequestMethod.GET, RequestMethod.POST })
+       public String transactionsAccounts(@RequestParam(required = false) String formmode,
+                                          @RequestParam(required = false) Long id,
+                                          Model md, HttpServletRequest req) {
+           if (formmode == null || formmode.equals("list")) {
+               md.addAttribute("formmode", "list");
+               md.addAttribute("list", bglsTransactionAccountsRepo.getList()); 
+           } else if (formmode.equals("add")) {
+               md.addAttribute("formmode", "add");
+               md.addAttribute("account", new BglsTransactionAccountsEntity());
+           } else if (formmode.equals("modify") && id != null) {
+               md.addAttribute("formmode", "modify");
+               md.addAttribute("account", bglsTransactionAccountsRepo.findById(id).orElse(null));
+           } else if (formmode.equals("view") && id != null) {
+               md.addAttribute("formmode", "view");
+               md.addAttribute("account", bglsTransactionAccountsRepo.findById(id).orElse(null));
+           } else if (formmode.equals("verify") && id != null) {
+               md.addAttribute("formmode", "verify");
+               md.addAttribute("account", bglsTransactionAccountsRepo.findById(id).orElse(null));
+           } else if (formmode.equals("delete") && id != null) {
+           	md.addAttribute("formmode", "delete");
+               md.addAttribute("account", bglsTransactionAccountsRepo.findById(id).orElse(null));
+           }
+
+
+           return "TransactionsAccounts.html";
+       }
 
 
 }

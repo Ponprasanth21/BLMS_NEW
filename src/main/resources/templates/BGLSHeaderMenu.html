@@ -717,10 +717,15 @@
 				</ul>
 			</li>
 
-			<li class="nav-item" th:if="${session.SCREEN_ACCESS_LOAN_MAINTENANCE} == 'Y' "><a
+			<li class="nav-item" th:if="${session.SCREEN_ACCESS_TRANSACTION_REVERSAL} == 'Y' "><a
 					class="nav-link nav-link-collapse pl-3 " id="ReversalTransactions" href="#"
 					onclick="contentLoad(this)">Transaction
 					Reversal</a></li>
+			
+			<li class="nav-item" th:if="${session.SCREEN_ACCESS_TRANSACTION_ACCOUNTS} == 'Y' "><a
+					class="nav-link nav-link-collapse pl-3 " id="TransactionsAccounts" href="#"
+					onclick="contentLoad(this)">Transaction
+					Accounts</a></li>
 
 			<!--<li class="nav-item"><a class="nav-link nav-link-collapse pl-3" href="#" id="hasSubItems"
 					data-toggle="collapse" data-target="#collapseSubItems3" aria-controls="collapseSubItems3"
