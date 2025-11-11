@@ -2963,6 +2963,86 @@
 			});
 		}
 	</script>
+	<script>
+		function reversubmit() {
+			let originalData = [];
+			let reversalData = [];
+			let newData = [];
+
+			// ORIGINAL TRANSACTION
+			$('#placelist11 tr').each(function () {
+				let row = $(this);
+				let data = {
+					tran_date: row.find('td:eq(0)').text().trim(),
+					tran_id: row.find('td:eq(1)').text().trim(),
+					part_tran_type: row.find('td:eq(2)').text().trim(),
+					acct_crncy: row.find('td:eq(3)').text().trim(),
+					tran_amt: row.find('td:eq(4)').text().trim().replace(/,/g, ''),
+					acct_num: row.find('td:eq(5)').text().trim(),
+					acct_name: row.find('td:eq(6)').text().trim(),
+					tran_status: row.find('td:eq(7)').text().trim()
+				};
+				originalData.push(data);
+			});
+
+			// REVERSAL TRANSACTION
+			$('#placelist21 tr').each(function () {
+				let row = $(this);
+				let data = {
+					tran_date: row.find('td:eq(0)').text().trim(),
+					tran_id: row.find('td:eq(1)').text().trim(),
+					part_tran_type: row.find('td:eq(2)').text().trim(),
+					acct_crncy: row.find('td:eq(3)').text().trim(),
+					tran_amt: row.find('td:eq(4)').text().trim().replace(/,/g, ''),
+					acct_num: row.find('td:eq(5)').text().trim(),
+					acct_name: row.find('td:eq(6)').text().trim(),
+					tran_status: row.find('td:eq(7)').text().trim()
+				};
+				reversalData.push(data);
+			});
+
+			// NEW TRANSACTION (input fields for tran_amt)
+			$('#placelist31 tr').each(function () {
+				let row = $(this);
+				let data = {
+					tran_date: row.find('td:eq(0)').text().trim(),
+					tran_id: row.find('td:eq(1)').text().trim(),
+					part_tran_type: row.find('td:eq(2)').text().trim(),
+					acct_crncy: row.find('td:eq(3)').text().trim(),
+					tran_amt: row.find('td:eq(4) input').val().trim().replace(/,/g, ''),
+					acct_num: row.find('td:eq(5)').text().trim(),
+					acct_name: row.find('td:eq(6)').text().trim(),
+					tran_status: row.find('td:eq(7)').text().trim()
+				};
+				newData.push(data);
+			});
+
+			// Combine all
+			let payload = {
+				originalTransactions: originalData,
+				reversalTransactions: reversalData,
+				newTransactions: newData
+			};
+
+			console.log("Submitting Data:", payload);
+
+			// AJAX call
+			$.ajax({
+				type: "POST",
+				url: "/ASPIRA/submitreversaldata", // your REST controller endpoint
+				contentType: "application/json",
+				data: JSON.stringify(payload),
+				success: function (response) {
+					alert("Reversal submitted successfully!");
+					console.log(response);
+				},
+				error: function (xhr, status, error) {
+					alert("Error submitting reversal: " + xhr.responseText);
+					console.error(error);
+				}
+			});
+		}
+	</script>
 </head>
 
 <body>
@@ -4630,10 +4710,9 @@
 						</div>
 						<div class="card-footer text-center" style="background-color: #e9ecef">
 							<button class="btn-primary big-btn" onclick="Home();">Home</button>
+							<button class="btn-primary big-btn" onclick="reversubmit();">Submit</button>
 							<button class="btn-primary big-btn" onclick="Back();">Back</button>
 						</div>
-
-
 						<div class="card-body">
 							<div class="table-responsive">
 								<table class="table  table-bordered  table-hover table-sm"

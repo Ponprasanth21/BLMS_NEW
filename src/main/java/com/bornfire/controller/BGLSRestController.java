@@ -12960,4 +12960,50 @@ public class BGLSRestController {
         }
         return "Transaction Deleted Successfully";
     }
+    
+	@PostMapping("/submitreversaldata")
+	public ResponseEntity<String> submitreversaldata(@RequestBody Map<String, Object> payload) {
+
+	    System.out.println("===== REVERSAL DATA RECEIVED =====");
+
+	    // 1️⃣ Original Transactions
+	    List<Map<String, Object>> originalList = (List<Map<String, Object>>) payload.get("originalTransactions");
+	    System.out.println("---- ORIGINAL TRANSACTIONS ----");
+	    if (originalList != null && !originalList.isEmpty()) {
+	        int i = 1;
+	        for (Map<String, Object> row : originalList) {
+	            System.out.println("Row " + i++ + ": " + row);
+	        }
+	    } else {
+	        System.out.println("No Original Transactions Found");
+	    }
+
+	    // 2️⃣ Reversal Transactions
+	    List<Map<String, Object>> reversalList = (List<Map<String, Object>>) payload.get("reversalTransactions");
+	    System.out.println("---- REVERSAL TRANSACTIONS ----");
+	    if (reversalList != null && !reversalList.isEmpty()) {
+	        int i = 1;
+	        for (Map<String, Object> row : reversalList) {
+	            System.out.println("Row " + i++ + ": " + row);
+	        }
+	    } else {
+	        System.out.println("No Reversal Transactions Found");
+	    }
+
+	    // 3️⃣ New Transactions
+	    List<Map<String, Object>> newList = (List<Map<String, Object>>) payload.get("newTransactions");
+	    System.out.println("---- NEW TRANSACTIONS ----");
+	    if (newList != null && !newList.isEmpty()) {
+	        int i = 1;
+	        for (Map<String, Object> row : newList) {
+	            System.out.println("Row " + i++ + ": " + row);
+	        }
+	    } else {
+	        System.out.println("No New Transactions Found");
+	    }
+
+	    System.out.println("===== END OF REVERSAL DATA =====");
+
+	    return ResponseEntity.ok("Reversal submitted successfully");
+	}
 }

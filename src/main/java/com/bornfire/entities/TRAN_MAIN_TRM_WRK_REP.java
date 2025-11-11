@@ -305,7 +305,7 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 	@Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS aa WHERE aa.part_tran_id =?3 AND aa.tran_id =?1 AND aa.acct_num = ?2 ", nativeQuery = true)
 	TRAN_MAIN_TRM_WRK_ENTITY getValuepopvalues(String tran_id, String acct_num, String part_tran_id);
 
-	@Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS WHERE tran_id = ?1", nativeQuery = true)
+	@Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS WHERE tran_id = ?1 ORDER BY TRAN_DATE,TRAN_ID,PART_TRAN_ID", nativeQuery = true)
 	List<TRAN_MAIN_TRM_WRK_ENTITY> findByjournalvalues(String tran_id);
 
 	@Query(value = "SELECT tran_id, Part_tran_id FROM BGLS_TRM_WRK_TRANSACTIONS aa WHERE aa.acct_num = ?1 AND ROWNUM = 1", nativeQuery = true)
