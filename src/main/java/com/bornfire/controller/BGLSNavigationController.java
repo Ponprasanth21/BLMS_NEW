@@ -3320,6 +3320,15 @@ public class BGLSNavigationController {
         }
         return "InterestBatchJob";
     }
+    
+    @RequestMapping(value = "rebuild", method = { RequestMethod.GET, RequestMethod.POST })
+    public String rebuild(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
+
+        if (formmode == null || formmode.equals("list")) {
+            md.addAttribute("formmode", "list");
+        } 
+        return "Rebuild_Balance";
+    }
 
     @RequestMapping(value = "interestBatchJob", method = { RequestMethod.GET, RequestMethod.POST })
     public String interestBatchJob(@RequestParam(required = false) String formmode, Model model,

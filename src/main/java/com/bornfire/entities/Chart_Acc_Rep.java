@@ -320,8 +320,23 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 		    		    nativeQuery = true)
 		    		List<Object[]> getTransactionReport2ByDate(@Param("tranDate") String tranDate);
 
-
-
-
+			@Query(value = "SELECT " + "b.id AS ID, " + "b.loan_name AS LOAN_NAME "
+					+ "FROM BGLS_CHART_OF_ACCOUNTS_DEMO1 a "
+					+ "JOIN LOAN_ACCOUNT_MASTER_TBL_DEMO1 b ON a.encoded_key = b.encoded_key "
+					+ "LEFT JOIN LOAN_REPAYMENT_TBL_DEMO1 c ON b.encoded_key = c.parent_account_key "
+					+ "WHERE a.own_type = 'C' "
+					+ "AND (b.principal_balance + b.interest_balance + b.fees_balance + b.penalty_balance) - ABS(a.acct_bal) <> 0 "
+					+ "GROUP BY b.id, b.loan_name, b.principal_balance, b.interest_balance, b.fees_balance, b.penalty_balance, a.acct_bal "
+					+ "ORDER BY b.id", nativeQuery = true)
+			List<Object[]> getMismatchedAccounts();
+			
+			@Query(value = "SELECT DISTINCT " + "b.principal_balance, " + "b.interest_balance, " + "b.fees_balance, "
+					+ "b.penalty_balance, "
+					+ "(b.principal_balance + b.interest_balance + b.fees_balance + b.penalty_balance) AS total_balance "
+					+ "FROM BGLS_CHART_OF_ACCOUNTS_DEMO1 a "
+					+ "JOIN LOAN_ACCOUNT_MASTER_TBL_DEMO1 b ON a.encoded_key = b.encoded_key "
+					+ "LEFT JOIN LOAN_REPAYMENT_TBL_DEMO1 c ON b.encoded_key = c.parent_account_key "
+					+ "WHERE a.own_type = 'C' AND a.acct_num = :acctNum", nativeQuery = true)
+			List<Object[]> getAccountBalanceDetails(@Param("acctNum") String acctNum);
 
 }

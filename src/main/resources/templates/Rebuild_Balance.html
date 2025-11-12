@@ -1,0 +1,547 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<!--
+	CREATED BY : Aishwarya
+	DATE : 07-11-25
+    VERSION    : 01
+-->
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/ASPIRA/js/jquery.min.js"></script>
+<script src="/ASPIRA/js/jquery-ui.min.js"></script>
+<style>
+.modal {
+	display: none;
+	/* Hidden by default */
+	position: absolute;
+	/* Stay in place */
+	z-index: 1;
+	/* Sit on top */
+	padding-top: 100px;
+	/* Location of the box */
+	left: 0;
+	top: 0;
+	width: 100%;
+	/* Full width */
+	height: 100%;
+	/* Full height */
+	overflow: auto;
+	/* Enable scroll if needed */
+	background-color: rgb(0, 0, 0);
+	/* Fallback color */
+	background-color: rgba(0, 0, 0, 0.4);
+	/* Black w/ opacity */
+}
+
+.modal-header {
+	padding: 2px 16px;
+	background-color: #BBC3CB;
+	color: balck;
+}
+
+.modal-body {
+	padding: 2px 16px;
+}
+
+.modal-footer {
+	padding: 2px 16px;
+	background-color: #BBC3CB;
+	color: black;
+}
+
+/* Modal Content */
+.modal-content {
+	background-color: #fefefe;
+	margin: auto;
+	/* //padding: 20px; */
+	border: 1px solid #888;
+	width: 80%;
+	height: 0%;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0
+		rgba(0, 0, 0, 0.19);
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 0.4s;
+	animation-name: animatetop;
+	animation-duration: 0.4s
+}
+
+body {
+	font-size: 0.8rem;
+}
+
+.btn {
+	line-height: 0.5rem;
+}
+
+.container-manager {
+	width: 83.5%;
+	padding-right: 15px;
+	padding-left: 15px;
+	margin-right: auto;
+	margin-left: 17.3%;
+	margin-top: 80px;
+}
+
+.table .thead-light th {
+	color: #495057;
+	background-color: #e9ecef;
+	border-color: #dee2e6;
+	width: 23px;
+}
+
+.tablinks {
+	background-color: #f2f2f2;
+	color: #000;
+}
+
+.tablinks.active {
+	background-color: #007bff;
+	color: #fff;
+}
+
+.tab {
+	overflow: hidden;
+	border: 1px solid #ccc;
+	background-color: #f1f1f1;
+}
+
+.scroll {
+	max-height: 60vh;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+.tab button {
+	background-color: inherit;
+	float: left;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 14px 16px;
+	transition: 0.3s;
+	font-size: 17px;
+}
+
+.tab button:hover {
+	background-color: #ddd;
+}
+
+.tabcontent {
+	display: none;
+	padding: 6px 12px;
+	border: 0px solid #ccc;
+	border-top: none;
+}
+
+#myPieChart {
+	width: 100px;
+	height: 100px;
+}
+
+.input-group-text {
+	cursor: pointer;
+}
+
+#eyeIcon {
+	font-size: 1.2rem;
+}
+
+input, select {
+	width: 75% !important;
+	padding: 2px;
+}
+
+.mmdd {
+	height: 25px;
+	width: 35% !important;
+}
+
+.ml-2 {
+	margin-left: 1px;
+}
+
+button:focus {
+	outline: unset !important;
+	border: unset !important;
+}
+
+.borderRemove {
+	border: none;
+}
+</style>
+<style>
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 70%;
+	height: 20%;
+	/* 	margin-left: 200px; */
+}
+
+.modal-content {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 70%;
+	height: 20%;
+	/* 	margin-left: 200px; */
+}
+
+.modal-pass {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 40%;
+	height: 25%;
+	margin-left: 400PX;
+	margin-right: auto;
+	border-radius: 10px;
+	box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+	font-family: Arial, sans-serif;
+}
+
+.close {
+	color: red;
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.close:hover, .close:focus {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+}
+</style>
+<style>
+.password-info {
+	visibility: hidden;
+	width: 320px;
+	background-color: #333;
+	color: #fff;
+	text-align: left;
+	border-radius: 10px;
+	padding: 10px;
+	position: absolute;
+	z-index: 1;
+	top: calc(100% + 10px);
+	left: 50%;
+	transform: translateX(-50%);
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+input:hover+.password-info {
+	visibility: visible;
+	opacity: 0.8;
+}
+
+.filterable .filters input[disabled] {
+	background-color: transparent;
+	border: none;
+	cursor: auto;
+	box-shadow: none;
+	padding: 0;
+	height: auto;
+}
+
+.filterable .filters input[disabled]::-webkit-input-placeholder {
+	color: #333;
+}
+
+.filterable .filters input[disabled]::-moz-placeholder {
+	color: #333;
+}
+
+.filterable .filters input[disabled]:-ms-input-placeholder {
+	color: #333;
+}
+
+.big-btn {
+	font-size: 16px;
+}
+</style>
+<!--  model style-->
+<style>
+#datacancel, #datacancel * {
+	box-sizing: content-box !important;
+}
+
+#SuccesPopUp, #SuccesPopUp * {
+	box-sizing: content-box !important;
+}
+
+#datacancel .modal-dialog-centered.modal-dialog-scrollable {
+	justify-content: flex-start !important;
+}
+
+#SuccesPopUp .modal-dialog-centered.modal-dialog-scrollable {
+	justify-content: flex-start !important;
+}
+</style>
+<script>
+function home() {
+	location.href = '/Dashboard';
+}
+function back() {
+	window.history.back();
+}
+</script>
+<script>
+	function toggleFilterOptions(event) {
+		event.stopPropagation(); // prevent click from bubbling to document
+		const menu = document.getElementById('filterOptions');
+		menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
+	}
+
+	function handleFilter(value) {
+		alert("Selected Filter: " + value);
+		document.getElementById('filterOptions').style.display = 'none';
+	}
+
+	// Close dropdown when clicking outside
+	document.addEventListener('click', function (event) {
+		const menu = document.getElementById('filterOptions');
+		if (menu && !menu.contains(event.target) && event.target.className !== 'fa fa-filter text-secondary') {
+			menu.style.display = 'none';
+		}
+	});
+</script>
+<script>
+function searchData() {
+    document.getElementById('loadingModal').style.display = 'flex';
+    $.ajax({
+        url: './getMismatchedAccounts',
+        type: 'GET',
+        success: function(data) {
+            document.getElementById('loadingModal').style.display = 'none';
+            let tbody = $('#mismatchTable tbody');
+            tbody.empty();
+
+            if (!data || data.length === 0) {
+                tbody.append('<tr><td colspan="3" class="text-center text-muted">No mismatched accounts found.</td></tr>');
+            } else {
+                data.forEach(row => {
+                    let acctNum = row.acct_num;
+                    let acctName = row.acct_name;
+
+                    tbody.append(`
+                        <tr>
+                            <td>${acctNum}</td>
+                            <td>${acctName}</td>
+                            <td class="text-center">
+                                <input type="radio" name="selectedAcct" value="${acctNum}" 
+                                	onclick="handleSelect('${acctNum}', '${acctName}')">
+                            </td>
+                        </tr>
+                    `);
+                });
+            }
+
+            $('#mismatchModal').modal('show');
+        },
+        error: function() {
+            document.getElementById('loadingModal').style.display = 'none';
+            $("#alertmsg").text("Failed to load mismatched accounts.");
+            $('#alert').modal("toggle");
+        }
+    });
+}
+
+// ✅ When a radio button is clicked
+function handleSelect(acctNum, acctName) {
+    // Close the mismatch modal
+    $('#mismatchModal').modal('hide');
+
+    // Display selected account info in header (formatted)
+    $('#selectedAccountInfo').html(`
+        <div>
+            <strong>Acct Num  :</strong> <span style="color:#007bff;">${acctNum}</span><br>
+            <strong>Acct Name :</strong> <span>${acctName}</span>
+        </div>
+    `);
+
+    // Fetch the account details for selected acctNum
+    fetchAccountDetails(acctNum);
+}
+
+//✅ Fetch account details from backend and update the main table
+function fetchAccountDetails(acctNum) {
+    $.get('./getAccountBalanceDetails', { acctNum }, function(data) {
+        if (data) {
+            $('#usertable1').html(`
+                <tr>
+                    <td>Principal Balance</td>
+                    <td style="text-align:right">${data.principal_balance != null ? Number(data.principal_balance).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
+                    <td style="text-align:right">-</td>
+                    <td style="text-align:right"></td>
+                </tr>
+                <tr>
+                    <td>Interest Balance</td>
+                    <td style="text-align:right">${data.interest_balance != null ? Number(data.interest_balance).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
+                    <td style="text-align:right">-</td>
+                    <td style="text-align:right"></td>
+                </tr>
+                <tr>
+                    <td>Fees Balance</td>
+                    <td style="text-align:right">${data.fee_balance != null ? Number(data.fee_balance).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
+                    <td style="text-align:right">-</td>
+                    <td style="text-align:right"></td>
+                </tr>
+                <tr>
+                    <td>Penalty Balance</td>
+                    <td style="text-align:right">${data.penalty_balance != null ? Number(data.penalty_balance).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
+                    <td style="text-align:right">-</td>
+                    <td style="text-align:right"></td>
+                </tr>
+                <tr>
+                    <td><strong>Total Balance</strong></td>
+                    <td style="text-align:right"><strong>${data.total_balance != null ? Number(data.total_balance).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</strong></td>
+                    <td style="text-align:right"><strong>${data.total_balance != null ? Number(data.total_balance).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</strong></td>
+                    <td style="text-align:right"></td>
+                </tr>
+            `);
+        } else {
+            $('#usertable1').html('<tr><td colspan="5" class="text-center text-muted">No data found</td></tr>');
+        }
+    }).fail(() => {
+        $('#usertable1').html('<tr><td colspan="5" class="text-center text-danger">Error fetching account details</td></tr>');
+    });
+}
+</script>
+</head>
+<title>ASPIRA</title>
+<body>
+	<div class="col-sm-2">
+		<div th:insert="BGLSHeaderMenu :: header"></div>
+	</div>
+<!------------------------------------------------------------ Start --------------------------------------------------------->
+	<div class="container-manager">
+		<div class="row">
+			<div class="col-sm-11 ml-5 mt-2">
+<!------------------------------------------------------------ List --------------------------------------------------------->
+				<div th:if="${formmode}=='list'">
+					<div class="card w-100 border panel panel-primary filterable">
+						<div class="card-header"
+							style="background-color: #e9ecef; height: 60px">
+							<div class="float-left">
+								<h6 style="font-size: 1.2rem;margin-top: 4%">REBUILD BALANCE</h6>
+							
+							</div>
+							<!-- <button class="btn-primary big-btn btn-filter float-right"style="margin-right: 5px;">Filter</button> -->
+							<div
+								class="float-right d-flex align-items-center justify-content-end mr-4">
+
+							<!-- 	<div class="mr-3">
+									<i class="fa fa-filter"
+										style="font-size: 18px; cursor: pointer;"
+										title="Filter" onclick="toggleFilterOptions(event)"></i>
+
+									<div id="filterOptions"
+										class="border rounded bg-white shadow-sm position-absolute p-2"
+										style="display: none; top: 25px; right: 0; z-index: 1000;">
+										<div class="dropdown-item py-1 px-2"
+											onclick="handleFilter('Email')">Email</div>
+										<div class="dropdown-item py-1 px-2"
+											onclick="handleFilter('Customer_ID')">Customer ID</div>
+										<div class="dropdown-item py-1 px-2"
+											onclick="handleFilter('Mobile_No')">Mobile No</div>
+									</div>
+								</div> -->
+								<!-- Selected Account Info -->
+								<div id="selectedAccountInfo" style="margin-right: 15px;"></div>
+                                
+								<i class="fa fa-search center"
+									style="cursor: pointer;font-size: 15px;" 
+									onclick="searchData()" title="Mismatched Accounts"></i>
+							</div>
+						</div>
+						<div class="card-body"
+							style="overflow-y: auto; border: 1px solid #ddd;">
+							<div class="table-responsive" id="cardBody">
+								<table class="table  table-bordered  table-hover table-sm"
+									style="margin-bottom: 0px; font-size: initial;">
+									<thead class="thead-light"
+										style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+										<tr class="filters">
+											<th>TYPE</th>
+											<th>LOAN ACCOUNT MASTER</th>
+											<th>GENERAL ACCOUNT MASTER</th>
+											<th>TRANSACTION</th>
+										</tr>
+									</thead>
+									 <tbody id="usertable1">
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<div class="card-footer text-center">
+							<button class="btn-primary big-btn" onclick="home();">Home</button>
+							<button class="btn-primary big-btn" onclick="">Rebuild</button>
+							<button class="btn-primary big-btn" onclick="back()">Back</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<!-------------------------------------------------------------------------------- Modal ------------------------------------------------>
+<div class="modal fade" id="mismatchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="max-height: 100vh; overflow: hidden; border-radius: 12px;">
+      <div class="modal-header">
+        <h5 class="modal-title">Mismatched Accounts</h5>
+        <button type="button" class="btn-close" onclick="$('#mismatchModal').modal('hide')" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body" style="overflow-y: auto; max-height: 65vh; padding: 15px;">
+        <table class="table table-bordered" id="mismatchTable">
+          <thead>
+            <tr>
+              <th>Account Number</th>
+              <th>Account Name</th>
+              <th>Select</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Dynamically populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-------------------------------------------------------------------------------- Modal ------------------------------------------------>
+<div class="modal fade" data-backdrop="false" data-keyboard="false" style="padding-right: 850px" id="alert">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
+			<div class="modal-content" style="margin-left: 121%;height: 16%">
+				<div class="modal-body" style="text-align: center">
+					<p id="alertmsg"></p>
+				</div>
+				<div class="text-center">
+				<button type="button" class="btn-primary big-btn" onclick="$('#alert').modal('hide')">Close</button>
+				</div>
+			</div>
+		</div>
+</div>
+<!-------------------------------------------------------------------------------- End ------------------------------------------------>
+</body>
+</html>

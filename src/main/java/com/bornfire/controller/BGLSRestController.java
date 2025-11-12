@@ -13006,4 +13006,44 @@ public class BGLSRestController {
 
 	    return ResponseEntity.ok("Reversal submitted successfully");
 	}
+	
+	@GetMapping("/getMismatchedAccounts")
+	public List<Map<String, Object>> getMismatchedAccounts() {
+		List<Object[]> data = chart_Acc_Rep.getMismatchedAccounts();
+		List<Map<String, Object>> result = new ArrayList<>();
+
+		for (Object[] row : data) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("acct_num", row[0]);
+			map.put("acct_name", row[1]);
+			result.add(map);
+		}
+		return result;
+	}
+
+	@GetMapping("/getAccountBalanceDetails")
+	public ResponseEntity<Map<String, Object>> getAccountBalanceDetails(@RequestParam String acctNum) {
+		try {
+			List<Object[]> results = chart_Acc_Rep.getAccountBalanceDetails(acctNum);
+
+			if (results == null || results.isEmpty()) {
+				return ResponseEntity.notFound().build();
+			}
+
+			Object[] result = results.get(0); // get the first (and only) row
+
+			Map<String, Object> response = new HashMap<>();
+			response.put("principal_balance", result[0]);
+			response.put("interest_balance", result[1]);
+			response.put("fee_balance", result[2]);
+			response.put("penalty_balance", result[3]);
+			response.put("total_balance", result[4]);
+
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("error", "Error fetching account balance details"));
+		}
+	}
 }
