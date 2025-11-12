@@ -8,7 +8,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+	<script src="/ASPIRA/js/moment.min.js"></script>
 	<script src="/ASPIRA/js/jquery.min.js"></script>
 	<script src="/ASPIRA/js/jquery-ui.min.js"></script>
 	<style>
@@ -308,6 +308,7 @@
 			var acctnum = $('#acct_num').val();
 			var fromdate = $('#fromdate').val();
 			var todate = $('#todate').val();
+			
 
 			// Validate account number and date fields
 			if (!acctnum) {
@@ -343,6 +344,7 @@
 						$('#TranBalance').val('0.00');
 					}
 
+					alert("acctnum"+acctnum+"fromdate"+fromdate+"todate"+todate);
 					// Second AJAX call to get transaction records
 					$.ajax({
 						url: './getTransactionRecords',
