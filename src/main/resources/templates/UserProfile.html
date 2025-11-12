@@ -697,6 +697,8 @@
 					day_end_operation: $('#day_end_operation_user').is(':checked') ? 'Y' : 'N',
 					customer_maintenance: $('#customer_maintenance').is(':checked') ? 'Y' : 'N',
 					loan_maintanace: $('#loan_maintanace').is(':checked') ? 'Y' : 'N',
+					transaction_reversal: $('#transaction_reversal').is(':checked') ? 'Y' : 'N',
+					transaction_accounts: $('#transaction_accounts').is(':checked') ? 'Y' : 'N',
 
 					participating_banks: $('#participating_banks').is(':checked') ? 'Y' : 'N',
 					loan_collecting: $('#loan_collecting').is(':checked') ? 'Y' : 'N',
@@ -928,6 +930,8 @@
 					day_end_operation: $('#day_end_operation_user').is(':checked') ? 'Y' : 'N',
 					customer_maintenance: $('#customer_maintenance').is(':checked') ? 'Y' : 'N',
 					loan_maintanace: $('#loan_maintanace').is(':checked') ? 'Y' : 'N',
+					transaction_reversal: $('#transaction_reversal').is(':checked') ? 'Y' : 'N',
+					transaction_accounts: $('#transaction_accounts').is(':checked') ? 'Y' : 'N',
 
 					participating_banks: $('#participating_banks').is(':checked') ? 'Y' : 'N',
 					loan_collecting: $('#loan_collecting').is(':checked') ? 'Y' : 'N',
@@ -3864,6 +3868,9 @@
 						<input type="checkbox" id="loan_maintanaceg" value="Y" name="loan_maintanace"
 							style="margin-right: 10px" th:checked="${access?.loan_maintanace == 'Y'}" /><label> Loan
 							Maintanance</label> <br>
+
+						
+
 					</div>
 					<input type="checkbox" id="loan_operationg" value="Y" name="loan_operationg"
 						style="margin-right: 10px" checked />Loan Operation
@@ -4201,6 +4208,16 @@
 							th:disabled="${formmode != 'add' and formmode != 'modify'}"
 							th:checked="${access?.loan_maintanace == 'Y'}" style="margin-right: 10px" /><label> Loan
 							Maintanance</label> <br>
+
+
+						<input type="checkbox" id="transaction_accounts" value="Y" name="transaction_accounts"
+							style="margin-right: 10px" th:checked="${access?.transaction_accounts == 'Y'}" /><label> Transaction Accounts
+							</label> <br>
+
+						<input type="checkbox" id="transaction_reversal" value="Y" name="transaction_reversal"
+							style="margin-right: 10px" th:checked="${access?.transaction_reversal == 'Y'}" /><label> Transaction Reversal
+							</label> <br>
+
 					</div>
 					<input type="checkbox" id="loan_operation" name="loan_operation"
 						th:disabled="${formmode != 'add' and formmode != 'modify'}"
