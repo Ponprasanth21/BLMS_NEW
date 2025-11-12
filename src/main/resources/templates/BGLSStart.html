@@ -4,6 +4,8 @@
 <title>ASPIRA</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <link rel="stylesheet" href="/ASPIRA/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/ASPIRA/css/fontawesome.min.css">
 	<link rel="stylesheet" href="/ASPIRA/css/jquery-ui.min.css">
@@ -19,6 +21,8 @@
 	<script src="/ASPIRA/js/jquery.validate.min.js"></script>
 	<script src="/ASPIRA/js/jquery.dataTables.min.js"></script>
 	<script src="/ASPIRA/js/dataTables.bootstrap4.min.js"></script>
+	<link rel="stylesheet" href="js/fontawesome-free-7.1.0-web/css/all.min.css">
+
 	<!-- TOAST -->
 	<link rel="stylesheet" th:href="@{/css/jquery.toast.min.css}">
 	<script th:src="@{/js/jquery.toast.min.js}"></script>
@@ -542,6 +546,35 @@ body {
 
 
 </style>
+
+<style>
+/* Container to align input and icon */
+.password-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+/* Password input with space on the right */
+.password-container input {
+  width: 100%;
+  padding-right: 40px; /* Space for the eye icon */
+  box-sizing: border-box;
+}
+
+/* Eye icon positioned inside the input */
+.password-container .toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: gray;
+  font-size: 18px;
+  z-index: 2;
+}
+</style>
+
 <script>
 	
 	/*Praveen*/
@@ -552,7 +585,23 @@ body {
 			cleanValue = cleanValue.toUpperCase();
 			input.value = cleanValue;
 		}
+
 </script>
+
+	<script>
+		function showpassword() {
+		const field = document.getElementById("password");
+		const icon = document.querySelector(".toggle-password");
+		if (field.type === "password") {
+			field.type = "text";
+			icon.classList.replace("fa-eye", "fa-eye-slash");
+		} else {
+			field.type = "password";
+			icon.classList.replace("fa-eye-slash", "fa-eye");
+		}
+		}
+	</script>
+
 </head>
 <body>
 	<div class="container login">
@@ -564,23 +613,26 @@ body {
 				th:src=@{/images/Bornfire.png} />
 
 			<p id="profile-name" class="profile-name-card">BLMS Login</p>
-			<form class="form-signin mt-2" th:action="@{/login}" method="post" name="Login_Form"
-				>
-				<input type="text" class="form-control" name="userid"
-					placeholder="User Id" id="userid" required autofocus oninput="letterAndNumbers(this);"> <input
-					type="password" class="form-control" name="password"
-					placeholder="Password" id="password" required>
-				<div style="text-align: center; padding-bottom: 10px;">
-					<span style="color: #cd103c;" th:if="${param.error}"
-						th:text="${param.error}">test</span> <span style="color: #34af32;"
-						th:if="${param.logout}">You have been logged out.</span>
-				</div>
-				<button class="btn btn-lg btn-primary btn-block btn-signin"
-					type="submit">Sign in</button>
-				<p class="btn btn-lg btn-primary btn-block btn-signin" style="padding-top:7px;"
-					onclick="openForm()">Change Password</p>
+			<form class="form-signin mt-2" th:action="@{/login}" method="post" name="Login_Form">
 
+			  <input type="text" class="form-control" name="userid"
+			         placeholder="User Id" id="userid" required 
+			         autofocus oninput="letterAndNumbers(this);">
 
+			  <!-- Password + Eye Icon in Same Line -->
+			  <div class="password-container">
+			    <input type="password" class="form-control" name="password"
+			           placeholder="Password" id="password" required>
+			    <i class="fa-solid fa-eye toggle-password" onclick="showpassword()"></i>
+			  </div>
+
+			  <div style="text-align: center; padding-bottom: 10px;">
+			    <span style="color: #cd103c;" th:if="${param.error}" th:text="${param.error}">test</span>
+			    <span style="color: #34af32;" th:if="${param.logout}">You have been logged out.</span>
+			  </div>
+
+			  <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>
+			  <p class="btn btn-lg btn-primary btn-block btn-signin" style="padding-top:7px;" onclick="openForm()">Change Password</p>
 
 			</form>
 			<!-- /form -->

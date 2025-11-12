@@ -59,12 +59,10 @@ public class AES {
 		return encryptedText;
 	}
 
-	public static boolean validatePassword(String originalPassword, String storedPassword)
+	public static boolean validatePassword(String passwordFromRequest, String DBstoredPassword)
 			throws NoSuchAlgorithmException, InvalidKeySpecException {
 		try {
-
-			if (originalPassword.equals(AES.decrypt(storedPassword))) {
-
+			if (passwordFromRequest.equals(AES.decrypt(DBstoredPassword))) {
 				return true;
 			} else {
 				return false;

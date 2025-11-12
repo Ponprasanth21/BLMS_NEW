@@ -387,14 +387,14 @@ public class BGLSNavigationController {
 
     }
 
-    @RequestMapping(value = "passwordReset", method = RequestMethod.POST)
-    @ResponseBody
-    public String passwordReset(@ModelAttribute UserProfile userprofile, Model md, HttpServletRequest rq) {
-        String userid = (String) rq.getSession().getAttribute("USERID");
-        String msg = loginServices.passwordReset(userprofile, userid);
-
-        return msg;
-    }
+//    @RequestMapping(value = "passwordReset", method = RequestMethod.POST)
+//    @ResponseBody
+//    public String passwordReset(@ModelAttribute UserProfile userprofile, Model md, HttpServletRequest rq) {
+//        String userid = (String) rq.getSession().getAttribute("USERID");
+//        String msg = loginServices.passwordReset(userprofile, userid);
+//
+//        return msg;
+//    }
 
     @RequestMapping(value = "login?logout", method = RequestMethod.POST)
     @ResponseBody
@@ -5405,5 +5405,11 @@ public class BGLSNavigationController {
            return "TransactionsAccounts.html";
        }
 
+       @RequestMapping(value = "changePasswordLogin", method = { RequestMethod.GET, RequestMethod.POST })
+       public String changePasswordLogin(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req)
+       		throws ParseException {
+       	System.out.println("reset password");
+       	return "ChangePasswordLogin";
+       }
 
 }

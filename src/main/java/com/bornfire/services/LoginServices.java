@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -123,13 +121,13 @@ public class LoginServices {
 	 */
 
 	public String addUser(UserProfile userProfile, String formmode, String inputUser)
-			throws NoSuchAlgorithmException, InvalidKeySpecException {
+			throws Exception {
 
 		String msg = "";
 
 		if (formmode.equals("add")) {
 
-			String encryptedPassword = PasswordEncryption.getEncryptedPassword(userProfile.getPassword());
+			String encryptedPassword = AES.encrypt(userProfile.getPassword());
 
 			if (userProfile.getLogin_status().equals("Active")) {
 				userProfile.setUser_locked_flg("N");
@@ -422,38 +420,38 @@ public class LoginServices {
 		return msg;
 	}
 
-	public String passwordReset(UserProfile userprofile, String userid) {
-
-		String msg = "";
-
-		try {
-			String encryptedPassword = PasswordEncryption.getEncryptedPassword(this.password);
-
-			Optional<UserProfile> up = userProfileRep.findById(userprofile.getUserid());
-
-			if (up.isPresent()) {
-
-				UserProfile user = up.get();
-
-				user.setPassword(encryptedPassword);
-
-				user.setNo_of_attmp(0);
-				user.setLogin_flg("N");
-				user.setUser_locked_flg("N");
-				userProfileRep.save(user);
-			}
-
-			msg = "Password Resetted Successfully";
-
-		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-
-			e.printStackTrace();
-
-			msg = "Error Occured. Please contact Administrator";
-		}
-
-		return msg;
-	}
+//	public String passwordReset(UserProfile userprofile, String userid) {
+//
+//		String msg = "";
+//
+//		try {
+//			String encryptedPassword = PasswordEncryption.getEncryptedPassword(this.password);
+//
+//			Optional<UserProfile> up = userProfileRep.findById(userprofile.getUserid());
+//
+//			if (up.isPresent()) {
+//
+//				UserProfile user = up.get();
+//
+//				user.setPassword(encryptedPassword);
+//
+//				user.setNo_of_attmp(0);
+//				user.setLogin_flg("N");
+//				user.setUser_locked_flg("N");
+//				userProfileRep.save(user);
+//			}
+//
+//			msg = "Password Resetted Successfully";
+//
+//		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+//
+//			e.printStackTrace();
+//
+//			msg = "Error Occured. Please contact Administrator";
+//		}
+//
+//		return msg;
+//	}
 
 	/*
 	 * Getting LoginFlg -
@@ -654,4 +652,64 @@ public class LoginServices {
 
 	    return outputFile;
 	}
+	
+	public String changePassword(String oldpass, String newpass, String userid) {
+
+		String msg = "";
+		Optional<UserProfile> up = userProfileRep.findById(userid);
+		String encrypted_password =null;
+		try {
+			 encrypted_password =	AES.encrypt(oldpass);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		UserProfile user = up.get();
+		System.out.println(encrypted_password+" old pas : "+oldpass+" new pas : "+newpass+" pas : "+user.getPassword());
+		
+if(encrypted_password.equals(user.getPassword())) {
+	if (up.isPresent()) {
+
+		
+			//	if (PasswordEncryption.validatePassword(encrypted_password, user.getPassword())) {
+
+				//	if (!PasswordEncryption.validatePassword(newpass, user.getPassword())) {
+
+						String encryptedPassword = null;
+						try {
+							encryptedPassword = AES.encrypt(newpass);
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						System.out.println(encryptedPassword+"new one");
+						if(encryptedPassword.equals(user.getPassword())) {
+							return msg = "New password cannot be Same as Old password";
+						}
+
+						user.setPassword(encryptedPassword);
+					//	user.setDel_flg("Y");
+
+//						final Calendar cal = Calendar.getInstance();
+//						cal.add(Calendar.MONTH,1);
+//						System.out.println(cal.getTime());
+//						user.setPw_expy_date(cal.getTime());
+								
+						userProfileRep.save(user);
+
+						msg = "Password Changed Successfully";
+
+					} else {
+
+						msg = "User Not Found";
+					}
+
+				} else {
+					msg = "Incorrect Old Password!";
+				}
+			
+		
+		return msg;
+	};
+	
 }

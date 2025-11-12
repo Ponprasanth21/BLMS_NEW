@@ -93,7 +93,7 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-		.antMatchers("/css/**","/js/**",  "/webfonts/**",  "/images/**", "/login*", "/freezeColumn/**","favicon.ico")
+		.antMatchers("/css/**","/js/**",  "/webfonts/**",  "/images/**", "/login*","/changePasswordLogin*","/rest_password*", "/freezeColumn/**","favicon.ico")
 				.permitAll().anyRequest().authenticated().and().formLogin().loginPage("/login").permitAll()
 				.failureHandler(blrsAuthFailHandle()).successHandler(blrsAuthSuccessHandle())
 				.usernameParameter("userid").and().logout().permitAll().and().logout()
@@ -150,9 +150,10 @@ public class BGLSWebSecurity extends WebSecurityConfigurerAdapter {
 						 * throw new LockedException("Login Not Allowed");
 						 * 
 						 * }
-						 */ 
-
-						if (!PasswordEncryption.validatePassword(password, usr.getPassword())) {
+						 */
+						if (!AES.validatePassword(password,usr.getPassword())) {
+						
+//						if (!PasswordEncryption.validatePassword(password, usr.getPassword())) {
 
 							logger.info("Passing Userid :" + userid);
 

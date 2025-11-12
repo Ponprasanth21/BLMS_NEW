@@ -420,7 +420,7 @@ public class BGLSRestController {
 	public String createUser(@RequestParam("formmode") String formmode,
 			@RequestParam("accountExpiryDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date accountExpiryDate,
 			@RequestBody UserProfile userprofile, HttpServletRequest rq)
-			throws NoSuchAlgorithmException, InvalidKeySpecException {
+			throws Exception {
 
 		String userid = (String) rq.getSession().getAttribute("USERID");
 		System.out.println("accountExpiryDate " + accountExpiryDate);
@@ -445,7 +445,7 @@ public class BGLSRestController {
 	public String mosifyUser(@RequestParam("formmode") String formmode,
 			@RequestParam("accountExpiryDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date accountExpiryDate,
 			@RequestBody UserProfile userprofile, HttpServletRequest rq)
-			throws NoSuchAlgorithmException, InvalidKeySpecException {
+			throws Exception {
 
 		String userid = (String) rq.getSession().getAttribute("USERID");
 		System.out.println("accountExpiryDate " + accountExpiryDate);
@@ -13046,4 +13046,20 @@ public class BGLSRestController {
 					.body(Map.of("error", "Error fetching account balance details"));
 		}
 	}
+	
+	@RequestMapping(value = "rest_password", method = RequestMethod.POST)
+	@ResponseBody
+	public String rest_password(
+		@RequestParam("old_password") String old_password,
+		@RequestParam("new_password") String new_password,
+		@RequestParam("user_id") String userid,
+		Model md, HttpServletRequest rq) {
+
+		System.out.println("Password reset attempt by user: " + userid);
+
+		String msg = loginServices.changePassword(old_password, new_password, userid);
+		md.addAttribute("message", "success");
+		return msg;
+	}
+
 }
