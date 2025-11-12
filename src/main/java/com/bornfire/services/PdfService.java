@@ -49,7 +49,7 @@ public class PdfService {
          // Table Headers
             String[] headers = {
                 "TRAN DATE", "ACCT NUM", "ACCT NAME", "TYPE", "TRAN ID",
-                "PART TRAN", "IND", "CREDIT", "DEBIT", "TRAN PARTICULAR"
+                "PT TRAN", "IND", "CREDIT", "DEBIT", "TRAN PARTICULAR"
             };
 
             PdfPTable table = new PdfPTable(headers.length);
@@ -60,8 +60,8 @@ public class PdfService {
 
             // ✅ Adjust column widths (values are relative proportions)
             float[] columnWidths = {
-                1.2f, 2.6f, 3.1f, 1.2f, 1.5f,
-                1.5f, 1.8f, 1.2f, 1.2f, 2.2f
+                1.2f, 3.4f, 3.8f, 1.2f, 1.3f,
+                1.0f, 1.0f, 1.2f, 1.2f, 2.2f
             };
             table.setWidths(columnWidths);
 
@@ -78,8 +78,8 @@ public class PdfService {
             }
 
             // Row Fonts
-            Font rowFont = FontFactory.getFont(FontFactory.HELVETICA, 8);
-            Font numericFont = FontFactory.getFont(FontFactory.HELVETICA, 8);
+            Font rowFont = FontFactory.getFont(FontFactory.HELVETICA, 6);
+            Font numericFont = FontFactory.getFont(FontFactory.HELVETICA, 6);
 
             SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy");
