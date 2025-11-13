@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -330,13 +331,28 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 					+ "ORDER BY b.id", nativeQuery = true)
 			List<Object[]> getMismatchedAccounts();
 			
-			@Query(value = "SELECT DISTINCT " + "b.principal_balance, " + "b.interest_balance, " + "b.fees_balance, "
-					+ "b.penalty_balance, "
-					+ "(b.principal_balance + b.interest_balance + b.fees_balance + b.penalty_balance) AS total_balance "
-					+ "FROM BGLS_CHART_OF_ACCOUNTS_DEMO1 a "
-					+ "JOIN LOAN_ACCOUNT_MASTER_TBL_DEMO1 b ON a.encoded_key = b.encoded_key "
-					+ "LEFT JOIN LOAN_REPAYMENT_TBL_DEMO1 c ON b.encoded_key = c.parent_account_key "
+			@Query(value = "SELECT DISTINCT " + "a.ACCT_BAL, " + "b.principal_balance, " + "b.interest_balance, "
+					+ "b.fees_balance, " + "b.penalty_balance, "
+					+ "(b.principal_balance + b.interest_balance + b.fees_balance + b.penalty_balance) AS total_balance, "
+					+ "NVL(trm.principal_trm, 0) AS principal_trm, " + "NVL(trm.interest_trm, 0) AS interest_trm, "
+					+ "NVL(trm.fees_trm, 0) AS fees_trm, " + "NVL(trm.penalty_trm, 0) AS penalty_trm, "
+					+ "NVL(trm.total_trm_balance, 0) AS total_trm_balance " + "FROM BGLS_CHART_OF_ACCOUNTS a "
+					+ "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.encoded_key = b.encoded_key "
+					+ "LEFT JOIN LOAN_REPAYMENT_TBL c ON b.encoded_key = c.parent_account_key " + "LEFT JOIN ( "
+					+ "   SELECT d.acct_num, "
+					+ "          SUM(CASE WHEN d.tran_particular IN ('Principal Outstanding Amount', 'Principal Recovery', 'Extra Recovery Adjustment') THEN d.tran_amt ELSE 0 END) AS principal_trm, "
+					+ "          SUM(CASE WHEN d.tran_particular IN ('Interest Outstanding Amount', 'Interest Recovery', 'Interest Applied') THEN d.tran_amt ELSE 0 END) AS interest_trm, "
+					+ "          SUM(CASE WHEN d.tran_particular IN ('Fees Outstanding Balance', 'Fees Recovery', 'Fee Applied') THEN d.tran_amt ELSE 0 END) AS fees_trm, "
+					+ "          SUM(CASE WHEN d.tran_particular IN ('Penalty Outstanding Balance', 'Penalty Recovery', 'Penalty Applied') THEN d.tran_amt ELSE 0 END) AS penalty_trm, "
+					+ "          (NVL(SUM(CASE WHEN d.tran_particular IN ('Principal Outstanding Amount', 'Principal Recovery', 'Extra Recovery Adjustment') THEN d.tran_amt ELSE 0 END), 0) + "
+					+ "           NVL(SUM(CASE WHEN d.tran_particular IN ('Interest Outstanding Amount', 'Interest Recovery', 'Interest Applied') THEN d.tran_amt ELSE 0 END), 0) + "
+					+ "           NVL(SUM(CASE WHEN d.tran_particular IN ('Fees Outstanding Balance', 'Fees Recovery', 'Fee Applied') THEN d.tran_amt ELSE 0 END), 0) + "
+					+ "           NVL(SUM(CASE WHEN d.tran_particular IN ('Penalty Outstanding Balance', 'Penalty Recovery', 'Penalty Applied') THEN d.tran_amt ELSE 0 END), 0)) AS total_trm_balance "
+					+ "   FROM bgls_trm_wrk_transactions d " + "   GROUP BY d.acct_num "
+					+ ") trm ON trm.acct_num = a.acct_num "
 					+ "WHERE a.own_type = 'C' AND a.acct_num = :acctNum", nativeQuery = true)
 			List<Object[]> getAccountBalanceDetails(@Param("acctNum") String acctNum);
-
+			
+			@Procedure(procedureName = "UPDATE_LOAN_BALANCE_BY_ACCT")
+		    void updateLoanBalanceByAcct(@Param("acct_num") String acctNum);
 }

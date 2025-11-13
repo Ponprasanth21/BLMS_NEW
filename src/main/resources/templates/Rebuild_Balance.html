@@ -305,26 +305,6 @@ function back() {
 }
 </script>
 <script>
-	function toggleFilterOptions(event) {
-		event.stopPropagation(); // prevent click from bubbling to document
-		const menu = document.getElementById('filterOptions');
-		menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
-	}
-
-	function handleFilter(value) {
-		alert("Selected Filter: " + value);
-		document.getElementById('filterOptions').style.display = 'none';
-	}
-
-	// Close dropdown when clicking outside
-	document.addEventListener('click', function (event) {
-		const menu = document.getElementById('filterOptions');
-		if (menu && !menu.contains(event.target) && event.target.className !== 'fa fa-filter text-secondary') {
-			menu.style.display = 'none';
-		}
-	});
-</script>
-<script>
 function searchData() {
     document.getElementById('loadingModal').style.display = 'flex';
     $.ajax({
@@ -366,20 +346,25 @@ function searchData() {
 }
 
 // ✅ When a radio button is clicked
+let selectedAcctNum = null; // 🌟 global variable
+
 function handleSelect(acctNum, acctName) {
-    // Close the mismatch modal
-    $('#mismatchModal').modal('hide');
+  // Store globally
+  selectedAcctNum = acctNum;
 
-    // Display selected account info in header (formatted)
-    $('#selectedAccountInfo').html(`
-        <div>
-            <strong>Acct Num  :</strong> <span style="color:#007bff;">${acctNum}</span><br>
-            <strong>Acct Name :</strong> <span>${acctName}</span>
-        </div>
-    `);
+  // Close the mismatch modal
+  $('#mismatchModal').modal('hide');
 
-    // Fetch the account details for selected acctNum
-    fetchAccountDetails(acctNum);
+  // Display selected account info in header (formatted)
+  $('#selectedAccountInfo').html(`
+      <div>
+          <strong>Acct Num :</strong> <span style="color:#007bff;">${acctNum}</span><br>
+          <strong>Acct Name :</strong> <span>${acctName}</span>
+      </div>
+  `);
+
+  // Fetch the account details for selected acctNum
+  fetchAccountDetails(acctNum);
 }
 
 //✅ Fetch account details from backend and update the main table
@@ -391,31 +376,31 @@ function fetchAccountDetails(acctNum) {
                     <td>Principal Balance</td>
                     <td style="text-align:right">${data.principal_balance != null ? Number(data.principal_balance).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
                     <td style="text-align:right">-</td>
-                    <td style="text-align:right"></td>
+                    <td style="text-align:right">${data.principal_trm != null ? Number(data.principal_trm).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
                 </tr>
                 <tr>
                     <td>Interest Balance</td>
                     <td style="text-align:right">${data.interest_balance != null ? Number(data.interest_balance).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
                     <td style="text-align:right">-</td>
-                    <td style="text-align:right"></td>
+                    <td style="text-align:right">${data.interest_trm != null ? Number(data.interest_trm).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
                 </tr>
                 <tr>
                     <td>Fees Balance</td>
                     <td style="text-align:right">${data.fee_balance != null ? Number(data.fee_balance).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
                     <td style="text-align:right">-</td>
-                    <td style="text-align:right"></td>
+                    <td style="text-align:right">${data.fees_trm != null ? Number(data.fees_trm).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
                 </tr>
                 <tr>
                     <td>Penalty Balance</td>
                     <td style="text-align:right">${data.penalty_balance != null ? Number(data.penalty_balance).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
                     <td style="text-align:right">-</td>
-                    <td style="text-align:right"></td>
+                    <td style="text-align:right">${data.penalty_trm != null ? Number(data.penalty_trm).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</td>
                 </tr>
                 <tr>
                     <td><strong>Total Balance</strong></td>
                     <td style="text-align:right"><strong>${data.total_balance != null ? Number(data.total_balance).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</strong></td>
-                    <td style="text-align:right"><strong>${data.total_balance != null ? Number(data.total_balance).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</strong></td>
-                    <td style="text-align:right"></td>
+                    <td style="text-align:right"><strong>${data.acct_bal != null ? Number(data.acct_bal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</strong></td>
+                    <td style="text-align:right"><strong>${data.total_trm_balance != null ? Number(data.total_trm_balance).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}</strong></td>
                 </tr>
             `);
         } else {
@@ -425,6 +410,74 @@ function fetchAccountDetails(acctNum) {
         $('#usertable1').html('<tr><td colspan="5" class="text-center text-danger">Error fetching account details</td></tr>');
     });
 }
+</script>
+<script>
+$(document).ready(function() {
+	  let filtersEnabled = false;
+	  // Toggle filter mode
+	  $('#toggleFilterBtn').on('click', function() {
+	    filtersEnabled = !filtersEnabled;
+	    if (filtersEnabled) {
+	      enableHeaderFilters();
+	      $(this).addClass('btn-primary').removeClass('btn-outline-secondary');
+	    } else {
+	      disableHeaderFilters();
+	      $(this).removeClass('btn-primary').addClass('btn-outline-secondary');
+	    }
+	  });
+	  function enableHeaderFilters() {
+	    // Replace header text with input fields
+	    $('#acctNumHeader').html('<input type="text" id="filterAcctNum" class="form-control form-control-sm" placeholder="Search Account Number">');
+	    $('#acctNameHeader').html('<input type="text" id="filterAcctName" class="form-control form-control-sm" placeholder="Search Account Name">');
+	    // Focus first input
+	    $('#filterAcctNum').focus();
+	    // Attach live filtering
+	    $('#filterAcctNum, #filterAcctName').on('keyup', function() {
+	      const acctNumFilter = $('#filterAcctNum').val()?.toLowerCase() || '';
+	      const acctNameFilter = $('#filterAcctName').val()?.toLowerCase() || '';
+	      $('#mismatchTable tbody tr').each(function() {
+	        const acctNum = $(this).find('td:eq(0)').text().toLowerCase();
+	        const acctName = $(this).find('td:eq(1)').text().toLowerCase();
+	        if (acctNum.includes(acctNumFilter) && acctName.includes(acctNameFilter)) {
+	          $(this).show();
+	        } else {
+	          $(this).hide();
+	        }
+	      });
+	    });
+	  }
+	  function disableHeaderFilters() {
+	    // Clear filters and restore original headers
+	    $('#acctNumHeader').text('Account Number');
+	    $('#acctNameHeader').text('Account Name');
+	    $('#mismatchTable tbody tr').show();
+	  }
+	});
+	
+function rebuildLoanBalance() {
+	  if (!selectedAcctNum) {
+		  $("#alertmsg").text("Please select an account first before rebuilding.");
+          $('#alert').modal("toggle");
+	    return;
+	  }
+
+	/*   if (!confirm(`Rebuild loan balance for account ${selectedAcctNum}?`)) return; */
+
+	  $.ajax({
+	    url: './rebuildLoanBalance',
+	    type: 'POST',
+	    data: { acctNum: selectedAcctNum },
+	    success: function(response) {
+	    	 $("#alertmsg").text("Loan balance updated successfully!");
+	            $('#alert').modal("toggle");
+	      fetchAccountDetails(selectedAcctNum); // refresh balance info
+	    },
+	    error: function(xhr) {
+	    	$("#alertmsg").text("Error rebuilding loan balance: " + (xhr.responseJSON?.error || "Unknown error"));
+	        $('#alert').modal("toggle");
+	    }
+	  });
+	}
 </script>
 </head>
 <title>ASPIRA</title>
@@ -498,7 +551,7 @@ function fetchAccountDetails(acctNum) {
 
 						<div class="card-footer text-center">
 							<button class="btn-primary big-btn" onclick="home();">Home</button>
-							<button class="btn-primary big-btn" onclick="">Rebuild</button>
+							<button class="btn-primary big-btn" onclick="rebuildLoanBalance()">Rebuild</button>
 							<button class="btn-primary big-btn" onclick="back()">Back</button>
 						</div>
 					</div>
@@ -510,22 +563,29 @@ function fetchAccountDetails(acctNum) {
 <div class="modal fade" id="mismatchModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content" style="max-height: 100vh; overflow: hidden; border-radius: 12px;">
-      <div class="modal-header">
+      <div class="modal-header d-flex justify-content-between align-items-center" style="background-color: #e9ecef;">
         <h5 class="modal-title">Mismatched Accounts</h5>
-        <button type="button" class="btn-close" onclick="$('#mismatchModal').modal('hide')" aria-label="Close"></button>
+        <div class="d-flex align-items-center gap-2">
+          <!-- 🧭 Filter Button -->
+          <button type="button" id="toggleFilterBtn" title="Enable Filters" style="border: none; background-color: transparent;">
+            <i class="fa fa-filter" style="color:black;"></i>
+          </button>
+          <!-- ❌ Close -->
+          <button type="button" class="btn-close black" onclick="$('#mismatchModal').modal('hide')" title="Close"></button>
+        </div>
       </div>
 
-      <div class="modal-body" style="overflow-y: auto; max-height: 65vh; padding: 15px;">
-        <table class="table table-bordered" id="mismatchTable">
+      <div class="modal-body" style="overflow-y: auto; max-height: 70vh;">
+        <table class="table table-bordered table-hover" id="mismatchTable">
           <thead>
             <tr>
-              <th>Account Number</th>
-              <th>Account Name</th>
-              <th>Select</th>
+              <th id="acctNumHeader" style="width: 35%;">Account Number</th>
+              <th id="acctNameHeader" style="width: 50%;">Account Name</th>
+              <th style="width: 15%;">Select</th>
             </tr>
           </thead>
           <tbody>
-            <!-- Dynamically populated via JS -->
+            <!-- dynamically populated -->
           </tbody>
         </table>
       </div>

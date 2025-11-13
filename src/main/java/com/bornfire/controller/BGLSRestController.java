@@ -13030,14 +13030,20 @@ public class BGLSRestController {
 				return ResponseEntity.notFound().build();
 			}
 
-			Object[] result = results.get(0); // get the first (and only) row
+			Object[] result = results.get(0); // first row
 
 			Map<String, Object> response = new HashMap<>();
-			response.put("principal_balance", result[0]);
-			response.put("interest_balance", result[1]);
-			response.put("fee_balance", result[2]);
-			response.put("penalty_balance", result[3]);
-			response.put("total_balance", result[4]);
+			response.put("acct_bal", result[0]);
+			response.put("principal_balance", result[1]);
+			response.put("interest_balance", result[2]);
+			response.put("fee_balance", result[3]);
+			response.put("penalty_balance", result[4]);
+			response.put("total_balance", result[5]);
+			response.put("principal_trm", result[6]);
+			response.put("interest_trm", result[7]);
+			response.put("fees_trm", result[8]);
+			response.put("penalty_trm", result[9]);
+			response.put("total_trm_balance", result[10]);
 
 			return ResponseEntity.ok(response);
 		} catch (Exception e) {
@@ -13046,6 +13052,18 @@ public class BGLSRestController {
 					.body(Map.of("error", "Error fetching account balance details"));
 		}
 	}
+	
+	@PostMapping("/rebuildLoanBalance")
+    public ResponseEntity<Map<String, String>> rebuildLoanBalance(@RequestParam String acctNum) {
+        try {
+        	chart_Acc_Rep.updateLoanBalanceByAcct(acctNum);
+            return ResponseEntity.ok(Map.of("message", "Loan balance updated successfully."));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error while rebuilding loan balance."));
+        }
+    }
 	
 	@RequestMapping(value = "rest_password", method = RequestMethod.POST)
 	@ResponseBody
