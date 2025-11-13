@@ -49,7 +49,7 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 			+ "WHERE a.OWN_TYPE IN ('O', 'M') " + "GROUP BY a.gl_code, a.ACCT_NAME "
 			+ "ORDER BY a.ACCT_NAME", nativeQuery = true)
 	List<Object[]> getListtrail();
-	
+
 	@Query(value = "SELECT " + "a.gl_code, " + "a.acct_name, " + "SUM(b.tran_date_bal) AS opening_bal, "
 			+ "SUM(a.cr_amt) AS credit, " + "SUM(a.dr_amt) AS debit, "
 			+ "ABS(SUM(a.dr_amt) - SUM(a.cr_amt)) AS net_change, "
@@ -111,7 +111,8 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 	@Query(value = "SELECT DISTINCT GLSH_CODE, CLASSIFICATION, GL_DESC, ACCT_CRNCY, GL_CODE, GLSH_DESC, "
 			+ "COUNT(GLSH_CODE) AS total_count, " + "SUM(CASE WHEN acct_bal > 0 THEN acct_bal ELSE 0 END) AS cr_amt, "
 			+ "SUM(CASE WHEN acct_bal < 0 THEN ABS(acct_bal) ELSE 0 END) AS dr_amt " + "FROM BGLS_CHART_OF_ACCOUNTS "
-			+ "WHERE del_flg = 'N' AND OWN_TYPE IN ('O','M')" + "GROUP BY GLSH_CODE, CLASSIFICATION, GL_DESC, ACCT_CRNCY, GL_CODE, GLSH_DESC "
+			+ "WHERE del_flg = 'N' AND OWN_TYPE IN ('O','M')"
+			+ "GROUP BY GLSH_CODE, CLASSIFICATION, GL_DESC, ACCT_CRNCY, GL_CODE, GLSH_DESC "
 			+ "ORDER BY GLSH_CODE ASC", nativeQuery = true)
 	Object[] getglcode();
 
@@ -141,7 +142,7 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 	@Query(value = "SELECT * " + "FROM BGLS_CHART_OF_ACCOUNTS " + "WHERE del_flg = 'N' " + "  AND OWN_TYPE IN ('C') "
 			+ "ORDER BY ACCT_NUM, CLASSIFICATION ASC", nativeQuery = true)
 	List<Chart_Acc_Entity> getListofCustomer();
-	
+
 //	
 //	@Query(value =
 //		    "SELECT " +
@@ -181,211 +182,145 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 //		    "ORDER BY b.account_state, b.id",
 //		    nativeQuery = true)
 //		List<Object[]> findLoanAccountsByDueDate();
-		
-		
-		@Query(value =
-			    "SELECT " +
-			    "    b.tran_date AS TRDT, " +
-			    "    a.acct_num AS ACNO, " +
-			    "    a.acct_name AS ACNAME, " +
-			    "    INITCAP(b.tran_type) AS TT, " +
-			    "    b.tran_id AS TRID, " +
-			    "    b.part_tran_id AS PTID, " +
-			    "    INITCAP(b.part_tran_type) AS PTT, " +
-			    "    DECODE(b.part_tran_type,'Credit',b.tran_amt,0.00) AS CR, " +
-			    "    DECODE(b.part_tran_type,'Debit',b.tran_amt,0.00) AS DR, " +
-			    "    b.tran_particular AS TP " +
-			    "FROM BGLS_CHART_OF_ACCOUNTS a " +
-			    "JOIN BGLS_TRM_WRK_TRANSACTIONS b ON a.acct_num = b.acct_num " +
-			    "WHERE TO_CHAR(b.tran_date, 'DD-MM-YYYY') = :tranDate " +
-			    "ORDER BY b.tran_date, b.tran_id, b.part_tran_id",
-			    nativeQuery = true)
-			List<Object[]> getTransactionReportByDate(@Param("tranDate") String tranDate);
 
-		    @Query(value =
-		            "SELECT " +
-		            "    a.gl_desc AS GLDESC, " +
-		            "    a.acct_num AS ACNO, " +
-		            "    a.acct_name AS ACNAME, " +
-		            "    b.opening_bal AS OPBAL, " +
-		            "    b.tran_cr_bal AS CRBAL, " +
-		            "    b.tran_dr_bal AS DRBAL, " +
-		            "    b.tran_tot_net AS NET, " +
-		            "    CASE WHEN b.tran_date_bal > 0 THEN b.tran_date_bal ELSE 0 END AS ACCRBAL, " +
-		            "    CASE WHEN b.tran_date_bal < 0 THEN b.tran_date_bal ELSE 0 END AS ACDRBAL " +
-		            "FROM BGLS_CHART_OF_ACCOUNTS a " +
-		            "JOIN BGLS_DAILY_ACCT_BAL b ON a.acct_num = b.acct_num " +
-		            "WHERE TO_CHAR(b.tran_date, 'DD-MM-YYYY') = :tranDate " +
-		            "AND a.own_type IN ('C', 'O') " +
-		            "ORDER BY a.gl_desc, a.acct_num",
-		            nativeQuery = true)
-		        List<Object[]> getDabReportByDate(@Param("tranDate") String tranDate);
-		        
-		        
-		        @Query(value = "SELECT ACCT_NUM, ACCT_NAME, ACCT_TYPE, DUE_DATE, DAYS_INARREARS, " +
-		                   "INTEREST_AMT, ACCRUAL_DATE, LAST_DUE_DATE, RUN_TRAN_DATE " +
-		                   "FROM LOAN_ACCRUAL_INTEREST_TBL " +
-		                   "WHERE TO_CHAR(RUN_TRAN_DATE, 'DD-MM-YYYY') = :accrualDate", nativeQuery = true)
-		    List<Object[]> findLoanAccrualByDate(@Param("accrualDate") String accrualDate);
-		    
-		    @Query(value = "SELECT " +
-	                "b.account_state AS ACCOUNT_STATE, " +
-	                "a.customer_id AS CUSTOMER_ID, " +
-	                "a.customer_name AS CUSTOMER_NAME, " +
-	                "b.id AS ID, " +
-	                "b.total_product_price AS TOTAL_PRODUCT_PRICE, " +
-	                "b.loan_amount AS LOAN_AMOUNT, " +
-	                "b.interest_rate AS INTEREST_RATE, " +
-	                "b.repayment_installments AS REPAYMENT_INSTALLMENTS, " +
-	                "b.principal_balance AS PRINCIPAL_BALANCE, " +
-	                "b.interest_balance AS INTEREST_BALANCE, " +
-	                "b.fees_balance AS FEE_BALANCE, " +
-	                "b.penalty_balance AS PENALTY_BALANCE, " +
-	                "(b.principal_balance + b.interest_balance + b.fees_balance + b.penalty_balance) AS TOTAL_BALANCE, " +
-	                "a.acct_bal AS ACCT_BAL, " +
-	                "b.principal_paid AS PRINCIPAL_PAID, " +
-	                "b.interest_paid AS INTEREST_PAID, " +
-	                "b.fee_paid AS FEE_PAID, " +
-	                "b.penalty_paid AS PENALTY_PAID, " +
-	                "b.days_late AS DAYS_LATE, " +
-	                "NVL(c.total_principal_paid, 0) AS TOTAL_PRINCIPAL_PAID, " +
-	                "NVL(c.total_interest_paid, 0) AS TOTAL_INTEREST_PAID, " +
-	                "NVL(c.total_fee_paid, 0) AS TOTAL_FEE_PAID, " +
-	                "NVL(c.total_penalty_paid, 0) AS TOTAL_PENALTY_PAID, " +
-	                "c.last_paid_date AS LAST_PAID_DATE, " +
+	@Query(value = "SELECT " + "    b.tran_date AS TRDT, " + "    a.acct_num AS ACNO, " + "    a.acct_name AS ACNAME, "
+			+ "    INITCAP(b.tran_type) AS TT, " + "    b.tran_id AS TRID, " + "    b.part_tran_id AS PTID, "
+			+ "    INITCAP(b.part_tran_type) AS PTT, " + "    DECODE(b.part_tran_type,'Credit',b.tran_amt,0.00) AS CR, "
+			+ "    DECODE(b.part_tran_type,'Debit',b.tran_amt,0.00) AS DR, " + "    b.tran_particular AS TP "
+			+ "FROM BGLS_CHART_OF_ACCOUNTS a " + "JOIN BGLS_TRM_WRK_TRANSACTIONS b ON a.acct_num = b.acct_num "
+			+ "WHERE TO_CHAR(b.tran_date, 'DD-MM-YYYY') = :tranDate "
+			+ "ORDER BY b.tran_date, b.tran_id, b.part_tran_id", nativeQuery = true)
+	List<Object[]> getTransactionReportByDate(@Param("tranDate") String tranDate);
 
-	                // ----- TRM -----
-	                "NVL(d.principal_trm, 0) AS PRINCIPAL_TRM, " +
-	                "NVL(d.interest_trm, 0) AS INTEREST_TRM, " +
-	                "NVL(d.fees_trm, 0) AS FEES_TRM, " +
-	                "NVL(d.penalty_trm, 0) AS PENALTY_TRM, " +
-	                "NVL(d.total_trm_balance, 0) AS TOTAL_TRM_BALANCE, " +
+	@Query(value = "SELECT " + "    a.gl_desc AS GLDESC, " + "    a.acct_num AS ACNO, " + "    a.acct_name AS ACNAME, "
+			+ "    b.opening_bal AS OPBAL, " + "    b.tran_cr_bal AS CRBAL, " + "    b.tran_dr_bal AS DRBAL, "
+			+ "    b.tran_tot_net AS NET, "
+			+ "    CASE WHEN b.tran_date_bal > 0 THEN b.tran_date_bal ELSE 0 END AS ACCRBAL, "
+			+ "    CASE WHEN b.tran_date_bal < 0 THEN b.tran_date_bal ELSE 0 END AS ACDRBAL "
+			+ "FROM BGLS_CHART_OF_ACCOUNTS a " + "JOIN BGLS_DAILY_ACCT_BAL b ON a.acct_num = b.acct_num "
+			+ "WHERE TO_CHAR(b.tran_date, 'DD-MM-YYYY') = :tranDate " + "AND a.own_type IN ('C', 'O') "
+			+ "ORDER BY a.gl_desc, a.acct_num", nativeQuery = true)
+	List<Object[]> getDabReportByDate(@Param("tranDate") String tranDate);
 
-	                "b.loan_name AS PRODUCT " +
+	@Query(value = "SELECT ACCT_NUM, ACCT_NAME, ACCT_TYPE, DUE_DATE, DAYS_INARREARS, "
+			+ "INTEREST_AMT, ACCRUAL_DATE, LAST_DUE_DATE, RUN_TRAN_DATE " + "FROM LOAN_ACCRUAL_INTEREST_TBL "
+			+ "WHERE TO_CHAR(RUN_TRAN_DATE, 'DD-MM-YYYY') = :accrualDate", nativeQuery = true)
+	List<Object[]> findLoanAccrualByDate(@Param("accrualDate") String accrualDate);
 
-	                "FROM BGLS_CHART_OF_ACCOUNTS a " +
-	                "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.encoded_key = b.encoded_key " +
+	@Query(value = "SELECT " + "b.account_state AS ACCOUNT_STATE, " + "a.customer_id AS CUSTOMER_ID, "
+			+ "a.customer_name AS CUSTOMER_NAME, " + "b.id AS ID, " + "b.total_product_price AS TOTAL_PRODUCT_PRICE, "
+			+ "b.loan_amount AS LOAN_AMOUNT, " + "b.interest_rate AS INTEREST_RATE, "
+			+ "b.repayment_installments AS REPAYMENT_INSTALLMENTS, " + "b.principal_balance AS PRINCIPAL_BALANCE, "
+			+ "b.interest_balance AS INTEREST_BALANCE, " + "b.fees_balance AS FEE_BALANCE, "
+			+ "b.penalty_balance AS PENALTY_BALANCE, "
+			+ "(b.principal_balance + b.interest_balance + b.fees_balance + b.penalty_balance) AS TOTAL_BALANCE, "
+			+ "a.acct_bal AS ACCT_BAL, " + "b.principal_paid AS PRINCIPAL_PAID, " + "b.interest_paid AS INTEREST_PAID, "
+			+ "b.fee_paid AS FEE_PAID, " + "b.penalty_paid AS PENALTY_PAID, " + "b.days_late AS DAYS_LATE, "
+			+ "NVL(c.total_principal_paid, 0) AS TOTAL_PRINCIPAL_PAID, "
+			+ "NVL(c.total_interest_paid, 0) AS TOTAL_INTEREST_PAID, " + "NVL(c.total_fee_paid, 0) AS TOTAL_FEE_PAID, "
+			+ "NVL(c.total_penalty_paid, 0) AS TOTAL_PENALTY_PAID, " + "c.last_paid_date AS LAST_PAID_DATE, " +
 
-	                "LEFT JOIN ( " +
-	                "    SELECT parent_account_key, " +
-	                "           SUM(principal_paid) AS total_principal_paid, " +
-	                "           SUM(interest_paid) AS total_interest_paid, " +
-	                "           SUM(fee_paid) AS total_fee_paid, " +
-	                "           SUM(penalty_paid) AS total_penalty_paid, " +
-	                "           MAX(last_paid_date) AS last_paid_date " +
-	                "    FROM LOAN_REPAYMENT_TBL " +
-	                "    GROUP BY parent_account_key " +
-	                ") c ON b.encoded_key = c.parent_account_key " +
+			// ----- TRM -----
+			"NVL(d.principal_trm, 0) AS PRINCIPAL_TRM, " + "NVL(d.interest_trm, 0) AS INTEREST_TRM, "
+			+ "NVL(d.fees_trm, 0) AS FEES_TRM, " + "NVL(d.penalty_trm, 0) AS PENALTY_TRM, "
+			+ "NVL(d.total_trm_balance, 0) AS TOTAL_TRM_BALANCE, " +
 
-	                "LEFT JOIN ( " +
-	                "    SELECT t.acct_num, " +
-	                "           MAX(t.tran_date) AS latest_tran_date, " +
-	                "           SUM(CASE WHEN t.flow_code IN ('PRREC', 'EXREC') THEN t.tran_amt ELSE 0 END) AS principal_trm, " +
-	                "           SUM(CASE WHEN t.flow_code = 'INREC' THEN t.tran_amt ELSE 0 END) AS interest_trm, " +
-	                "           SUM(CASE WHEN t.flow_code = 'FEREC' THEN t.tran_amt ELSE 0 END) AS fees_trm, " +
-	                "           SUM(CASE WHEN t.flow_code = 'PLREC' THEN t.tran_amt ELSE 0 END) AS penalty_trm, " +
-	                "           ( NVL(SUM(CASE WHEN t.flow_code IN ('PRREC','EXREC') THEN t.tran_amt ELSE 0 END),0) + " +
-	                "             NVL(SUM(CASE WHEN t.flow_code = 'INREC' THEN t.tran_amt ELSE 0 END),0) + " +
-	                "             NVL(SUM(CASE WHEN t.flow_code = 'FEREC' THEN t.tran_amt ELSE 0 END),0) + " +
-	                "             NVL(SUM(CASE WHEN t.flow_code = 'PLREC' THEN t.tran_amt ELSE 0 END),0) " +
-	                "           ) AS total_trm_balance " +
-	                "    FROM bgls_trm_wrk_transactions t " +
-	                "    WHERE t.tran_date = ( " +
-	                "        SELECT MAX(x.tran_date) FROM bgls_trm_wrk_transactions x WHERE x.acct_num = t.acct_num " +
-	                "    ) " +
-	                "    GROUP BY t.acct_num " +
-	                ") d ON b.id = d.acct_num " +
+			"b.loan_name AS PRODUCT " +
 
-	                "WHERE a.own_type = 'C' " +
-	                "ORDER BY b.account_state, b.id",
-	                nativeQuery = true)
-	        List<Object[]> getConsolidatedLoanReport();
-		    	
+			"FROM BGLS_CHART_OF_ACCOUNTS a " + "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.encoded_key = b.encoded_key " +
 
-@Query(value = "SELECT b.id, b.LOAN_NAME, a.due_date, a.tran_date, a.no_of_days, a.month_no_of_days, a.penalty_per_day, " +
-		                   "a.penalty_per_month, a.tolerance_period, a.up_to_date_penalty, a.penalty_rate ,a.run_tran_date " +
-		                   "FROM LOAN_DAILY_PENALTY_TBL a " +
-		                   "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.encoded_key = b.ENCODED_KEY " +
-		                   "WHERE TO_CHAR(a.run_tran_date, 'DD-MM-YYYY') = :tranDate", nativeQuery = true)
-		    List<Object[]> findLoanDailyPenaltyByDate(@Param("tranDate") String tranDate);
-		    
-		    
-		    
-		    @Query(value = 
-		    	    "SELECT " +
-		    	    "    b.tran_date AS TRDT, " +
-		    	    "    a.acct_num AS ACNO, " +
-		    	    "    a.acct_name AS ACNAME, " +
-		    	    "    INITCAP(b.tran_type) AS TT, " +
-		    	    "    b.tran_id AS TRID, " +
-		    	    "    b.part_tran_id AS PTID, " +
-		    	    "    INITCAP(b.part_tran_type) AS PTT, " +
-		    	    "    DECODE(b.part_tran_type, 'Credit', b.tran_amt, 0.00) AS CR, " +
-		    	    "    DECODE(b.part_tran_type, 'Debit',  b.tran_amt, 0.00) AS DR, " +
-		    	    "    b.tran_particular AS TP " +
-		    	    "FROM BGLS_CHART_OF_ACCOUNTS a " +
-		    	    "JOIN BGLS_TRM_WRK_TRANSACTIONS b ON a.acct_num = b.acct_num " +
-		    	    "WHERE TRUNC(b.tran_date) = TO_DATE(:tranDate, 'DD-MM-YYYY') " +
-		    	    "  AND b.FLOW_CODE IN ('INDEM', 'FEEDEM', 'PENDEM') " +
-		    	    "ORDER BY b.tran_date, b.tran_id, b.part_tran_id",
-		    	    nativeQuery = true)
-		    	List<Object[]> getTransactionReport3ByDate(@Param("tranDate") String tranDate);
+			"LEFT JOIN ( " + "    SELECT parent_account_key, "
+			+ "           SUM(principal_paid) AS total_principal_paid, "
+			+ "           SUM(interest_paid) AS total_interest_paid, " + "           SUM(fee_paid) AS total_fee_paid, "
+			+ "           SUM(penalty_paid) AS total_penalty_paid, "
+			+ "           MAX(last_paid_date) AS last_paid_date " + "    FROM LOAN_REPAYMENT_TBL "
+			+ "    GROUP BY parent_account_key " + ") c ON b.encoded_key = c.parent_account_key " +
 
-		    	
-		    	@Query(value = 
-		    		    "SELECT " +
-		    		    "    b.tran_date AS TRDT, " +
-		    		    "    a.acct_num AS ACNO, " +
-		    		    "    a.acct_name AS ACNAME, " +
-		    		    "    INITCAP(b.tran_type) AS TT, " +
-		    		    "    b.tran_id AS TRID, " +
-		    		    "    b.part_tran_id AS PTID, " +
-		    		    "    INITCAP(b.part_tran_type) AS PTT, " +
-		    		    "    DECODE(b.part_tran_type, 'Credit', b.tran_amt, 0.00) AS CR, " +
-		    		    "    DECODE(b.part_tran_type, 'Debit',  b.tran_amt, 0.00) AS DR, " +
-		    		    "    b.tran_particular AS TP " +
-		    		    "FROM BGLS_CHART_OF_ACCOUNTS a " +
-		    		    "JOIN BGLS_TRM_WRK_TRANSACTIONS b ON a.acct_num = b.acct_num " +
-		    		    "WHERE TRUNC(b.tran_date) = TO_DATE(:tranDate, 'DD-MM-YYYY') " +
-		    		    "  AND b.FLOW_CODE IN ('RECOVERY' , 'PRREC' , 'INREC', 'FEREC' , 'PLREC', 'EXREC', 'FRECOVERY') " +
-		    		    "ORDER BY b.tran_date, b.tran_id, b.part_tran_id",
-		    		    nativeQuery = true)
-		    		List<Object[]> getTransactionReport2ByDate(@Param("tranDate") String tranDate);
+			"LEFT JOIN ( " + "    SELECT t.acct_num, " + "           MAX(t.tran_date) AS latest_tran_date, "
+			+ "           SUM(CASE WHEN t.flow_code IN ('PRREC', 'EXREC') THEN t.tran_amt ELSE 0 END) AS principal_trm, "
+			+ "           SUM(CASE WHEN t.flow_code = 'INREC' THEN t.tran_amt ELSE 0 END) AS interest_trm, "
+			+ "           SUM(CASE WHEN t.flow_code = 'FEREC' THEN t.tran_amt ELSE 0 END) AS fees_trm, "
+			+ "           SUM(CASE WHEN t.flow_code = 'PLREC' THEN t.tran_amt ELSE 0 END) AS penalty_trm, "
+			+ "           ( NVL(SUM(CASE WHEN t.flow_code IN ('PRREC','EXREC') THEN t.tran_amt ELSE 0 END),0) + "
+			+ "             NVL(SUM(CASE WHEN t.flow_code = 'INREC' THEN t.tran_amt ELSE 0 END),0) + "
+			+ "             NVL(SUM(CASE WHEN t.flow_code = 'FEREC' THEN t.tran_amt ELSE 0 END),0) + "
+			+ "             NVL(SUM(CASE WHEN t.flow_code = 'PLREC' THEN t.tran_amt ELSE 0 END),0) "
+			+ "           ) AS total_trm_balance " + "    FROM bgls_trm_wrk_transactions t "
+			+ "    WHERE t.tran_date = ( "
+			+ "        SELECT MAX(x.tran_date) FROM bgls_trm_wrk_transactions x WHERE x.acct_num = t.acct_num "
+			+ "    ) " + "    GROUP BY t.acct_num " + ") d ON b.id = d.acct_num " +
 
-			@Query(value = "SELECT " + "b.id AS ID, " + "b.loan_name AS LOAN_NAME "
-					+ "FROM BGLS_CHART_OF_ACCOUNTS_DEMO1 a "
-					+ "JOIN LOAN_ACCOUNT_MASTER_TBL_DEMO1 b ON a.encoded_key = b.encoded_key "
-					+ "LEFT JOIN LOAN_REPAYMENT_TBL_DEMO1 c ON b.encoded_key = c.parent_account_key "
-					+ "WHERE a.own_type = 'C' "
-					+ "AND (b.principal_balance + b.interest_balance + b.fees_balance + b.penalty_balance) - ABS(a.acct_bal) <> 0 "
-					+ "GROUP BY b.id, b.loan_name, b.principal_balance, b.interest_balance, b.fees_balance, b.penalty_balance, a.acct_bal "
-					+ "ORDER BY b.id", nativeQuery = true)
-			List<Object[]> getMismatchedAccounts();
-			
-			@Query(value = "SELECT DISTINCT " + "a.ACCT_BAL, " + "b.principal_balance, " + "b.interest_balance, "
-					+ "b.fees_balance, " + "b.penalty_balance, "
-					+ "(b.principal_balance + b.interest_balance + b.fees_balance + b.penalty_balance) AS total_balance, "
-					+ "NVL(trm.principal_trm, 0) AS principal_trm, " + "NVL(trm.interest_trm, 0) AS interest_trm, "
-					+ "NVL(trm.fees_trm, 0) AS fees_trm, " + "NVL(trm.penalty_trm, 0) AS penalty_trm, "
-					+ "NVL(trm.total_trm_balance, 0) AS total_trm_balance " + "FROM BGLS_CHART_OF_ACCOUNTS a "
-					+ "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.encoded_key = b.encoded_key "
-					+ "LEFT JOIN LOAN_REPAYMENT_TBL c ON b.encoded_key = c.parent_account_key " + "LEFT JOIN ( "
-					+ "   SELECT d.acct_num, "
-					+ "          SUM(CASE WHEN d.tran_particular IN ('Principal Outstanding Amount', 'Principal Recovery', 'Extra Recovery Adjustment') THEN d.tran_amt ELSE 0 END) AS principal_trm, "
-					+ "          SUM(CASE WHEN d.tran_particular IN ('Interest Outstanding Amount', 'Interest Recovery', 'Interest Applied') THEN d.tran_amt ELSE 0 END) AS interest_trm, "
-					+ "          SUM(CASE WHEN d.tran_particular IN ('Fees Outstanding Balance', 'Fees Recovery', 'Fee Applied') THEN d.tran_amt ELSE 0 END) AS fees_trm, "
-					+ "          SUM(CASE WHEN d.tran_particular IN ('Penalty Outstanding Balance', 'Penalty Recovery', 'Penalty Applied') THEN d.tran_amt ELSE 0 END) AS penalty_trm, "
-					+ "          (NVL(SUM(CASE WHEN d.tran_particular IN ('Principal Outstanding Amount', 'Principal Recovery', 'Extra Recovery Adjustment') THEN d.tran_amt ELSE 0 END), 0) + "
-					+ "           NVL(SUM(CASE WHEN d.tran_particular IN ('Interest Outstanding Amount', 'Interest Recovery', 'Interest Applied') THEN d.tran_amt ELSE 0 END), 0) + "
-					+ "           NVL(SUM(CASE WHEN d.tran_particular IN ('Fees Outstanding Balance', 'Fees Recovery', 'Fee Applied') THEN d.tran_amt ELSE 0 END), 0) + "
-					+ "           NVL(SUM(CASE WHEN d.tran_particular IN ('Penalty Outstanding Balance', 'Penalty Recovery', 'Penalty Applied') THEN d.tran_amt ELSE 0 END), 0)) AS total_trm_balance "
-					+ "   FROM bgls_trm_wrk_transactions d " + "   GROUP BY d.acct_num "
-					+ ") trm ON trm.acct_num = a.acct_num "
-					+ "WHERE a.own_type = 'C' AND a.acct_num = :acctNum", nativeQuery = true)
-			List<Object[]> getAccountBalanceDetails(@Param("acctNum") String acctNum);
-			
-			@Modifying
-			@Transactional
-			@Query(value = "CALL UPDATE_LOAN_BALANCE_BY_ACCT(:acct_num)", nativeQuery = true)
-			void updateLoanBalanceByAcct(@Param("acct_num") String acct_num);
+			"WHERE a.own_type = 'C' " + "ORDER BY b.account_state, b.id", nativeQuery = true)
+	List<Object[]> getConsolidatedLoanReport();
+
+	@Query(value = "SELECT b.id, b.LOAN_NAME, a.due_date, a.tran_date, a.no_of_days, a.month_no_of_days, a.penalty_per_day, "
+			+ "a.penalty_per_month, a.tolerance_period, a.up_to_date_penalty, a.penalty_rate ,a.run_tran_date "
+			+ "FROM LOAN_DAILY_PENALTY_TBL a " + "JOIN LOAN_ACCOUNT_MASTER_TBL b ON a.encoded_key = b.ENCODED_KEY "
+			+ "WHERE TO_CHAR(a.run_tran_date, 'DD-MM-YYYY') = :tranDate", nativeQuery = true)
+	List<Object[]> findLoanDailyPenaltyByDate(@Param("tranDate") String tranDate);
+
+	@Query(value = "SELECT " + "    b.tran_date AS TRDT, " + "    a.acct_num AS ACNO, " + "    a.acct_name AS ACNAME, "
+			+ "    INITCAP(b.tran_type) AS TT, " + "    b.tran_id AS TRID, " + "    b.part_tran_id AS PTID, "
+			+ "    INITCAP(b.part_tran_type) AS PTT, "
+			+ "    DECODE(b.part_tran_type, 'Credit', b.tran_amt, 0.00) AS CR, "
+			+ "    DECODE(b.part_tran_type, 'Debit',  b.tran_amt, 0.00) AS DR, " + "    b.tran_particular AS TP "
+			+ "FROM BGLS_CHART_OF_ACCOUNTS a " + "JOIN BGLS_TRM_WRK_TRANSACTIONS b ON a.acct_num = b.acct_num "
+			+ "WHERE TRUNC(b.tran_date) = TO_DATE(:tranDate, 'DD-MM-YYYY') "
+			+ "  AND b.FLOW_CODE IN ('INDEM', 'FEEDEM', 'PENDEM') "
+			+ "ORDER BY b.tran_date, b.tran_id, b.part_tran_id", nativeQuery = true)
+	List<Object[]> getTransactionReport3ByDate(@Param("tranDate") String tranDate);
+
+	@Query(value = "SELECT " + "    b.tran_date AS TRDT, " + "    a.acct_num AS ACNO, " + "    a.acct_name AS ACNAME, "
+			+ "    INITCAP(b.tran_type) AS TT, " + "    b.tran_id AS TRID, " + "    b.part_tran_id AS PTID, "
+			+ "    INITCAP(b.part_tran_type) AS PTT, "
+			+ "    DECODE(b.part_tran_type, 'Credit', b.tran_amt, 0.00) AS CR, "
+			+ "    DECODE(b.part_tran_type, 'Debit',  b.tran_amt, 0.00) AS DR, " + "    b.tran_particular AS TP "
+			+ "FROM BGLS_CHART_OF_ACCOUNTS a " + "JOIN BGLS_TRM_WRK_TRANSACTIONS b ON a.acct_num = b.acct_num "
+			+ "WHERE TRUNC(b.tran_date) = TO_DATE(:tranDate, 'DD-MM-YYYY') "
+			+ "  AND b.FLOW_CODE IN ('RECOVERY' , 'PRREC' , 'INREC', 'FEREC' , 'PLREC', 'EXREC', 'FRECOVERY') "
+			+ "ORDER BY b.tran_date, b.tran_id, b.part_tran_id", nativeQuery = true)
+	List<Object[]> getTransactionReport2ByDate(@Param("tranDate") String tranDate);
+
+	@Query(value = "SELECT DISTINCT " + "b.id AS id, " + "a.acct_name AS acct_name " + "FROM bgls_chart_of_accounts a "
+			+ "JOIN loan_account_master_tbl b ON a.encoded_key = b.encoded_key "
+			+ "LEFT JOIN loan_repayment_tbl c ON b.encoded_key = c.parent_account_key " + "WHERE a.own_type = 'C' "
+			+ "AND (b.principal_balance + b.interest_balance + b.fees_balance + b.penalty_balance) - ABS(a.acct_bal) <> 0 "
+			+ "ORDER BY b.id", nativeQuery = true)
+	List<Object[]> getMismatchedAccounts();
+
+	@Query(value = "SELECT DISTINCT " + "a.acct_bal, " + "b.principal_balance, " + "b.interest_balance, "
+			+ "b.fees_balance, " + "b.penalty_balance, "
+			+ "(b.principal_balance + b.interest_balance + b.fees_balance + b.penalty_balance) AS total_balance, "
+			+ "NVL(trm.principal_trm, 0) AS principal_trm, " + "NVL(trm.interest_trm, 0) AS interest_trm, "
+			+ "NVL(trm.fees_trm, 0) AS fees_trm, " + "NVL(trm.penalty_trm, 0) AS penalty_trm, "
+			+ "NVL(trm.total_trm_balance, 0) AS total_trm_balance " + "FROM bgls_chart_of_accounts a "
+			+ "JOIN loan_account_master_tbl b ON a.encoded_key = b.encoded_key "
+			+ "LEFT JOIN loan_repayment_tbl c ON b.encoded_key = c.parent_account_key " + "LEFT JOIN ( "
+			+ "    SELECT d.acct_num, "
+			+ "        SUM(CASE WHEN d.tran_particular IN ('Principal Outstanding Amount', 'Principal Recovery', 'Extra Recovery Adjustment') "
+			+ "            THEN (CASE WHEN d.part_tran_type = 'Debit' THEN 1 ELSE -1 END) * d.tran_amt ELSE 0 END) AS principal_trm, "
+			+ "        SUM(CASE WHEN d.tran_particular IN ('Interest Outstanding Amount', 'Interest Recovery', 'Interest Applied') "
+			+ "            THEN (CASE WHEN d.part_tran_type = 'Debit' THEN 1 ELSE -1 END) * d.tran_amt ELSE 0 END) AS interest_trm, "
+			+ "        SUM(CASE WHEN d.tran_particular IN ('Fees Outstanding Balance', 'Fees Recovery', 'Fee Applied') "
+			+ "            THEN (CASE WHEN d.part_tran_type = 'Debit' THEN 1 ELSE -1 END) * d.tran_amt ELSE 0 END) AS fees_trm, "
+			+ "        SUM(CASE WHEN d.tran_particular IN ('Penalty Outstanding Balance', 'Penalty Recovery', 'Penalty Applied') "
+			+ "            THEN (CASE WHEN d.part_tran_type = 'Debit' THEN 1 ELSE -1 END) * d.tran_amt ELSE 0 END) AS penalty_trm, "
+			+ "        ( "
+			+ "            NVL(SUM(CASE WHEN d.tran_particular IN ('Principal Outstanding Amount', 'Principal Recovery', 'Extra Recovery Adjustment') "
+			+ "                THEN (CASE WHEN d.part_tran_type = 'Debit' THEN 1 ELSE -1 END) * d.tran_amt ELSE 0 END), 0) + "
+			+ "            NVL(SUM(CASE WHEN d.tran_particular IN ('Interest Outstanding Amount', 'Interest Recovery', 'Interest Applied') "
+			+ "                THEN (CASE WHEN d.part_tran_type = 'Debit' THEN 1 ELSE -1 END) * d.tran_amt ELSE 0 END), 0) + "
+			+ "            NVL(SUM(CASE WHEN d.tran_particular IN ('Fees Outstanding Balance', 'Fees Recovery', 'Fee Applied') "
+			+ "                THEN (CASE WHEN d.part_tran_type = 'Debit' THEN 1 ELSE -1 END) * d.tran_amt ELSE 0 END), 0) + "
+			+ "            NVL(SUM(CASE WHEN d.tran_particular IN ('Penalty Outstanding Balance', 'Penalty Recovery', 'Penalty Applied') "
+			+ "                THEN (CASE WHEN d.part_tran_type = 'Debit' THEN 1 ELSE -1 END) * d.tran_amt ELSE 0 END), 0) "
+			+ "        ) AS total_trm_balance " + "    FROM bgls_trm_wrk_transactions d " + "    GROUP BY d.acct_num "
+			+ ") trm ON trm.acct_num = a.acct_num "
+			+ "WHERE a.own_type = 'C' AND a.acct_num = :acctNum", nativeQuery = true)
+	List<Object[]> getAccountBalanceDetails(@Param("acctNum") String acctNum);
+
+	@Modifying
+	@Transactional
+	@Query(value = "CALL UPDATE_LOAN_BALANCE_BY_ACCT(:acct_num)", nativeQuery = true)
+	void updateLoanBalanceByAcct(@Param("acct_num") String acct_num);
 }
