@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -353,6 +355,8 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 					+ "WHERE a.own_type = 'C' AND a.acct_num = :acctNum", nativeQuery = true)
 			List<Object[]> getAccountBalanceDetails(@Param("acctNum") String acctNum);
 			
-			@Procedure(procedureName = "UPDATE_LOAN_BALANCE_BY_ACCT")
-		    void updateLoanBalanceByAcct(@Param("acct_num") String acctNum);
+			@Modifying
+			@Transactional
+			@Query(value = "CALL UPDATE_LOAN_BALANCE_BY_ACCT(:acct_num)", nativeQuery = true)
+			void updateLoanBalanceByAcct(@Param("acct_num") String acct_num);
 }
