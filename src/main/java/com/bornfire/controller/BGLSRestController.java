@@ -12664,7 +12664,7 @@ public class BGLSRestController {
 	@GetMapping("/ConsolidatedLoanReportDownload")
 	public ResponseEntity<byte[]> downloadTransactions(@RequestParam("dueDate") String dueDate) {
 
-		List<Object[]> rawData = chart_Acc_Rep.findLoanAccountsByDueDate();
+		List<Object[]> rawData = chart_Acc_Rep.getConsolidatedLoanReport();
 		byte[] excelData = exelDownloadService.generateTransactionExcel(rawData, dueDate);
 
 		if (excelData == null || excelData.length == 0) {

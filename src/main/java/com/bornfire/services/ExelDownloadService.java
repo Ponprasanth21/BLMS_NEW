@@ -1314,7 +1314,7 @@ public class ExelDownloadService {
             titleStyle.setAlignment(HorizontalAlignment.CENTER);
             titleCell.setCellStyle(titleStyle);
 
-            int totalColumns = 23;
+            int totalColumns = 27;
             sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, totalColumns - 1));
 
             // ==============================
@@ -1344,7 +1344,9 @@ public class ExelDownloadService {
                 "FEE_BALANCE", "PENALTY_BALANCE", "TOTAL_BALANCE", "ACCT_BAL",
                 "PRINCIPAL_PAID", "INTEREST_PAID", "FEE_PAID", "PENALTY_PAID",
                 "DAYS_LATE", "TOTAL_PRINCIPAL_PAID", "TOTAL_INTEREST_PAID",
-                "TOTAL_FEE_PAID", "TOTAL_PENALTY_PAID", "LAST_PAID_DATE", "PRODUCT"
+                "TOTAL_FEE_PAID", "TOTAL_PENALTY_PAID", "LAST_PAID_DATE", 
+                "LAST PRINCIPAL PAID", "LAST INTEREST PAID", "LAST FEE PAID", "LAST PENALTY PAID",
+                "PAYMENT AMOUNT","PRODUCT",
             };
 
             CellStyle headerStyle = workbook.createCellStyle();
@@ -1434,7 +1436,7 @@ public class ExelDownloadService {
                     }
 
                     // LAST_PAID_DATE → format dd-MM-yyyy
-                    if (i == 23) {
+                    if (i == 23 || i == 30) {
                         try {
                             if (value instanceof java.util.Date) {
                                 cell.setCellValue((Date) value);
@@ -1451,6 +1453,17 @@ public class ExelDownloadService {
                         continue;
                     }
 
+                    if (i >= 25 && i <= 29) {
+                        try {
+                            cell.setCellValue(Double.parseDouble(value.toString()));
+                            cell.setCellStyle(numberStyle);
+                        } catch (Exception e) {
+                            cell.setCellValue(value.toString());
+                            cell.setCellStyle(textLeftStyle);
+                        }
+                        continue;
+                    }
+                    
                     // Default numeric or text handling
                     if (value instanceof Number) {
                         cell.setCellValue(((Number) value).doubleValue());
@@ -1497,6 +1510,11 @@ public class ExelDownloadService {
             int penaltyCol = 11;      // "L"
             int totalBalanceCol = 12; // "M"
             int acctBalCol = 13;      // "N"
+            int lastPrincipalPaidCol = 24;
+            int lastInterestPaidCol = 25;
+            int lastFeePaidCol = 26;
+            int lastPenaltyPaidCol = 27;
+            int paymentAmountCol = 28;
 
             labelRow.createCell(principalCol).setCellValue("PRINCIPAL");
             labelRow.getCell(principalCol).setCellStyle(turquoiseStyle);
@@ -1515,6 +1533,21 @@ public class ExelDownloadService {
 
             labelRow.createCell(acctBalCol).setCellValue("ACCT BAL");
             labelRow.getCell(acctBalCol).setCellStyle(turquoiseStyle);
+            
+            labelRow.createCell(lastPrincipalPaidCol).setCellValue("LAST PRINCIPAL PAID");
+            labelRow.getCell(lastPrincipalPaidCol).setCellStyle(turquoiseStyle);
+
+            labelRow.createCell(lastInterestPaidCol).setCellValue("LAST INTEREST PAID");
+            labelRow.getCell(lastInterestPaidCol).setCellStyle(turquoiseStyle);
+
+            labelRow.createCell(lastFeePaidCol).setCellValue("LAST FEE PAID");
+            labelRow.getCell(lastFeePaidCol).setCellStyle(turquoiseStyle);
+
+            labelRow.createCell(lastPenaltyPaidCol).setCellValue("LAST PENALTY PAID");
+            labelRow.getCell(lastPenaltyPaidCol).setCellStyle(turquoiseStyle);
+
+            labelRow.createCell(paymentAmountCol).setCellValue("PAYMENT AMOUNT");
+            labelRow.getCell(paymentAmountCol).setCellStyle(turquoiseStyle);
 
             String principalFormula = "SUM(I5:I" + lastDataRow + ")";
             String interestFormula = "SUM(J5:J" + lastDataRow + ")";
@@ -1522,6 +1555,12 @@ public class ExelDownloadService {
             String penaltyFormula = "SUM(L5:L" + lastDataRow + ")";
             String totalBalanceFormula = "SUM(M5:M" + lastDataRow + ")";
             String acctBalFormula = "SUM(N5:N" + lastDataRow + ")";
+            String lastPrincipalSum = "SUM(Y5:Y" + lastDataRow + ")";
+            String lastInterestSum = "SUM(Z5:Z" + lastDataRow + ")";
+            String lastFeeSum = "SUM(AA5:AA" + lastDataRow + ")";
+            String lastPenaltySum = "SUM(AB5:AB" + lastDataRow + ")";
+            String paymentAmountSum = "SUM(AC5:AC" + lastDataRow + ")";
+
 
             sumRow.createCell(principalCol).setCellFormula(principalFormula);
             sumRow.createCell(interestCol).setCellFormula(interestFormula);
@@ -1529,6 +1568,12 @@ public class ExelDownloadService {
             sumRow.createCell(penaltyCol).setCellFormula(penaltyFormula);
             sumRow.createCell(totalBalanceCol).setCellFormula(totalBalanceFormula);
             sumRow.createCell(acctBalCol).setCellFormula(acctBalFormula);
+            sumRow.createCell(lastPrincipalPaidCol).setCellFormula(lastPrincipalSum);
+            sumRow.createCell(lastInterestPaidCol).setCellFormula(lastInterestSum);
+            sumRow.createCell(lastFeePaidCol).setCellFormula(lastFeeSum);
+            sumRow.createCell(lastPenaltyPaidCol).setCellFormula(lastPenaltySum);
+            sumRow.createCell(paymentAmountCol).setCellFormula(paymentAmountSum);
+
 
             sumRow.getCell(principalCol).setCellStyle(numberStyle1);
             sumRow.getCell(interestCol).setCellStyle(numberStyle1);
@@ -1536,6 +1581,12 @@ public class ExelDownloadService {
             sumRow.getCell(penaltyCol).setCellStyle(numberStyle1);
             sumRow.getCell(totalBalanceCol).setCellStyle(numberStyle1);
             sumRow.getCell(acctBalCol).setCellStyle(numberStyle1);
+            sumRow.getCell(lastPrincipalPaidCol).setCellStyle(numberStyle1);
+            sumRow.getCell(lastInterestPaidCol).setCellStyle(numberStyle1);
+            sumRow.getCell(lastFeePaidCol).setCellStyle(numberStyle1);
+            sumRow.getCell(lastPenaltyPaidCol).setCellStyle(numberStyle1);
+            sumRow.getCell(paymentAmountCol).setCellStyle(numberStyle1);
+
 
             Cell summaryLabel = sumRow.createCell(7);
             summaryLabel.setCellValue("TOTAL :");
@@ -2156,7 +2207,7 @@ public byte[] generateEndOfMonthExcel(List<Object[]> rawData, String dueDate) {
             // ===================== HEADERS =====================
             String[] headers = {
                 "Account Number", "Account Name", "Account Type", "Due Date",
-                "Days in Arrears", "Interest Amount", "Accrual Date", "Last Due Date"
+                "Days in Arrears", "Interest Amount", "Accrual Date", "Last Due Date", "Tran Date"
             };
 
             Row headerRow = sheet.createRow(3);
@@ -2214,6 +2265,7 @@ public byte[] generateEndOfMonthExcel(List<Object[]> rawData, String dueDate) {
                         case 3: // Due Date
                         case 6: // Accrual Date
                         case 7: // Last Due Date
+                        case 8:
                             cell.setCellStyle(dateCellStyle);
                             if (val instanceof Date) {
                                 cell.setCellValue((Date) val);
@@ -2304,8 +2356,8 @@ public byte[] generateEndOfMonthExcel(List<Object[]> rawData, String dueDate) {
 
             // ===================== HEADERS =====================
             String[] headers = {
-                "Account ID", "Loan Name", "Due Date", "Tran Date","No of Days","Month No Of Days",
-                "Penalty Per Day", "Penalty Per Month", "Tolerance Period", "Total Penalty", "Penalty Rate"
+                "Account ID", "Loan Name", "Due Date", "Accrual Date","No of Days","Month No Of Days",
+                "Penalty Per Day", "Penalty Per Month", "Tolerance Period", "Total Penalty", "Penalty Rate", "Tran Date"
             };
 
             Row headerRow = sheet.createRow(3);
@@ -2365,6 +2417,7 @@ public byte[] generateEndOfMonthExcel(List<Object[]> rawData, String dueDate) {
                     switch (i) {
                         case 2:
                         case 3:// Due Date
+                        case 11:// Due Date
                             cell.setCellStyle(dateCellStyle);
                             if (val instanceof Date) {
                                 cell.setCellValue((Date) val);
