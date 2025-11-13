@@ -339,4 +339,22 @@ public class TRAN_MAIN_TRM_WRK_ENTITY {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	@Override
+	public String toString() {
+		return "TRAN_MAIN_TRM_WRK_ENTITY [srl_no=" + srl_no + ", branch_id=" + branch_id + ", acid=" + acid
+				+ ", cust_id=" + cust_id + ", tran_id=" + tran_id + ", part_tran_id=" + part_tran_id + ", acct_num="
+				+ acct_num + ", acct_name=" + acct_name + ", tran_type=" + tran_type + ", part_tran_type="
+				+ part_tran_type + ", acct_crncy=" + acct_crncy + ", tran_amt=" + tran_amt + ", tran_particular="
+				+ tran_particular + ", tran_remarks=" + tran_remarks + ", tran_date=" + tran_date + ", value_date="
+				+ value_date + ", tran_ref_no=" + tran_ref_no + ", add_details=" + add_details + ", partition_type="
+				+ partition_type + ", partition_det=" + partition_det + ", instr_num=" + instr_num + ", ref_crncy="
+				+ ref_crncy + ", ref_crncy_amt=" + ref_crncy_amt + ", rate_code=" + rate_code + ", rate=" + rate
+				+ ", entry_user=" + entry_user + ", post_user=" + post_user + ", entry_time=" + entry_time
+				+ ", post_time=" + post_time + ", tran_status=" + tran_status + ", del_flg=" + del_flg + ", instr_date="
+				+ instr_date + ", tran_code=" + tran_code + ", tran_rpt_code=" + tran_rpt_code + ", modify_user="
+				+ modify_user + ", modify_time=" + modify_time + ", flow_code=" + flow_code + ", flow_date=" + flow_date
+				+ "]";
+	}
+	
+	
 }
