@@ -99,5 +99,9 @@ public interface BGLS_CONTROL_TABLE_REP extends JpaRepository<BGLS_Control_Table
         @Modifying
 	    @Query(value = "UPDATE BGLS_CONTROL_TABLE SET TRAN_DATE = :nxtdate, DCP_END_TIME = CURRENT_TIMESTAMP,PREVIOUS_DATE =:trndate", nativeQuery = true)
 	    int updateTranDates(@Param("nxtdate") Date nxtdate,@Param("trndate") Date trndate);
+        
+        
+        @Query(value = "SELECT TRAN_DATE FROM BGLS_CONTROL_TABLE", nativeQuery = true)
+  	    Date getTranDateforScheduler();
 
 }

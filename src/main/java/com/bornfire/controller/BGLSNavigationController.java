@@ -5074,7 +5074,7 @@ public class BGLSNavigationController {
         Date trndate1 = sdf.parse(trndate);
         System.out.println("trndate1"+trndate1);
         
-        String result = tRAN_MAIN_TRM_WRK_REP.checkDemandAndRecovery(trndate);
+        String result = tRAN_MAIN_TRM_WRK_REP.checkDemandAndRecovery(trndate1);
 
         if(result.equals("BOTH_MISSING") || result.equals("RECOVERY_MISSING") || result.equals("DEMAND_MISSING") ) {
         	String output = "";

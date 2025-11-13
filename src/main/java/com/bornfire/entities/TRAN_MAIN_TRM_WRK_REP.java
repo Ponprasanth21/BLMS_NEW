@@ -592,17 +592,45 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 			"     SELECT " +
 			"         (SELECT COUNT(*)  " +
 			"          FROM BGLS_TRM_WRK_TRANSACTIONS " +
-			"          WHERE TRAN_DATE = TO_DATE('07-11-2025','DD-MM-YYYY') " +
+			"          WHERE TRAN_DATE = :tranDate " +
 			"            AND FLOW_CODE IN ('INDEM','FEEDEM','PENDEM') " +
 			"         ) AS demand_cnt, " +
 			"         (SELECT COUNT(*)  " +
 			"          FROM BGLS_TRM_WRK_TRANSACTIONS " +
-			"          WHERE TRAN_DATE = TO_DATE('07-11-2025','DD-MM-YYYY') " +
+			"          WHERE TRAN_DATE = :tranDate " +
 			"            AND FLOW_CODE IN ('RECOVERY','PRREC','INREC','FEREC','PLREC','EXREC','FRECOVERY') " +
 			"         ) AS recovery_cnt " +
 			"     FROM dual " +
 			" ) t "  
 			, nativeQuery = true)
-			String checkDemandAndRecovery(@Param("tranDate") String tranDate);
+			String checkDemandAndRecovery(@Param("tranDate") Date tranDate);
 
+	
+	@Query(value = "SELECT COUNT(*) FROM  BGLS_TRM_WRK_TRANSACTIONS WHERE TRUNC(TRAN_DATE) = TRUNC(SYSDATE) AND FLOW_CODE = 'INDEM'", nativeQuery = true)
+	List<TRAN_MAIN_TRM_WRK_ENTITY> getResultindem();
+	
+	
+	@Query(value = "SELECT COUNT(*) FROM  BGLS_TRM_WRK_TRANSACTIONS WHERE TRUNC(TRAN_DATE) = TRUNC(SYSDATE) AND FLOW_CODE = 'FEEDEM'", nativeQuery = true)
+	List<TRAN_MAIN_TRM_WRK_ENTITY> getResultfeedem();
+	
+	
+	@Query(value = "SELECT COUNT(*) FROM  BGLS_TRM_WRK_TRANSACTIONS WHERE TRUNC(TRAN_DATE) = TRUNC(SYSDATE) AND FLOW_CODE = 'PENDEM'", nativeQuery = true)
+	int getResultpenaltydem();
+	
+	
+	@Modifying
+	@Transactional
+	@Query(value = "CALL SYSTEM_DAYEND_INTEREST_DEMAND(:ENTRY_USER)", nativeQuery = true)
+	void SystemInterestDemand(@Param("ENTRY_USER") String ENTRY_USER);
+	
+	@Modifying
+	@Transactional
+	@Query(value = "CALL SYSTEM_DAYEND_FEE_DEMAND(:ENTRY_USER)", nativeQuery = true)
+	void SystemFeeDemand(@Param("ENTRY_USER") String ENTRY_USER);
+	
+	@Modifying
+	@Transactional
+	@Query(value = "CALL SYSTEM_DAYEND_PENALITY_DEMAND(:ENTRY_USER)", nativeQuery = true)
+	void SystemPenaltyDemand(@Param("ENTRY_USER") String ENTRY_USER);
+	
 }
