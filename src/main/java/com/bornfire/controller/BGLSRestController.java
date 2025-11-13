@@ -419,8 +419,7 @@ public class BGLSRestController {
 	@RequestMapping(value = "createUser", method = RequestMethod.POST)
 	public String createUser(@RequestParam("formmode") String formmode,
 			@RequestParam("accountExpiryDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date accountExpiryDate,
-			@RequestBody UserProfile userprofile, HttpServletRequest rq)
-			throws Exception {
+			@RequestBody UserProfile userprofile, HttpServletRequest rq) throws Exception {
 
 		String userid = (String) rq.getSession().getAttribute("USERID");
 		System.out.println("accountExpiryDate " + accountExpiryDate);
@@ -444,8 +443,7 @@ public class BGLSRestController {
 	@RequestMapping(value = "mosifyUser", method = RequestMethod.POST)
 	public String mosifyUser(@RequestParam("formmode") String formmode,
 			@RequestParam("accountExpiryDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date accountExpiryDate,
-			@RequestBody UserProfile userprofile, HttpServletRequest rq)
-			throws Exception {
+			@RequestBody UserProfile userprofile, HttpServletRequest rq) throws Exception {
 
 		String userid = (String) rq.getSession().getAttribute("USERID");
 		System.out.println("accountExpiryDate " + accountExpiryDate);
@@ -10452,6 +10450,61 @@ public class BGLSRestController {
 								userid, decimalFormatter, partTranId);
 					}
 
+					for (Map<String, Object> row : custTransactions) {
+
+						// 🔹 Extract frontend values
+						String TransactionIds = (String) row.get("tran_id");
+						String acctNum = (String) row.get("acct_num");
+						String acctName = (String) row.get("acct_namedata");
+						String tranRemarks = row.get("tran_remarks") != null ? row.get("tran_remarks").toString() : "";
+						String tranParticularData = row.get("tran_particulardata") != null
+								? row.get("tran_particulardata").toString()
+								: "0";
+
+						String tranAmtStr = row.get("tran_particulardata") != null
+								? row.get("tran_particulardata").toString().replace(",", "").trim()
+								: "0";
+
+						BigDecimal tranAmt = BigDecimal.ZERO;
+						try {
+							tranAmt = new BigDecimal(tranAmtStr);
+						} catch (Exception ex) {
+							System.out.println("⚠️ Invalid tran_amt for " + acctName + ": " + tranAmtStr);
+							continue;
+						}
+
+						// 🌟 Use FIRST flow row to determine loan product for debit parking
+						Object[] sample = flows.get(0);
+						String loanAcctNo = sample[4] != null ? sample[4].toString() : "";
+
+						String productname = lOAN_ACT_MST_REPO.getLoanproductnames(loanAcctNo);
+						if ("Customer Loan Product".equalsIgnoreCase(productname)) {
+							productname = "Credit Facility";
+						}
+
+						// 🌟 Get Parking Account for this product
+						Transaction_accounts_entity account_numbervalues = transaction_accounts_Rep
+								.getLoanView(productname);
+
+						String parkingAcct = account_numbervalues.getLoan_parking_account();
+
+						// 🌟 Load COA account for the debit
+						Chart_Acc_Entity debitAccount = chart_Acc_Rep.getaedit(parkingAcct);
+						if (debitAccount == null) {
+							System.out.println("❌ Parking debit account NOT FOUND: " + parkingAcct);
+							continue;
+						}
+
+						// 🌟 CREATE DEBIT MAP ENTRY (FINAL FIX)
+						Map<String, Object> map = new HashMap<>();
+						map.put("tran_id", tranId);
+						map.put("part_tran_id", partTranId.get());
+						map.put("account_no", parkingAcct);
+						map.put("tran_amt", decimalFormatter.format(tranAmt));
+						map.put("part_tran_type", "D"); // <<< MUST BE "D" FOR DEBIT
+						datas.add(map);
+					}
+
 					double remainingAmt = totalDebitAmountBD.doubleValue();
 					BigDecimal creditEntriesSumBD = BigDecimal.ZERO;
 
@@ -10681,15 +10734,26 @@ public class BGLSRestController {
 
 					// ---------- Now ALL datas entries exist (D and C). Update COA balances
 					// ----------
+					System.out.println("===============================================================");
+					System.out.println("🔵 STARTING COA UPDATE FOR CUSTOMER : " + customerId);
+					System.out.println("===============================================================");
+
 					for (Map<String, Object> entry1 : datas) {
-						String accountNo = entry1.get("account_no") != null ? entry1.get("account_no").toString() : "";
-						String partTranType = entry1.get("part_tran_type") != null
+
+						String accountNo = entry1.get("account_no") != null ? entry1.get("account_no").toString().trim()
+								: "";
+
+						String partTranTypeRaw = entry1.get("part_tran_type") != null
 								? entry1.get("part_tran_type").toString()
 								: "";
+
+						String partTranType = partTranTypeRaw.trim().toUpperCase(); // normalize
+
 						String tranAmtStr = entry1.get("tran_amt") != null
 								? entry1.get("tran_amt").toString().replace(",", "")
 								: "0";
-						BigDecimal tranAmt = BigDecimal.ZERO;
+
+						BigDecimal tranAmt;
 						try {
 							tranAmt = new BigDecimal(tranAmtStr);
 						} catch (Exception ex) {
@@ -10697,197 +10761,218 @@ public class BGLSRestController {
 						}
 
 						Chart_Acc_Entity account = null;
-						if (accountNo != null && !accountNo.isEmpty()) {
+						if (!accountNo.isEmpty()) {
 							try {
 								account = chart_Acc_Rep.getaedit(accountNo);
 							} catch (Exception ex) {
 								account = null;
 							}
 						}
+
 						if (account == null) {
 							System.out.println("⚠️ Account not found (COA update) : " + accountNo + " — skipping");
 							continue;
 						}
 
-						BigDecimal balance = Optional.ofNullable(account.getAcct_bal()).orElse(BigDecimal.ZERO);
-						BigDecimal crAmt = Optional.ofNullable(account.getCr_amt()).orElse(BigDecimal.ZERO);
-						BigDecimal drAmt = Optional.ofNullable(account.getDr_amt()).orElse(BigDecimal.ZERO);
+						// Previous values
+						BigDecimal prevBalance = Optional.ofNullable(account.getAcct_bal()).orElse(BigDecimal.ZERO);
+						BigDecimal prevCrAmt = Optional.ofNullable(account.getCr_amt()).orElse(BigDecimal.ZERO);
+						BigDecimal prevDrAmt = Optional.ofNullable(account.getDr_amt()).orElse(BigDecimal.ZERO);
 
-						if ("C".equalsIgnoreCase(partTranType) || "Credit".equalsIgnoreCase(partTranType)) {
-							balance = balance.add(tranAmt);
-							crAmt = crAmt.add(tranAmt);
-						} else if ("D".equalsIgnoreCase(partTranType) || "Debit".equalsIgnoreCase(partTranType)) {
-							balance = balance.subtract(tranAmt);
-							drAmt = drAmt.add(tranAmt);
+						BigDecimal newBalance = prevBalance;
+						BigDecimal newCrAmt = prevCrAmt;
+						BigDecimal newDrAmt = prevDrAmt;
+
+						System.out.println("------------------------------------------------------------------");
+						System.out.println("👤 CUSTOMER      : " + customerId);
+						System.out.println("🏦 ACCOUNT       : " + accountNo + " - " + account.getAcct_name());
+						System.out.println("🔁 ENTRY TYPE    : " + partTranTypeRaw);
+						System.out.println("💰 TRAN AMOUNT   : " + tranAmt);
+						System.out.println("Before Update:");
+						System.out.println("      Balance : " + prevBalance);
+						System.out.println("      Credit  : " + prevCrAmt);
+						System.out.println("      Debit   : " + prevDrAmt);
+
+						// APPLY COA UPDATE
+						if (partTranType.equals("C") || partTranType.equals("CREDIT")) {
+
+							// CREDIT ENTRY
+							newBalance = prevBalance.add(tranAmt);
+							newCrAmt = prevCrAmt.add(tranAmt);
+
+							System.out.println("👉 Applied: CREDIT entry");
+							System.out.println("      New Balance : " + newBalance);
+							System.out.println("      New Credit  : " + newCrAmt);
+
+						} else if (partTranType.equals("D") || partTranType.equals("DEBIT")) {
+
+							// DEBIT ENTRY (only one per customer, but this loop handles it correctly)
+							newBalance = prevBalance.subtract(tranAmt);
+							newDrAmt = prevDrAmt.add(tranAmt);
+
+							System.out.println("👉 Applied: DEBIT entry");
+							System.out.println("      New Balance : " + newBalance);
+							System.out.println("      New Debit   : " + newDrAmt);
+
+						} else {
+							System.out.println("⚠️ Unknown transaction type: [" + partTranTypeRaw + "]");
 						}
 
-						account.setAcct_bal(balance);
-						account.setCr_amt(crAmt);
-						account.setDr_amt(drAmt);
+						// SAVE UPDATE
+						account.setAcct_bal(newBalance);
+						account.setCr_amt(newCrAmt);
+						account.setDr_amt(newDrAmt);
 						account.setModify_time(new Date());
 						account.setModify_user(userid);
 						chart_Acc_Rep.save(account);
+
+						System.out.println("💾 SAVED COA UPDATE SUCCESSFULLY");
 					}
+
+					System.out.println("===============================================================");
+					System.out.println("🔵 COMPLETED COA UPDATE FOR CUSTOMER : " + customerId);
+					System.out.println("===============================================================");
 
 					// ---------- Update Loan Account Master (loanActRecord) using datas ----------
 					for (Map<String, Object> entry2 : datas) {
-					    String accountNumber = entry2.get("account_no") != null ? entry2.get("account_no").toString() : "";
-					    String flowCode = entry2.get("flow_code") != null ? entry2.get("flow_code").toString() : "";
-					    String tranAmtStr = entry2.get("tran_amt") != null
-					            ? entry2.get("tran_amt").toString().replace(",", "")
-					            : "0";
+						String accountNumber = entry2.get("account_no") != null ? entry2.get("account_no").toString()
+								: "";
+						String flowCode = entry2.get("flow_code") != null ? entry2.get("flow_code").toString() : "";
+						String tranAmtStr = entry2.get("tran_amt") != null
+								? entry2.get("tran_amt").toString().replace(",", "")
+								: "0";
 
-					    BigDecimal tranAmt = BigDecimal.ZERO;
-					    try {
-					        tranAmt = new BigDecimal(tranAmtStr);
-					    } catch (Exception ex) {
-					        tranAmt = BigDecimal.ZERO;
-					    }
+						BigDecimal tranAmt = BigDecimal.ZERO;
+						try {
+							tranAmt = new BigDecimal(tranAmtStr);
+						} catch (Exception ex) {
+							tranAmt = BigDecimal.ZERO;
+						}
 
-					    if (accountNumber.isEmpty()) {
-					        System.out.println("⚠️ Skipping LoanAct update: Missing Account Number.");
-					        continue;
-					    }
+						if (accountNumber.isEmpty()) {
+							System.out.println("⚠️ Skipping LoanAct update: Missing Account Number.");
+							continue;
+						}
 
-					    LOAN_ACT_MST_ENTITY loanActRecord = lOAN_ACT_MST_REPO.getLoanView(accountNumber);
-					    if (loanActRecord == null) {
-					        System.out.println("⚠️ Loan Account not found for Account Number: " + accountNumber);
-					        continue;
-					    }
+						LOAN_ACT_MST_ENTITY loanActRecord = lOAN_ACT_MST_REPO.getLoanView(accountNumber);
+						if (loanActRecord == null) {
+							System.out.println("⚠️ Loan Account not found for Account Number: " + accountNumber);
+							continue;
+						}
 
-					    switch (flowCode) {
-					        case "PRREC": {
-					            BigDecimal oldPaid = loanActRecord.getPrincipal_paid();
-					            BigDecimal oldBalance = loanActRecord.getPrincipal_balance();
+						switch (flowCode) {
+						case "PRREC": {
+							BigDecimal oldPaid = loanActRecord.getPrincipal_paid();
+							BigDecimal oldBalance = loanActRecord.getPrincipal_balance();
 
-					            loanActRecord.setPrincipal_paid(oldPaid.add(tranAmt));
+							loanActRecord.setPrincipal_paid(oldPaid.add(tranAmt));
 
-					            BigDecimal newBalance;
-					            if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
-					                newBalance = BigDecimal.ZERO.subtract(tranAmt);
-					            } else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
-					            	newBalance = oldBalance.subtract(tranAmt.abs()); 
-					            } else {
-					                newBalance = oldBalance.subtract(tranAmt);
-					            }
+							BigDecimal newBalance;
+							if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
+								newBalance = BigDecimal.ZERO.subtract(tranAmt);
+							} else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
+								newBalance = oldBalance.subtract(tranAmt.abs());
+							} else {
+								newBalance = oldBalance.subtract(tranAmt);
+							}
 
-					            loanActRecord.setPrincipal_balance(newBalance);
-					            loanActRecord.setPrincipal_due(loanActRecord.getPrincipal_due().subtract(tranAmt));
+							loanActRecord.setPrincipal_balance(newBalance);
+							loanActRecord.setPrincipal_due(loanActRecord.getPrincipal_due().subtract(tranAmt));
 
-					            System.out.println("✅ [PRREC] Account: " + accountNumber
-					                    + " | Old Bal: " + oldBalance + " | TranAmt: " + tranAmt
-					                    + " | New Bal: " + newBalance);
-					            break;
-					        }
+							System.out.println("✅ [PRREC] Account: " + accountNumber + " | Old Bal: " + oldBalance
+									+ " | TranAmt: " + tranAmt + " | New Bal: " + newBalance);
+							break;
+						}
 
-					        case "INREC": {
-					            BigDecimal oldPaid = loanActRecord.getInterest_paid();
-					            BigDecimal oldBalance = loanActRecord.getInterest_balance();
+						case "INREC": {
+							BigDecimal oldPaid = loanActRecord.getInterest_paid();
+							BigDecimal oldBalance = loanActRecord.getInterest_balance();
 
-					            loanActRecord.setInterest_paid(oldPaid.add(tranAmt));
+							loanActRecord.setInterest_paid(oldPaid.add(tranAmt));
 
-					            BigDecimal newBalance;
-					            if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
-					                newBalance = BigDecimal.ZERO.subtract(tranAmt);
-					            } else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
-					            	 newBalance = oldBalance.subtract(tranAmt.abs());
-					            } else {
-					                newBalance = oldBalance.subtract(tranAmt);
-					            }
+							BigDecimal newBalance;
+							if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
+								newBalance = BigDecimal.ZERO.subtract(tranAmt);
+							} else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
+								newBalance = oldBalance.subtract(tranAmt.abs());
+							} else {
+								newBalance = oldBalance.subtract(tranAmt);
+							}
 
-					            loanActRecord.setInterest_balance(newBalance);
-					            loanActRecord.setInterest_due(loanActRecord.getInterest_due().subtract(tranAmt));
+							loanActRecord.setInterest_balance(newBalance);
+							loanActRecord.setInterest_due(loanActRecord.getInterest_due().subtract(tranAmt));
 
-					            System.out.println("✅ [INREC] Account: " + accountNumber
-					                    + " | Old Bal: " + oldBalance + " | TranAmt: " + tranAmt
-					                    + " | New Bal: " + newBalance);
-					            break;
-					        }
+							break;
+						}
 
-					        case "FEREC": {
-					            BigDecimal oldPaid = loanActRecord.getFees_paid();
-					            BigDecimal oldBalance = loanActRecord.getFees_balance();
+						case "FEREC": {
+							BigDecimal oldPaid = loanActRecord.getFees_paid();
+							BigDecimal oldBalance = loanActRecord.getFees_balance();
 
-					            loanActRecord.setFees_paid(oldPaid.add(tranAmt));
+							loanActRecord.setFees_paid(oldPaid.add(tranAmt));
 
-					            BigDecimal newBalance;
-					            if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
-					                newBalance = BigDecimal.ZERO.subtract(tranAmt);
-					            } else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
-					            	 newBalance = oldBalance.subtract(tranAmt.abs());
-					            } else {
-					                newBalance = oldBalance.subtract(tranAmt);
-					            }
+							BigDecimal newBalance;
+							if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
+								newBalance = BigDecimal.ZERO.subtract(tranAmt);
+							} else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
+								newBalance = oldBalance.subtract(tranAmt.abs());
+							} else {
+								newBalance = oldBalance.subtract(tranAmt);
+							}
 
-					            loanActRecord.setFees_balance(newBalance);
-					            loanActRecord.setFees_due(loanActRecord.getFees_due().subtract(tranAmt));
+							loanActRecord.setFees_balance(newBalance);
+							loanActRecord.setFees_due(loanActRecord.getFees_due().subtract(tranAmt));
 
-					            System.out.println("✅ [FEREC] Account: " + accountNumber
-					                    + " | Old Bal: " + oldBalance + " | TranAmt: " + tranAmt
-					                    + " | New Bal: " + newBalance);
-					            break;
-					        }
+							break;
+						}
 
-					        case "PLREC": {
-					            BigDecimal oldPaid = loanActRecord.getPenalty_paid();
-					            BigDecimal oldBalance = loanActRecord.getPenalty_balance();
+						case "PLREC": {
+							BigDecimal oldPaid = loanActRecord.getPenalty_paid();
+							BigDecimal oldBalance = loanActRecord.getPenalty_balance();
 
-					            loanActRecord.setPenalty_paid(oldPaid.add(tranAmt));
+							loanActRecord.setPenalty_paid(oldPaid.add(tranAmt));
 
-					            BigDecimal newBalance;
-					            if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
-					                newBalance = BigDecimal.ZERO.subtract(tranAmt);
-					            } else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
-					            	newBalance = oldBalance.subtract(tranAmt.abs());
-					            } else {
-					                newBalance = oldBalance.subtract(tranAmt);
-					            }
+							BigDecimal newBalance;
+							if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
+								newBalance = BigDecimal.ZERO.subtract(tranAmt);
+							} else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
+								newBalance = oldBalance.subtract(tranAmt.abs());
+							} else {
+								newBalance = oldBalance.subtract(tranAmt);
+							}
 
-					            loanActRecord.setPenalty_balance(newBalance);
-					            loanActRecord.setPenalty_due(loanActRecord.getPenalty_due().subtract(tranAmt));
+							loanActRecord.setPenalty_balance(newBalance);
+							loanActRecord.setPenalty_due(loanActRecord.getPenalty_due().subtract(tranAmt));
 
-					            System.out.println("✅ [PLREC] Account: " + accountNumber
-					                    + " | Old Bal: " + oldBalance + " | TranAmt: " + tranAmt
-					                    + " | New Bal: " + newBalance);
-					            break;
-					        }
+							break;
+						}
 
-					        case "EXREC": {
-					            System.out.println("ℹ️ [EXREC] Extra credit transaction detected for Account: "
-					                    + accountNumber + " | TranAmt: " + tranAmt);
+						case "EXREC": {
 
-					            BigDecimal oldBalance = loanActRecord.getPrincipal_balance();
-					            BigDecimal newBalance;
+							BigDecimal oldBalance = loanActRecord.getPrincipal_balance();
+							BigDecimal newBalance;
 
-					            if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
-					                newBalance = BigDecimal.ZERO.subtract(tranAmt);
-					            } else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
-					            	 newBalance = oldBalance.subtract(tranAmt.abs());
-					            } else {
-					                newBalance = oldBalance.subtract(tranAmt);
-					            }
+							if (oldBalance.compareTo(BigDecimal.ZERO) == 0) {
+								newBalance = BigDecimal.ZERO.subtract(tranAmt);
+							} else if (oldBalance.compareTo(BigDecimal.ZERO) < 0) {
+								newBalance = oldBalance.subtract(tranAmt.abs());
+							} else {
+								newBalance = oldBalance.subtract(tranAmt);
+							}
 
-					            loanActRecord.setPrincipal_balance(newBalance);
+							loanActRecord.setPrincipal_balance(newBalance);
 
-					            System.out.println("✅ [EXREC] Account: " + accountNumber
-					                    + " | Old Bal: " + oldBalance
-					                    + " | TranAmt: " + tranAmt
-					                    + " | New Bal: " + newBalance);
-					            break;
-					        }
+							break;
+						}
 
+						default:
+							System.out.println("⚠️ Unknown flow code: " + flowCode + " for Account: " + accountNumber);
+							continue;
+						}
 
-					        default:
-					            System.out.println("⚠️ Unknown flow code: " + flowCode + " for Account: " + accountNumber);
-					            continue;
-					    }
-
-					    loanActRecord.setLast_modified_date(transactionDate);
-					    lOAN_ACT_MST_REPO.save(loanActRecord);
-					    System.out.println("💾 Record saved for Account: " + accountNumber + " | Flow: " + flowCode);
+						loanActRecord.setLast_modified_date(transactionDate);
+						lOAN_ACT_MST_REPO.save(loanActRecord);
 					}
-
-
 
 					// ---------- Update LOAN_REPAYMENT demand records for credit entries only
 					// ----------
@@ -10981,7 +11066,7 @@ public class BGLSRestController {
 						}
 						lOAN_REPAYMENT_REPO.save(demandRecord);
 					}
-					
+
 					// ---------- Move MULTIPLE_TRANSACTION_ENTITY -> HISTORY (matched case)
 					// ----------
 					for (Map<String, Object> t : custTransactions) {
@@ -11062,9 +11147,6 @@ public class BGLSRestController {
 				// condition check multiple
 				else if (backend_datas != null && !backend_datas.isEmpty() && flow_datas != null
 						&& !flow_datas.isEmpty() && (flows == null || flows.isEmpty())) {
-
-					System.out.println("❌ Customer ID MATCHED: " + frontendCustomerId + " - No flow records found.");
-					logger.info("❌ Customer ID MATCHED: " + frontendCustomerId + " - No flow records found.");
 
 					for (Map<String, Object> row : custTransactions) {
 						System.out.println("   → Frontend Row: " + row);
@@ -11162,6 +11244,18 @@ public class BGLSRestController {
 						debitAccount.setModify_user(userid);
 						chart_Acc_Rep.save(debitAccount);
 
+						System.out.println("------------------------------------------------------------");
+						System.out.println("🏦 DEBIT ACCOUNT UPDATE (Loan Parking)");
+						System.out.println("   ➤ Account No     : " + debitAccount.getAcct_num());
+						System.out.println("   ➤ Account Name   : " + debitAccount.getAcct_name());
+						System.out.println("   ➤ Previous Balance: " + debitBal);
+						System.out.println("   ➤ Previous Dr Amt : " + debitDrAmt);
+						System.out.println("   ➤ Transaction Amt : " + tranAmt);
+						System.out.println("✅ Debit COA updated successfully!");
+						System.out.println("   ➤ New Balance: " + debitAccount.getAcct_bal());
+						System.out.println("   ➤ New Dr Amt : " + debitAccount.getDr_amt());
+						System.out.println("------------------------------------------------------------");
+
 						// ✅ CREDIT ENTRY
 						TRAN_MAIN_TRM_WRK_ENTITY creditTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
 						creditTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
@@ -11209,10 +11303,16 @@ public class BGLSRestController {
 						creditAccount.setModify_user(userid);
 						chart_Acc_Rep.save(creditAccount);
 
-						logger.info("🟢 Created Debit & Credit for Customer Row: " + acctName + " | TRAN_ID: " + tranId
-								+ " | Amount: " + tranAmt + " | Date: " + transactionDate);
-						System.out.println("🟢 Created Debit & Credit for Customer Row: " + acctName + " | TRAN_ID: "
-								+ tranId + " | Amount: " + tranAmt + " | Date: " + transactionDate);
+						System.out.println("🏦 CREDIT ACCOUNT UPDATE (Receivable)");
+						System.out.println("   ➤ Account No     : " + creditAccount.getAcct_num());
+						System.out.println("   ➤ Account Name   : " + creditAccount.getAcct_name());
+						System.out.println("   ➤ Previous Balance: " + creditBal);
+						System.out.println("   ➤ Previous Cr Amt : " + creditCrAmt);
+						System.out.println("   ➤ Transaction Amt : " + tranAmt);
+						System.out.println("✅ Credit COA updated successfully!");
+						System.out.println("   ➤ New Balance: " + creditAccount.getAcct_bal());
+						System.out.println("   ➤ New Cr Amt : " + creditAccount.getCr_amt());
+						System.out.println("------------------------------------------------------------");
 
 						for (Map<String, Object> t : custTransactions) {
 							String inputTranId = t.get("tran_id") != null ? t.get("tran_id").toString() : null;
@@ -11253,9 +11353,6 @@ public class BGLSRestController {
 
 				} else if (backend_datas != null && !backend_datas.isEmpty()
 						&& (flow_datas == null || flow_datas.isEmpty()) && (flows == null || flows.isEmpty())) {
-
-					System.out.println("❌ Customer ID MATCHED: " + frontendCustomerId + " - No flow records found.");
-					logger.info("❌ Customer ID MATCHED: " + frontendCustomerId + " - No flow records found.");
 
 					for (Map<String, Object> row : custTransactions) {
 						System.out.println("   → Frontend Row: " + row);
@@ -11354,6 +11451,18 @@ public class BGLSRestController {
 						debitAccount.setModify_user(userid);
 						chart_Acc_Rep.save(debitAccount);
 
+						System.out.println("------------------------------------------------------------");
+						System.out.println("🏦 DEBIT ACCOUNT UPDATE (Loan Parking)");
+						System.out.println("   ➤ Account No     : " + debitAccount.getAcct_num());
+						System.out.println("   ➤ Account Name   : " + debitAccount.getAcct_name());
+						System.out.println("   ➤ Previous Balance: " + debitBal);
+						System.out.println("   ➤ Previous Dr Amt : " + debitDrAmt);
+						System.out.println("   ➤ Transaction Amt : " + tranAmt);
+						System.out.println("✅ Debit COA updated successfully!");
+						System.out.println("   ➤ New Balance: " + debitAccount.getAcct_bal());
+						System.out.println("   ➤ New Dr Amt : " + debitAccount.getDr_amt());
+						System.out.println("------------------------------------------------------------");
+
 						// ✅ CREDIT ENTRY
 						TRAN_MAIN_TRM_WRK_ENTITY creditTrm = new TRAN_MAIN_TRM_WRK_ENTITY();
 						creditTrm.setSrl_no(tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID());
@@ -11401,10 +11510,16 @@ public class BGLSRestController {
 						creditAccount.setModify_user(userid);
 						chart_Acc_Rep.save(creditAccount);
 
-						logger.info("🟢 Created Debit & Credit for Customer Row: " + acctName + " | TRAN_ID: " + tranId
-								+ " | Amount: " + tranAmt + " | Date: " + transactionDate);
-						System.out.println("🟢 Created Debit & Credit for Customer Row: " + acctName + " | TRAN_ID: "
-								+ tranId + " | Amount: " + tranAmt + " | Date: " + transactionDate);
+						System.out.println("🏦 CREDIT ACCOUNT UPDATE (Receivable)");
+						System.out.println("   ➤ Account No     : " + creditAccount.getAcct_num());
+						System.out.println("   ➤ Account Name   : " + creditAccount.getAcct_name());
+						System.out.println("   ➤ Previous Balance: " + creditBal);
+						System.out.println("   ➤ Previous Cr Amt : " + creditCrAmt);
+						System.out.println("   ➤ Transaction Amt : " + tranAmt);
+						System.out.println("✅ Credit COA updated successfully!");
+						System.out.println("   ➤ New Balance: " + creditAccount.getAcct_bal());
+						System.out.println("   ➤ New Cr Amt : " + creditAccount.getCr_amt());
+						System.out.println("------------------------------------------------------------");
 
 						for (Map<String, Object> t : custTransactions) {
 							String inputTranId = t.get("tran_id") != null ? t.get("tran_id").toString() : null;
@@ -11445,11 +11560,6 @@ public class BGLSRestController {
 
 				} else if ((backend_datas == null || backend_datas.isEmpty())
 						&& (flow_datas == null || flow_datas.isEmpty()) && (flows == null || flows.isEmpty())) {
-
-					// unmatched customer: move to history and add zeroed summary
-					logger.info("❌ Customer ID Unmatched: " + frontendCustomerId + " - No records found in backend.");
-					System.out.println(
-							"❌ Customer ID Unmatched: " + frontendCustomerId + " - No records found in backend.");
 
 					for (Map<String, Object> row : custTransactions) {
 						System.out.println("   → Frontend Row: " + row);
@@ -11517,6 +11627,27 @@ public class BGLSRestController {
 						debitTrm.setDel_flg("N");
 						tRAN_MAIN_TRM_WRK_REP.save(debitTrm);
 
+						// ✅ Update Debit Account COA (Loan Parking)
+						BigDecimal debitBal = Optional.ofNullable(debitAccount.getAcct_bal()).orElse(BigDecimal.ZERO);
+						BigDecimal debitDrAmt = Optional.ofNullable(debitAccount.getDr_amt()).orElse(BigDecimal.ZERO);
+						debitAccount.setAcct_bal(debitBal.subtract(tranAmt));
+						debitAccount.setDr_amt(debitDrAmt.add(tranAmt));
+						debitAccount.setModify_time(new Date());
+						debitAccount.setModify_user(userid);
+						chart_Acc_Rep.save(debitAccount);
+
+						System.out.println("------------------------------------------------------------");
+						System.out.println("🏦 DEBIT ACCOUNT UPDATE (Loan Parking)");
+						System.out.println("   ➤ Account No     : " + debitAccount.getAcct_num());
+						System.out.println("   ➤ Account Name   : " + debitAccount.getAcct_name());
+						System.out.println("   ➤ Previous Balance: " + debitBal);
+						System.out.println("   ➤ Previous Dr Amt : " + debitDrAmt);
+						System.out.println("   ➤ Transaction Amt : " + tranAmt);
+						System.out.println("✅ Debit COA updated successfully!");
+						System.out.println("   ➤ New Balance: " + debitAccount.getAcct_bal());
+						System.out.println("   ➤ New Dr Amt : " + debitAccount.getDr_amt());
+						System.out.println("------------------------------------------------------------");
+
 						// 🔹 Receivable account credit
 						String receivableaccount = "1644000001";
 						Chart_Acc_Entity creditAccount = chart_Acc_Rep.getaedit(receivableaccount);
@@ -11548,10 +11679,25 @@ public class BGLSRestController {
 						creditTrm.setDel_flg("N");
 						tRAN_MAIN_TRM_WRK_REP.save(creditTrm);
 
-						System.out.println("🟢 Created Debit & Credit for Unmatched Customer Row: " + acctName
-								+ " | TRAN_ID: " + tranId + " | Amount: " + tranAmt + " | Date: " + transactionDate);
-						logger.info("🟢 Created Debit & Credit for Unmatched Customer Row: " + acctName + " | TRAN_ID: "
-								+ tranId + " | Amount: " + tranAmt + " | Date: " + transactionDate);
+						// ✅ Update Credit Account COA (Receivable)
+						BigDecimal creditBal = Optional.ofNullable(creditAccount.getAcct_bal()).orElse(BigDecimal.ZERO);
+						BigDecimal creditCrAmt = Optional.ofNullable(creditAccount.getCr_amt()).orElse(BigDecimal.ZERO);
+						creditAccount.setAcct_bal(creditBal.add(tranAmt));
+						creditAccount.setCr_amt(creditCrAmt.add(tranAmt));
+						creditAccount.setModify_time(new Date());
+						creditAccount.setModify_user(userid);
+						chart_Acc_Rep.save(creditAccount);
+
+						System.out.println("🏦 CREDIT ACCOUNT UPDATE (Receivable)");
+						System.out.println("   ➤ Account No     : " + creditAccount.getAcct_num());
+						System.out.println("   ➤ Account Name   : " + creditAccount.getAcct_name());
+						System.out.println("   ➤ Previous Balance: " + creditBal);
+						System.out.println("   ➤ Previous Cr Amt : " + creditCrAmt);
+						System.out.println("   ➤ Transaction Amt : " + tranAmt);
+						System.out.println("✅ Credit COA updated successfully!");
+						System.out.println("   ➤ New Balance: " + creditAccount.getAcct_bal());
+						System.out.println("   ➤ New Cr Amt : " + creditAccount.getCr_amt());
+						System.out.println("------------------------------------------------------------");
 
 						for (Map<String, Object> t : custTransactions) {
 							String inputTranId = t.get("tran_id") != null ? t.get("tran_id").toString() : null;
@@ -12880,133 +13026,163 @@ public class BGLSRestController {
 		return new ResponseEntity<>(pdfData, headers, HttpStatus.OK);
 	}
 
-	
-	
 	@Autowired
-    BglsTransactionAccountsRepo bglsTransactionAccountsRepo;
-
+	BglsTransactionAccountsRepo bglsTransactionAccountsRepo;
 
 	@PostMapping("/TransactionsAccounts/save")
 	@ResponseBody
 	public String save(@RequestBody BglsTransactionAccountsEntity account) {
-	    try {
-	        if (account.getId() != null) {
-	            Optional<BglsTransactionAccountsEntity> existingOpt = bglsTransactionAccountsRepo.findById(account.getId());
-	            if (existingOpt.isPresent()) {
-	                BglsTransactionAccountsEntity existing = existingOpt.get();
+		try {
+			if (account.getId() != null) {
+				Optional<BglsTransactionAccountsEntity> existingOpt = bglsTransactionAccountsRepo
+						.findById(account.getId());
+				if (existingOpt.isPresent()) {
+					BglsTransactionAccountsEntity existing = existingOpt.get();
 
-	                existing.setProductKey(account.getProductKey());
-	                existing.setGlCode(account.getGlCode());
-	                existing.setGlDesc(account.getGlDesc());
-	                existing.setSchmCode(account.getSchmCode());
-	                existing.setSchmDesc(account.getSchmDesc());
-	                existing.setGlshCode(account.getGlshCode());
-	                existing.setGlshDesc(account.getGlshDesc());
-	                existing.setInterestIncome(account.getInterestIncome());
-	                existing.setInterestReceivable(account.getInterestReceivable());
-	                existing.setFeesIncome(account.getFeesIncome());
-	                existing.setPenaltyIncome(account.getPenaltyIncome());
-	                existing.setCollectionAccount(account.getCollectionAccount());
-	                existing.setLoanParkingAccount(account.getLoanParkingAccount());
-	                existing.setDelFlg("N");
-	                existing.setModifyFlg("N");
-	                existing.setVerifyFlg("N");
+					existing.setProductKey(account.getProductKey());
+					existing.setGlCode(account.getGlCode());
+					existing.setGlDesc(account.getGlDesc());
+					existing.setSchmCode(account.getSchmCode());
+					existing.setSchmDesc(account.getSchmDesc());
+					existing.setGlshCode(account.getGlshCode());
+					existing.setGlshDesc(account.getGlshDesc());
+					existing.setInterestIncome(account.getInterestIncome());
+					existing.setInterestReceivable(account.getInterestReceivable());
+					existing.setFeesIncome(account.getFeesIncome());
+					existing.setPenaltyIncome(account.getPenaltyIncome());
+					existing.setCollectionAccount(account.getCollectionAccount());
+					existing.setLoanParkingAccount(account.getLoanParkingAccount());
+					existing.setDelFlg("N");
+					existing.setModifyFlg("N");
+					existing.setVerifyFlg("N");
 
-	                bglsTransactionAccountsRepo.save(existing);
-	                return "Record updated successfully.";
-	            }
-	        }
+					bglsTransactionAccountsRepo.save(existing);
+					return "Record updated successfully.";
+				}
+			}
 
-	        // Add new record
-	        account.setEntryTime(new Date());
-	        account.setDelFlg("N");
-	        account.setModifyFlg("N");
-	        account.setVerifyFlg("N");
-	        bglsTransactionAccountsRepo.save(account);
-	        return "Record added successfully.";
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return "Error: " + e.getMessage();
-	    }
+			// Add new record
+			account.setEntryTime(new Date());
+			account.setDelFlg("N");
+			account.setModifyFlg("N");
+			account.setVerifyFlg("N");
+			bglsTransactionAccountsRepo.save(account);
+			return "Record added successfully.";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Error: " + e.getMessage();
+		}
 	}
 
-	
+	@PostMapping("/TransactionsAccounts/verify")
+	@ResponseBody
+	public String verifyTransaction(@RequestParam("id") Long id) {
+		Optional<BglsTransactionAccountsEntity> accountOpt = bglsTransactionAccountsRepo.findById(id);
+		if (accountOpt.isPresent()) {
+			BglsTransactionAccountsEntity acc = accountOpt.get();
+			acc.setModifyFlg("Y");
+			acc.setVerifyFlg("Y");
+			bglsTransactionAccountsRepo.save(acc);
+			return "Transaction verified successfully.";
+		} else {
+			return "Transaction not found.";
+		}
+	}
 
-    @PostMapping("/TransactionsAccounts/verify")
-    @ResponseBody
-    public String verifyTransaction(@RequestParam("id") Long id) {
-        Optional<BglsTransactionAccountsEntity> accountOpt = bglsTransactionAccountsRepo.findById(id);
-        if (accountOpt.isPresent()) {
-            BglsTransactionAccountsEntity acc = accountOpt.get();
-            acc.setModifyFlg("Y");
-            acc.setVerifyFlg("Y");
-            bglsTransactionAccountsRepo.save(acc);
-            return "Transaction verified successfully.";
-        } else {
-            return "Transaction not found.";
-        }
-    }
+	@PostMapping("/TransactionsAccounts/delete")
+	public String delete(@RequestParam Long id, HttpServletRequest req) {
+		Optional<BglsTransactionAccountsEntity> optionalAccount = bglsTransactionAccountsRepo.findById(id);
 
-    @PostMapping("/TransactionsAccounts/delete")
-    public String delete(@RequestParam Long id, HttpServletRequest req) {
-    	Optional<BglsTransactionAccountsEntity> optionalAccount = bglsTransactionAccountsRepo.findById(id);
-        
-        if (optionalAccount.isPresent()) {
-            BglsTransactionAccountsEntity account = optionalAccount.get();
-            account.setDelFlg("Y"); // mark as deleted
-            bglsTransactionAccountsRepo.save(account); // update record instead of deleting
-        }else {
-            return "Transaction not found.";
-        }
-        return "Transaction Deleted Successfully";
-    }
-    
+		if (optionalAccount.isPresent()) {
+			BglsTransactionAccountsEntity account = optionalAccount.get();
+			account.setDelFlg("Y"); // mark as deleted
+			bglsTransactionAccountsRepo.save(account); // update record instead of deleting
+		} else {
+			return "Transaction not found.";
+		}
+		return "Transaction Deleted Successfully";
+	}
+
 	@PostMapping("/submitreversaldata")
 	public ResponseEntity<String> submitreversaldata(@RequestBody Map<String, Object> payload) {
+		System.out.println("===== REVERSAL DATA RECEIVED =====");
 
-	    System.out.println("===== REVERSAL DATA RECEIVED =====");
+		// ----- ORIGINAL TRANSACTIONS -----
+		System.out.println("---- ORIGINAL TRANSACTIONS ----");
+		List<Map<String, Object>> originalTransactions = (List<Map<String, Object>>) payload
+				.get("originalTransactions");
+		if (originalTransactions != null && !originalTransactions.isEmpty()) {
+			int rowNum = 1;
+			for (Map<String, Object> txn : originalTransactions) {
+				String tran_date = (String) txn.get("tran_date");
+				String tran_id = (String) txn.get("tran_id");
+				String part_tran_type = (String) txn.get("part_tran_type");
+				String acct_crncy = (String) txn.get("acct_crncy");
+				String tran_amt = String.valueOf(txn.get("tran_amt"));
+				String acct_num = (String) txn.get("acct_num");
+				String acct_name = (String) txn.get("acct_name");
+				String tran_status = (String) txn.get("tran_status");
 
-	    // 1️⃣ Original Transactions
-	    List<Map<String, Object>> originalList = (List<Map<String, Object>>) payload.get("originalTransactions");
-	    System.out.println("---- ORIGINAL TRANSACTIONS ----");
-	    if (originalList != null && !originalList.isEmpty()) {
-	        int i = 1;
-	        for (Map<String, Object> row : originalList) {
-	            System.out.println("Row " + i++ + ": " + row);
-	        }
-	    } else {
-	        System.out.println("No Original Transactions Found");
-	    }
+				System.out.println("Row " + rowNum++ + ": " + "tran_date=" + tran_date + ", tran_id=" + tran_id
+						+ ", part_tran_type=" + part_tran_type + ", acct_crncy=" + acct_crncy + ", tran_amt=" + tran_amt
+						+ ", acct_num=" + acct_num + ", acct_name=" + acct_name + ", tran_status=" + tran_status);
+			}
+		} else {
+			System.out.println("No Original Transactions Found");
+		}
 
-	    // 2️⃣ Reversal Transactions
-	    List<Map<String, Object>> reversalList = (List<Map<String, Object>>) payload.get("reversalTransactions");
-	    System.out.println("---- REVERSAL TRANSACTIONS ----");
-	    if (reversalList != null && !reversalList.isEmpty()) {
-	        int i = 1;
-	        for (Map<String, Object> row : reversalList) {
-	            System.out.println("Row " + i++ + ": " + row);
-	        }
-	    } else {
-	        System.out.println("No Reversal Transactions Found");
-	    }
+		// ----- REVERSAL TRANSACTIONS -----
+		System.out.println("---- REVERSAL TRANSACTIONS ----");
+		List<Map<String, Object>> reversalTransactions = (List<Map<String, Object>>) payload
+				.get("reversalTransactions");
+		if (reversalTransactions != null && !reversalTransactions.isEmpty()) {
+			int rowNum = 1;
+			for (Map<String, Object> txn : reversalTransactions) {
+				String tran_date = (String) txn.get("tran_date");
+				String tran_id = (String) txn.get("tran_id");
+				String part_tran_type = (String) txn.get("part_tran_type");
+				String acct_crncy = (String) txn.get("acct_crncy");
+				String tran_amt = String.valueOf(txn.get("tran_amt"));
+				String acct_num = (String) txn.get("acct_num");
+				String acct_name = (String) txn.get("acct_name");
+				String tran_status = (String) txn.get("tran_status");
 
-	    // 3️⃣ New Transactions
-	    List<Map<String, Object>> newList = (List<Map<String, Object>>) payload.get("newTransactions");
-	    System.out.println("---- NEW TRANSACTIONS ----");
-	    if (newList != null && !newList.isEmpty()) {
-	        int i = 1;
-	        for (Map<String, Object> row : newList) {
-	            System.out.println("Row " + i++ + ": " + row);
-	        }
-	    } else {
-	        System.out.println("No New Transactions Found");
-	    }
+				System.out.println("Row " + rowNum++ + ": " + "tran_date=" + tran_date + ", tran_id=" + tran_id
+						+ ", part_tran_type=" + part_tran_type + ", acct_crncy=" + acct_crncy + ", tran_amt=" + tran_amt
+						+ ", acct_num=" + acct_num + ", acct_name=" + acct_name + ", tran_status=" + tran_status);
+			}
+		} else {
+			System.out.println("No Reversal Transactions Found");
+		}
 
-	    System.out.println("===== END OF REVERSAL DATA =====");
+		// ----- NEW TRANSACTIONS -----
+		System.out.println("---- NEW TRANSACTIONS ----");
+		List<Map<String, Object>> newTransactions = (List<Map<String, Object>>) payload.get("newTransactions");
+		if (newTransactions != null && !newTransactions.isEmpty()) {
+			int rowNum = 1;
+			for (Map<String, Object> txn : newTransactions) {
+				String tran_date = (String) txn.get("tran_date");
+				String tran_id = (String) txn.get("tran_id");
+				String part_tran_type = (String) txn.get("part_tran_type");
+				String acct_crncy = (String) txn.get("acct_crncy");
+				String tran_amt = String.valueOf(txn.get("tran_amt"));
+				String acct_num = (String) txn.get("acct_num");
+				String acct_name = (String) txn.get("acct_name");
+				String tran_status = (String) txn.get("tran_status");
 
-	    return ResponseEntity.ok("Reversal submitted successfully");
+				System.out.println("Row " + rowNum++ + ": " + "tran_date=" + tran_date + ", tran_id=" + tran_id
+						+ ", part_tran_type=" + part_tran_type + ", acct_crncy=" + acct_crncy + ", tran_amt=" + tran_amt
+						+ ", acct_num=" + acct_num + ", acct_name=" + acct_name + ", tran_status=" + tran_status);
+			}
+		} else {
+			System.out.println("No New Transactions Found");
+		}
+
+		System.out.println("===== END OF REVERSAL DATA =====");
+
+		return ResponseEntity.ok("Reversal submitted successfully");
 	}
-	
+
 	@GetMapping("/getMismatchedAccounts")
 	public List<Map<String, Object>> getMismatchedAccounts() {
 		List<Object[]> data = chart_Acc_Rep.getMismatchedAccounts();
@@ -13052,26 +13228,24 @@ public class BGLSRestController {
 					.body(Map.of("error", "Error fetching account balance details"));
 		}
 	}
-	
+
 	@PostMapping("/rebuildLoanBalance")
-    public ResponseEntity<Map<String, String>> rebuildLoanBalance(@RequestParam String acctNum) {
-        try {
-        	chart_Acc_Rep.updateLoanBalanceByAcct(acctNum);
-            return ResponseEntity.ok(Map.of("message", "Loan balance updated successfully."));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error while rebuilding loan balance."));
-        }
-    }
-	
+	public ResponseEntity<Map<String, String>> rebuildLoanBalance(@RequestParam String acctNum) {
+		try {
+			chart_Acc_Rep.updateLoanBalanceByAcct(acctNum);
+			return ResponseEntity.ok(Map.of("message", "Loan balance updated successfully."));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("error", "Error while rebuilding loan balance."));
+		}
+	}
+
 	@RequestMapping(value = "rest_password", method = RequestMethod.POST)
 	@ResponseBody
-	public String rest_password(
-		@RequestParam("old_password") String old_password,
-		@RequestParam("new_password") String new_password,
-		@RequestParam("user_id") String userid,
-		Model md, HttpServletRequest rq) {
+	public String rest_password(@RequestParam("old_password") String old_password,
+			@RequestParam("new_password") String new_password, @RequestParam("user_id") String userid, Model md,
+			HttpServletRequest rq) {
 
 		System.out.println("Password reset attempt by user: " + userid);
 
