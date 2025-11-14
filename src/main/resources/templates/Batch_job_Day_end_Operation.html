@@ -413,6 +413,7 @@
 	$(document).on("click", "#openAccountList", function () {
 	$("#dabStep1").hide();
 	$("#dabStep2").show();
+	$("#dabDaySelectSubmit").hide();
 	$("#toggleFilterBtn, #backToForm").show();
 	$(".modal-dialog").addClass("expanded");   // <-- expand & center
 	loadAccounts();
@@ -423,6 +424,7 @@
 	$(document).on("click", "#backToForm", function () {
 	$("#dabStep2").hide();
 	$("#dabStep1").show();
+	$("#dabDaySelectSubmit").show();
 	$("#toggleFilterBtn, #backToForm").hide();
 	$(".modal-dialog").removeClass("expanded"); // <-- restore width
 	});
