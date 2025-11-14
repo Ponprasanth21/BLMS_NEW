@@ -607,11 +607,11 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 
 	
 	@Query(value = "SELECT COUNT(*) FROM  BGLS_TRM_WRK_TRANSACTIONS WHERE TRUNC(TRAN_DATE) = TRUNC(SYSDATE) AND FLOW_CODE = 'INDEM'", nativeQuery = true)
-	List<TRAN_MAIN_TRM_WRK_ENTITY> getResultindem();
+	int getResultindem();
 	
 	
 	@Query(value = "SELECT COUNT(*) FROM  BGLS_TRM_WRK_TRANSACTIONS WHERE TRUNC(TRAN_DATE) = TRUNC(SYSDATE) AND FLOW_CODE = 'FEEDEM'", nativeQuery = true)
-	List<TRAN_MAIN_TRM_WRK_ENTITY> getResultfeedem();
+	int getResultfeedem();
 	
 	
 	@Query(value = "SELECT COUNT(*) FROM  BGLS_TRM_WRK_TRANSACTIONS WHERE TRUNC(TRAN_DATE) = TRUNC(SYSDATE) AND FLOW_CODE = 'PENDEM'", nativeQuery = true)

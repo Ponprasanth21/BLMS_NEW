@@ -41,5 +41,9 @@ public interface UserProfileRep extends CrudRepository<UserProfile, String> {
 	
 	@Query(value = "select user_name,email_id,mob_number from BGLS_USER_PROFILE_TABLE where USER_ID=?1", nativeQuery = true)
 	Object[] getdetailsforalert(String userid);
+	
+	@Query(value = "SELECT * FROM BGLS_USER_PROFILE_TABLE WHERE  USER_ID=?1 AND DEL_FLG='N' ", nativeQuery = true)
+	UserProfile findByAll(String userid);
+	
 
 }

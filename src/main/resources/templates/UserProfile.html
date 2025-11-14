@@ -976,10 +976,10 @@
 					balance_sheets: $('#balance_sheets').is(':checked') ? 'Y' : 'N',
 					batch_job_execution: $('#batch_job_execution').is(':checked') ? 'Y' : 'N',
 					batch_job: $('#batch_job_execution').is(':checked') ? 'Y' : 'N',
-					interest_accrual_report : $('#interest_accrual_report').is(':checked') ? 'Y' : 'N',
-					penalty_accrual_report : $('#penalty_accrual_report').is(':checked') ? 'Y' : 'N',
-					recovery_report : $('#recovery_report').is(':checked') ? 'Y' : 'N',
-					demand_generation : $('#demand_generation').is(':checked') ? 'Y' : 'N'
+					interest_accrual_report: $('#interest_accrual_report').is(':checked') ? 'Y' : 'N',
+					penalty_accrual_report: $('#penalty_accrual_report').is(':checked') ? 'Y' : 'N',
+					recovery_report: $('#recovery_report').is(':checked') ? 'Y' : 'N',
+					demand_generation: $('#demand_generation').is(':checked') ? 'Y' : 'N'
 				};
 
 				console.log(userProfile);
@@ -1384,6 +1384,66 @@
 			filterEnabled = !filterEnabled;
 		}
 
+		let selectedUserId = null;
+		function PasswordReset(a) {
+			
+		    a.preventDefault;
+
+		    selectedUserId = $(a).data("userid");   // get userid from clicked menu
+		    console.log("Password Reset for User:", selectedUserId);
+
+		    $("#popforpasswordreset").modal("show");
+		}
+		function confirmPasswordReset() {
+
+		    if (!selectedUserId) {
+		        showPasswordResetMessage("User ID not found!", "error");
+		        return;
+		    }
+
+		    $.ajax({
+		        url: "./resetPassword",
+		        type: "POST",
+		        data: { userid: selectedUserId },
+		        success: function (response) {
+		            $("#popforpasswordreset").modal("hide"); // hide current modal
+
+		            // Show success message
+		            showPasswordResetMessage("Password Reset Successfully!", "success");
+		        },
+		        error: function () {
+		            $("#popforpasswordreset").modal("hide"); // hide current modal
+
+		            // Show error message
+		            showPasswordResetMessage("Error resetting password!", "error");
+		        }
+		    });
+		}
+
+		function showPasswordResetMessage(message, type) {
+
+		    // Change text
+		    $("#passwordresetpromptbody").text(message);
+
+		    // Change color based on type
+		    if (type === "success") {
+		        $("#passwordresetpromptbody").css("color", "green");
+		    } else {
+		        $("#passwordresetpromptbody").css("color", "red");
+		    }
+
+		    // Show modal
+		    $("#passwordresetPrompt").modal("show");
+		}
+
+
+		
+		
+		
+		
+		
+		
+
 
 
 	</script>
@@ -1464,7 +1524,7 @@
 											class="userlist">
 
 											<td><a href="#" th:text="${userProfile.userid}"
-													th:data-userId="${userProfile.userid}"
+													th:data-userId="${userProfile.userid}" id="userids"
 													onclick="enquiryuser(this)">View</a></td>
 
 											<!--<td  th:text="${userProfile.userid}">
@@ -1512,6 +1572,14 @@
 															th:if='${userProfile?.auth_flg == "N" and userProfile?.modify_flg == "Y"}'
 															th:attr="data-userId=${userProfile?.userid}" title="Delete"
 															onclick="deleteuser(this)">Delete</a>
+
+
+															<a class="dropdown-item delete-item"
+															   style="border-top: 1px solid #dee2e6;"
+															   th:attr="data-userId=${userProfile.userid}"
+															   title="Reset Password"
+															   onclick="PasswordReset(this)">Reset Password</a>
+
 													</div>
 												</div>
 											</td>
@@ -1560,7 +1628,7 @@
 									<div class="col-sm-2">
 										<input type="text" id="userid"
 											class="form-control form-control-sm bg-white border border-dark"
-											name="userid" autocomplete="off" required readonly />
+											name="userid"   autocomplete="off" required readonly />
 										<i id="searchIcon" class="info-icon position-absolute" onclick="userIdModal();"
 											style="right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer;">i</i>
 									</div>
@@ -1664,9 +1732,9 @@
 									<label class="col-sm-2">Password</label>
 									<div class="col-sm-2">
 
-										<input type="password" id="password" name="password" value="Bornfire@123"
+										<input type="password" id="password" name="password"
 											class="form-control form-control-sm bg-white border border-dark"
-											autocomplete="off" readonly />
+											autocomplete="off" />
 										<button type="button" id="pwd-toggle" class="toggle-btn position-absolute"
 											aria-label="Show password"
 											style="right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer;">
@@ -2701,10 +2769,11 @@
 									<div class="col-sm-2">
 										<select id="user_locked_flg" name="user_locked_flg"
 											th:value="${userProfile?.user_locked_flg}"
-											class="form-control form-control-sm bg-white border border-dark"
-											required>
-											<option value="N" th:selected="${userProfile?.user_locked_flg == 'N'}">N</option>
-											<option value="Y" th:selected="${userProfile?.user_locked_flg == 'Y'}">Y</option>
+											class="form-control form-control-sm bg-white border border-dark" required>
+											<option value="N" th:selected="${userProfile?.user_locked_flg == 'N'}">N
+											</option>
+											<option value="Y" th:selected="${userProfile?.user_locked_flg == 'Y'}">Y
+											</option>
 										</select>
 									</div>
 
@@ -3869,7 +3938,7 @@
 							style="margin-right: 10px" th:checked="${access?.loan_maintanace == 'Y'}" /><label> Loan
 							Maintanance</label> <br>
 
-						
+
 
 					</div>
 					<input type="checkbox" id="loan_operationg" value="Y" name="loan_operationg"
@@ -4211,12 +4280,14 @@
 
 
 						<input type="checkbox" id="transaction_accounts" value="Y" name="transaction_accounts"
-							style="margin-right: 10px" th:checked="${access?.transaction_accounts == 'Y'}" /><label> Transaction Accounts
-							</label> <br>
+							style="margin-right: 10px" th:checked="${access?.transaction_accounts == 'Y'}" /><label>
+							Transaction Accounts
+						</label> <br>
 
 						<input type="checkbox" id="transaction_reversal" value="Y" name="transaction_reversal"
-							style="margin-right: 10px" th:checked="${access?.transaction_reversal == 'Y'}" /><label> Transaction Reversal
-							</label> <br>
+							style="margin-right: 10px" th:checked="${access?.transaction_reversal == 'Y'}" /><label>
+							Transaction Reversal
+						</label> <br>
 
 					</div>
 					<input type="checkbox" id="loan_operation" name="loan_operation"
@@ -4350,7 +4421,8 @@
 								th:disabled="${formmode != 'add' and formmode != 'modify'}"
 								th:checked="${access?.batch_job == 'Y'}" style="margin-right: 10px; margin-top: 10px" />
 							<label for="batch_job">Batch Job
-							</label></li>
+							</label>
+						</li>
 					</ul>
 
 					<input type="checkbox" id="inquiries_and_reports" name="inquiries_and_reports"
@@ -4382,53 +4454,55 @@
 
 						<li><input type="checkbox" id="dab_report" name="dab_report"
 								th:disabled="${formmode != 'add' and formmode != 'modify'}"
-								th:checked="${access?.dab == 'Y'}"
-								style="margin-right: 10px; margin-top: 10px" /> <label for="dab_report">DAB Report
+								th:checked="${access?.dab == 'Y'}" style="margin-right: 10px; margin-top: 10px" />
+							<label for="dab_report">DAB Report
 							</label></li>
 
 						<li><input type="checkbox" id="consolidated_report" name="consolidated_report"
 								th:disabled="${formmode != 'add' and formmode != 'modify'}"
 								th:checked="${access?.consolidated_report == 'Y'}"
-								style="margin-right: 10px; margin-top: 10px" /> <label for="consolidated_report">Consolidated Report
+								style="margin-right: 10px; margin-top: 10px" /> <label
+								for="consolidated_report">Consolidated Report
 							</label></li>
 
 						<li><input type="checkbox" id="transaction_report" name="transaction_report"
 								th:disabled="${formmode != 'add' and formmode != 'modify'}"
 								th:checked="${access?.transaction_report == 'Y'}"
-								style="margin-right: 10px; margin-top: 10px" /> <label for="transaction_report">Transaction Report
+								style="margin-right: 10px; margin-top: 10px" /> <label
+								for="transaction_report">Transaction Report
 							</label></li>
 
-							<!-- ------ -->
+						<!-- ------ -->
 
-							<li><input type="checkbox" id="interest_accrual_report" name="interest_accrual_report"
+						<li><input type="checkbox" id="interest_accrual_report" name="interest_accrual_report"
 								th:disabled="${formmode != 'add' and formmode != 'modify'}"
 								th:checked="${access?.interest_accrual_report == 'Y'}"
 								style="margin-right: 10px; margin-top: 10px" /> <label
 								for="interest_accrual_report">Interest Accrual
 							</label></li>
 
-							<li><input type="checkbox" id="penalty_accrual_report" name="penalty_accrual_report"
+						<li><input type="checkbox" id="penalty_accrual_report" name="penalty_accrual_report"
 								th:disabled="${formmode != 'add' and formmode != 'modify'}"
 								th:checked="${access?.penalty_accrual_report == 'Y'}"
 								style="margin-right: 10px; margin-top: 10px" /> <label
 								for="penalty_accrual_report">Penalty Accrual
 							</label></li>
 
-							<li><input type="checkbox" id="recovery_report" name="recovery_report"
+						<li><input type="checkbox" id="recovery_report" name="recovery_report"
 								th:disabled="${formmode != 'add' and formmode != 'modify'}"
 								th:checked="${access?.recovery_report == 'Y'}"
-								style="margin-right: 10px; margin-top: 10px" /> <label
-								for="recovery_report">Recovery Report
+								style="margin-right: 10px; margin-top: 10px" /> <label for="recovery_report">Recovery
+								Report
 							</label></li>
 
-							<li><input type="checkbox" id="demand_generation" name="demand_generation"
+						<li><input type="checkbox" id="demand_generation" name="demand_generation"
 								th:disabled="${formmode != 'add' and formmode != 'modify'}"
 								th:checked="${access?.demand_generation == 'Y'}"
-								style="margin-right: 10px; margin-top: 10px" /> <label
-								for="demand_generation">Demand generation Report
+								style="margin-right: 10px; margin-top: 10px" /> <label for="demand_generation">Demand
+								generation Report
 							</label></li>
 
-							<!-- ------------- -->
+						<!-- ------------- -->
 
 						<li><input type="checkbox" id="interset_summary_inq" name="interset_summary_inq"
 								th:disabled="${formmode != 'add' and formmode != 'modify'}"
@@ -4587,6 +4661,46 @@
 			</div>
 		</div>
 	</div>
+	
+	
+	<div class="modal fade" id="popforpasswordreset" style="background: #000000b0;margin-bottom:10px;margin: auto;"
+			role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+				<div class="modal-content" style="height:200px;margin-left:0px;">
+					<!-- Modal Body -->
+					<div class="modal-body">
+						<h5 id="passwordreset" style="font-size: 17px; color: black; padding: 15px;">Are you sure You want to Reset the password ?</h5>
+					</div>
+					<!-- Modal Footer -->
+					<div style="padding: 10px; text-align: center;">
+						<button type="button" class="btn btn-outline-dark me-3" style="font-size: 16px;"
+													onclick="confirmPasswordReset();">Yes</button>
+						<button type="button" class="btn btn-outline-dark me-3" style="font-size: 16px;"
+							onclick="goToList();">No</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		
+		<div class="modal fade" id="passwordresetPrompt" style="background: #000000b0;margin-bottom:10px;margin: auto;"
+					role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+						<div class="modal-content" style="height:200px;margin-left:0px;">
+							<!-- Modal Body -->
+							<div class="modal-body">
+								<h5 id="passwordresetpromptbody" style="font-size: 17px; color: black; padding: 15px;padding-left:80px">Are you sure You want to Reset the password ?</h5>
+							</div>
+							<!-- Modal Footer -->
+							<div style="padding: 10px; text-align: center;">
+								
+								<button type="button" class="btn btn-outline-dark me-3" style="font-size: 16px;"
+									onclick="goToList();">Close</button>
+							</div>
+
+						</div>
+					</div>
+				</div>
 
 
 </body>

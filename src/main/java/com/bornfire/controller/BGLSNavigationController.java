@@ -5332,5 +5332,22 @@ public class BGLSNavigationController {
        	System.out.println("reset password");
        	return "ChangePasswordLogin";
        }
+       
+       
+       @RequestMapping(value = "resetPassword", method = { RequestMethod.GET, RequestMethod.POST })
+       @ResponseBody
+       public String resetPassword(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req,
+    		   @RequestParam (required = false) String userid)
+       		throws ParseException {
+       	System.out.println("userid"+userid);
+       	UserProfile singlerecord=userProfileRep.findByAll(userid);
+        if (singlerecord == null) {
+            return "User not found!";
+        }
+       	singlerecord.setPassword("9yXzwvfDl/wv+IZLxAHX6A==");
+       	userProfileRep.save(singlerecord);
+       	
+       	return "Successully Password Reset";
+       }
 
 }
