@@ -2766,99 +2766,20 @@ public class BGLSNavigationController {
 
     @RequestMapping(value = "DoatransactionpushBatchJob", method = RequestMethod.POST)
     @ResponseBody
-    public String DoatransactionpushBatchJob(Model md, HttpServletRequest rq, @ModelAttribute DAB_Entity DAB_Entity,
+    public String DoatransactionpushBatchJob(HttpServletRequest rq,
                                              @RequestParam("to_date") String to_date,@RequestParam("acct_num") String Acct_num,
                                              @RequestParam("from_date") String from_date) throws java.text.ParseException {
-        // Get TRANDATE from session as a String
-        System.out.println("Trndate"+to_date);
-        Date toDateDAB = (Date) rq.getSession().getAttribute("TRANDATE");
-        System.out.println("TRANDATE: " + toDateDAB);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = dateFormat.format(toDateDAB);
+    	  Date sessionTranDate = (Date) rq.getSession().getAttribute("TRANDATE");
+    	  
+          SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
-        System.out.println("formattedDate"+formattedDate);
-        List<Object[]> debitCreditData = tRAN_MAIN_TRM_WRK_REP.getNetDebitCreditWithCountForCurrentDateByAcctNum(from_date,to_date,Acct_num);
+          Date fromat_to_date = sdf.parse(to_date);
+          Date fromat_from_date = sdf.parse(from_date);
 
-        List<String> accountNumbers = new ArrayList<>();
-        List<Date>acctTranDate = new ArrayList<>();
-        List<String> netAmounts = new ArrayList<>();
-        List<String> accountNames = new ArrayList<>();
+         dAB_Repo.UpdateDabSingleAcct(fromat_from_date,fromat_to_date,Acct_num);
 
-        // Lists for each field
-        List<String> glshCodes = new ArrayList<>();
-        List<String> glshDescs = new ArrayList<>();
-        List<String> glCodes = new ArrayList<>();
-        List<String> glDescs = new ArrayList<>();
-        List<BigDecimal> totalCredits = new ArrayList<>();
-        List<BigDecimal> totalDebits = new ArrayList<>();
-
-        // Step 1: Get all account numbers from `debitCreditData`
-        for (Object[] record : debitCreditData) {
-            accountNumbers.add(record[0].toString()); // acct_num
-            accountNames.add(record[1].toString()); // acct_name
-            netAmounts.add(record[5].toString()); // NETAMT
-            totalCredits.add((BigDecimal) record[3]); // TOTAL_CREDIT
-            totalDebits.add((BigDecimal) record[4]); // TOTAL_DEBIT
-            acctTranDate.add((Date) record[6]);
-        }
-
-        // Print accountNumbers, accountNames, netAmounts, totalCredits, and totalDebits
-        System.out.println("Account Numbers: " + accountNumbers);
-        System.out.println("Account Names: " + accountNames);
-        System.out.println("Net Amounts: " + netAmounts);
-        System.out.println("Total Credits: " + totalCredits);
-        System.out.println("Total Debits: " + totalDebits);
-
-        List<Chart_Acc_Entity> allAccounts = new ArrayList<>();
-        int batchSize = 1000;
-        for (int i = 0; i < accountNumbers.size(); i += batchSize) {
-            List<String> batch = accountNumbers.subList(i, Math.min(i + batchSize, accountNumbers.size()));
-            allAccounts.addAll(chart_Acc_Rep.getcoaaccunt_num(batch));
-        }
-        List<Chart_Acc_Entity> exist = allAccounts;
-
-        // Step 3: Create a map to store GL details for each account number
-        Map<String, Chart_Acc_Entity> glDetailsMap = new HashMap<>();
-        for (Chart_Acc_Entity up1 : exist) {
-            glDetailsMap.put(up1.getAcct_num(), up1);
-        }
-
-        // Step 4: Retrieve GL details in the same order as `accountNumbers`
-        for (int i = 0; i < accountNumbers.size(); i++) {
-            String acctNum = accountNumbers.get(i);
-            String acctName = accountNames.get(i);
-
-            Chart_Acc_Entity glDetails = glDetailsMap.get(acctNum);
-            if (glDetails != null) {
-                glshCodes.add(glDetails.getGlsh_code());
-                glshDescs.add(glDetails.getGlsh_desc());
-                glCodes.add(glDetails.getGl_code());
-                glDescs.add(glDetails.getGl_desc());
-
-                // Print account number, account name, and corresponding GL details
-                System.out.println("Account Number: " + acctNum + ", Account Name: " + acctName + ", GL Code: "
-                        + glDetails.getGl_code() + ", GLSH Code: " + glDetails.getGlsh_code() + ", GL Description: "
-                        + glDetails.getGl_desc() + ", GLSH Description: " + glDetails.getGlsh_desc());
-            } else {
-//                 Handle cases where no GL details are found for the account number
-                glshCodes.add(null);
-                glshDescs.add(null);
-                glCodes.add(null);
-                glDescs.add(null);
-
-                // Print account number and name with a message for missing GL details
-                System.out.println(
-                        "Account Number: " + acctNum + ", Account Name: " + acctName + " - No GL details found.");
-            }
-        }
-        System.out.println("sdfdsf ---- "+accountNumbers+" ---- "+acctTranDate);
-        String result = insertOrUpdateAccountBalancesBatchJob(md, rq, accountNumbers, netAmounts, glshCodes, glshDescs, glCodes,
-                glDescs, accountNames, totalCredits, totalDebits, formattedDate,acctTranDate);
-
-        // Return the result of the insertOrUpdateAccountBalances
-        return result;
+        return "Acct Number :"+Acct_num+" balances updated successfully ";
     }
-
 
     @RequestMapping(value = "Doatransactionpush", method = RequestMethod.POST)
     @ResponseBody

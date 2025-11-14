@@ -7,13 +7,23 @@ import javax.persistence.*;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-@NamedStoredProcedureQuery(
-        name = "PROC_UPDATE_DAILY_BALANCE",
-        procedureName = "PROC_UPDATE_DAILY_BALANCE",
-        parameters = {
-                @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_tran_date", type = Date.class)
-        }
-)
+	@NamedStoredProcedureQuery(
+	        name = "PROC_UPDATE_DAILY_BALANCE",
+	        procedureName = "PROC_UPDATE_DAILY_BALANCE",
+	        parameters = {
+	                @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_tran_date", type = Date.class)
+	        }
+	)
+	
+	@NamedStoredProcedureQuery(
+	        name = "PROC_UPDATE_DAILY_BALANCE_SINGLE_ACCT",
+	        procedureName = "PROC_UPDATE_DAILY_BALANCE_SINGLE_ACCT",
+	        parameters = {
+	                @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_from_date", type = Date.class),
+	                @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_to_date", type = Date.class),
+	                @StoredProcedureParameter(mode = ParameterMode.IN, name = "p_acct_num", type = String.class)
+	        }
+	)
 
 @Entity
 @Table(name = "BGLS_DAILY_ACCT_BAL")

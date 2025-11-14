@@ -95,7 +95,7 @@ public interface DAB_Repo extends CrudRepository<DAB_Entity, String> {
     List<Object[]> findTranDate(@Param("dueDate") String dueDate);
 
     // Dynamic search by column and keyword
-    @Query(value = "SELECT DISTINCT acct_num, acct_name FROM dab_demo " +
+    @Query(value = "SELECT DISTINCT acct_num, acct_name FROM BGLS_DAILY_ACCT_BAL " +
             "WHERE (:columnName = 'acct_num' AND LOWER(acct_num) LIKE LOWER('%' || :keyword || '%')) " +
             "   OR (:columnName = 'acct_name' AND LOWER(acct_name) LIKE LOWER('%' || :keyword || '%'))",
             nativeQuery = true)
@@ -107,6 +107,9 @@ public interface DAB_Repo extends CrudRepository<DAB_Entity, String> {
 
     @Procedure(name = "PROC_UPDATE_DAILY_BALANCE")
     void UpdateDab(@Param("p_tran_date") Date p_tran_date);
+    
+    @Procedure(name = "PROC_UPDATE_DAILY_BALANCE_SINGLE_ACCT")
+    void UpdateDabSingleAcct(@Param("p_from_date") Date p_from_date,@Param("p_to_date") Date p_to_date,@Param("p_acct_num") String p_acct_num);
 
 
 }
