@@ -312,8 +312,16 @@
 			}
 		}
 	</style>
-
-
+	<style>
+		.disabledDelete {
+			pointer-events: none;
+			/* Cannot click */
+			opacity: 0.4;
+			/* Light grey icon */
+			cursor: not-allowed;
+			/* Disabled cursor */
+		}
+	</style>
 	<script>
 		function Home() {
 
@@ -425,6 +433,7 @@
 		}
 
 		function selectActions(element) {
+
 			var tranId = $(element).attr('data-tranid');
 			var partnId = $(element).attr('data-partnid');
 			var acctNum = $(element).attr('data-acctnum');
@@ -438,19 +447,18 @@
 					acct_num: acctNum
 				},
 				success: function (data) {
-					console.log(data);
 
 					function formatDate(dateStr) {
 						if (!dateStr) return '';
 						const date = new Date(dateStr);
 						if (isNaN(date)) return dateStr;
-						const day = String(date.getDate()).padStart(2, '0');
-						const month = String(date.getMonth() + 1).padStart(2, '0');
-						const year = date.getFullYear();
-						return `${day}-${month}-${year}`;
+						const d = String(date.getDate()).padStart(2, '0');
+						const m = String(date.getMonth() + 1).padStart(2, '0');
+						const y = date.getFullYear();
+						return `${d}-${m}-${y}`;
 					}
 
-					// Assign values to modal table fields
+					// Assign values to modal labels
 					$("#m_tran_id").text(data.tran_id);
 					$("#m_part_tran_id").text(data.part_tran_id);
 					$("#m_acct_num").text(data.acct_num);
@@ -461,10 +469,20 @@
 					$("#m_tran_amt").text(data.tran_amt);
 					$("#m_tran_particular").text(data.tran_particular);
 					$("#m_tran_remarks").text(data.tran_remarks);
-					$("#m_flow_code").text(data.flow_code);
+
+					// ⭐ SHOW BACKEND VALUE IN DROPDOWN
+					$("#m_flow_code").val(data.flow_code);
+
+					// OPTIONAL: Show selected flow in text field
+					$("#m_flow_code_display").text(data.flow_code);
+
 					$("#m_flow_date").text(formatDate(data.flow_date));
 					$("#m_tran_date").text(formatDate(data.tran_date));
 					$("#m_value_date").text(formatDate(data.value_date));
+					$("#m_instr_date").text(formatDate(data.instr_date));
+					$("#m_entry_time").text(formatDate(data.entry_time));
+					$("#m_post_time").text(formatDate(data.post_time));
+
 					$("#m_tran_code").text(data.tran_code);
 					$("#m_tran_rpt_code").text(data.tran_rpt_code);
 					$("#m_tran_ref_no").text(data.tran_ref_no);
@@ -472,25 +490,28 @@
 					$("#m_partition_type").text(data.partition_type);
 					$("#m_partition_det").text(data.partition_det);
 					$("#m_instr_num").text(data.instr_num);
-					$("#m_instr_date").text(formatDate(data.instr_date));
 					$("#m_ref_crncy").text(data.ref_crncy);
 					$("#m_ref_crncy_amt").text(data.ref_crncy_amt);
 					$("#m_rate_code").text(data.rate_code);
 					$("#m_rate").text(data.rate);
 					$("#m_entry_user").text(data.entry_user);
 					$("#m_post_user").text(data.post_user);
-					$("#m_entry_time").text(formatDate(data.entry_time));
-					$("#m_post_time").text(formatDate(data.post_time));
 					$("#m_tran_status").text(data.tran_status);
 					$("#m_del_flg").text(data.del_flg);
 
-					// Show the modal after setting data
 					$("#transactionModal").modal("show");
 				},
 				error: function () {
 					alert("Error fetching transaction details!");
 				}
 			});
+		}
+
+		function flowCodeChanged(element) {
+			var selectedValue = element.value;
+
+			// Update displayed value
+			$("#m_flow_code_display").text(selectedValue);
 		}
 
 		function flowcodemodule(a) {
@@ -2867,6 +2888,8 @@
 
 	</script>
 	<script>
+		let globalTranDate = "";
+
 		function addtransactions() {
 			let tableBody = $("#placelist31");
 			let lastRow = tableBody.find("tr:last");
@@ -2887,7 +2910,9 @@
 			let lastPartId = parseInt(tranIdCell.split("/")[1].trim()) || 0;
 			let newPartId = lastPartId + 1;
 			let acctNum = lastRow.find("td:eq(5)").text().trim(); // acct_num column
-			let tranDate = lastRow.find("td:eq(0)").text().trim();
+			// ⭐ get tran date & store globally
+			let tranDate = safeDate(lastRow.find("td:eq(0)").text().trim());
+			
 			let valueDate = tranDate; // same
 
 			console.log("Tran ID:", lastTranId, "Part Tran ID:", newPartId, "Acct Num:", acctNum);
@@ -2920,13 +2945,22 @@
 					$("#transactionModal21 #m_acct_num").html(acctNum);
 					$("#transactionModal21 #m_acct_name").html(data.acct_name || '');
 					$("#transactionModal21 #m_tran_type").html(data.tran_type || '');
-					$("#transactionModal21 #m_part_tran_type").html("Credit");
+					$("#transactionModal21 #m_part_tran_type1").html("Credit");
 					$("#transactionModal21 #m_acct_crncy").html(data.acct_crncy || '');
 					$("#transactionModal21 #m_tran_amt").html("");
-					$("#transactionModal21 #m_tran_particular").html(data.tran_particular || '');
-					$("#transactionModal21 #m_tran_remarks").html(data.tran_remarks || '');
-					$("#transactionModal21 #m_flow_code").html("");
-					$("#transactionModal21 #m_flow_date").html("");
+					$("#transactionModal21 #m_tran_particular1").html(data.tran_particular || '');
+					$("#transactionModal21 #m_tran_remarks1").html(data.tran_remarks || '');
+					// ⭐ SHOW BACKEND VALUE IN DROPDOWN
+					$("#m_flow_code")
+						.val(data.flow_code)   // database flow code
+						.trigger("change");    // auto-run logic
+
+					// OPTIONAL: Show selected flow in text field
+					$("#m_flow_code_display").text(data.flow_code);
+					$("#transactionModal21 #m_flow_date").html(formatDate(data.flow_date) || '');
+					
+					globalTranDate = formatDate(data.flow_date);
+					
 					$("#transactionModal21 #m_tran_date").html(tranDate);
 					$("#transactionModal21 #m_value_date").html(valueDate);
 					$("#transactionModal21 #m_tran_code").html(data.tran_code || '');
@@ -2962,14 +2996,73 @@
 				}
 			});
 		}
+
+		function safeDate(globalTranDate) {
+			if (!globalTranDate || globalTranDate === "null" || globalTranDate.trim() === "") {
+				return "";  // return blank if null
+			}
+			return globalTranDate;
+		}
+
+		function flowCodeChanged1(element) {
+
+			let code = element.value;
+			let tranDate = globalTranDate;
+
+			let particular = "";
+			let remarks = "";
+			let partType = "Credit"; // default
+
+			switch (code) {
+
+				case "PLREC":
+					particular = "Penalty Recovery";
+					remarks = tranDate ? `Penalty recovered on ${tranDate}` : "Penalty Recovery";
+					break;
+
+				case "FEREC":
+					particular = "Fees Recovery";
+					remarks = tranDate ? `Fees recovered on ${tranDate}` : "Fees Recovery";
+					break;
+
+				case "INREC":
+					particular = "Interest Recovery";
+					remarks = tranDate ? `Interest recovered on ${tranDate}` : "Interest Recovery";
+					break;
+
+				case "PRREC":
+					particular = "Principal Recovery";
+					remarks = tranDate ? `Principal recovered on ${tranDate}` : "Principal Recovery";
+					break;
+
+				case "RECOVERY":
+					particular = "Recovery Amount";
+					remarks = tranDate ? `Recovery done on ${tranDate}` : "Recovery Amount";
+					partType = "Debit";
+					break;
+
+				default:
+					particular = "";
+					remarks = "";
+					partType = "";
+					break;
+			}
+
+			$("#m_tran_particular1").text(particular);
+			$("#m_tran_remarks1").text(remarks);
+			$("#m_part_tran_type1").text(partType);
+		}
 	</script>
 	<script>
 		function reversubmit() {
+			document.getElementById('loadingModal').style.display = 'flex';
 			let originalData = [];
 			let reversalData = [];
 			let newData = [];
 
+			// -----------------------
 			// ORIGINAL TRANSACTION
+			// -----------------------
 			$('#placelist11 tr').each(function () {
 				let row = $(this);
 				let data = {
@@ -2985,7 +3078,9 @@
 				originalData.push(data);
 			});
 
+			// -----------------------
 			// REVERSAL TRANSACTION
+			// -----------------------
 			$('#placelist21 tr').each(function () {
 				let row = $(this);
 				let data = {
@@ -3001,7 +3096,9 @@
 				reversalData.push(data);
 			});
 
-			// NEW TRANSACTION (input fields for tran_amt)
+			// -----------------------
+			// NEW TRANSACTION
+			// -----------------------
 			$('#placelist31 tr').each(function () {
 				let row = $(this);
 				let data = {
@@ -3017,7 +3114,6 @@
 				newData.push(data);
 			});
 
-			// Combine all
 			let payload = {
 				originalTransactions: originalData,
 				reversalTransactions: reversalData,
@@ -3026,22 +3122,116 @@
 
 			console.log("Submitting Data:", payload);
 
-			// AJAX call
 			$.ajax({
 				type: "POST",
-				url: "/ASPIRA/submitreversaldata", // your REST controller endpoint
+				url: "/ASPIRA/submitreversaldata",
 				contentType: "application/json",
 				data: JSON.stringify(payload),
+
 				success: function (response) {
-					alert("Reversal submitted successfully!");
-					console.log(response);
+					document.getElementById('loadingModal').style.display = 'none';
+					// response is already JSON object
+					let data = response;
+
+					let msg =
+						"Reversal Transaction : Created Successfully\n" +
+						"TRAN_ID = " + data.reversalTranId + "\n\n" +
+						"New Transaction : Created Successfully\n" +
+						"TRAN_ID = " + data.newTranId;
+
+					alert(msg);
+
+					console.log("Backend Response:", data);
 				},
+
 				error: function (xhr, status, error) {
 					alert("Error submitting reversal: " + xhr.responseText);
 					console.error(error);
 				}
 			});
 		}
+
+		function saveNewTransaction() {
+
+			let tranId = $("#transactionModal21 #m_tran_id").text().trim();
+			let partId = $("#transactionModal21 #m_part_tran_id").text().trim();
+			let tranType = $("#transactionModal21 #m_part_tran_type1").text().trim();
+			let crncy = $("#transactionModal21 #m_acct_crncy").text().trim();
+			let tranAmt = $("#transactionModal21 #m_tran_amt").text().trim();
+			let acctNum = $("#transactionModal21 #m_acct_num").text().trim();
+			let acctName = $("#transactionModal21 #m_acct_name").text().trim();
+			let status = $("#transactionModal21 #m_tran_status").text().trim();
+			let flowCode = $("#transactionModal21 #m_flow_code").text().trim();
+			let tranDate = $("#transactionModal21 #m_tran_date").text().trim();
+
+			// Build new row
+			let newRow = `
+		        <tr>
+		            <td>${tranDate}</td>
+		            <td>${tranId}/${partId}</td>
+		            <td>${tranType}</td>
+		            <td>${crncy}</td>
+		            <td style="text-align:right;">${tranAmt}</td>
+		            <td>${acctNum}</td>
+		            <td>${acctName}</td>
+		            <td>${status}</td>
+
+		            <td style="text-align:center;">
+		                <input type="radio"
+		                    name="actionRadio"
+		                    onclick="selectActions(this)"
+		                    data-tranid="${tranId}"
+		                    data-partnid="${partId}"
+		                    data-acctnum="${acctNum}">
+		            </td>
+		            <td style="text-align:center;">
+		                <i class="fa fa-trash deleteRowIcon" style="cursor:pointer; font-size:18px;"></i>
+		            </td>
+		        </tr>
+		    `;
+
+			// Append row to table
+			$("#placelist31").append(newRow);
+
+			// Close modal
+			$("#transactionModal21").modal("hide");
+
+			// Re-bind delete icon event
+			bindDeleteEvents();
+		}
+
+		function bindDeleteEvents() {
+			$(".deleteRowIcon").off("click").on("click", function () {
+				$(this).closest("tr").remove();
+			});
+		}
+
+		// Call at page load
+		$(document).ready(function () {
+			bindDeleteEvents();
+		});
+
+	</script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+
+			document.querySelectorAll(".deleteRowIcon").forEach(icon => {
+
+				icon.addEventListener("click", function () {
+
+					// If icon is disabled → do nothing
+					if (this.classList.contains("disabledDelete")) {
+						return;
+					}
+
+					// Normal delete for other rows
+					this.closest("tr").remove();
+				});
+
+			});
+
+		});
+
 	</script>
 </head>
 
@@ -4663,6 +4853,7 @@
 								<table class="table table-bordered table-hover table-sm"
 									style="margin-bottom: 0px; font-size: initial; table-layout: fixed; width: 100%;"
 									id="usertablevalues1">
+
 									<thead class="thead-light">
 										<tr>
 											<th style="text-align: left;white-space: nowrap;width:7%;">TRAN DATE</th>
@@ -4671,20 +4862,24 @@
 											<th style="text-align: left;white-space: nowrap;width:6%;">CURRENCY</th>
 											<th style="text-align: right;white-space: nowrap;width:6%;">AMOUNT</th>
 											<th style="text-align: left;white-space: nowrap;width:17%;">ACCT ID</th>
-											<th style="text-align: left; width: 20%;white-space: nowrap;width:17%;">ACCT
-												NAME</th>
+											<th style="text-align: left;white-space: nowrap;width:17%;">ACCT NAME</th>
 											<th style="text-align: left;white-space: nowrap;width:6%">STATUS</th>
-											<th style="text-align: center;white-space: nowrap;width:6%;">SELECT</th>
+											<th style="text-align: center;white-space: nowrap;width:3%;">SELECT</th>
+											<th style="text-align: center;white-space: nowrap;width:3%;">DELETE</th>
 										</tr>
 									</thead>
+
 									<tbody id="placelist31">
-										<tr th:each="details : ${jour}">
+										<tr th:each="details, iterStat : ${jour}">
+
 											<td style="white-space: nowrap;"
 												th:text="${details.tran_date != null ? #dates.format(details.tran_date,'dd-MM-yyyy') : ''}">
 											</td>
+
 											<td style="white-space: nowrap;"
 												th:text="${details.tran_id} + '/' + ${details.part_tran_id}">
 											</td>
+
 											<td style="white-space: nowrap;" th:text="${details.part_tran_type}"></td>
 											<td style="white-space: nowrap;" th:text="${details.acct_crncy}"></td>
 
@@ -4698,13 +4893,27 @@
 											<td style="white-space: nowrap;" th:text="${details.acct_num}"></td>
 											<td style="white-space: nowrap;" th:text="${details.acct_name}"></td>
 											<td style="white-space: nowrap;" th:text="${details.tran_status}"></td>
+
+											<!-- SELECT RADIO -->
 											<td style="text-align: center; white-space: nowrap;">
-												<input type="radio" id="radioSelect" name="actionRadio"
-													th:attr="data-tranid=${details.tran_id}, data-partnid=${details.part_tran_id}, data-acctnum=${details.acct_num}"
-													onclick="selectActions(this);">
+												<input type="radio" id="radioSelect" name="actionRadio" th:attr="data-tranid=${details.tran_id}, 
+								                                data-partnid=${details.part_tran_id}, 
+								                                data-acctnum=${details.acct_num}" onclick="selectActions(this);">
 											</td>
+
+											<!-- DELETE ICON (separate column) -->
+											<td style="text-align: center; white-space: nowrap;">
+
+												<i class="fa fa-trash deleteRowIcon"
+													th:attr="data-index=${iterStat.index}"
+													th:classappend="${iterStat.index <= 1} ? ' disabledDelete' : ''"
+													style="font-size:18px; cursor:pointer;"></i>
+
+											</td>
+
 										</tr>
 									</tbody>
+
 								</table>
 							</div>
 						</div>
@@ -6300,129 +6509,17 @@
 							</tr>
 							<tr>
 								<th>Flow Code</th>
-								<td id="m_flow_code"></td>
-								<th>Flow Date</th>
-								<td id="m_flow_date"></td>
-							</tr>
-							<tr>
-								<th>Tran Date</th>
-								<td id="m_tran_date"></td>
-								<th>Value Date</th>
-								<td id="m_value_date"></td>
-							</tr>
-							<tr>
-								<th>Tran Code</th>
-								<td id="m_tran_code"></td>
-								<th>Tran Report Code</th>
-								<td id="m_tran_rpt_code"></td>
-							</tr>
-							<tr>
-								<th>Tran Ref NO</th>
-								<td id="m_tran_ref_no"></td>
-								<th>Additional Details</th>
-								<td id="m_add_details"></td>
-							</tr>
-							<tr>
-								<th>Partition Type</th>
-								<td id="m_partition_type"></td>
-								<th>Partition Details</th>
-								<td id="m_partition_det"></td>
-							</tr>
-							<tr>
-								<th>Instrument NO</th>
-								<td id="m_instr_num"></td>
-								<th>Instrument Date</th>
-								<td id="m_instr_date"></td>
-							</tr>
-							<tr>
-								<th>Account Currency</th>
-								<td id="m_ref_crncy"></td>
-								<th>Home Currency Amount</th>
-								<td id="m_ref_crncy_amt"></td>
-							</tr>
-							<tr>
-								<th>Rate Code</th>
-								<td id="m_rate_code"></td>
-								<th>Rate</th>
-								<td id="m_rate"></td>
-							</tr>
-							<tr>
-								<th>Entry User</th>
-								<td id="m_entry_user"></td>
-								<th>Post User</th>
-								<td id="m_post_user"></td>
-							</tr>
-							<tr>
-								<th>Entry Time</th>
-								<td id="m_entry_time"></td>
-								<th>Post Time</th>
-								<td id="m_post_time"></td>
-							</tr>
-							<tr>
-								<th>Tran Status</th>
-								<td id="m_tran_status"></td>
-								<th>Deleted</th>
-								<td id="m_del_flg"></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+								<td>
+									<select id="m_flow_code" class="form-control" onchange="flowCodeChanged(this)">
+										<option value="">-- Select --</option>
+										<option value="RECOVERY">RECOVERY</option>
+										<option value="PLREC">PLREC</option>
+										<option value="FEREC">FEREC</option>
+										<option value="INREC">INREC</option>
+										<option value="PRREC">PRREC</option>
+									</select>
+								</td>
 
-				<div class="modal-footer justify-content-center">
-					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-
-	<div class="modal fade tran_modal" id="transactionModal21" tabindex="-1" role="dialog"
-		aria-labelledby="transactionModalLabel" aria-hidden="true" style="overflow-y: hidden;">
-		<div class="modal-dialog modal-lg" role="document">
-			<div class="modal-content" style="padding: 0px;">
-				<div class="modal-header">
-					<h5 class="modal-title w-100 text-center" id="transactionModalLabel">Transaction Details</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-
-				<div class="modal-body">
-					<table class="table table-bordered">
-						<tbody>
-							<tr>
-								<th>Tran Id</th>
-								<td id="m_tran_id"></td>
-								<th>Part Tran Id</th>
-								<td id="m_part_tran_id"></td>
-							</tr>
-							<tr>
-								<th>Acct ID</th>
-								<td id="m_acct_num"></td>
-								<th>Acct Name</th>
-								<td id="m_acct_name"></td>
-							</tr>
-							<tr>
-								<th>Tran Type</th>
-								<td id="m_tran_type"></td>
-								<th>Part Tran Type</th>
-								<td id="m_part_tran_type"></td>
-							</tr>
-							<tr>
-								<th>Account Currency</th>
-								<td id="m_acct_crncy"></td>
-								<th>Tran Amt</th>
-								<td id="m_tran_amt"></td>
-							</tr>
-							<tr>
-								<th>Tran Particulars</th>
-								<td id="m_tran_particular"></td>
-								<th>Tran Remarks</th>
-								<td id="m_tran_remarks"></td>
-							</tr>
-							<tr>
-								<th>Flow Code</th>
-								<td id="m_flow_code"></td>
 								<th>Flow Date</th>
 								<td id="m_flow_date"></td>
 							</tr>
@@ -6492,6 +6589,139 @@
 
 				<div class="modal-footer justify-content-center">
 					<button type="button" class="btn btn-primary" data-dismiss="modal">Submit</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade tran_modal" id="transactionModal21" tabindex="-1" role="dialog"
+		aria-labelledby="transactionModalLabel" aria-hidden="true" style="overflow-y: hidden;">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content" style="padding: 0px;">
+				<div class="modal-header">
+					<h5 class="modal-title w-100 text-center" id="transactionModalLabel">Transaction Details</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<div class="modal-body">
+					<table class="table table-bordered">
+						<tbody>
+							<tr>
+								<th>Tran Id</th>
+								<td id="m_tran_id"></td>
+								<th>Part Tran Id</th>
+								<td id="m_part_tran_id"></td>
+							</tr>
+							<tr>
+								<th>Acct ID</th>
+								<td id="m_acct_num"></td>
+								<th>Acct Name</th>
+								<td id="m_acct_name"></td>
+							</tr>
+							<tr>
+								<th>Tran Type</th>
+								<td id="m_tran_type"></td>
+								<th>Part Tran Type</th>
+								<td id="m_part_tran_type1"></td>
+							</tr>
+							<tr>
+								<th>Account Currency</th>
+								<td id="m_acct_crncy"></td>
+								<th>Tran Amt</th>
+								<td id="m_tran_amt"></td>
+							</tr>
+							<tr>
+								<th>Tran Particulars</th>
+								<td id="m_tran_particular1"></td>
+								<th>Tran Remarks</th>
+								<td id="m_tran_remarks1"></td>
+							</tr>
+							<tr>
+								<th>Flow Code</th>
+								<td>
+									<select id="m_flow_code" class="form-control" onchange="flowCodeChanged1(this)">
+										<option value="">-- Select --</option>
+										<option value="RECOVERY">RECOVERY</option>
+										<option value="PLREC">PLREC</option>
+										<option value="FEREC">FEREC</option>
+										<option value="INREC">INREC</option>
+										<option value="PRREC">PRREC</option>
+									</select>
+								</td>
+
+								<th>Flow Date</th>
+								<td id="m_flow_date"></td>
+							</tr>
+							<tr>
+								<th>Tran Date</th>
+								<td id="m_tran_date"></td>
+								<th>Value Date</th>
+								<td id="m_value_date"></td>
+							</tr>
+							<tr>
+								<th>Tran Code</th>
+								<td id="m_tran_code"></td>
+								<th>Tran Report Code</th>
+								<td id="m_tran_rpt_code"></td>
+							</tr>
+							<tr>
+								<th>Tran Ref NO</th>
+								<td id="m_tran_ref_no"></td>
+								<th>Additional Details</th>
+								<td id="m_add_details"></td>
+							</tr>
+							<tr>
+								<th>Partition Type</th>
+								<td id="m_partition_type"></td>
+								<th>Partition Details</th>
+								<td id="m_partition_det"></td>
+							</tr>
+							<tr>
+								<th>Instrument NO</th>
+								<td id="m_instr_num"></td>
+								<th>Instrument Date</th>
+								<td id="m_instr_date"></td>
+							</tr>
+							<tr>
+								<th>Account Currency</th>
+								<td id="m_ref_crncy"></td>
+								<th>Home Currency Amount</th>
+								<td id="m_ref_crncy_amt"></td>
+							</tr>
+							<tr>
+								<th>Rate Code</th>
+								<td id="m_rate_code"></td>
+								<th>Rate</th>
+								<td id="m_rate"></td>
+							</tr>
+							<tr>
+								<th>Entry User</th>
+								<td id="m_entry_user"></td>
+								<th>Post User</th>
+								<td id="m_post_user"></td>
+							</tr>
+							<tr>
+								<th>Entry Time</th>
+								<td id="m_entry_time"></td>
+								<th>Post Time</th>
+								<td id="m_post_time"></td>
+							</tr>
+							<tr>
+								<th>Tran Status</th>
+								<td id="m_tran_status"></td>
+								<th>Deleted</th>
+								<td id="m_del_flg"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="modal-footer justify-content-center">
+					<button type="button" class="btn btn-primary" onclick="saveNewTransaction()">Submit</button>
 					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
 				</div>
 			</div>
