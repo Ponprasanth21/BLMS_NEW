@@ -6,7 +6,6 @@
 	DATE : 07-11-25
     VERSION    : 01
 -->
-
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -326,7 +325,7 @@ function searchData() {
                         <tr>
                             <td>${acctNum}</td>
                             <td>${acctName}</td>
-                            <td class="text-center">
+                            <td class="text-center" style="cursor:pointer;">
                                 <input type="radio" name="selectedAcct" value="${acctNum}" 
                                 	onclick="handleSelect('${acctNum}', '${acctName}')">
                             </td>
@@ -334,7 +333,6 @@ function searchData() {
                     `);
                 });
             }
-
             $('#mismatchModal').modal('show');
         },
         error: function() {
@@ -344,17 +342,13 @@ function searchData() {
         }
     });
 }
-
 // ✅ When a radio button is clicked
 let selectedAcctNum = null; // 🌟 global variable
-
 function handleSelect(acctNum, acctName) {
   // Store globally
   selectedAcctNum = acctNum;
-
   // Close the mismatch modal
   $('#mismatchModal').modal('hide');
-
   // Display selected account info in header (formatted)
   $('#selectedAccountInfo').html(`
       <div>
@@ -362,7 +356,6 @@ function handleSelect(acctNum, acctName) {
           <strong>Acct Name :</strong> <span>${acctName}</span>
       </div>
   `);
-
   // Fetch the account details for selected acctNum
   fetchAccountDetails(acctNum);
 }
@@ -479,6 +472,293 @@ function rebuildLoanBalance() {
 	  });
 	}
 </script>
+<script>
+function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+
+    if (tabName === "tab1") {
+    	 $('.fa-search').show();
+    }
+    // 👉 When Tab2 opens → load ALL automatically
+    if (tabName === "tab2") {
+    	$('.fa-search').hide();  
+    	fetchTrmVsCoaTotals();
+    }
+    if (tabName === "tab3") {
+    	$('.fa-search').hide();
+    }
+}
+function handleFilterChange(page = 1) {
+    const filterValue = document.getElementById('approvedfilter').value;
+
+    if (filterValue === "ALL") {
+    	$('#selectedAccount').hide();
+        $('.fa-search').hide();   
+        fetchTrmVsCoaTotals(page);   // Call for ALL
+    } 
+    else if (filterValue === "ACCOUNT") {
+    	searchData1(page);              // Call for Account
+    }
+}
+function fetchTrmVsCoaTotals() {
+    $.get('./getTrmVsCoaTotals', function (data) {
+        if (!data) {
+            $('#trmVsCoaTable').html(
+                '<tr><td colspan="4" class="text-center text-muted">No data found</td></tr>'
+            );
+            return;
+        }
+        // Number formatting
+        const fmt = (val) =>
+            val != null
+                ? Number(val).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                : '-';
+        $('#trmVsCoaTable').html(`
+            <tr>
+                <td>Credit</td>
+                <td style="text-align:right">${fmt(data.trm_total_cr)}</td>
+                <td style="text-align:right">${fmt(data.coa_total_cr)}</td>
+                <td style="text-align:right">${fmt(data.diff_trm_cr_coa_cr)}</td>
+            </tr>
+
+            <tr>
+                <td>Debit</td>
+                <td style="text-align:right">${fmt(data.trm_total_dr)}</td>
+                <td style="text-align:right">${fmt(data.coa_total_dr)}</td>
+                <td style="text-align:right">${fmt(data.diff_trm_dr_coa_dr)}</td>
+            </tr>
+
+            <tr>
+                <td>Net</td>
+                <td style="text-align:right">${fmt(data.trm_net_amount)}</td>
+                <td style="text-align:right">${fmt(data.coa_net_amount)}</td>
+                <td style="text-align:right">${fmt(data.diff_trm_net_coa_net)}</td>
+            </tr>
+
+            <tr>
+                <td><strong>Balance</strong></td>
+                <td style="text-align:right"><strong>${fmt(data.trm_balance)}</strong></td>
+                <td style="text-align:right"><strong>${fmt(data.coa_total_acct_bal)}</strong></td>
+                <td style="text-align:right"><strong>${fmt(data.diff_trm_balance_coa_balance)}</strong></td>
+            </tr>
+        `);
+    }).fail(() => {
+        $('#trmVsCoaTable').html(
+            '<tr><td colspan="4" class="text-center text-danger">Error fetching data</td></tr>'
+        );
+    });
+}
+</script>
+<script>
+function searchData1() {
+    document.getElementById('loadingModal').style.display = 'flex';
+
+    $.ajax({
+        url: './getCOAList',
+        type: 'GET',
+        success: function (data) {
+            document.getElementById('loadingModal').style.display = 'none';
+            let tbody = $('#coaTable tbody');
+            tbody.empty();
+
+            if (!data || data.length === 0) {
+                tbody.append('<tr><td colspan="3" class="text-center text-muted">No COA accounts found.</td></tr>');
+            } else {
+                data.forEach(row => {
+                    let acctNum = row.acct_num;
+                    let acctName = row.acct_name;
+
+                    tbody.append(`
+                        <tr>
+                            <td>${acctNum}</td>
+                            <td>${acctName}</td>
+                            <td class="text-center" style="cursor:pointer;">
+                                <input type="radio" name="selectedAcct" 
+                                       value="${acctNum}" 
+                                       onclick="handleSelect1('${acctNum}', '${acctName}')">
+                            </td>
+                        </tr>
+                    `);
+                });
+            }
+            $('#coaModal').modal('show');
+        },
+        error: function () {
+            document.getElementById('loadingModal').style.display = 'none';
+            $("#alertmsg").text("Failed to load COA List.");
+            $('#alert').modal("toggle");
+        }
+    });
+}
+// ✅ When a radio button is clicked
+function handleSelect1(acctNum, acctName) {
+    selectedAcctNum = acctNum;
+    // Close modal
+    $('#coaModal').modal('hide');
+    // Show selected account
+    $('#selectedAccount').html(`
+        <div>
+            <strong>Acct Num :</strong> <span style="color:#007bff;">${acctNum}</span><br>
+            <strong>Acct Name :</strong> <span>${acctName}</span>
+        </div>
+    `);
+    // Show search icon
+    $('#coaSearchIcon').show();
+    // Fetch account details
+    fetchCoaAcct(acctNum);
+}
+function fetchCoaAcct(acctNum) {
+    $.get('./getCoaAcct', { acctNum }, function (data) {
+        if (!data) {
+            $('#trmVsCoaTable').html(
+                '<tr><td colspan="4" class="text-center text-muted">No data found</td></tr>'
+            );
+            return;
+        }
+        // Number formatting
+        const fmt = (val) =>
+            val != null
+                ? Number(val).toLocaleString('en-IN', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                  })
+                : '-';
+        $('#trmVsCoaTable').html(`
+            <tr>
+                <td>Credit</td>
+                <td style="text-align:right">${fmt(data.trm_total_cr)}</td>
+                <td style="text-align:right">${fmt(data.coa_total_cr)}</td>
+                <td style="text-align:right">${fmt(data.diff_trm_cr_coa_cr)}</td>
+            </tr>
+
+            <tr>
+                <td>Debit</td>
+                <td style="text-align:right">${fmt(data.trm_total_dr)}</td>
+                <td style="text-align:right">${fmt(data.coa_total_dr)}</td>
+                <td style="text-align:right">${fmt(data.diff_trm_dr_coa_dr)}</td>
+            </tr>
+
+            <tr>
+                <td>Net</td>
+                <td style="text-align:right">${fmt(data.trm_net_amount)}</td>
+                <td style="text-align:right">${fmt(data.coa_net_amount)}</td>
+                <td style="text-align:right">${fmt(data.diff_trm_net_coa_net)}</td>
+            </tr>
+
+            <tr>
+                <td><strong>Balance</strong></td>
+                <td style="text-align:right"><strong>${fmt(data.trm_balance)}</strong></td>
+                <td style="text-align:right"><strong>${fmt(data.coa_total_acct_bal)}</strong></td>
+                <td style="text-align:right"><strong>${fmt(data.diff_trm_balance_coa_balance)}</strong></td>
+            </tr>
+        `);
+    }).fail(() => {
+        $('#trmVsCoaTable').html(
+            '<tr><td colspan="4" class="text-center text-danger">Error fetching data</td></tr>'
+        );
+    });
+}
+$(document).ready(function () {
+    let coaFiltersEnabled = false;
+    // Toggle filter mode
+    $('#toggleFiltercoa').on('click', function () {
+        coaFiltersEnabled = !coaFiltersEnabled;
+        if (coaFiltersEnabled) {
+            enableCOAHeaderFilters();
+            $(this).find("i").css("color", "blue");
+        } else {
+            disableCOAHeaderFilters();
+            $(this).find("i").css("color", "black");
+        }
+    });
+    // Enable filters
+    function enableCOAHeaderFilters() {
+        $('#coaAcctNumHeader').html(`
+            <input type="text" id="coaFilterAcctNum"
+                class="form-control form-control-sm"
+                placeholder="Search Account Number">
+        `);
+        $('#coaAcctNameHeader').html(`
+            <input type="text" id="coaFilterAcctName"
+                class="form-control form-control-sm"
+                placeholder="Search Account Name">
+        `);
+        $('#coaFilterAcctNum').focus();
+        // Live filtering
+        $('#coaFilterAcctNum, #coaFilterAcctName').on('keyup', function () {
+            const numFilter = $('#coaFilterAcctNum').val().toLowerCase();
+            const nameFilter = $('#coaFilterAcctName').val().toLowerCase();
+            $('#coaTable tbody tr').each(function () {
+                const acctNum = $(this).find('td:eq(0)').text().toLowerCase();
+                const acctName = $(this).find('td:eq(1)').text().toLowerCase();
+
+                if (acctNum.includes(numFilter) && acctName.includes(nameFilter)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    }
+    // Disable filters
+    function disableCOAHeaderFilters() {
+        $('#coaAcctNumHeader').text('Account Number');
+        $('#coaAcctNameHeader').text('Account Name');
+        $('#coaTable tbody tr').show();
+    }
+
+});
+function rebuildCoabal() {
+	  if (!selectedAcctNum) {
+		  $("#alertmsg").text("Please select an account first before rebuilding.");
+        $('#alert').modal("toggle");
+	    return;
+	  }
+
+	/*   if (!confirm(`Rebuild loan balance for account ${selectedAcctNum}?`)) return; */
+
+	  $.ajax({
+	    url: './rebuildCoabal',
+	    type: 'POST',
+	    data: { acctNum: selectedAcctNum },
+	    success: function(response) {
+	    	 $("#alertmsg").text("COA balance updated successfully!");
+	            $('#alert').modal("toggle");
+	      fetchAccountDetails(selectedAcctNum); // refresh balance info
+	    },
+	    error: function(xhr) {
+	    	$("#alertmsg").text("Error rebuilding loan balance: " + (xhr.responseJSON?.error || "Unknown error"));
+	        $('#alert').modal("toggle");
+	    }
+	  });
+	}
+</script>
+<script>
+function handleFilter(page = 1) {
+    const filterValue = document.getElementById('approvedfilterDab').value;
+
+    if (filterValue === "ALL") {
+    	$('#selectedAccount').hide(); 
+        fetchTrmVsCoaTotals(page);   // Call for ALL
+    } 
+    else if (filterValue === "ACCOUNT") {
+    	searchData1(page);              // Call for Account
+    }
+}
+</script>
 </head>
 <title>ASPIRA</title>
 <body>
@@ -493,51 +773,49 @@ function rebuildLoanBalance() {
 				<div th:if="${formmode}=='list'">
 					<div class="card w-100 border panel panel-primary filterable">
 						<div class="card-header"
-							style="background-color: #e9ecef; height: 60px">
+							style="background-color: #e9ecef; height: 50px">
 							<div class="float-left">
-								<h6 style="font-size: 1.2rem;margin-top: 4%">REBUILD BALANCE</h6>
+								<h6 style="font-size: 1.2rem;">REBUILD BALANCE</h6>
 							
 							</div>
-							<!-- <button class="btn-primary big-btn btn-filter float-right"style="margin-right: 5px;">Filter</button> -->
-							<div
-								class="float-right d-flex align-items-center justify-content-end mr-4">
-
-							<!-- 	<div class="mr-3">
-									<i class="fa fa-filter"
-										style="font-size: 18px; cursor: pointer;"
-										title="Filter" onclick="toggleFilterOptions(event)"></i>
-
-									<div id="filterOptions"
-										class="border rounded bg-white shadow-sm position-absolute p-2"
-										style="display: none; top: 25px; right: 0; z-index: 1000;">
-										<div class="dropdown-item py-1 px-2"
-											onclick="handleFilter('Email')">Email</div>
-										<div class="dropdown-item py-1 px-2"
-											onclick="handleFilter('Customer_ID')">Customer ID</div>
-										<div class="dropdown-item py-1 px-2"
-											onclick="handleFilter('Mobile_No')">Mobile No</div>
-									</div>
-								</div> -->
-								<!-- Selected Account Info -->
-								<div id="selectedAccountInfo" style="margin-right: 15px;"></div>
-                                
-								<i class="fa fa-search center"
-									style="cursor: pointer;font-size: 15px;" 
-									onclick="searchData()" title="Mismatched Accounts"></i>
-							</div>
 						</div>
-						<div class="card-body"
-							style="overflow-y: auto; border: 1px solid #ddd;">
+						<div class="tab mt-2"
+							style="padding: 4px 4px; position: relative; display: flex; justify-content: space-around; margin-top: 10px; width: 100%; height: 43px">
+							<button class="tablinks active" onclick="openTab(event, 'tab1')"
+								style="font-size: 16px; padding: 4px 8px; height: 32px;">Loan Account Master</button>
+							<button class="tablinks" onclick="openTab(event, 'tab2')"
+								style="font-size: 16px; padding: 4px 8px; height: 32px;">General Account Master</button>
+							<button class="tablinks" onclick="openTab(event, 'tab3')"
+								style="font-size: 16px; padding: 4px 8px; height: 32px;">Daily Account Balances</button>
+						</div>
+<!----------------------------------------------------------------------- Tab1	----------------------------------------------------------->					
+						<div id="tab1" class="tabcontent" style="display: block">
+						<div class="card-body">
+							<div class="card-header"
+							style="background-color: #e9ecef; height: 50px">
+							<div class="float-left">
+								<h6 style="font-size: 1.2rem;margin-left:-8%">Rebuild Balance for LOA</h6>
+							</div>
+									<div class="d-flex align-items-center justify-content-end mr-4"
+										style="gap: 12px;">
+										<!-- Selected Account Info -->
+										<div id="selectedAccountInfo" style="white-space: nowrap;"></div>
+										<!-- Icon -->
+										<i class="fa fa-search"
+											style="cursor: pointer; font-size: 16px;"
+											onclick="searchData()" title="Mismatched Accounts"></i>
+									</div>
+								</div>
 							<div class="table-responsive" id="cardBody">
 								<table class="table  table-bordered  table-hover table-sm"
 									style="margin-bottom: 0px; font-size: initial;">
 									<thead class="thead-light"
 										style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
 										<tr class="filters">
-											<th>TYPE</th>
-											<th>LOAN ACCOUNT MASTER</th>
-											<th>GENERAL ACCOUNT MASTER</th>
-											<th>TRANSACTION</th>
+											<th>Type</th>
+											<th style="text-align:right">Loan Account Master</th>
+											<th style="text-align:right">General Account Master</th>
+											<th style="text-align:right">Transactions</th>
 										</tr>
 									</thead>
 									<tbody id="usertable1">
@@ -547,13 +825,115 @@ function rebuildLoanBalance() {
 									</tbody>
 								</table>
 							</div>
-						</div>
-
 						<div class="card-footer text-center">
 							<button class="btn-primary big-btn" onclick="home();">Home</button>
 							<button class="btn-primary big-btn" onclick="rebuildLoanBalance()">Rebuild</button>
 							<button class="btn-primary big-btn" onclick="back()">Back</button>
 						</div>
+						</div>
+                     </div>
+<!----------------------------------------------------------------------- Tab2	----------------------------------------------------------->
+						<div id="tab2" class="tabcontent">
+							<div class="card-body">
+								<div class="card-header"
+									style="background-color: #e9ecef; height: 50px">
+									<div class="float-left">
+										<h6 style="font-size: 1.2rem; margin-left: -8%">Rebuild
+											Balance for COA</h6>
+									</div>
+									<div class="float-right d-flex align-items-center mr-4"
+										style="gap: 12px;">
+										<!-- Selected Account Display -->
+										<div id="selectedAccount" style="white-space: nowrap;"></div>
+										<!-- Filter Dropdown -->
+										<select class="form-control form-control-sm w-100"
+											id="approvedfilter" onchange="handleFilterChange(1)">
+											<option value="ALL" selected>All</option>
+											<option value="ACCOUNT">Account</option>
+										</select>
+										<!-- Icon -->
+										<i class="fa fa-search" id="coaSearchIcon"
+											style="cursor: pointer; font-size: 16px;"
+											onclick="searchData1()" title="COA Accounts"></i>
+									</div>
+								</div>
+								<div class="table-responsive" id="cardBody">
+									<table class="table  table-bordered  table-hover table-sm"
+										style="margin-bottom: 0px; font-size: initial;">
+										<thead class="thead-light"
+											style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+											<tr class="filters">
+												<th>Type</th>
+												<th style="text-align: right">Transactions</th>
+												<th style="text-align: right">General Account Master</th>
+												<th style="text-align: right">Difference</th>
+											</tr>
+										</thead>
+										<tbody id="trmVsCoaTable">
+										</tbody>
+									</table>
+								</div>
+								<div class="card-footer text-center">
+									<button class="btn-primary big-btn" onclick="home();">Home</button>
+									<button class="btn-primary big-btn"
+										onclick="rebuildCoabal()">Rebuild</button>
+									<button class="btn-primary big-btn" onclick="back()">Back</button>
+								</div>
+							</div>
+						</div>
+<!----------------------------------------------------------------------- Tab3	----------------------------------------------------------->	 
+                  	<div id="tab3" class="tabcontent">
+						<div class="card-body">
+							<div class="card-header"
+							style="background-color: #e9ecef; height: 50px">
+							<div class="float-left">
+								<h6 style="font-size: 1.2rem;margin-left:-8%">Rebuild Balance for DAB</h6>
+							</div>
+							<div class="float-right d-flex align-items-center mr-4"
+										style="gap: 12px;">
+										<!-- Selected Account Display -->
+										<div id="selectedAccountDAB" style="white-space: nowrap;"></div>
+										<!-- Filter Dropdown -->
+										<select class="form-control form-control-sm w-100"
+											id="approvedfilterDab" onchange="handleFilter(1)">
+											<option value="ALL_ACCT" selected>All Account</option>
+											<option value="ACCOUNT">Account</option>
+											<option value="ALL_DATE">All Date</option>
+											<option value="TRAN_DATE">Tran Date</option>
+										</select>
+										<!-- Icon -->
+										<i class="fa fa-search" id="dabSearchIcon"
+											style="cursor: pointer; font-size: 16px;"
+											onclick="searchData2()" title="DAB Accounts"></i>
+									</div>
+							</div>
+							<div class="table-responsive" id="cardBody">
+								<table class="table  table-bordered  table-hover table-sm"
+									style="margin-bottom: 0px; font-size: initial;">
+									<thead class="thead-light"
+										style="position: sticky; top: 0; background-color: #f8f9fa; z-index: 1;">
+										<tr class="filters">
+											<th>Type</th>
+												<th style="text-align: right">Transactions</th>
+												<th style="text-align: right">Daily Account Balances</th>
+												<th style="text-align: right">Difference</th>
+										</tr>
+									</thead>
+									<tbody id="usertable1">
+										<tr>
+											<td colspan="4" class="text-center text-muted">Please select an account to view details.</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						<div class="card-footer text-center">
+							<button class="btn-primary big-btn" onclick="home();">Home</button>
+							<button class="btn-primary big-btn" onclick="">Rebuild</button>
+							<button class="btn-primary big-btn" onclick="back()">Back</button>
+						</div>
+						</div>
+                     </div>
+<!----------------------------------------------------------------------- Tab End----------------------------------------------------------->	                 
 					</div>
 				</div>
 			</div>
@@ -571,7 +951,7 @@ function rebuildLoanBalance() {
             <i class="fa fa-filter" style="color:black;"></i>
           </button>
           <!-- ❌ Close -->
-          <button type="button" class="btn-close black" onclick="$('#mismatchModal').modal('hide')" title="Close"></button>
+          <button type="button" class="btn-close" onclick="$('#mismatchModal').modal('hide')" title="Close"></button>
         </div>
       </div>
 
@@ -582,6 +962,39 @@ function rebuildLoanBalance() {
               <th id="acctNumHeader" style="width: 35%;">Account Number</th>
               <th id="acctNameHeader" style="width: 50%;">Account Name</th>
               <th style="width: 15%;">Select</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-------------------------------------------------------------------------------- Modal ------------------------------------------------>
+<div class="modal fade" id="coaModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="max-height: 100vh; overflow: hidden; border-radius: 12px;">
+      <!-- Modal Header -->
+      <div class="modal-header" style="background-color: #e9ecef;">
+        <h5 class="modal-title">COA Accounts</h5>
+        <div class="d-flex align-items-center">
+          <!-- Filter Button -->
+          <button type="button" id="toggleFiltercoa" title="Enable Filters" style="border: none; background-color: transparent;">
+            <i class="fa fa-filter" style="color:black;"></i>
+          </button><!-- Close Button -->
+          <button type="button" class="btn-close" onclick="$('#coaModal').modal('hide')" title="Close"></button>
+        </div>
+      </div>
+      <!-- Modal Body -->
+      <div class="modal-body" style="overflow-y: auto; max-height: 70vh;">
+        <table class="table table-bordered table-hover mb-0" id="coaTable">
+          <thead class="thead-light">
+            <tr>
+             <th id="coaAcctNumHeader">Account Number</th>
+             <th id="coaAcctNameHeader">Account Name</th>
+              <th style="width: 15%; text-align: center;">Select</th>
             </tr>
           </thead>
           <tbody>
