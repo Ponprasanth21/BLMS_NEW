@@ -5349,5 +5349,231 @@ public class BGLSNavigationController {
        	
        	return "Successully Password Reset";
        }
+       
+       
+       
+       @RequestMapping(value = "TransactionReport2", method = { RequestMethod.GET, RequestMethod.POST })
+       public String TransactionReport2(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
+           if (formmode == null || formmode.equals("list")) {
+               md.addAttribute("formmode", "list");
+               md.addAttribute("date", bGLS_CONTROL_TABLE_REP.getCurrentTranDate());
+           }
+           return "TransactionReport2.html";
+       }
+       
+       
+       @RequestMapping(value = "TransactionPointing", method = { RequestMethod.GET, RequestMethod.POST })
+       public String TransactionPointing(@RequestParam(required = false) String formmode,
+                                    @RequestParam(required = false) String acct_num, @RequestParam(required = false) String part_tran,
+                                    @RequestParam(required = false) String tran_idss, @RequestParam(required = false) String part_transs,
+                                    @RequestParam(required = false) String tran_id, @RequestParam(required = false) String part_tran_id,
+                                    @RequestParam(required = false) String account_number,
+                                    @RequestParam(required = false) String loan_sanctioned, @RequestParam(required = false) String account_name,
+                                    @RequestParam(required = false) String schm_type, @RequestParam(required = false) String flow_code,
+                                    @RequestParam(required = false) String flow_date, @RequestParam(required = false) String flow_amount,
+                                    @RequestParam(required = false) String account_no, @RequestParam(required = false) String currency,
+                                    @RequestParam(required = false) String accountName, Model md, HttpServletRequest rq) {
+
+           String user = (String) rq.getSession().getAttribute("USERID");
+           String user1 = (String) rq.getSession().getAttribute("BRANCH_ID");
+
+           String fullTranID1 = "TR" + tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1();
+           md.addAttribute("plusonetran2", fullTranID1);
+
+           if (formmode == null || formmode.equals("list1")) {
+
+               md.addAttribute("jour", tRAN_MAIN_TRM_WRK_REP.findByjournal1());
+               md.addAttribute("formmode", "list1");
+
+           } else if (formmode.equals("add")) {
+
+               md.addAttribute("part_tran", part_tran);
+
+               String fullTranID = "TR" + tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1();
+
+               /* NUmber part increment 1 */
+               String tranIdNUm = fullTranID.substring(3);
+               int newTranNUm = Integer.parseInt(tranIdNUm) + 1;
+
+               /* Letter part get */
+               String tranLetterPart = fullTranID.substring(0, 3);
+
+               if (account_number != null) {
+                   md.addAttribute("accountnumbervalue", account_number);
+               } else {
+
+               }
+
+               if (loan_sanctioned != null) {
+                   md.addAttribute("totalamountvalue", loan_sanctioned);
+               } else {
+
+                   md.addAttribute("totalamountvalue", 0); // Set a default value
+               }
+
+               if (account_name != null) {
+                   md.addAttribute("accountnamevalue", account_name);
+               } else {
+
+               }
+
+               /* from flow time */
+
+               if (account_no != null) {
+                   md.addAttribute("accountnumber", account_no);
+                   md.addAttribute("currencyvalue", "SCR");
+
+               } else {
+
+               }
+
+               if (flow_amount != null) {
+                   md.addAttribute("flowamount", flow_amount);
+               } else {
+
+               }
+
+               if (flow_code != null) {
+                   md.addAttribute("flowcodes", flow_code);
+               } else {
+
+               }
+
+               if (flow_date != null) {
+
+                   String[] flowTime = flow_date.split("-");
+                   String FlowDateSend = flowTime[0] + "/" + flowTime[1] + "/" + flowTime[2];
+                   md.addAttribute("flowdate", FlowDateSend);
+               } else {
+
+               }
+
+               if (accountName != null) {
+                   md.addAttribute("accountnamevalue", accountName);
+               } else {
+
+               }
+
+               if (currency != null) {
+                   md.addAttribute("currencyvalue", "SCR");
+               } else {
+
+               }
+
+               if (schm_type != null) {
+                   if (schm_type.equals("LA")) {
+                       md.addAttribute("accounttypevalue", "LeasyLoan");
+                   } else if (schm_type.equals("TD")) {
+                       md.addAttribute("accounttypevalue", "TermLoan");
+                   } else {
+                       md.addAttribute("accounttypevalue", ""); // Default case
+                   }
+               } else {
+
+               }
+
+               // This will be reflected in your frontend
+
+               md.addAttribute("plusonetran", tranLetterPart + newTranNUm);
+               md.addAttribute("plusonetran1", fullTranID);
+               md.addAttribute("popup", chart_Acc_Rep.getlistpopup());
+               md.addAttribute("popupvalues", depositRep.getdatavalues());
+               md.addAttribute("accountvalues", lease_Loan_Master_Repo.getCSlist());
+               md.addAttribute("currentDate", new Date());
+               md.addAttribute("partTranId", "1");
+               md.addAttribute("user", user);
+               md.addAttribute("tranStatus", "ENTERED");
+               // md.addAttribute("popup", account_Ledger_Rep.popup());
+               // System.out.println("123456789"+account_Ledger_Rep.popup());
+
+               md.addAttribute("formmode", "add");
+           } else if (formmode.equals("add1")) {
+
+               /*
+                * md.addAttribute("part_transs", part_transs); md.addAttribute("tran_idss",
+                * tran_idss); md.addAttribute("part_tran", part_tran); String a =
+                * account_Ledger_Rep.getlast(); String b = a.substring(3); int c =
+                * Integer.parseInt(b) + 1; String d = a.substring(0, 3);
+                * md.addAttribute("plusonetran", d + c);
+                */
+               md.addAttribute("formmode", "add1");
+               // md.addAttribute("popup", account_Ledger_Rep.popup());
+               // md.addAttribute("popup", chart_Acc_Rep.getlistpopup());
+
+           } else if (formmode.equals("massentires")) {
+               md.addAttribute("formmode", "massentires");
+           } else if (formmode.equals("verify")) {
+
+               md.addAttribute("formmode", "verify");
+               md.addAttribute("ledgervalues", account_Ledger_Rep.getValuepop(tran_id, acct_num, part_tran_id));
+
+           } else if (formmode.equals("view")) {
+               md.addAttribute("formmode", "view");
+               md.addAttribute("jour", tRAN_MAIN_TRM_WRK_REP.findByjournalvalues(tran_id));
+               md.addAttribute("Acctnum", acct_num);
+               md.addAttribute("ledgervalues", tRAN_MAIN_TRM_WRK_REP.getValuepopvalues(tran_id, acct_num, part_tran_id));
+               md.addAttribute("currentPartTran", part_tran_id);
+               System.out.println("part_tran_id" + part_tran_id);
+               md.addAttribute("maxPartTran", tRAN_MAIN_TRM_WRK_REP.maxPartranID(tran_id));
+               md.addAttribute("gldetails", chart_Acc_Rep.getlistpopupvalues(acct_num));
+           }  else if (formmode.equals("view1")) {
+               md.addAttribute("formmode", "view1");
+               md.addAttribute("jour", tRAN_MAIN_TRM_WRK_REP.findByjournalvalues(tran_id));
+               md.addAttribute("jour1", tRAN_MAIN_TRM_WRK_REP.findByjournalvalues(tran_id));
+               md.addAttribute("Acctnum", acct_num);
+               md.addAttribute("ledgervalues", tRAN_MAIN_TRM_WRK_REP.getValuepopvalues(tran_id, acct_num, part_tran_id));
+               md.addAttribute("currentPartTran", part_tran_id);
+               System.out.println("part_tran_id" + part_tran_id);
+               md.addAttribute("maxPartTran", tRAN_MAIN_TRM_WRK_REP.maxPartranID(tran_id));
+               md.addAttribute("gldetails", chart_Acc_Rep.getlistpopupvalues(acct_num));
+           } else if (formmode.equals("modify")) {
+               // md.addAttribute("jour", account_Ledger_Rep.getjourform(acct_num));
+               md.addAttribute("formmode", "modify");
+               md.addAttribute("jour", tRAN_MAIN_TRM_WRK_REP.findByjournal());
+               md.addAttribute("ledgervalues", tRAN_MAIN_TRM_WRK_REP.getValuepopvalues(tran_id, acct_num, part_tran_id));
+               md.addAttribute("currentPartTran", part_tran_id);
+               System.out.println("part_tran_id" + part_tran_id);
+               md.addAttribute("maxPartTran", tRAN_MAIN_TRM_WRK_REP.maxPartranID(tran_id));
+               md.addAttribute("gldetails", chart_Acc_Rep.getlistpopupvalues(acct_num));
+           } else if (formmode.equals("modify1")) {
+               // md.addAttribute("jour", account_Ledger_Rep.getjourform(acct_num));
+               md.addAttribute("formmode", "modify1");
+               md.addAttribute("ledgervalues", tRAN_MAIN_TRM_WRK_REP.getValuepopvalues(tran_id, acct_num, part_tran_id));
+               md.addAttribute("jour", tRAN_MAIN_TRM_WRK_REP.findByjournalvalues(tran_id));
+               md.addAttribute("currentPartTran", part_tran_id);
+               System.out.println("part_tran_id" + part_tran_id);
+               md.addAttribute("maxPartTran", tRAN_MAIN_TRM_WRK_REP.maxPartranID(tran_id));
+               System.out.println("maxPartTran" + tRAN_MAIN_TRM_WRK_REP.countPartTranIDs(tran_id));
+               md.addAttribute("tableparttran", tRAN_MAIN_TRM_WRK_REP.currentTableRecords(tran_id));
+               System.out.println(tRAN_MAIN_TRM_WRK_REP.currentTableRecords(tran_id) + "tableparttran");
+               md.addAttribute("gldetails", chart_Acc_Rep.getlistpopupvalues(acct_num));
+           } else if (formmode.equals("view2")) {
+               // md.addAttribute("jour", account_Ledger_Rep.getjourform(acct_num));
+               md.addAttribute("formmode", "view2");
+               md.addAttribute("part_tran", part_tran);
+
+               String fullTranID = "TR" + tRAN_MAIN_TRM_WRK_REP.gettrmRefUUID1();
+
+               /* NUmber part increment 1 */
+               String tranIdNUm = fullTranID.substring(3);
+               int newTranNUm = Integer.parseInt(tranIdNUm) + 1;
+
+               /* Letter part get */
+               String tranLetterPart = fullTranID.substring(0, 3);
+
+               md.addAttribute("plusonetran", tranLetterPart + newTranNUm);
+               md.addAttribute("popup", chart_Acc_Rep.getlistpopup());
+               md.addAttribute("currentDate", new Date());
+               md.addAttribute("partTranId", "1");
+               md.addAttribute("user", user);
+               md.addAttribute("tranStatus", "ENTERED");
+               // md.addAttribute("popup", account_Ledger_Rep.popup());
+               // System.out.println("123456789"+account_Ledger_Rep.popup());
+           }
+
+           return "TransactionPointing.html";
+       }
+
+
 
 }

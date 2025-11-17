@@ -550,9 +550,16 @@ public interface TRAN_MAIN_TRM_WRK_REP extends JpaRepository<TRAN_MAIN_TRM_WRK_E
 			+ "ORDER BY TRAN_DATE, TRAN_ID, PART_TRAN_ID "
 			+ "OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
 	List<TRAN_MAIN_TRM_WRK_ENTITY> findPaginatedJournal(@Param("offset") int offset, @Param("limit") int limit);
+	
+	@Query(value = "SELECT * FROM BGLS_TRM_WRK_TRANSACTIONS " + "WHERE FLOW_CODE  IN ('FRECOVERY','COLL') "
+			+ "OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
+	List<TRAN_MAIN_TRM_WRK_ENTITY> findTransactionPointings(@Param("offset") int offset, @Param("limit") int limit);
 
 	@Query(value = "SELECT COUNT(*) FROM BGLS_TRM_WRK_TRANSACTIONS WHERE TRAN_STATUS = 'POSTED'", nativeQuery = true)
 	int countJournalEntries();
+	
+	@Query(value = "SELECT COUNT(*) FROM BGLS_TRM_WRK_TRANSACTIONS WHERE FLOW_CODE  IN ('FRECOVERY','COLL')", nativeQuery = true)
+	int countTransactionPointings();
 
 	@Query(value = "SELECT COUNT(*) FROM BGLS_TRM_WRK_TRANSACTIONS", nativeQuery = true)
 	Long getTotalLoans();

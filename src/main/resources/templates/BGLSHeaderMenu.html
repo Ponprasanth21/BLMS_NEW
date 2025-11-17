@@ -722,6 +722,11 @@
 					onclick="contentLoad(this)">Transaction
 					Reversal</a></li>
 			
+			<!-- <li class="nav-item" th:if="${session.SCREEN_ACCESS_TRANSACTION_REVERSAL} == 'Y' "><a
+					class="nav-link nav-link-collapse pl-3 " id="TransactionPointing" href="#"
+					onclick="contentLoad(this)">Transaction
+					Pointing</a></li> -->
+			
 			<li class="nav-item" th:if="${session.SCREEN_ACCESS_TRANSACTION_ACCOUNTS} == 'Y' "><a
 					class="nav-link nav-link-collapse pl-3 " id="TransactionsAccounts" href="#"
 					onclick="contentLoad(this)">Transaction
@@ -833,6 +838,8 @@
 							id="InterestAccrualreport" href="#" onclick="contentLoad(this)"> Interest Accrual Report </a></li>
 					<li class="nav-item" th:if="${session.SCREEN_ACCESS_PENALTY_ACCRUAL_REPORT} == 'Y' "><a class="nav-link"
 							id="PenaltyAccrualreport" href="#" onclick="contentLoad(this)"> Penalty Accrual Report </a></li>
+					<!-- <li class="nav-item" th:if="${session.SCREEN_ACCESS_PENALTY_ACCRUAL_REPORT} == 'Y' "><a class="nav-link"
+							id="TransactionReport2" href="#" onclick="contentLoad(this)"> Transaction2 Report </a></li> -->
 					<li class="nav-item" th:if="${session.SCREEN_ACCESS_INTERSET_SUMMARY_INQ} == 'Y' "><a
 							class="nav-link" id="interest_summary" href="#" onclick="contentLoad(this)"> Interest
 							Summary </a></li>

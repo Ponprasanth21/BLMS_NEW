@@ -2473,6 +2473,128 @@ public byte[] generateEndOfMonthExcel(List<Object[]> rawData, String dueDate) {
         }
     }
 
+    
+    
+//    -----------------------------------------------------------------------------------------------------------------
+    public byte[] TransactionverifyReport(List<Object[]> rawData, String tranDate) {
+        if (rawData == null || rawData.isEmpty()) {
+            return new byte[0];
+        }
+
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet("TRANSACTION_" + tranDate);
+
+            // ====================== TITLE ======================
+            Row titleRow = sheet.createRow(0);
+            Cell titleCell = titleRow.createCell(0);
+            titleCell.setCellValue("TRANSACTION REPORT");
+
+            CellStyle titleStyle = workbook.createCellStyle();
+            Font titleFont = workbook.createFont();
+            titleFont.setBold(true);
+            titleFont.setFontHeightInPoints((short) 14);
+            titleStyle.setFont(titleFont);
+            titleStyle.setAlignment(HorizontalAlignment.CENTER);
+            titleCell.setCellStyle(titleStyle);
+
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 9));
+
+            // ====================== PRINTED DATE ======================
+            Row dateRow = sheet.createRow(1);
+            dateRow.createCell(0).setCellValue("Printed Date:");
+            dateRow.createCell(1).setCellValue(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
+
+            // ====================== HEADERS ======================
+            String[] headers = {
+                "Tran Date", "Account Number", "Account Name", "Tran Type", "Tran ID",
+                "Part Tran ID", "Part Tran Type", "Credit Amount", "Debit Amount", "Tran Particular"
+            };
+
+            Row headerRow = sheet.createRow(3);
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            headerStyle.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyle.setBorderBottom(BorderStyle.THIN);
+            headerStyle.setBorderTop(BorderStyle.THIN);
+            headerStyle.setBorderLeft(BorderStyle.THIN);
+            headerStyle.setBorderRight(BorderStyle.THIN);
+
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            // ====================== CELL STYLES ======================
+            CellStyle textStyle = workbook.createCellStyle();
+            textStyle.setAlignment(HorizontalAlignment.LEFT);
+
+            CellStyle numStyle = workbook.createCellStyle();
+            numStyle.setAlignment(HorizontalAlignment.RIGHT);
+            numStyle.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
+
+            CellStyle dateStyle = workbook.createCellStyle();
+            dateStyle.setDataFormat(workbook.createDataFormat().getFormat("dd-MM-yyyy"));
+            dateStyle.setAlignment(HorizontalAlignment.CENTER);
+
+            // ====================== DATA ROWS ======================
+            int rowNum = 4;
+            for (Object[] rowData : rawData) {
+                Row row = sheet.createRow(rowNum++);
+                for (int i = 0; i < rowData.length; i++) {
+                    Cell cell = row.createCell(i);
+                    Object val = rowData[i];
+
+                    if (val == null) {
+                        cell.setCellValue("");
+                        continue;
+                    }
+
+                    switch (i) {
+                        case 0: // tran_date
+                            cell.setCellStyle(dateStyle);
+                            if (val instanceof Date)
+                                cell.setCellValue((Date) val);
+                            else
+                                cell.setCellValue(val.toString());
+                            break;
+
+                        case 7: // Credit Amount
+                        case 8: // Debit Amount
+                            try {
+                                cell.setCellValue(Double.parseDouble(val.toString()));
+                                cell.setCellStyle(numStyle);
+                            } catch (Exception e) {
+                                cell.setCellValue(val.toString());
+                                cell.setCellStyle(textStyle);
+                            }
+                            break;
+
+                        default:
+                            cell.setCellValue(val.toString());
+                            cell.setCellStyle(textStyle);
+                            break;
+                    }
+                }
+            }
+
+            // ====================== AUTO SIZE ======================
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            workbook.write(out);
+            return out.toByteArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new byte[0];
+        }
+    }
+
 
     
     

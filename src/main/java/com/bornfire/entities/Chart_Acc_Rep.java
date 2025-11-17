@@ -448,5 +448,26 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 			"FROM BGLS_TRM_WRK_TRANSACTIONS t "
 			+ "JOIN BGLS_DAILY_ACCT_BAL d ON t.acct_num = d.acct_num ", nativeQuery = true)
 	List<Object[]> getTrmVsDabTotals();
+	
+	
+
+
+@Query(value = "SELECT " +
+			        "b.tran_date, " +
+			        "a.acct_num, " +
+			        "a.acct_name, " +
+			        "INITCAP(b.tran_type) AS tran_type, " +
+			        "b.tran_id, " +
+			        "b.part_tran_id, " +
+			        "INITCAP(b.part_tran_type) AS part_tran_type, " +
+			        "DECODE(b.part_tran_type, 'Credit', b.tran_amt, 0.00) AS credit_amount, " +
+			        "DECODE(b.part_tran_type, 'Debit', b.tran_amt, 0.00) AS debit_amount, " +
+			        "b.tran_particular " +
+			        "FROM BGLS_CHART_OF_ACCOUNTS a ," +
+			        "BGLS_TRM_WRK_TRANSACTIONS b where a.acct_num = b.acct_num " +
+			        "ORDER BY b.tran_date, b.tran_id, b.part_tran_id",
+			       nativeQuery = true)
+			List<Object[]> TransactionverifyReport(@Param("tranDate") String tranDate);
+
 
 }

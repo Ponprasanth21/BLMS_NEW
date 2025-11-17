@@ -10366,7 +10366,13 @@ public Map<String, Object> saveMultipleTransactions1(@RequestBody List<Map<Strin
     Map<String, Object> response = new HashMap<>();
     List<Map<String, Object>> summaryPerCustomer = new ArrayList<>();
     List<Map<String, Object>> unallocatedList = new ArrayList<>();
-    String userid = (String) rq.getSession().getAttribute("USERID");
+//  String userid = (String) rq.getSession().getAttribute("USERID");
+    String userid;
+	if (rq != null) {
+		userid = (String) rq.getSession().getAttribute("USERID");
+	}else {			
+		userid = "SYSTEM";
+	}
 
     int totalCustomerCount = 0;
     int totalAccountsCount = 0;
@@ -13036,5 +13042,50 @@ public ResponseEntity<Map<String, String>> rebuildCoabal(@RequestParam String ac
 		md.addAttribute("message", "success");
 		return msg;
 	}
+	
+	
+	@GetMapping("/getTransactionPointing")
+	@ResponseBody
+	public Map<String, Object> getTransactionPointing(@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "10") int size) {
+
+		int offset = (page - 1) * size;
+
+		// Fetch paginated records and total count
+		List<TRAN_MAIN_TRM_WRK_ENTITY> journalEntries = tRAN_MAIN_TRM_WRK_REP.findTransactionPointings(offset, size);
+		int totalItems = tRAN_MAIN_TRM_WRK_REP.countTransactionPointings();
+		int totalPages = (int) Math.ceil((double) totalItems / size);
+
+		// Prepare response
+		Map<String, Object> result = new HashMap<>();
+		result.put("data", journalEntries);
+		result.put("totalPages", totalPages);
+		result.put("currentPage", page);
+		result.put("totalItems", totalItems);
+
+		return result;
+	}
+	
+	
+	@GetMapping("/TransactionVerifyReport")
+	public ResponseEntity<byte[]> downloadConsolidatedReport(@RequestParam("tranDate") String tranDate) {
+		System.out.println(tranDate);
+	    List<Object[]> data = chart_Acc_Rep.TransactionverifyReport(tranDate);
+	    byte[] excelBytes = exelDownloadService.TransactionverifyReport(data, tranDate);
+
+	    if (excelBytes == null || excelBytes.length == 0) {
+	        return ResponseEntity.noContent().build();
+	    }
+
+	    String fileName = "TRANSACTIONS_" + tranDate + ".xlsx";
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
+	    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+	    return new ResponseEntity<>(excelBytes, headers, HttpStatus.OK);
+	}
+	
+	
+	
 
 }
