@@ -304,7 +304,7 @@ function back() {
 document.getElementById("RECONDate").max = new Date().toISOString().split("T")[0];
 </script>
 <script>
-function downloadReport() {
+function downloadReport(type) {
 	document.getElementById('loadingModal').style.display = 'flex';
     const dueDate = document.getElementById("DUEDate").value;
 
@@ -326,7 +326,7 @@ function downloadReport() {
     $.ajax({
         url: './TransactionPDFReport2Download',
         type: 'GET',
-        data: { dueDate: formattedDate },
+        data: { dueDate: formattedDate, reportType: type },
         xhrFields: {
             responseType: 'blob'  // For Excel download
         },
@@ -450,10 +450,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
 						<!-- Card Header -->
 						<div
-							class="card-header float-left"
+							class="card-header float-left d-flex justify-content-between align-items-center"
 							style="background-color: #f5f5f5; border-bottom: 1px solid #ddd;">
 							<h5 class="mb-0 fw-semibold text-dark">Recovery - Reports</h5>
+
+							<!-- <select class="form-control-sm bg-white mr-2 w-100 float-right" id="filterselect"
+								style="background-color: #e3e3e4;max-width: 200px;">
+								<option value="Mpesa" selected>Mpesa</option>
+								<option value="NCPA">NCPA</option>
+							</select> -->
 						</div>
+						
 
 						<!-- Card Body -->
 						<div class="card-body p-3 d-flex justify-content-center">
@@ -493,9 +500,23 @@ document.addEventListener('DOMContentLoaded', function () {
 						<div class="card-footer text-center">
 							<button type="button" class="btn-primary big-btn"
 								onclick="home()">Home</button>
-							<button type="button" class="btn-primary big-btn"
+							<!-- <button type="button" class="btn-primary big-btn"
 								form="IPSAccessRole" th:attr="data-formmode=${formmode}"
-								onclick="downloadReport()">Download</button>
+								onclick="downloadReport()">Download</button> -->
+
+							<div class="btn-group">
+						        <button type="button" class="btn-primary big-btn dropdown-toggle" data-toggle="dropdown"
+								style="margin-top: -5px;" aria-haspopup="true" aria-expanded="false"
+								form="IPSAccessRole" th:attr="data-formmode=${formmode}">
+						            Download
+						        </button>
+						        <div class="dropdown-menu">
+						            <span class="dropdown-item" onclick="downloadReport('Mpesa')" id="downloadButton2">Mpesa</span>
+						            <span class="dropdown-item" onclick="downloadReport('NCBA')" id="downloadButton3">NCBA</span>
+						        </div>
+						    </div>
+
+
 							<button type="button" class="btn-primary big-btn"
 								onclick="back()">Back</button>
 						</div>

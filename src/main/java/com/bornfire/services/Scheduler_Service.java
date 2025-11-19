@@ -26,7 +26,7 @@ import com.ibm.icu.text.SimpleDateFormat;
 import com.monitorjbl.xlsx.exceptions.ParseException;
 
 @Service
-//@EnableScheduling
+@EnableScheduling
 public class Scheduler_Service {
 	@Autowired
 	TRAN_MAIN_TRM_WRK_REP tRAN_MAIN_TRM_WRK_REP;
@@ -40,93 +40,96 @@ public class Scheduler_Service {
 	@Autowired
 	BGLS_CONTROL_TABLE_REP bGLS_CONTROL_TABLE_REP;
 
-//	@Scheduled(cron = "0 1 0 * * ?")
-//	public String ExecuteInterestDemand() throws SQLException, ParseException {
-//		System.out.println("Enter into InterestDemand");
-//		int values = tRAN_MAIN_TRM_WRK_REP.getResultindem();
-//
-//		if (values == 0) {
-//			tRAN_MAIN_TRM_WRK_REP.SystemInterestDemand("SYSTEM");
-//
-//			DayEnd_LogEntity logtab = new DayEnd_LogEntity();
-//			logtab.setProcessName("Interest Demand");
-//			logtab.setStatus("Success");
-//			logtab.setStepDesc("Interest Demand Process Completed.");
-//			logtab.setCreatedAt(new Date());
-//			dayEnd_LogRepo.save(logtab);
-//
-//		} else {
-//			DayEnd_LogEntity logtab = new DayEnd_LogEntity();
-//			logtab.setProcessName("Interest Demand");
-//			logtab.setStatus("INFO");
-//			logtab.setStepDesc("Interest Demand Process already Exists.");
-//			logtab.setCreatedAt(new Date());
-//			dayEnd_LogRepo.save(logtab);
-//		}
-//
-//		return "Success";
-//	}
+//	@Scheduled(cron = "0 1 0 * * ?") 
+//	@Scheduled(cron = "0 10 17 * * ?", zone = "Asia/Kolkata")
+	public String ExecuteInterestDemand() throws SQLException, ParseException {
+		System.out.println("Enter into InterestDemand");
+		int values = tRAN_MAIN_TRM_WRK_REP.getResultindem();
+
+		if (values == 0) {
+			tRAN_MAIN_TRM_WRK_REP.SystemInterestDemand("SYSTEM");
+
+			DayEnd_LogEntity logtab = new DayEnd_LogEntity();
+			logtab.setProcessName("Interest Demand");
+			logtab.setStatus("Success");
+			logtab.setStepDesc("Interest Demand Process Completed.");
+			logtab.setCreatedAt(new Date());
+			dayEnd_LogRepo.save(logtab);
+
+		} else {
+			DayEnd_LogEntity logtab = new DayEnd_LogEntity();
+			logtab.setProcessName("Interest Demand");
+			logtab.setStatus("INFO");
+			logtab.setStepDesc("Interest Demand Process already Exists.");
+			logtab.setCreatedAt(new Date());
+			dayEnd_LogRepo.save(logtab);
+		}
+
+		return "Success";
+	}
 
 //	@Scheduled(cron = "0 2 0 * * ?")
-//	public String ExecutefeeDemand() throws SQLException, ParseException {
-//		System.out.println("Enter into InterestDemand");
-//		int values = tRAN_MAIN_TRM_WRK_REP.getResultfeedem();
-//
-//		if (values == 0) {
-//			tRAN_MAIN_TRM_WRK_REP.SystemFeeDemand("SYSTEM");
-//
-//			DayEnd_LogEntity logtab = new DayEnd_LogEntity();
-//			logtab.setProcessName("Fee Demand");
-//			logtab.setStatus("Success");
-//			logtab.setStepDesc("Fee Demand Process Completed.");
-//			logtab.setCreatedAt(new Date());
-//			dayEnd_LogRepo.save(logtab);
-//
-//		} else {
-//			DayEnd_LogEntity logtab = new DayEnd_LogEntity();
-//			logtab.setProcessName("Fee Demand");
-//			logtab.setStatus("INFO");
-//			logtab.setStepDesc("Fee Demand Process already Exists.");
-//			logtab.setCreatedAt(new Date());
-//			dayEnd_LogRepo.save(logtab);
-//
-//		}
-//
-//		return "Success";
-//
-//	}
+//	@Scheduled(cron = "0 15 17 * * ?", zone = "Asia/Kolkata")
+	public String ExecutefeeDemand() throws SQLException, ParseException {
+		System.out.println("Enter into InterestDemand");
+		int values = tRAN_MAIN_TRM_WRK_REP.getResultfeedem();
 
-//	@Scheduled(cron = "0 3 0 * * ?") // Runs every day at 3:20 PM IST
-//	public void ExecutepenaltyDemand() throws SQLException, ParseException {
-//
-//		System.out.println("Enter into Penalty Demand");
-//		int values = tRAN_MAIN_TRM_WRK_REP.getResultpenaltydem();
-//
-//		System.out.println("Scheduler triggered at: " + new java.util.Date());
-//
-//		// Uncomment this block when needed
-//		if (values == 0) {
-//			tRAN_MAIN_TRM_WRK_REP.SystemPenaltyDemand("SYSTEM");
-//
-//			DayEnd_LogEntity logtab = new DayEnd_LogEntity();
-//			logtab.setProcessName("Penalty Demand");
-//			logtab.setStatus("Success");
-//			logtab.setStepDesc("Penalty Demand Process Completed.");
-//			logtab.setCreatedAt(new Date());
-//			dayEnd_LogRepo.save(logtab);
-//			System.out.println("Enter into Penalty Success");
-//		} else {
-//			DayEnd_LogEntity logtab = new DayEnd_LogEntity();
-//			logtab.setProcessName("Penalty Demand");
-//			logtab.setStatus("INFO");
-//			logtab.setStepDesc("Penalty Demand Process already Exists.");
-//			logtab.setCreatedAt(new Date());
-//			dayEnd_LogRepo.save(logtab);
-//			System.out.println("Enter into Penalty error");
-//		}
-//	}
+		if (values == 0) {
+			tRAN_MAIN_TRM_WRK_REP.SystemFeeDemand("SYSTEM");
 
-	// @Scheduled(cron = "0 55 9 * * ?", zone = "UTC") // Runs every day at 3:20 PM
+			DayEnd_LogEntity logtab = new DayEnd_LogEntity();
+			logtab.setProcessName("Fee Demand");
+			logtab.setStatus("Success");
+			logtab.setStepDesc("Fee Demand Process Completed.");
+			logtab.setCreatedAt(new Date());
+			dayEnd_LogRepo.save(logtab);
+
+		} else {
+			DayEnd_LogEntity logtab = new DayEnd_LogEntity();
+			logtab.setProcessName("Fee Demand");
+			logtab.setStatus("INFO");
+			logtab.setStepDesc("Fee Demand Process already Exists.");
+			logtab.setCreatedAt(new Date());
+			dayEnd_LogRepo.save(logtab);
+
+		}
+
+		return "Success";
+
+	}
+
+//	@Scheduled(cron = "0 3 0 * * ?")
+//	@Scheduled(cron = "0 20 17 * * ?", zone = "Asia/Kolkata")
+	public void ExecutepenaltyDemand() throws SQLException, ParseException {
+
+		System.out.println("Enter into Penalty Demand");
+		int values = tRAN_MAIN_TRM_WRK_REP.getResultpenaltydem();
+
+		System.out.println("Scheduler triggered at: " + new java.util.Date());
+
+		// Uncomment this block when needed
+		if (values == 0) {
+			tRAN_MAIN_TRM_WRK_REP.SystemPenaltyDemand("SYSTEM");
+
+			DayEnd_LogEntity logtab = new DayEnd_LogEntity();
+			logtab.setProcessName("Penalty Demand");
+			logtab.setStatus("Success");
+			logtab.setStepDesc("Penalty Demand Process Completed.");
+			logtab.setCreatedAt(new Date());
+			dayEnd_LogRepo.save(logtab);
+			System.out.println("Enter into Penalty Success");
+		} else {
+			DayEnd_LogEntity logtab = new DayEnd_LogEntity();
+			logtab.setProcessName("Penalty Demand");
+			logtab.setStatus("INFO");
+			logtab.setStepDesc("Penalty Demand Process already Exists.");
+			logtab.setCreatedAt(new Date());
+			dayEnd_LogRepo.save(logtab);
+			System.out.println("Enter into Penalty error");
+		}
+	}
+
+//	 @Scheduled(cron = "0 55 9 * * ?", zone = "UTC") // Runs every day at 3:20 PM
 //	public void ExecuteDAB() throws SQLException, ParseException, java.text.ParseException {
 //
 //		System.out.println("Scheduler triggered at: " + new java.util.Date());
@@ -183,7 +186,7 @@ public class Scheduler_Service {
 //		}
 //
 //	}
-
-	
+//
+//	
 
 }

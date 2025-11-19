@@ -249,6 +249,11 @@
 	</script>
 
 	<script>
+		function popupLoad() {
+			$("#alertmsg").text("This Feature No Longer Available");
+			$('#alert').modal('show');
+		}
+
 		function imageuserprofile() {
 			var userphoto = document.getElementById("userphoto").value;
 			//alert(userphoto)
@@ -484,10 +489,15 @@
 														onclick="contentLoad(this)"> Balance Sheet </a></li> -->
 				</ul>
 			</li>
-			<li class="nav-item" th:if="${session.SCREEN_ACCESS_DAY_END_OPERATION_USER} == 'Y' "><a
+			<!-- <li class="nav-item" th:if="${session.SCREEN_ACCESS_DAY_END_OPERATION_USER} == 'Y' "><a
 					class="nav-link nav-link-collapse pl-3 " id="day_end_operation" href="#"
 					onclick="contentLoad(this)"> Day
-					End Operation </a></li>
+					End Operation </a></li> -->
+
+			<li class="nav-item" th:if="${session.SCREEN_ACCESS_DAY_END_OPERATION_USER} == 'Y' "><a
+					class="nav-link nav-link-collapse pl-3 " id="day_end_operation" href="#" onclick="popupLoad()">
+					Day End Operation </a></li>
+
 			<li class="nav-item" th:if="${session.SCREEN_ACCESS_CUSTOMER_MAINTENANCE} == 'Y' "><a
 					class="nav-link nav-link-collapse pl-3 " id="customerMaster?formmode=list&module=module2" href="#"
 					onclick="contentLoad(this)"> Customer Maintenance </a></li>
@@ -732,6 +742,11 @@
 					onclick="contentLoad(this)">Transaction
 					Accounts</a></li>
 
+			<li class="nav-item" th:if="${session.SCREEN_ACCESS_TRANSACTION_ACCOUNTS} == 'Y' "><a
+					class="nav-link nav-link-collapse pl-3 " id="TransactionValidation" href="#"
+					onclick="contentLoad(this)">Transaction
+					Validation</a></li>
+
 			<!--<li class="nav-item"><a class="nav-link nav-link-collapse pl-3" href="#" id="hasSubItems"
 					data-toggle="collapse" data-target="#collapseSubItems3" aria-controls="collapseSubItems3"
 					aria-expanded="false">Recruitment</a>
@@ -938,6 +953,22 @@
 			<img th:src=@{/images/Loading.gif} alt="Loading...">
 		</div>
 	</div>
+
+	
+<div class="modal fade success2" data-backdrop="false" data-keyboard="false" id="alert" tabindex="-7" role="dialog"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content">
+
+					<div class="modal-body" style="text-align: center;">
+						<h6 id="alertmsg"></h6>
+						<button type="button" class="btn-primary big-btn" id="alertOkBtn"
+							onclick="$('#alert').modal('hide')">Close</button>
+					</div>
+				</div>
+			</div>
+		</div> 
+
 </body>
 
 </html>

@@ -9859,6 +9859,8 @@ public class BGLSRestController {
 			return chart_Acc_Rep.getListoffice1();
 		} else if (type.equals("C")) {
 			return chart_Acc_Rep.getListofCustomer();
+		}else if (type.equals("M")) {
+			return chart_Acc_Rep.getListMirror();
 		}
 		return chart_Acc_Rep.findAll();
 	}
@@ -10396,7 +10398,7 @@ public class BGLSRestController {
 		Map<String, Object> response = new HashMap<>();
 		List<Map<String, Object>> summaryPerCustomer = new ArrayList<>();
 		List<Map<String, Object>> unallocatedList = new ArrayList<>();
-//  String userid = (String) rq.getSession().getAttribute("USERID");
+//  	String userid = (String) rq.getSession().getAttribute("USERID");
 		String userid;
 		if (rq != null) {
 			userid = (String) rq.getSession().getAttribute("USERID");
@@ -12920,9 +12922,13 @@ public class BGLSRestController {
 	}
 
 	@GetMapping("/TransactionPDFReport2Download")
-	public ResponseEntity<byte[]> TransactionPDFReport2Download(@RequestParam("dueDate") String dueDate) {
-		List<Object[]> rawData = chart_Acc_Rep.getTransactionReport2ByDate(dueDate);
-
+	public ResponseEntity<byte[]> TransactionPDFReport2Download(@RequestParam("dueDate") String dueDate,@RequestParam("reportType") String reportType) {
+		List<Object[]> rawData ;
+		if(reportType.equals("Mpesa")) {
+			rawData = chart_Acc_Rep.getTransactionReportMpesaByDate(dueDate);
+		}else {
+			rawData = chart_Acc_Rep.getTransactionReportNCBAByDate(dueDate);
+		}
 		// ✅ Call the non-static method through the injected bean
 		byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate);
 
@@ -12930,7 +12936,14 @@ public class BGLSRestController {
 			return ResponseEntity.noContent().build();
 		}
 
-		String fileName = "RECOVERY_TRANSACTION_REPORT_" + dueDate + ".pdf";
+		String fileName;
+		
+		if(reportType.equals("Mpesa")) {
+			fileName = "RECOVERY_REPORT_Mpesa" + dueDate + ".pdf";
+		}else {
+			fileName = "RECOVERY_REPORT_NCBA" + dueDate + ".pdf";
+		}
+		
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
 		headers.setContentType(MediaType.APPLICATION_PDF);

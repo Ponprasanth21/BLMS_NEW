@@ -135,9 +135,14 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 	BigDecimal getaccountbal(String acc_num);
 
 	@Query(value = "SELECT * " + "FROM BGLS_CHART_OF_ACCOUNTS " + "WHERE del_flg = 'N' "
-			+ "  AND OWN_TYPE IN ('O', 'M') " + // <-- include 'M'
+			+ "  AND OWN_TYPE IN ('O') " + // <-- include 'M'
 			"ORDER BY ACCT_NUM, CLASSIFICATION ASC", nativeQuery = true)
 	List<Chart_Acc_Entity> getListoffice1();
+	
+	@Query(value = "SELECT * " + "FROM BGLS_CHART_OF_ACCOUNTS " + "WHERE del_flg = 'N' "
+			+ "  AND OWN_TYPE IN ('M') " + // <-- include 'M'
+			"ORDER BY ACCT_NUM, CLASSIFICATION ASC", nativeQuery = true)
+	List<Chart_Acc_Entity> getListMirror();
 
 	@Query(value = "SELECT * " + "FROM BGLS_CHART_OF_ACCOUNTS " + "WHERE del_flg = 'N' " + "  AND OWN_TYPE IN ('C') "
 			+ "ORDER BY ACCT_NUM, CLASSIFICATION ASC", nativeQuery = true)
@@ -274,12 +279,27 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 			+ "    INITCAP(b.tran_type) AS TT, " + "    b.tran_id AS TRID, " + "    b.part_tran_id AS PTID, "
 			+ "    INITCAP(b.part_tran_type) AS PTT, "
 			+ "    DECODE(b.part_tran_type, 'Credit', b.tran_amt, 0.00) AS CR, "
-			+ "    DECODE(b.part_tran_type, 'Debit',  b.tran_amt, 0.00) AS DR, " + "    b.tran_particular AS TP "
+			+ "    DECODE(b.part_tran_type, 'Debit',  b.tran_amt, 0.00) AS DR, " + "    b.tran_particular AS TP, "
+			+"	   b.TRAN_RPT_CODE "
 			+ "FROM BGLS_CHART_OF_ACCOUNTS a " + "JOIN BGLS_TRM_WRK_TRANSACTIONS b ON a.acct_num = b.acct_num "
 			+ "WHERE TRUNC(b.tran_date) = TO_DATE(:tranDate, 'DD-MM-YYYY') "
 			+ "  AND b.FLOW_CODE IN ('RECOVERY' , 'PRREC' , 'INREC', 'FEREC' , 'PLREC', 'EXREC', 'FRECOVERY') "
+			+ "  AND b.TRAN_RPT_CODE = 'Mpesa' "
 			+ "ORDER BY b.tran_date, b.tran_id, b.part_tran_id", nativeQuery = true)
-	List<Object[]> getTransactionReport2ByDate(@Param("tranDate") String tranDate);
+	List<Object[]> getTransactionReportMpesaByDate(@Param("tranDate") String tranDate);
+	
+	@Query(value = "SELECT " + "    b.tran_date AS TRDT, " + "    a.acct_num AS ACNO, " + "    a.acct_name AS ACNAME, "
+			+ "    INITCAP(b.tran_type) AS TT, " + "    b.tran_id AS TRID, " + "    b.part_tran_id AS PTID, "
+			+ "    INITCAP(b.part_tran_type) AS PTT, "
+			+ "    DECODE(b.part_tran_type, 'Credit', b.tran_amt, 0.00) AS CR, "
+			+ "    DECODE(b.part_tran_type, 'Debit',  b.tran_amt, 0.00) AS DR, " + "    b.tran_particular AS TP, "
+			+"	   b.TRAN_RPT_CODE "
+			+ "FROM BGLS_CHART_OF_ACCOUNTS a " + "JOIN BGLS_TRM_WRK_TRANSACTIONS b ON a.acct_num = b.acct_num "
+			+ "WHERE TRUNC(b.tran_date) = TO_DATE(:tranDate, 'DD-MM-YYYY') "
+			+ "  AND b.FLOW_CODE IN ('RECOVERY' , 'PRREC' , 'INREC', 'FEREC' , 'PLREC', 'EXREC', 'FRECOVERY') "
+			+ "  AND b.TRAN_RPT_CODE = 'NCBA' "
+			+ "ORDER BY b.tran_date, b.tran_id, b.part_tran_id", nativeQuery = true)
+	List<Object[]> getTransactionReportNCBAByDate(@Param("tranDate") String tranDate);
 	
 	/* Rebuild balance for LOA - Aishwarya */
 	

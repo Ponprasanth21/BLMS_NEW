@@ -5574,6 +5574,14 @@ public class BGLSNavigationController {
            return "TransactionPointing.html";
        }
 
+       
+       @RequestMapping(value = "TransactionValidation", method = { RequestMethod.GET, RequestMethod.POST })
+       public String TransactionValidation(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
 
+           if (formmode == null || formmode.equals("list")) {
+               md.addAttribute("formmode", "list");
+           } 
+           return "TransactionValidation";
+       }
 
 }
