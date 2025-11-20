@@ -24,7 +24,7 @@ public class ExcelController {
         	String userID = "SYSTEM";
 	        String userName = "SYSTEM";
 //            String excelPath = "C:/Users/SURESHKUMAR/TEST/transaction.xlsx";
-            excelService.importExcel(excelPath,userID,userName);
+//            excelService.importExcel(excelPath,userID,userName);
             return "Excel Imported Successfully!";
         } catch (Exception e) {
             e.printStackTrace();

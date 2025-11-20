@@ -255,10 +255,10 @@ public class ExcelToOracleService {
 //        fakeRq.setAttribute("AUTO_UPLOAD", "TRUE");
 //        fakeRq.setRemoteAddr("127.0.0.1");
 
-//        Map<String, Object> allocationResult = transactionService.saveMultipleTransactions1(autoPayload,null);
+        Map<String, Object> allocationResult = transactionService.saveMultipleTransactions1(autoPayload,null);
 
-//        System.out.println("🔥 AUTO ALLOCATION RESULT: " + allocationResult);
-//        resultMap.put("AllocationResult", allocationResult);
+        System.out.println("🔥 AUTO ALLOCATION RESULT: " + allocationResult);
+        resultMap.put("AllocationResult", allocationResult);
 
 
         // ====================================================================

@@ -213,7 +213,7 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 			+ "WHERE TO_CHAR(RUN_TRAN_DATE, 'DD-MM-YYYY') = :accrualDate", nativeQuery = true)
 	List<Object[]> findLoanAccrualByDate(@Param("accrualDate") String accrualDate);
 
-	@Query(value = "SELECT " + "b.account_state AS ACCOUNT_STATE, " + "a.customer_id AS CUSTOMER_ID, "
+	@Query(value = "SELECT " + "b.account_state AS ACCOUNT_STATE, " + "b.CREATION_DATE AS CREATION_DATE, " + "a.customer_id AS CUSTOMER_ID, "
 			+ "a.customer_name AS CUSTOMER_NAME, " + "b.id AS ID, " + "b.total_product_price AS TOTAL_PRODUCT_PRICE, "
 			+ "b.loan_amount AS LOAN_AMOUNT, " + "b.interest_rate AS INTEREST_RATE, "
 			+ "b.repayment_installments AS REPAYMENT_INSTALLMENTS, " + "b.principal_balance AS PRINCIPAL_BALANCE, "

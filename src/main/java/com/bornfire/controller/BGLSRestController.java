@@ -12978,7 +12978,8 @@ public class BGLSRestController {
 			type = "NBCA";
 		}
 		// ✅ Call the non-static method through the injected bean
-		byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate, type);
+//		byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate, type);
+		byte[] pdfData = exelDownloadService.generateRecoveryTransactionExcelReport(rawData, dueDate, type);
 
 		if (pdfData == null || pdfData.length == 0) {
 			return ResponseEntity.noContent().build();
@@ -12987,9 +12988,9 @@ public class BGLSRestController {
 		String fileName;
 		
 		if(reportType.equals("Mpesa")) {
-			fileName = "RECOVERY_REPORT_Mpesa" + dueDate + ".pdf";
+			fileName = "RECOVERY_REPORT_Mpesa" + dueDate + ".xlsx";
 		}else {
-			fileName = "RECOVERY_REPORT_NCBA" + dueDate + ".pdf";
+			fileName = "RECOVERY_REPORT_NCBA" + dueDate + ".xlsx";
 		}
 		
 		HttpHeaders headers = new HttpHeaders();
