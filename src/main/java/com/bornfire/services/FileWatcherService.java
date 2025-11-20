@@ -31,7 +31,7 @@ public class FileWatcherService {
     private static final String USER_NAME = "SYSTEM";
 
     // 🔥 Runs every 10 seconds — must be a NO-ARG method
-    @Scheduled(fixedDelay = 10000)
+//    @Scheduled(fixedDelay = 10000)
     public void checkIncomingFiles() {
 
         try {
