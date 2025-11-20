@@ -813,16 +813,11 @@
 				<ul class="nav-second-level collapse" id="collapseSubItems12" data-parent="#navAccordion">
 					<li class="nav-item" th:if="${session.SCREEN_ACCESS_BATCH_JOB} == 'Y' "><a class="nav-link"
 							id="interestBatchJob" href="#" onclick="contentLoad(this)">Batch Job</a></li>
-
-
 				</ul>
 			</li>
 
-
-		<!--<li class="nav-item"><a class="nav-link pl-3" data-toggle="collapse" href="#logout" id="rebuild"
-					onclick="contentLoad(this)">Rebuild Balance</a></li>-->
-
-
+		<li class="nav-item"><a class="nav-link pl-3" data-toggle="collapse" href="#logout" id="rebuild"
+					onclick="contentLoad(this)">Rebuild Balance</a></li>
 
 			<li class="nav-item" th:if="${session.SCREEN_ACCESS_INQUIRIES_AND_REPORTS} == 'Y' "><a
 					class="nav-link nav-link-collapse pl-3" href="#" id="hasSubItems" data-toggle="collapse"

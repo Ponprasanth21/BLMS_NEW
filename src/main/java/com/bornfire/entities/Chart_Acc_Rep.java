@@ -300,9 +300,9 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 			+ "  AND b.TRAN_RPT_CODE = 'NCBA' "
 			+ "ORDER BY b.tran_date, b.tran_id, b.part_tran_id", nativeQuery = true)
 	List<Object[]> getTransactionReportNCBAByDate(@Param("tranDate") String tranDate);
-	
+
 	/* Rebuild balance for LOA - Aishwarya */
-	
+
 	@Query(value = "SELECT " + "    b.id AS id, " + "    a.acct_name AS acct_name " + "FROM "
 			+ "    bgls_chart_of_accounts a " + "JOIN " + "    loan_account_master_tbl b "
 			+ "    ON a.encoded_key = b.encoded_key " + "WHERE " + "    a.own_type = 'C' " + "    AND (CASE "
@@ -346,7 +346,7 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 	@Transactional
 	@Query(value = "CALL UPDATE_LOAN_BALANCE_BY_ACCT(:acct_num)", nativeQuery = true)
 	void updateLoanBalanceByAcct(@Param("acct_num") String acct_num);
-	
+
 	/* Rebuild balance for COA - Aishwarya */
 
 	@Query(value = "SELECT "
@@ -356,13 +356,6 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 			+ "  ( NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END), 0) "
 			+ "    - NVL(SUM(CASE WHEN a.part_tran_type = 'Debit'  THEN a.tran_amt ELSE 0 END), 0) "
 			+ "  ) AS trm_net_amount, "
-
-			/* ---- TRM BALANCE ---- */
-			+ "  ( " + "      NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END), 0) "
-			+ "    + NVL(SUM(CASE WHEN a.part_tran_type = 'Debit'  THEN a.tran_amt ELSE 0 END), 0) "
-			+ "    + ( NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END), 0) "
-			+ "        - NVL(SUM(CASE WHEN a.part_tran_type = 'Debit'  THEN a.tran_amt ELSE 0 END), 0) " + "      ) "
-			+ "  ) AS trm_balance, "
 
 			/* ---- COA TOTALS ---- */
 			+ "  NVL(SUM(b.cr_amt), 0) AS coa_total_cr, " + "  NVL(SUM(b.dr_amt), 0) AS coa_total_dr, "
@@ -378,68 +371,51 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 
 			+ "  ( ( NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END), 0) "
 			+ "      - NVL(SUM(CASE WHEN a.part_tran_type = 'Debit'  THEN a.tran_amt ELSE 0 END), 0) "
-			+ "    ) - NVL(SUM(b.cr_amt - b.dr_amt), 0) " + "  ) AS diff_trm_net_coa_net, "
-
-			/* ---- DIFF: TRM BALANCE vs COA BALANCE ---- */
-			+ "  ( " + "      ( NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END), 0) "
-			+ "      + NVL(SUM(CASE WHEN a.part_tran_type = 'Debit'  THEN a.tran_amt ELSE 0 END), 0) "
-			+ "      + ( NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END), 0) "
-			+ "          - NVL(SUM(CASE WHEN a.part_tran_type = 'Debit'  THEN a.tran_amt ELSE 0 END), 0) "
-			+ "        ) " + "      ) - NVL(SUM(b.acct_bal), 0) " + "  ) AS diff_trm_balance_coa_balance "
+			+ "    ) - NVL(SUM(b.cr_amt - b.dr_amt), 0) " + "  ) AS diff_trm_net_coa_net "
 
 			+ "FROM BGLS_TRM_WRK_TRANSACTIONS a "
-			+ "JOIN BGLS_CHART_OF_ACCOUNTS b ON a.acct_num = b.acct_num", nativeQuery = true)
+			+ "JOIN BGLS_CHART_OF_ACCOUNTS b ON a.acct_num = b.acct_num WHERE b.own_type IN ('C','O')", nativeQuery = true)
 	List<Object[]> getTrmVsCoaTotals();
-	
+
 	@Query(value = "SELECT acct_num, acct_name FROM bgls_chart_of_accounts WHERE own_type IN ('C','O')", nativeQuery = true)
 	List<Object[]> getCOAList();
-	
+
 	@Query(value = "SELECT "
-			/* ========== TRM TOTALS ========== */
-			+ "NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END),0) AS trm_total_cr, "
-			+ "NVL(SUM(CASE WHEN a.part_tran_type = 'Debit' THEN a.tran_amt ELSE 0 END),0) AS trm_total_dr, "
+			/* ===== TRM TOTALS ===== */
+			+ "NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END), 0) AS trm_total_cr, "
+			+ "NVL(SUM(CASE WHEN a.part_tran_type = 'Debit'  THEN a.tran_amt ELSE 0 END), 0) AS trm_total_dr, "
 
-			+ "( NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END),0) - "
-			+ "  NVL(SUM(CASE WHEN a.part_tran_type = 'Debit' THEN a.tran_amt ELSE 0 END),0) " + ") AS trm_net_amount, "
+			+ "( NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END), 0) "
+			+ "  - NVL(SUM(CASE WHEN a.part_tran_type = 'Debit'  THEN a.tran_amt ELSE 0 END), 0) "
+			+ ") AS trm_net_amount, "
 
-			/* TRM BALANCE = CR + DR + NET */
-			+ "( " + "  NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END),0) + "
-			+ "  NVL(SUM(CASE WHEN a.part_tran_type = 'Debit' THEN a.tran_amt ELSE 0 END),0) + "
-			+ " (NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END),0) - "
-			+ "  NVL(SUM(CASE WHEN a.part_tran_type = 'Debit' THEN a.tran_amt ELSE 0 END),0)) " + ") AS trm_balance, "
+			/* ===== COA TOTALS ===== */
+			+ "NVL(SUM(b.cr_amt), 0) AS coa_total_cr, " + "NVL(SUM(b.dr_amt), 0) AS coa_total_dr, "
+			+ "NVL(SUM(b.cr_amt - b.dr_amt), 0) AS coa_net_amount, " + "NVL(SUM(b.acct_bal), 0) AS coa_total_acct_bal, "
 
-			/* ========== COA TOTALS ========== */
-			+ "NVL(SUM(b.cr_amt),0) AS coa_total_cr, " + "NVL(SUM(b.dr_amt),0) AS coa_total_dr, "
-			+ "NVL(SUM(b.cr_amt - b.dr_amt),0) AS coa_net_amount, " + "NVL(SUM(b.acct_bal),0) AS coa_total_acct_bal, "
+			/* ===== DIFFERENCES ===== */
+			+ "( NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END), 0) "
+			+ "  - NVL(SUM(b.cr_amt), 0) " + ") AS diff_trm_cr_coa_cr, "
 
-			/* ========== DIFFERENCES ========== */
-			+ "( NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END),0) - "
-			+ "  NVL(SUM(b.cr_amt),0) " + ") AS diff_trm_cr_coa_cr, "
+			+ "( NVL(SUM(CASE WHEN a.part_tran_type = 'Debit' THEN a.tran_amt ELSE 0 END), 0) "
+			+ "  - NVL(SUM(b.dr_amt), 0) " + ") AS diff_trm_dr_coa_dr, "
 
-			+ "( NVL(SUM(CASE WHEN a.part_tran_type = 'Debit' THEN a.tran_amt ELSE 0 END),0) - "
-			+ "  NVL(SUM(b.dr_amt),0) " + ") AS diff_trm_dr_coa_dr, "
-
-			+ "( " + " (NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END),0) - "
-			+ "  NVL(SUM(CASE WHEN a.part_tran_type = 'Debit' THEN a.tran_amt ELSE 0 END),0)) "
-			+ " - NVL(SUM(b.cr_amt - b.dr_amt),0) " + ") AS diff_trm_net_coa_net, "
-
-			+ "( " + " ( NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END),0) + "
-			+ "   NVL(SUM(CASE WHEN a.part_tran_type = 'Debit' THEN a.tran_amt ELSE 0 END),0) + "
-			+ "  (NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END),0) - "
-			+ "   NVL(SUM(CASE WHEN a.part_tran_type = 'Debit' THEN a.tran_amt ELSE 0 END),0)) "
-			+ " ) - NVL(SUM(b.acct_bal),0) " + ") AS diff_trm_balance_coa_balance "
+			+ "( ( NVL(SUM(CASE WHEN a.part_tran_type = 'Credit' THEN a.tran_amt ELSE 0 END), 0) "
+			+ "    - NVL(SUM(CASE WHEN a.part_tran_type = 'Debit'  THEN a.tran_amt ELSE 0 END), 0) ) "
+			+ "  - NVL(SUM(b.cr_amt - b.dr_amt), 0) " + ") AS diff_trm_net_coa_net "
 
 			+ "FROM BGLS_TRM_WRK_TRANSACTIONS a " + "JOIN BGLS_CHART_OF_ACCOUNTS b ON a.acct_num = b.acct_num "
 			+ "WHERE a.acct_num = :acctNum " + "GROUP BY a.acct_num " + "ORDER BY a.acct_num", nativeQuery = true)
 	List<Object[]> getCoaAcct(@Param("acctNum") String acctNum);
-	
+
 	@Modifying
 	@Transactional
 	@Query(value = "CALL UPDATE_COA_BY_ACCT(:acct_num)", nativeQuery = true)
 	void updateCoaByAcct(@Param("acct_num") String acct_num);
-	
+
 	/* Rebuild balance for DAB - Aishwarya */
-	
+
+	/* All acct/all date */
 	@Query(value = "SELECT " +
 	/* ---- TRM TOTALS ---- */
 			"  NVL(SUM(CASE WHEN t.part_tran_type = 'Credit' THEN t.tran_amt ELSE 0 END), 0) AS trm_total_cr, "
@@ -466,28 +442,118 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 			+ "    ) - NVL(SUM(d.tran_tot_net), 0) " + "  ) AS diff_trm_net_dab_net " +
 
 			"FROM BGLS_TRM_WRK_TRANSACTIONS t "
-			+ "JOIN BGLS_DAILY_ACCT_BAL d ON t.acct_num = d.acct_num ", nativeQuery = true)
+			+ "JOIN BGLS_DAILY_ACCT_BAL d ON t.acct_num = d.acct_num and t.tran_date = d.tran_date", nativeQuery = true)
 	List<Object[]> getTrmVsDabTotals();
+
+	@Query(value = "SELECT distinct acct_num, acct_name FROM BGLS_TRM_WRK_TRANSACTIONS", nativeQuery = true)
+	List<Object[]> getDABList();
+
+	/* acct/all date */
+	@Query(value =
+	        "SELECT " +
+
+	        /* ---- TRM TOTALS ---- */
+	        " NVL(SUM(CASE WHEN t.part_tran_type = 'Credit' THEN t.tran_amt ELSE 0 END), 0) AS trm_total_cr, " +
+	        " NVL(SUM(CASE WHEN t.part_tran_type = 'Debit'  THEN t.tran_amt ELSE 0 END), 0) AS trm_total_dr, " +
+	        " ( NVL(SUM(CASE WHEN t.part_tran_type = 'Credit' THEN t.tran_amt ELSE 0 END), 0) " +
+	        "   - NVL(SUM(CASE WHEN t.part_tran_type = 'Debit'  THEN t.tran_amt ELSE 0 END), 0) ) AS trm_net_amount, " +
+
+	        /* ---- DAB TOTALS ---- */
+	        " NVL(SUM(d.opening_bal), 0) AS dab_opening_bal, " +
+	        " NVL(SUM(d.tran_cr_bal), 0) AS dab_total_cr, " +
+	        " NVL(SUM(d.tran_dr_bal), 0) AS dab_total_dr, " +
+	        " NVL(SUM(d.tran_tot_net), 0) AS dab_net_amount, " +
+	        " NVL(SUM(d.tran_date_bal), 0) AS dab_date_balance, " +
+
+	        /* ---- DIFFERENCE ---- */
+	        " ( NVL(SUM(CASE WHEN t.part_tran_type = 'Credit' THEN t.tran_amt ELSE 0 END),0) " +
+	        "     - NVL(SUM(d.tran_cr_bal),0) ) AS diff_trm_cr_dab_cr, " +
+
+	        " ( NVL(SUM(CASE WHEN t.part_tran_type = 'Debit' THEN t.tran_amt ELSE 0 END),0) " +
+	        "     - NVL(SUM(d.tran_dr_bal),0) ) AS diff_trm_dr_dab_dr, " +
+
+	        " ( ( NVL(SUM(CASE WHEN t.part_tran_type = 'Credit' THEN t.tran_amt ELSE 0 END),0) " +
+	        "     - NVL(SUM(CASE WHEN t.part_tran_type = 'Debit' THEN t.tran_amt ELSE 0 END),0) ) " +
+	        "     - NVL(SUM(d.tran_tot_net),0) ) AS diff_trm_net_dab_net " +
+
+	        "FROM BGLS_TRM_WRK_TRANSACTIONS t " +
+	        "JOIN BGLS_DAILY_ACCT_BAL d ON t.acct_num = d.acct_num " +
+	        " AND t.tran_date = d.tran_date " +   // <-- FIXED SPACING
+	        "WHERE d.acct_num = :acctNum " +
+	        "GROUP BY d.acct_num " +
+	        "ORDER BY d.acct_num",
+	        nativeQuery = true)
+	List<Object[]> getDabAcct(@Param("acctNum") String acctNum);
+
+	/* All acct/date */
+	@Query(value = "SELECT " +
+	/* ---- TRM TOTALS ---- */
+			"  NVL(SUM(CASE WHEN t.part_tran_type = 'Credit' THEN t.tran_amt ELSE 0 END), 0) AS trm_total_cr, "
+			+ "  NVL(SUM(CASE WHEN t.part_tran_type = 'Debit'  THEN t.tran_amt ELSE 0 END), 0) AS trm_total_dr, " +
+
+			"  ( NVL(SUM(CASE WHEN t.part_tran_type = 'Credit' THEN t.tran_amt ELSE 0 END), 0) "
+			+ "    - NVL(SUM(CASE WHEN t.part_tran_type = 'Debit'  THEN t.tran_amt ELSE 0 END), 0) "
+			+ "  ) AS trm_net_amount, " +
+
+			/* ---- DAB TOTALS ---- */
+			"  NVL(SUM(d.opening_bal), 0) AS dab_opening_bal, " + "  NVL(SUM(d.tran_cr_bal), 0) AS dab_total_cr, "
+			+ "  NVL(SUM(d.tran_dr_bal), 0) AS dab_total_dr, " + "  NVL(SUM(d.tran_tot_net), 0) AS dab_net_amount, "
+			+ "  NVL(SUM(d.tran_date_bal), 0) AS dab_date_balance, " +
+
+			/* ---- DIFFERENCE: TRM vs DAB ---- */
+			"  ( NVL(SUM(CASE WHEN t.part_tran_type = 'Credit' THEN t.tran_amt ELSE 0 END), 0) "
+			+ "      - NVL(SUM(d.tran_cr_bal), 0) " + "  ) AS diff_trm_cr_dab_cr, " +
+
+			"  ( NVL(SUM(CASE WHEN t.part_tran_type = 'Debit' THEN t.tran_amt ELSE 0 END), 0) "
+			+ "      - NVL(SUM(d.tran_dr_bal), 0) " + "  ) AS diff_trm_dr_dab_dr, " +
+
+			"  ( ( NVL(SUM(CASE WHEN t.part_tran_type = 'Credit' THEN t.tran_amt ELSE 0 END), 0) "
+			+ "      - NVL(SUM(CASE WHEN t.part_tran_type = 'Debit'  THEN t.tran_amt ELSE 0 END), 0) "
+			+ "    ) - NVL(SUM(d.tran_tot_net), 0) " + "  ) AS diff_trm_net_dab_net " +
+
+			"FROM BGLS_TRM_WRK_TRANSACTIONS t "
+			+ "JOIN BGLS_DAILY_ACCT_BAL d ON t.acct_num = d.acct_num WHERE t.tran_date = :tranDate", nativeQuery = true)
+	List<Object[]> getByAllDate(@Param("tranDate") String tranDate);
+
+	/* acct/date */
+	@Query(value = "SELECT " +
+	/* ---- TRM TOTALS ---- */
+			"  NVL(SUM(CASE WHEN t.part_tran_type = 'Credit' THEN t.tran_amt ELSE 0 END), 0) AS trm_total_cr, "
+			+ "  NVL(SUM(CASE WHEN t.part_tran_type = 'Debit'  THEN t.tran_amt ELSE 0 END), 0) AS trm_total_dr, "
+			+ "  ( NVL(SUM(CASE WHEN t.part_tran_type = 'Credit' THEN t.tran_amt ELSE 0 END), 0) - "
+			+ "    NVL(SUM(CASE WHEN t.part_tran_type = 'Debit'  THEN t.tran_amt ELSE 0 END), 0) ) AS trm_net_amount, "
+			+
+
+			/* ---- DAB TOTALS ---- */
+			"  NVL(SUM(d.opening_bal), 0) AS dab_opening_bal, " + "  NVL(SUM(d.tran_cr_bal), 0) AS dab_total_cr, "
+			+ "  NVL(SUM(d.tran_dr_bal), 0) AS dab_total_dr, " + "  NVL(SUM(d.tran_tot_net), 0) AS dab_net_amount, "
+			+ "  NVL(SUM(d.tran_date_bal), 0) AS dab_date_balance, " +
+
+			/* ---- DIFFERENCE VALUES ---- */
+			"  ( NVL(SUM(CASE WHEN t.part_tran_type = 'Credit' THEN t.tran_amt ELSE 0 END),0) - NVL(SUM(d.tran_cr_bal),0) ) AS diff_trm_cr_dab_cr, "
+			+ "  ( NVL(SUM(CASE WHEN t.part_tran_type = 'Debit' THEN t.tran_amt ELSE 0 END),0) - NVL(SUM(d.tran_dr_bal),0) ) AS diff_trm_dr_dab_dr, "
+			+ "  ( ( NVL(SUM(CASE WHEN t.part_tran_type = 'Credit' THEN t.tran_amt ELSE 0 END),0) - "
+			+ "      NVL(SUM(CASE WHEN t.part_tran_type = 'Debit' THEN t.tran_amt ELSE 0 END),0) ) - NVL(SUM(d.tran_tot_net),0) ) AS diff_trm_net_dab_net "
+			+
+
+			"FROM BGLS_TRM_WRK_TRANSACTIONS t " + "JOIN BGLS_DAILY_ACCT_BAL d ON t.acct_num = d.acct_num "
+			+ "WHERE d.acct_num = :acctNum AND d.tran_date = :tranDate " + "GROUP BY d.acct_num "
+			+ "ORDER BY d.acct_num",
+
+			nativeQuery = true)
+	List<Object[]> getDabAcctByDate(@Param("acctNum") String acctNum, @Param("tranDate") String tranDate);
 	
+	@Query(value = "SELECT DISTINCT acct_num, acct_name, tran_date " + "FROM BGLS_TRM_WRK_TRANSACTIONS "
+			+ "WHERE tran_date = :tranDate", nativeQuery = true)
+	List<Object[]> findAccountsByDate(@Param("tranDate") String tranDate);
+	/* End */
 	
-
-
-@Query(value = "SELECT " +
-			        "b.tran_date, " +
-			        "a.acct_num, " +
-			        "a.acct_name, " +
-			        "INITCAP(b.tran_type) AS tran_type, " +
-			        "b.tran_id, " +
-			        "b.part_tran_id, " +
-			        "INITCAP(b.part_tran_type) AS part_tran_type, " +
-			        "DECODE(b.part_tran_type, 'Credit', b.tran_amt, 0.00) AS credit_amount, " +
-			        "DECODE(b.part_tran_type, 'Debit', b.tran_amt, 0.00) AS debit_amount, " +
-			        "b.tran_particular " +
-			        "FROM BGLS_CHART_OF_ACCOUNTS a ," +
-			        "BGLS_TRM_WRK_TRANSACTIONS b where a.acct_num = b.acct_num " +
-			        "ORDER BY b.tran_date, b.tran_id, b.part_tran_id",
-			       nativeQuery = true)
-			List<Object[]> TransactionverifyReport(@Param("tranDate") String tranDate);
-
-
+	@Query(value = "SELECT " + "b.tran_date, " + "a.acct_num, " + "a.acct_name, "
+			+ "INITCAP(b.tran_type) AS tran_type, " + "b.tran_id, " + "b.part_tran_id, "
+			+ "INITCAP(b.part_tran_type) AS part_tran_type, "
+			+ "DECODE(b.part_tran_type, 'Credit', b.tran_amt, 0.00) AS credit_amount, "
+			+ "DECODE(b.part_tran_type, 'Debit', b.tran_amt, 0.00) AS debit_amount, " + "b.tran_particular "
+			+ "FROM BGLS_CHART_OF_ACCOUNTS a ," + "BGLS_TRM_WRK_TRANSACTIONS b where a.acct_num = b.acct_num "
+			+ "ORDER BY b.tran_date, b.tran_id, b.part_tran_id", nativeQuery = true)
+	List<Object[]> TransactionverifyReport(@Param("tranDate") String tranDate);
 }

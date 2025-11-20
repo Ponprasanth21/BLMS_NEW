@@ -13141,169 +13141,307 @@ public class BGLSRestController {
 		}
 		return result;
 	}
-
 	@GetMapping("/getAccountBalanceDetails")
 	public ResponseEntity<Map<String, Object>> getAccountBalanceDetails(@RequestParam String acctNum) {
-		try {
-			List<Object[]> results = chart_Acc_Rep.getAccountBalanceDetails(acctNum);
+	    try {
+	        List<Object[]> results = chart_Acc_Rep.getAccountBalanceDetails(acctNum);
 
-			if (results == null || results.isEmpty()) {
-				return ResponseEntity.notFound().build();
-			}
+	        if (results == null || results.isEmpty()) {
+	            return ResponseEntity.notFound().build();
+	        }
 
-			Object[] result = results.get(0); // first row
+	        Object[] result = results.get(0); // first row
 
-			Map<String, Object> response = new HashMap<>();
-			response.put("acct_bal", result[0]);
-			response.put("principal_balance", result[1]);
-			response.put("interest_balance", result[2]);
-			response.put("fee_balance", result[3]);
-			response.put("penalty_balance", result[4]);
-			response.put("total_balance", result[5]);
-			response.put("principal_trm", result[6]);
-			response.put("interest_trm", result[7]);
-			response.put("fees_trm", result[8]);
-			response.put("penalty_trm", result[9]);
-			response.put("total_trm_balance", result[10]);
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("acct_bal", result[0]);
+	        response.put("principal_balance", result[1]);
+	        response.put("interest_balance", result[2]);
+	        response.put("fee_balance", result[3]);
+	        response.put("penalty_balance", result[4]);
+	        response.put("total_balance", result[5]);
+	        response.put("principal_trm", result[6]);
+	        response.put("interest_trm", result[7]);
+	        response.put("fees_trm", result[8]);
+	        response.put("penalty_trm", result[9]);
+	        response.put("total_trm_balance", result[10]);
 
-			return ResponseEntity.ok(response);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Map<String, Object> error = new HashMap<>();
-			error.put("error", "Error fetching account balance details");
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-		}
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        Map<String, Object> error = new HashMap<>();
+	        error.put("error", "Error fetching account balance details");
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+	    }
 	}
-
 	@PostMapping("/rebuildLoanBalance")
 	public ResponseEntity<Map<String, String>> rebuildLoanBalance(@RequestParam String acctNum) {
-		try {
-			chart_Acc_Rep.updateLoanBalanceByAcct(acctNum);
-			Map<String, String> response = new HashMap<>();
-			response.put("message", "Loan balance updated successfully.");
-			return ResponseEntity.ok(response);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Map<String, String> error = new HashMap<>();
-			error.put("error", "Error while rebuilding loan balance.");
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-		}
+	    try {
+	        chart_Acc_Rep.updateLoanBalanceByAcct(acctNum);
+	        Map<String, String> response = new HashMap<>();
+	        response.put("message", "Loan balance updated successfully.");
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        Map<String, String> error = new HashMap<>();
+	        error.put("error", "Error while rebuilding loan balance.");
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+	    }
 	}
+/* Rebuild balance for COA - Aishwarya */
+@GetMapping("/getTrmVsCoaTotals")
+public ResponseEntity<Map<String, Object>> getTrmVsCoaTotals() {
+	try {
+		List<Object[]> results = chart_Acc_Rep.getTrmVsCoaTotals();
 
-	/* Rebuild balance for COA - Aishwarya */
-	@GetMapping("/getTrmVsCoaTotals")
-	public ResponseEntity<Map<String, Object>> getTrmVsCoaTotals() {
-		try {
-			List<Object[]> results = chart_Acc_Rep.getTrmVsCoaTotals();
+		if (results == null || results.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
 
-			if (results == null || results.isEmpty()) {
-				return ResponseEntity.notFound().build();
+		Object[] r = results.get(0);
+
+		Map<String, Object> response = new HashMap<>();
+
+		// ---- TRM totals ----
+		response.put("trm_total_cr", r[0]);
+		response.put("trm_total_dr", r[1]);
+		response.put("trm_net_amount", r[2]);
+		// ---- COA totals ----
+		response.put("coa_total_cr", r[3]);
+		response.put("coa_total_dr", r[4]);
+		response.put("coa_net_amount", r[5]);
+		response.put("coa_total_acct_bal", r[6]);
+
+		// ---- Differences ----
+		response.put("diff_trm_cr_coa_cr", r[7]);
+		response.put("diff_trm_dr_coa_dr", r[8]);
+		response.put("diff_trm_net_coa_net", r[9]);
+		return ResponseEntity.ok(response);
+
+	} catch (Exception e) {
+		e.printStackTrace();
+		Map<String, Object> error = new HashMap<>();
+		error.put("error", "Error fetching TRM vs COA totals");
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+	}
+}
+@GetMapping("/getCOAList")
+public List<Map<String, Object>> getCOAList() {
+	List<Object[]> data = chart_Acc_Rep.getCOAList();
+	List<Map<String, Object>> result = new ArrayList<>();
+
+	for (Object[] row : data) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("acct_num", row[0]);
+		map.put("acct_name", row[1]);
+		result.add(map);
+	}
+	return result;
+}
+@GetMapping("/getCoaAcct")
+public ResponseEntity<Map<String, Object>> getCoaAcct(@RequestParam String acctNum) {
+	try {
+		List<Object[]> results = chart_Acc_Rep.getCoaAcct(acctNum);
+
+		if (results == null || results.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+
+		Object[] r = results.get(0);
+
+		Map<String, Object> response = new HashMap<>();
+
+		/* TRM VALUES */
+		response.put("trm_total_cr", r[0]);
+		response.put("trm_total_dr", r[1]);
+		BigDecimal val = (BigDecimal) r[2];
+		response.put("trm_net_amount", val.abs());
+
+		/* COA VALUES */
+		response.put("coa_total_cr", r[3]);
+		response.put("coa_total_dr", r[4]);
+		response.put("coa_net_amount", r[5]);
+		response.put("coa_total_acct_bal", r[6]);
+
+		/* DIFFERENCE VALUES */
+		response.put("diff_trm_cr_coa_cr", r[7]);
+		response.put("diff_trm_dr_coa_dr", r[8]);
+		response.put("diff_trm_net_coa_net", r[9]);
+
+		return ResponseEntity.ok(response);
+
+	} catch (Exception e) {
+		e.printStackTrace();
+		Map<String, Object> error = new HashMap<>();
+		error.put("error", "Error fetching TRM vs COA account totals");
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+	}
+}
+@PostMapping("/rebuildCoabal")
+public ResponseEntity<Map<String, String>> rebuildCoabal(@RequestParam String acctNum) {
+    try {
+        chart_Acc_Rep.updateCoaByAcct(acctNum);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "COA balance updated successfully.");
+        return ResponseEntity.ok(response);
+    } catch (Exception e) {
+        e.printStackTrace();
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Error while rebuilding loan balance.");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+}
+/* Rebuild balance for DAB - Aishwarya */
+@GetMapping("/getTrmVsDabTotals")
+public ResponseEntity<Map<String, Object>> getTrmVsDabTotals() {
+    try {
+        List<Object[]> results = chart_Acc_Rep.getTrmVsDabTotals();
+
+        if (results == null || results.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Object[] r = results.get(0);
+        Map<String, Object> response = new HashMap<>();
+
+        /* ---- TRM totals ---- */
+        response.put("trm_total_cr", r[0]);
+        response.put("trm_total_dr", r[1]);
+        response.put("trm_net_amount", r[2]);
+
+        /* ---- DAB totals ---- */
+        response.put("dab_opening_bal", r[3]);
+        response.put("dab_total_cr", r[4]);
+        response.put("dab_total_dr", r[5]);
+        response.put("dab_net_amount", r[6]);
+        response.put("dab_date_balance", r[7]);
+
+        /* ---- Difference TRM vs DAB ---- */
+        response.put("diff_trm_cr_dab_cr", r[8]);
+        response.put("diff_trm_dr_dab_dr", r[9]);
+        response.put("diff_trm_net_dab_net", r[10]);
+
+        return ResponseEntity.ok(response);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        Map<String, Object> error = new HashMap<>();
+        error.put("error", "Error fetching TRM vs DAB totals");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+}
+@GetMapping("/getDABList")
+public List<Map<String, Object>> getDABList() {
+	List<Object[]> data = chart_Acc_Rep.getDABList();
+	List<Map<String, Object>> result = new ArrayList<>();
+
+	for (Object[] row : data) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("acct_num", row[0]);
+		map.put("acct_name", row[1]);
+		result.add(map);
+	}
+	return result;
+}
+
+@GetMapping("/getDabAcct")
+public ResponseEntity<Map<String, Object>> getDabAcct(@RequestParam String acctNum,
+		@RequestParam(required = false) String tranDate) {
+	try {
+		List<Object[]> results;
+		// ---------- FORMAT tranDate ----------
+		String formattedTranDate = null;
+		if (tranDate != null) {
+			try {
+				DateTimeFormatter inFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				DateTimeFormatter outFmt = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+				formattedTranDate = LocalDate.parse(tranDate, inFmt).format(outFmt);
+			} catch (Exception e) {
+				formattedTranDate = tranDate; // fallback
 			}
-
-			Object[] r = results.get(0);
-
-			Map<String, Object> response = new HashMap<>();
-
-			// ---- TRM totals ----
-			response.put("trm_total_cr", r[0]);
-			response.put("trm_total_dr", r[1]);
-			response.put("trm_net_amount", r[2]);
-			response.put("trm_balance", r[3]); // NEW
-
-			// ---- COA totals ----
-			response.put("coa_total_cr", r[4]);
-			response.put("coa_total_dr", r[5]);
-			response.put("coa_net_amount", r[6]);
-			response.put("coa_total_acct_bal", r[7]);
-
-			// ---- Differences ----
-			response.put("diff_trm_cr_coa_cr", r[8]);
-			response.put("diff_trm_dr_coa_dr", r[9]);
-			response.put("diff_trm_net_coa_net", r[10]);
-			response.put("diff_trm_balance_coa_balance", r[11]); // NEW
-
-			return ResponseEntity.ok(response);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			Map<String, Object> error = new HashMap<>();
-			error.put("error", "Error fetching TRM vs COA totals");
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
 		}
-	}
-
-	@GetMapping("/getCOAList")
-	public List<Map<String, Object>> getCOAList() {
-		List<Object[]> data = chart_Acc_Rep.getCOAList();
-		List<Map<String, Object>> result = new ArrayList<>();
-
-		for (Object[] row : data) {
-			Map<String, Object> map = new HashMap<>();
-			map.put("acct_num", row[0]);
-			map.put("acct_name", row[1]);
-			result.add(map);
+		// -------------------------------------
+		if (formattedTranDate == null) {
+			// ACCOUNT mode
+			results = chart_Acc_Rep.getDabAcct(acctNum);
+		} else {
+			// TRAN_DATE mode
+			results = chart_Acc_Rep.getDabAcctByDate(acctNum, formattedTranDate);
 		}
-		return result;
-	}
-
-	@GetMapping("/getCoaAcct")
-	public ResponseEntity<Map<String, Object>> getCoaAcct(@RequestParam String acctNum) {
-		try {
-			List<Object[]> results = chart_Acc_Rep.getCoaAcct(acctNum);
-
-			if (results == null || results.isEmpty()) {
-				return ResponseEntity.notFound().build();
-			}
-
-			Object[] r = results.get(0);
-
-			Map<String, Object> response = new HashMap<>();
-
-			/* TRM VALUES */
-			response.put("trm_total_cr", r[0]);
-			response.put("trm_total_dr", r[1]);
-			BigDecimal val = (BigDecimal) r[2];
-			response.put("trm_net_amount", val.abs());
-			response.put("trm_balance", r[3]); // NEW
-
-			/* COA VALUES */
-			response.put("coa_total_cr", r[4]);
-			response.put("coa_total_dr", r[5]);
-			response.put("coa_net_amount", r[6]);
-			response.put("coa_total_acct_bal", r[7]);
-
-			/* DIFFERENCE VALUES */
-			response.put("diff_trm_cr_coa_cr", r[8]);
-			response.put("diff_trm_dr_coa_dr", r[9]);
-			response.put("diff_trm_net_coa_net", r[10]);
-			response.put("diff_trm_balance_coa_balance", r[11]); // NEW
-
-			return ResponseEntity.ok(response);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			Map<String, Object> error = new HashMap<>();
-			error.put("error", "Error fetching TRM vs COA account totals");
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+		if (results == null || results.isEmpty()) {
+			return ResponseEntity.notFound().build();
 		}
-	}
+		Object[] r = results.get(0);
+		Map<String, Object> response = new HashMap<>();
+		response.put("trm_total_cr", r[0]);
+		response.put("trm_total_dr", r[1]);
+		response.put("trm_net_amount", r[2]);
+		response.put("dab_opening_bal", r[3]);
+		response.put("dab_total_cr", r[4]);
+		response.put("dab_total_dr", r[5]);
+		response.put("dab_net_amount", r[6]);
+		response.put("dab_date_balance", r[7]);
+		response.put("diff_trm_cr_dab_cr", r[8]);
+		response.put("diff_trm_dr_dab_dr", r[9]);
+		response.put("diff_trm_net_dab_net", r[10]);
 
-	@PostMapping("/rebuildCoabal")
-	public ResponseEntity<Map<String, String>> rebuildCoabal(@RequestParam String acctNum) {
-		try {
-			chart_Acc_Rep.updateCoaByAcct(acctNum);
-			Map<String, String> response = new HashMap<>();
-			response.put("message", "COA balance updated successfully.");
-			return ResponseEntity.ok(response);
-		} catch (Exception e) {
-			e.printStackTrace();
-			Map<String, String> error = new HashMap<>();
-			error.put("error", "Error while rebuilding loan balance.");
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-		}
+		return ResponseEntity.ok(response);
+	} catch (Exception e) {
+		e.printStackTrace();
+		Map<String, Object> error = new HashMap<>();
+		error.put("error", "Error fetching TRM vs DAB totals");
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
 	}
+}
+@GetMapping("/getByAllDate")
+public ResponseEntity<Map<String, Object>> getByAllDate(@RequestParam String tranDate) {
+    try {
+        List<Object[]> results = chart_Acc_Rep.getByAllDate(tranDate);
+        if (results == null || results.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Object[] r = results.get(0);
+        Map<String, Object> response = new HashMap<>();
 
-	/* End */
+        /* ---- TRM totals ---- */
+        response.put("trm_total_cr", r[0]);
+        response.put("trm_total_dr", r[1]);
+        response.put("trm_net_amount", r[2]);
+
+        /* ---- DAB totals ---- */
+        response.put("dab_opening_bal", r[3]);
+        response.put("dab_total_cr", r[4]);
+        response.put("dab_total_dr", r[5]);
+        response.put("dab_net_amount", r[6]);
+        response.put("dab_date_balance", r[7]);
+
+        /* ---- Difference TRM vs DAB ---- */
+        response.put("diff_trm_cr_dab_cr", r[8]);
+        response.put("diff_trm_dr_dab_dr", r[9]);
+        response.put("diff_trm_net_dab_net", r[10]);
+
+        return ResponseEntity.ok(response);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        Map<String, Object> error = new HashMap<>();
+        error.put("error", "Error fetching TRM vs DAB totals");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+}
+@GetMapping("/getAccountsByDate")
+public ResponseEntity<List<Map<String, Object>>> getAccountsByDate(@RequestParam String tranDate) {
+    List<Object[]> results = chart_Acc_Rep.findAccountsByDate(tranDate);
+    List<Map<String, Object>> list = new ArrayList<>();
+    for (Object[] r : results) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("acct_num", r[0]);
+        map.put("acct_name", r[1]);
+        map.put("tran_date", r[2]);
+        list.add(map);
+    }
+    return ResponseEntity.status(HttpStatus.OK).body(list);
+}
+/* End */
 	@RequestMapping(value = "rest_password", method = RequestMethod.POST)
 	@ResponseBody
 	public String rest_password(@RequestParam("old_password") String old_password,

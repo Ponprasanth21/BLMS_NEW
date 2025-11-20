@@ -302,8 +302,185 @@ function home() {
 function back() {
 	window.history.back();
 }
+/* Tab function */
+function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+
+    if (tabName === "tab1") {
+    	 $('.fa-search').show();
+    }
+    // 👉 When Tab2 opens → load ALL automatically
+    if (tabName === "tab2") {
+    	$('.fa-search').hide();  
+    	fetchTrmVsCoaTotals();
+    }
+    if (tabName === "tab3") {
+    	$('.fa-search').hide();
+    	fetchTrmVsDabTotals();
+    }
+}
 </script>
 <script>
+/* filter for modal DAB */
+$(document).ready(function () {
+    let dabFiltersEnabled = false;
+    // Toggle filter mode
+    $('#toggleFilterdab').on('click', function () {
+        dabFiltersEnabled = !dabFiltersEnabled;
+
+        if (dabFiltersEnabled) {
+            enableDABHeaderFilters();
+            $(this).find("i").css("color", "blue");
+        } else {
+            disableDABHeaderFilters();
+            $(this).find("i").css("color", "black");
+        }
+    });
+    // Enable filters in header
+    function enableDABHeaderFilters() {
+        $('#dabAcctNumHeader').html(`
+            <input type="text" id="dabFilterAcctNum"
+                class="form-control form-control-sm"
+                placeholder="Search Account Number">
+        `);
+        $('#dabAcctNameHeader').html(`
+            <input type="text" id="dabFilterAcctName"
+                class="form-control form-control-sm"
+                placeholder="Search Account Name">
+        `);
+        $('#dabFilterAcctNum').focus();
+        // Live Filtering
+        $('#dabFilterAcctNum, #dabFilterAcctName').on('keyup', function () {
+            const numFilter = $('#dabFilterAcctNum').val().toLowerCase();
+            const nameFilter = $('#dabFilterAcctName').val().toLowerCase();
+            $('#dabTable tbody tr').each(function () {
+                const acctNum = $(this).find('td:eq(0)').text().toLowerCase();
+                const acctName = $(this).find('td:eq(1)').text().toLowerCase();
+                if (acctNum.includes(numFilter) && acctName.includes(nameFilter)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    }
+    // Disable filters and restore headers
+    function disableDABHeaderFilters() {
+        $('#dabAcctNumHeader').text('Account Number');
+        $('#dabAcctNameHeader').text('Account Name');
+        $('#dabTable tbody tr').show();
+    }
+});
+
+/* filter for modal COA */
+$(document).ready(function () {
+    let coaFiltersEnabled = false;
+    // Toggle filter mode
+    $('#toggleFiltercoa').on('click', function () {
+        coaFiltersEnabled = !coaFiltersEnabled;
+        if (coaFiltersEnabled) {
+            enableCOAHeaderFilters();
+            $(this).find("i").css("color", "blue");
+        } else {
+            disableCOAHeaderFilters();
+            $(this).find("i").css("color", "black");
+        }
+    });
+    // Enable filters
+    function enableCOAHeaderFilters() {
+        $('#coaAcctNumHeader').html(`
+            <input type="text" id="coaFilterAcctNum"
+                class="form-control form-control-sm"
+                placeholder="Search Account Number">
+        `);
+        $('#coaAcctNameHeader').html(`
+            <input type="text" id="coaFilterAcctName"
+                class="form-control form-control-sm"
+                placeholder="Search Account Name">
+        `);
+        $('#coaFilterAcctNum').focus();
+        // Live filtering
+        $('#coaFilterAcctNum, #coaFilterAcctName').on('keyup', function () {
+            const numFilter = $('#coaFilterAcctNum').val().toLowerCase();
+            const nameFilter = $('#coaFilterAcctName').val().toLowerCase();
+            $('#coaTable tbody tr').each(function () {
+                const acctNum = $(this).find('td:eq(0)').text().toLowerCase();
+                const acctName = $(this).find('td:eq(1)').text().toLowerCase();
+
+                if (acctNum.includes(numFilter) && acctName.includes(nameFilter)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    }
+    // Disable filters
+    function disableCOAHeaderFilters() {
+        $('#coaAcctNumHeader').text('Account Number');
+        $('#coaAcctNameHeader').text('Account Name');
+        $('#coaTable tbody tr').show();
+    }
+});
+
+/* filter for modal LAM */
+$(document).ready(function() {
+	  let filtersEnabled = false;
+	  // Toggle filter mode
+	  $('#toggleFilterBtn').on('click', function() {
+	    filtersEnabled = !filtersEnabled;
+	    if (filtersEnabled) {
+	      enableHeaderFilters();
+	      $(this).addClass('btn-primary').removeClass('btn-outline-secondary');
+	    } else {
+	      disableHeaderFilters();
+	      $(this).removeClass('btn-primary').addClass('btn-outline-secondary');
+	    }
+	  });
+	  function enableHeaderFilters() {
+	    // Replace header text with input fields
+	    $('#acctNumHeader').html('<input type="text" id="filterAcctNum" class="form-control form-control-sm" placeholder="Search Account Number">');
+	    $('#acctNameHeader').html('<input type="text" id="filterAcctName" class="form-control form-control-sm" placeholder="Search Account Name">');
+	    // Focus first input
+	    $('#filterAcctNum').focus();
+	    // Attach live filtering
+	    $('#filterAcctNum, #filterAcctName').on('keyup', function() {
+	      const acctNumFilter = $('#filterAcctNum').val()?.toLowerCase() || '';
+	      const acctNameFilter = $('#filterAcctName').val()?.toLowerCase() || '';
+	      $('#mismatchTable tbody tr').each(function() {
+	        const acctNum = $(this).find('td:eq(0)').text().toLowerCase();
+	        const acctName = $(this).find('td:eq(1)').text().toLowerCase();
+	        if (acctNum.includes(acctNumFilter) && acctName.includes(acctNameFilter)) {
+	          $(this).show();
+	        } else {
+	          $(this).hide();
+	        }
+	      });
+	    });
+	  }
+	  function disableHeaderFilters() {
+	    // Clear filters and restore original headers
+	    $('#acctNumHeader').text('Account Number');
+	    $('#acctNameHeader').text('Account Name');
+	    $('#mismatchTable tbody tr').show();
+	  }
+	});
+</script>
+<script>
+/* Rebuild balance for LAM */
 function searchData() {
     document.getElementById('loadingModal').style.display = 'flex';
     $.ajax({
@@ -359,7 +536,6 @@ function handleSelect(acctNum, acctName) {
   // Fetch the account details for selected acctNum
   fetchAccountDetails(acctNum);
 }
-
 //✅ Fetch account details from backend and update the main table
 function fetchAccountDetails(acctNum) {
     $.get('./getAccountBalanceDetails', { acctNum }, function(data) {
@@ -403,59 +579,13 @@ function fetchAccountDetails(acctNum) {
         $('#usertable1').html('<tr><td colspan="5" class="text-center text-danger">Error fetching account details</td></tr>');
     });
 }
-</script>
-<script>
-$(document).ready(function() {
-	  let filtersEnabled = false;
-	  // Toggle filter mode
-	  $('#toggleFilterBtn').on('click', function() {
-	    filtersEnabled = !filtersEnabled;
-	    if (filtersEnabled) {
-	      enableHeaderFilters();
-	      $(this).addClass('btn-primary').removeClass('btn-outline-secondary');
-	    } else {
-	      disableHeaderFilters();
-	      $(this).removeClass('btn-primary').addClass('btn-outline-secondary');
-	    }
-	  });
-	  function enableHeaderFilters() {
-	    // Replace header text with input fields
-	    $('#acctNumHeader').html('<input type="text" id="filterAcctNum" class="form-control form-control-sm" placeholder="Search Account Number">');
-	    $('#acctNameHeader').html('<input type="text" id="filterAcctName" class="form-control form-control-sm" placeholder="Search Account Name">');
-	    // Focus first input
-	    $('#filterAcctNum').focus();
-	    // Attach live filtering
-	    $('#filterAcctNum, #filterAcctName').on('keyup', function() {
-	      const acctNumFilter = $('#filterAcctNum').val()?.toLowerCase() || '';
-	      const acctNameFilter = $('#filterAcctName').val()?.toLowerCase() || '';
-	      $('#mismatchTable tbody tr').each(function() {
-	        const acctNum = $(this).find('td:eq(0)').text().toLowerCase();
-	        const acctName = $(this).find('td:eq(1)').text().toLowerCase();
-	        if (acctNum.includes(acctNumFilter) && acctName.includes(acctNameFilter)) {
-	          $(this).show();
-	        } else {
-	          $(this).hide();
-	        }
-	      });
-	    });
-	  }
-	  function disableHeaderFilters() {
-	    // Clear filters and restore original headers
-	    $('#acctNumHeader').text('Account Number');
-	    $('#acctNameHeader').text('Account Name');
-	    $('#mismatchTable tbody tr').show();
-	  }
-	});
-	
 function rebuildLoanBalance() {
 	  if (!selectedAcctNum) {
 		  $("#alertmsg").text("Please select an account first before rebuilding.");
           $('#alert').modal("toggle");
 	    return;
 	  }
-
 	/*   if (!confirm(`Rebuild loan balance for account ${selectedAcctNum}?`)) return; */
-
 	  $.ajax({
 	    url: './rebuildLoanBalance',
 	    type: 'POST',
@@ -473,34 +603,7 @@ function rebuildLoanBalance() {
 	}
 </script>
 <script>
-function openTab(evt, tabName) {
-    var i, tabcontent, tablinks;
-
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-    }
-
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-
-    document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.className += " active";
-
-    if (tabName === "tab1") {
-    	 $('.fa-search').show();
-    }
-    // 👉 When Tab2 opens → load ALL automatically
-    if (tabName === "tab2") {
-    	$('.fa-search').hide();  
-    	fetchTrmVsCoaTotals();
-    }
-    if (tabName === "tab3") {
-    	$('.fa-search').hide();
-    }
-}
+/* Rebuild balance for COA */
 function handleFilterChange(page = 1) {
     const filterValue = document.getElementById('approvedfilter').value;
 
@@ -533,26 +636,23 @@ function fetchTrmVsCoaTotals() {
                 <td style="text-align:right">${fmt(data.coa_total_cr)}</td>
                 <td style="text-align:right">${fmt(data.diff_trm_cr_coa_cr)}</td>
             </tr>
-
             <tr>
                 <td>Debit</td>
                 <td style="text-align:right">${fmt(data.trm_total_dr)}</td>
                 <td style="text-align:right">${fmt(data.coa_total_dr)}</td>
                 <td style="text-align:right">${fmt(data.diff_trm_dr_coa_dr)}</td>
             </tr>
-
             <tr>
                 <td>Net</td>
                 <td style="text-align:right">${fmt(data.trm_net_amount)}</td>
                 <td style="text-align:right">${fmt(data.coa_net_amount)}</td>
                 <td style="text-align:right">${fmt(data.diff_trm_net_coa_net)}</td>
             </tr>
-
             <tr>
                 <td><strong>Balance</strong></td>
-                <td style="text-align:right"><strong>${fmt(data.trm_balance)}</strong></td>
+                <td style="text-align:right"><strong>0.00</strong></td>
                 <td style="text-align:right"><strong>${fmt(data.coa_total_acct_bal)}</strong></td>
-                <td style="text-align:right"><strong>${fmt(data.diff_trm_balance_coa_balance)}</strong></td>
+                <td style="text-align:right"><strong>0.00</strong></td>
             </tr>
         `);
     }).fail(() => {
@@ -660,9 +760,9 @@ function fetchCoaAcct(acctNum) {
 
             <tr>
                 <td><strong>Balance</strong></td>
-                <td style="text-align:right"><strong>${fmt(data.trm_balance)}</strong></td>
+                <td style="text-align:right"><strong>0.00</strong></td>
                 <td style="text-align:right"><strong>${fmt(data.coa_total_acct_bal)}</strong></td>
-                <td style="text-align:right"><strong>${fmt(data.diff_trm_balance_coa_balance)}</strong></td>
+                <td style="text-align:right"><strong>0.00</strong></td>
             </tr>
         `);
     }).fail(() => {
@@ -671,65 +771,13 @@ function fetchCoaAcct(acctNum) {
         );
     });
 }
-$(document).ready(function () {
-    let coaFiltersEnabled = false;
-    // Toggle filter mode
-    $('#toggleFiltercoa').on('click', function () {
-        coaFiltersEnabled = !coaFiltersEnabled;
-        if (coaFiltersEnabled) {
-            enableCOAHeaderFilters();
-            $(this).find("i").css("color", "blue");
-        } else {
-            disableCOAHeaderFilters();
-            $(this).find("i").css("color", "black");
-        }
-    });
-    // Enable filters
-    function enableCOAHeaderFilters() {
-        $('#coaAcctNumHeader').html(`
-            <input type="text" id="coaFilterAcctNum"
-                class="form-control form-control-sm"
-                placeholder="Search Account Number">
-        `);
-        $('#coaAcctNameHeader').html(`
-            <input type="text" id="coaFilterAcctName"
-                class="form-control form-control-sm"
-                placeholder="Search Account Name">
-        `);
-        $('#coaFilterAcctNum').focus();
-        // Live filtering
-        $('#coaFilterAcctNum, #coaFilterAcctName').on('keyup', function () {
-            const numFilter = $('#coaFilterAcctNum').val().toLowerCase();
-            const nameFilter = $('#coaFilterAcctName').val().toLowerCase();
-            $('#coaTable tbody tr').each(function () {
-                const acctNum = $(this).find('td:eq(0)').text().toLowerCase();
-                const acctName = $(this).find('td:eq(1)').text().toLowerCase();
-
-                if (acctNum.includes(numFilter) && acctName.includes(nameFilter)) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-        });
-    }
-    // Disable filters
-    function disableCOAHeaderFilters() {
-        $('#coaAcctNumHeader').text('Account Number');
-        $('#coaAcctNameHeader').text('Account Name');
-        $('#coaTable tbody tr').show();
-    }
-
-});
 function rebuildCoabal() {
 	  if (!selectedAcctNum) {
 		  $("#alertmsg").text("Please select an account first before rebuilding.");
         $('#alert').modal("toggle");
 	    return;
 	  }
-
 	/*   if (!confirm(`Rebuild loan balance for account ${selectedAcctNum}?`)) return; */
-
 	  $.ajax({
 	    url: './rebuildCoabal',
 	    type: 'POST',
@@ -747,16 +795,335 @@ function rebuildCoabal() {
 	}
 </script>
 <script>
+/* Rebuild balance for DAB */
 function handleFilter(page = 1) {
     const filterValue = document.getElementById('approvedfilterDab').value;
 
-    if (filterValue === "ALL") {
-    	$('#selectedAccount').hide(); 
-        fetchTrmVsCoaTotals(page);   // Call for ALL
+    if (filterValue === "ALL_ACCT") {
+    	$('#selectedAccountDAB').hide(); 
+    	$('.fa-search').hide();  
+    	$('#dabDate1').hide();
+    	fetchTrmVsDabTotals(page);   // Call for ALL
     } 
     else if (filterValue === "ACCOUNT") {
-    	searchData1(page);              // Call for Account
+    	$('#dabDate1').hide();
+        searchData2(page, "ACCOUNT");
     }
+    else if (filterValue === "ALL_DATE") {
+    	$('#selectedAccountDAB').hide(); 
+    	$('.fa-search').hide();
+    	 $('#dabDate1').show();   
+    	fetchByAllDate(page);              // Call for All date
+    }
+    else if (filterValue === "TRAN_DATE") {
+    	$('#dabDate1').hide();
+        searchData2(page, "TRAN_DATE");
+    }
+}
+function fetchTrmVsDabTotals() {
+    $.get('./getTrmVsDabTotals', function (data) {
+        if (!data) {
+            $('#trmVsDabTable').html(
+                '<tr><td colspan="4" class="text-center text-muted">No data found</td></tr>'
+            );
+            return;
+        }
+        // Number formatting
+        const fmt = (val) =>
+            val != null
+                ? Number(val).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                : '-';
+        $('#trmVsDabTable').html(`
+            <!-- Opening Balance -->
+            <tr>
+                <td>Open</td>
+                <td style="text-align:right">0.00</td>
+                <td style="text-align:right">${fmt(data.dab_opening_bal)}</td>
+                <td style="text-align:right">0.00</td>
+            </tr>
+            <!-- Credit -->
+            <tr>
+                <td>Credit</td>
+                <td style="text-align:right">${fmt(data.trm_total_cr)}</td>
+                <td style="text-align:right">${fmt(data.dab_total_cr)}</td>
+                <td style="text-align:right">${fmt(data.diff_trm_cr_dab_cr)}</td>
+            </tr>
+            <!-- Debit -->
+            <tr>
+                <td>Debit</td>
+                <td style="text-align:right">${fmt(data.trm_total_dr)}</td>
+                <td style="text-align:right">${fmt(data.dab_total_dr)}</td>
+                <td style="text-align:right">${fmt(data.diff_trm_dr_dab_dr)}</td>
+            </tr>
+            <!-- Net -->
+            <tr>
+                <td>Net</td>
+                <td style="text-align:right">${fmt(data.trm_net_amount)}</td>
+                <td style="text-align:right">${fmt(data.dab_net_amount)}</td>
+                <td style="text-align:right">${fmt(data.diff_trm_net_dab_net)}</td>
+            </tr>
+            <!-- Close -->
+            <tr>
+                <td><strong>Close</strong></td>
+                <td style="text-align:right"><strong>0.00</strong></td>
+                <td style="text-align:right"><strong>${fmt(data.dab_date_balance)}</strong></td>
+                <td style="text-align:right"><strong>0.00</strong></td>
+            </tr>
+        `);
+    }).fail(() => {
+        $('#trmVsDabTable').html(
+            '<tr><td colspan="4" class="text-center text-danger">Error fetching data</td></tr>'
+        );
+    });
+}
+function searchData2(page, mode) {
+    // Hide date container when NOT tran_date
+    if (mode !== "TRAN_DATE" && $('#dabDateContainer').length) {
+        $('#dabDateContainer').hide();
+    }
+    document.getElementById('loadingModal').style.display = 'flex';
+    $.ajax({
+        url: './getDABList',
+        type: 'GET',
+        success: function (data) {
+            document.getElementById('loadingModal').style.display = 'none';
+
+            let tbody = $('#dabTable tbody');
+            tbody.empty();
+
+            // Show date field only when TRAN_DATE mode
+            if (mode === "TRAN_DATE") {
+
+                if (!$('#dabDateContainer').length) {
+                    $('#dabModal .modal-body').prepend(`
+                        <div id="dabDateContainer" class="mb-3 d-flex justify-content-end align-items-center">
+                            <label for="dabDate" class="me-3 mb-0 mr-2"><strong>Tran Date: </strong></label>
+                            <input type="date" id="dabDate" class="form-control form-control-sm" style="max-width:18%;" onchange="findByDate()"/>
+                        </div>
+                    `);
+                }
+                $('#dabDateContainer').show();
+            }
+            if (!data || data.length === 0) {
+                tbody.append(`<tr><td colspan="3" class="text-center text-muted">No DAB accounts found.</td></tr>`);
+            } else {
+                data.forEach(row => {
+                    let acctNum = row.acct_num;
+                    let acctName = row.acct_name;
+                    tbody.append(`
+                        <tr>
+                            <td>${acctNum}</td>
+                            <td>${acctName}</td>
+                            <td class="text-center" style="cursor:pointer;">
+                                <input type="radio" name="selectedAcct"
+                                       value="${acctNum}"
+                                       onclick="handleSelect2('${acctNum}','${acctName}','${mode}')">
+                            </td>
+                        </tr>
+                    `);
+                });
+            }
+            $('#dabModal').modal('show');
+        }
+    });
+}
+//✅ When a radio button is clicked
+function handleSelect2(acctNum, acctName, mode) {
+    // ---------------- TRAN_DATE MODE ----------------
+    if (mode === "TRAN_DATE") {
+        let selectedDate = document.getElementById("dabDate").value;
+        if (!selectedDate) {
+            $("#alertmsg").text("Please select a tran date.");
+            $('#alert').modal("toggle");
+            $("input[name='selectedAcct']:checked").prop("checked", false);
+            return;
+        }
+        // Convert yyyy-mm-dd → dd-mm-yyyy
+        let parts = selectedDate.split("-");
+        let formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        // Fetch account + date
+        fetchDabAcct(acctNum, selectedDate);
+        // Show selected account details with date
+        $('#selectedAccountDAB').html(`
+            <div style="margin-top:-7%">
+                <strong>Acct Num :</strong> <span style="color:#007bff;">${acctNum}</span><br>
+                <strong>Acct Name :</strong> ${acctName}<br>
+                <strong>Tran Date :</strong> ${formattedDate}
+            </div>
+        `);
+        $('#dabSearchIcon').show();
+        $('#dabModal').modal('hide');
+        return;
+    }
+    // ---------------- ACCOUNT ONLY MODE ----------------
+    $('#selectedAccountDAB').html(`
+        <div>
+            <strong>Acct Num :</strong> <span style="color:#007bff;">${acctNum}</span><br>
+            <strong>Acct Name :</strong> ${acctName}
+        </div>
+    `);
+    $('#dabSearchIcon').show();
+    $('#dabModal').modal('hide');
+    // Fetch account without date
+    fetchDabAcct(acctNum);
+}
+</script>
+<script>
+function fetchDabAcct(acctNum, tranDate = null) {
+    let params = { acctNum };
+    if (tranDate) params.tranDate = tranDate;
+    $.get('./getDabAcct', params, function (data) {  
+        if (!data) {
+            $('#trmVsDabTable').html(
+                '<tr><td colspan="4" class="text-center text-muted">No data found</td></tr>'
+            );
+            return;
+        }
+        const fmt = (val) =>
+            val != null
+                ? Number(val).toLocaleString('en-IN', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                  })
+                : '-';
+        $('#trmVsDabTable').html(`
+            <tr>
+                <td>Opening</td>
+                <td style="text-align:right">0.00</td>
+                <td style="text-align:right">${fmt(data.dab_opening_bal)}</td>
+                <td style="text-align:right">0.00</td>
+            </tr>
+            <tr>
+                <td>Credit</td>
+                <td style="text-align:right">${fmt(data.trm_total_cr)}</td>
+                <td style="text-align:right">${fmt(data.dab_total_cr)}</td>
+                <td style="text-align:right">${fmt(data.diff_trm_cr_dab_cr)}</td>
+            </tr>
+            <tr>
+                <td>Debit</td>
+                <td style="text-align:right">${fmt(data.trm_total_dr)}</td>
+                <td style="text-align:right">${fmt(data.dab_total_dr)}</td>
+                <td style="text-align:right">${fmt(data.diff_trm_dr_dab_dr)}</td>
+            </tr>
+            <tr>
+                <td>Net</td>
+                <td style="text-align:right">${fmt(data.trm_net_amount)}</td>
+                <td style="text-align:right">${fmt(data.dab_net_amount)}</td>
+                <td style="text-align:right">${fmt(data.diff_trm_net_dab_net)}</td>
+            </tr>
+            <tr>
+                <td><strong>Close</strong></td>
+                <td style="text-align:right"><strong>0.00</strong></td>
+                <td style="text-align:right"><strong>${fmt(data.dab_date_balance)}</strong></td>
+                <td style="text-align:right"><strong>0.00</strong></td>
+            </tr>
+        `);
+    }).fail(() => {
+        $('#trmVsDabTable').html(
+            '<tr><td colspan="4" class="text-center text-danger">Error fetching data</td></tr>'
+        );
+    });
+}
+function fetchByAllDate() {
+    let selectedDate = $('#dabDate1').val();  // your <input type="date"> element
+    if (!selectedDate) {
+    	  $("#alertmsg").text("Please select a date");
+          $("#alert").modal("show");
+        return;
+    }
+    let parts = selectedDate.split("-");
+    let formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+    $.get('./getByAllDate', { tranDate: formattedDate }, function (data) {
+        if (!data) {
+            $('#trmVsDabTable').html(
+                '<tr><td colspan="4" class="text-center text-muted">No data found</td></tr>'
+            );
+            return;
+        }
+        const fmt = (val) =>
+            val != null
+                ? Number(val).toLocaleString('en-IN', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                  })
+                : '-';
+        $('#trmVsDabTable').html(`
+            <tr><td>Open</td><td style="text-align:right">0.00</td>
+                <td style="text-align:right">${fmt(data.dab_opening_bal)}</td>
+                <td style="text-align:right">0.00</td>
+            </tr>
+            <tr><td>Credit</td>
+                <td style="text-align:right">${fmt(data.trm_total_cr)}</td>
+                <td style="text-align:right">${fmt(data.dab_total_cr)}</td>
+                <td style="text-align:right">${fmt(data.diff_trm_cr_dab_cr)}</td>
+            </tr>
+            <tr><td>Debit</td>
+                <td style="text-align:right">${fmt(data.trm_total_dr)}</td>
+                <td style="text-align:right">${fmt(data.dab_total_dr)}</td>
+                <td style="text-align:right">${fmt(data.diff_trm_dr_dab_dr)}</td>
+            </tr>
+            <tr><td>Net</td>
+                <td style="text-align:right">${fmt(data.trm_net_amount)}</td>
+                <td style="text-align:right">${fmt(data.dab_net_amount)}</td>
+                <td style="text-align:right">${fmt(data.diff_trm_net_dab_net)}</td>
+            </tr>
+            <tr><td><strong>Close</strong></td>
+                <td style="text-align:right"><strong>0.00</strong></td>
+                <td style="text-align:right"><strong>${fmt(data.dab_date_balance)}</strong></td>
+                <td style="text-align:right"><strong>0.00</strong></td>
+            </tr>
+        `);
+
+    }).fail(() => {
+        $('#trmVsDabTable').html(
+            '<tr><td colspan="4" class="text-center text-danger">Error fetching data</td></tr>'
+        );
+    });
+}
+</script>
+<script>
+function findByDate() {
+	document.getElementById('loadingModal').style.display = 'flex';
+    let selectedDate = document.getElementById("dabDate").value;
+    if (!selectedDate) return;
+    // Convert HTML yyyy-mm-dd → dd-mm-yy (if needed by DB)
+    let parts = selectedDate.split("-");
+    let formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+    $.ajax({
+        url: "./getAccountsByDate",
+        type: "GET",
+        data: { tranDate: formattedDate },
+        success: function(data) {
+        	document.getElementById('loadingModal').style.display = 'none';
+            let tbody = $("#dabTable tbody");
+            tbody.empty();
+            if (!data || data.length === 0) {
+                tbody.append(`
+                    <tr><td colspan="3" class="text-center text-muted">
+                        No accounts found for selected date
+                    </td></tr>
+                `);
+                return;
+            }
+            data.forEach(row => {
+                tbody.append(`
+                    <tr>
+                        <td>${row.acct_num}</td>
+                        <td>${row.acct_name}</td>
+                        <td class="text-center">
+                            <input type="radio" name="selectedAcct"
+                                   onclick="handleSelect2('${row.acct_num}', '${row.acct_name}', 'TRAN_DATE')">
+                        </td>
+                    </tr>
+                `);
+            });
+        },
+        error: function() {
+        	document.getElementById('loadingModal').style.display = 'none';
+            $("#alertmsg").text("Error loading data for selected date");
+            $("#alert").modal("show");
+        }
+    });
 }
 </script>
 </head>
@@ -896,15 +1263,20 @@ function handleFilter(page = 1) {
 										<!-- Filter Dropdown -->
 										<select class="form-control form-control-sm w-100"
 											id="approvedfilterDab" onchange="handleFilter(1)">
-											<option value="ALL_ACCT" selected>All Account</option>
-											<option value="ACCOUNT">Account</option>
-											<option value="ALL_DATE">All Date</option>
-											<option value="TRAN_DATE">Tran Date</option>
+											<option value="ALL_ACCT" selected>All Account/All Date</option>
+											<option value="ALL_DATE">All Account/Date</option>
+											<option value="ACCOUNT">Account/All Date</option>
+											<option value="TRAN_DATE">Account/Date</option>
 										</select>
+										<!-- Date Input-->
+										<input type="date" id="dabDate1" onchange="fetchByAllDate()"
+											class="form-control form-control-sm"
+											style="width: 150px; display: none;" />
 										<!-- Icon -->
 										<i class="fa fa-search" id="dabSearchIcon"
 											style="cursor: pointer; font-size: 16px;"
-											onclick="searchData2()" title="DAB Accounts"></i>
+											onclick="searchData2(1, document.getElementById('approvedfilterDab').value)"
+											title="DAB Accounts"></i>
 									</div>
 							</div>
 							<div class="table-responsive" id="cardBody">
@@ -919,7 +1291,7 @@ function handleFilter(page = 1) {
 												<th style="text-align: right">Difference</th>
 										</tr>
 									</thead>
-									<tbody id="usertable1">
+									<tbody id="trmVsDabTable">
 										<tr>
 											<td colspan="4" class="text-center text-muted">Please select an account to view details.</td>
 										</tr>
@@ -994,6 +1366,39 @@ function handleFilter(page = 1) {
             <tr>
              <th id="coaAcctNumHeader">Account Number</th>
              <th id="coaAcctNameHeader">Account Name</th>
+              <th style="width: 15%; text-align: center;">Select</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-------------------------------------------------------------------------------- Modal ------------------------------------------------>
+<div class="modal fade" id="dabModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="max-height: 100vh; overflow: hidden; border-radius: 12px;">
+      <!-- Modal Header -->
+      <div class="modal-header" style="background-color: #e9ecef;">
+        <h5 class="modal-title">DAB Accounts</h5>
+        <div class="d-flex align-items-center">
+          <!-- Filter Button -->
+          <button type="button" id="toggleFilterdab" title="Enable Filters" style="border: none; background-color: transparent;">
+            <i class="fa fa-filter" style="color:black;"></i>
+          </button><!-- Close Button -->
+          <button type="button" class="btn-close" onclick="$('#dabModal').modal('hide')" title="Close"></button>
+        </div>
+      </div>
+      <!-- Modal Body -->
+      <div class="modal-body" style="overflow-y: auto; max-height: 70vh;">
+        <table class="table table-bordered table-hover mb-0" id="dabTable">
+          <thead class="thead-light">
+            <tr>
+             <th id="dabAcctNumHeader" style="width: 10%;">Account Number</th>
+             <th id="dabAcctNameHeader">Account Name</th>
               <th style="width: 15%; text-align: center;">Select</th>
             </tr>
           </thead>
