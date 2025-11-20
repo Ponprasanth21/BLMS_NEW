@@ -3,6 +3,8 @@ package com.bornfire.services;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -54,8 +56,19 @@ public class FileWatcherService {
             System.out.println("🔥 NEW FILES DETECTED:");
             Arrays.stream(files).forEach(f -> System.out.println("➡ " + f.getName()));
             System.out.println("==========================================================");
+//            for (File file : files) {
+//                processFile(file);
+//            }
             for (File file : files) {
-                processFile(file);
+
+                // Extract file name without extension
+                String name = file.getName();             // example.xlsx
+                String baseName = name.contains(".")
+                        ? name.substring(0, name.lastIndexOf('.'))
+                        : name;                           // example
+
+                // Send only the base file name
+                processFile(file, baseName);
             }
 
         } catch (Exception e) {
@@ -65,12 +78,12 @@ public class FileWatcherService {
     }
 
 
-    private void processFile(File file) {
+    private void processFile(File file,String baseName) {
         try {
             System.out.println("-----------------------------------------------------");
             System.out.println("🔥 PROCESSING FILE: " + file.getName());
 
-            String fileName = file.getName();
+            String fileName = baseName;
             if (fileName != null) {
                 fileName = fileName.replaceFirst("[.][^.]+$", "");
             }
@@ -84,20 +97,21 @@ public class FileWatcherService {
             String newFileName;
             
             
-
+            String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("ddMMyyyy_HHmmss"));
+            
             if ("duplicate".equals(response.get("status"))) {
                 // 🔥 File contains duplicates → move as .duplicate
-                newFileName = file.getName() + ".duplicate";
+            	newFileName = baseName + "_" + timeStamp + ".duplicate";
                 System.out.println("❌ FILE HAS DUPLICATES → MARKING AS .duplicate");
 
             } else if (!"success".equals(response.get("status"))) {
                 // 🔥 Processing failed → mark as .error
-                newFileName = file.getName() + ".error";
+            	newFileName = baseName + "_" + timeStamp + ".error";
                 System.out.println("❌ FILE FAILED DURING PROCESS → MARKING AS .error");
 
             } else {
                 // 🔥 Processing successful → mark as .complete
-                newFileName = file.getName() + ".complete";
+            	newFileName = baseName + "_" + timeStamp + ".complete";
                 System.out.println("✔ FILE PROCESSED SUCCESSFULLY → MARKING AS .complete");
             }
 
