@@ -10391,14 +10391,14 @@ public class BGLSRestController {
 		return 0.0; // default if no number found
 	}
 
-	@PostMapping(value = "/saveMultipleTransactions1", consumes = "application/json", produces = "application/json")
+@PostMapping(value = "/saveMultipleTransactions1", consumes = "application/json", produces = "application/json")
 	public Map<String, Object> saveMultipleTransactions1(@RequestBody List<Map<String, Object>> transactions,
 			HttpServletRequest rq) {
 
 		Map<String, Object> response = new HashMap<>();
 		List<Map<String, Object>> summaryPerCustomer = new ArrayList<>();
 		List<Map<String, Object>> unallocatedList = new ArrayList<>();
-//  	String userid = (String) rq.getSession().getAttribute("USERID");
+//  String userid = (String) rq.getSession().getAttribute("USERID");
 		String userid;
 		if (rq != null) {
 			userid = (String) rq.getSession().getAttribute("USERID");
@@ -10451,6 +10451,36 @@ public class BGLSRestController {
 				// NOW – GROUP BY tran_id inside SAME customer
 				Map<String, List<Map<String, Object>>> tranMap = tranRows.stream()
 						.collect(Collectors.groupingBy(t -> t.get("tran_id").toString().trim()));
+				
+				String globalAuthUser = null;   // declare once
+				
+				for (Map.Entry<String, List<Map<String, Object>>> tranEntry : tranMap.entrySet()) {
+
+				    String tranId = tranEntry.getKey();
+				    List<Map<String, Object>> rowsForThisTran = tranEntry.getValue();
+
+				    if (tranId == null || tranId.isEmpty()) continue;
+
+				    System.out.println("=========== Transaction ID = " + tranId + " ===========");
+
+				    List<MULTIPLE_TRANSACTION_ENTITY> records = mULTIPLE_TRANSACTION_REPO.getDataValue1(tranId);
+
+				    System.out.println("ROWS FROM FRONTEND : " + rowsForThisTran.size());
+				    System.out.println("RECORDS FROM BACKEND: " + records.size());
+
+				    // GET AUTH_USER FROM BACKEND — FIRST RECORD ONLY
+				    if (!records.isEmpty()) {
+				        globalAuthUser = records.get(0).getAuth_user();    // <-- SET GLOBAL VARIABLE
+				        System.out.println("SAVED AUTH_USER: " + globalAuthUser);
+				    }
+
+				    // PRINT ALL AUTH_USER VALUES (OPTIONAL)
+				    for (MULTIPLE_TRANSACTION_ENTITY rec : records) {
+				        System.out.println("AUTH_USER : " + rec.getAuth_user());
+				    }
+
+				    System.out.println();
+				}
 
 				// 🔁 Process each tran_id SEPARATELY (NO SUM PROBLEM)
 				for (Map.Entry<String, List<Map<String, Object>>> tranEntry : tranMap.entrySet()) {
@@ -10569,7 +10599,7 @@ public class BGLSRestController {
 						// allocate single debit (existing helper)
 						partTranId = allocateSingleDebitForCustomer(customerId, rowsForThisTran, flows,
 								totalDebitAmountBD.doubleValue(), transactionDate, tranId, userid, decimalFormatter,
-								partTranId);
+								partTranId,globalAuthUser);
 
 						// Load latest transaction date (already have transactionDate)
 						SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
@@ -10659,7 +10689,7 @@ public class BGLSRestController {
 						    if (alloc <= 0) continue;
 
 						    allocPartTranId = allocateCreditEntry(customerId, rowsForThisTran, frow, alloc,
-						            transactionDate, tranId, userid, decimalFormatter, allocPartTranId);
+						            transactionDate, tranId, userid, decimalFormatter, allocPartTranId,globalAuthUser);
 
 						    remainingAmt -= alloc;
 
@@ -10691,7 +10721,7 @@ public class BGLSRestController {
 						    if (alloc <= 0) continue;
 
 						    allocPartTranId = allocateCreditEntry(customerId, rowsForThisTran, frow, alloc,
-						            transactionDate, tranId, userid, decimalFormatter, allocPartTranId);
+						            transactionDate, tranId, userid, decimalFormatter, allocPartTranId,globalAuthUser);
 
 						    remainingAmt -= alloc;
 
@@ -10727,7 +10757,7 @@ public class BGLSRestController {
 						            exrecAccountNo, acctNameExrec};
 						    allocPartTranId = allocateCreditEntry(customerId, rowsForThisTran, exrecRow,
 						            diff.doubleValue(), transactionDate, tranId, userid, decimalFormatter,
-						            allocPartTranId);
+						            allocPartTranId,globalAuthUser);
 
 						    Map<String, Object> exrecEntry = new HashMap<>();
 						    exrecEntry.put("tran_id", tranId);
@@ -11132,6 +11162,7 @@ public class BGLSRestController {
 							debitTrm.setEntry_time(new Date());
 							debitTrm.setModify_time(new Date());
 							debitTrm.setDel_flg("N");
+							debitTrm.setTran_rpt_code(globalAuthUser);
 
 							try {
 								tRAN_MAIN_TRM_WRK_REP.save(debitTrm);
@@ -11179,6 +11210,7 @@ public class BGLSRestController {
 							creditTrm.setEntry_time(new Date());
 							creditTrm.setModify_time(new Date());
 							creditTrm.setDel_flg("N");
+							creditTrm.setTran_rpt_code(globalAuthUser);
 
 							try {
 								tRAN_MAIN_TRM_WRK_REP.save(creditTrm);
@@ -11316,6 +11348,7 @@ public class BGLSRestController {
 							debitTrm.setEntry_time(new Date());
 							debitTrm.setModify_time(new Date());
 							debitTrm.setDel_flg("N");
+							debitTrm.setTran_rpt_code(globalAuthUser);
 
 							try {
 								tRAN_MAIN_TRM_WRK_REP.save(debitTrm);
@@ -11363,6 +11396,7 @@ public class BGLSRestController {
 							creditTrm.setEntry_time(new Date());
 							creditTrm.setModify_time(new Date());
 							creditTrm.setDel_flg("N");
+							creditTrm.setTran_rpt_code(globalAuthUser);
 
 							try {
 								tRAN_MAIN_TRM_WRK_REP.save(creditTrm);
@@ -11487,6 +11521,8 @@ public class BGLSRestController {
 							debitTrm.setEntry_time(new Date());
 							debitTrm.setModify_time(new Date());
 							debitTrm.setDel_flg("N");
+							debitTrm.setTran_rpt_code(globalAuthUser);
+							
 							tRAN_MAIN_TRM_WRK_REP.save(debitTrm);
 
 							BigDecimal debitBal = Optional.ofNullable(debitAccount.getAcct_bal())
@@ -11526,6 +11562,8 @@ public class BGLSRestController {
 							creditTrm.setEntry_time(new Date());
 							creditTrm.setModify_time(new Date());
 							creditTrm.setDel_flg("N");
+							creditTrm.setTran_rpt_code(globalAuthUser);
+							
 							tRAN_MAIN_TRM_WRK_REP.save(creditTrm);
 
 							BigDecimal creditBal = Optional.ofNullable(creditAccount.getAcct_bal())
@@ -11712,7 +11750,7 @@ public class BGLSRestController {
 	 */
 	private AtomicInteger allocateSingleDebitForCustomer(String customerId, // new parameter
 			List<Map<String, Object>> custTransactions, List<Object[]> sortedFlows, double totalAmt,
-			Date transactionDate, String tranId, String userid, DecimalFormat df, AtomicInteger partTranId) {
+			Date transactionDate, String tranId, String userid, DecimalFormat df, AtomicInteger partTranId,String globalAuthUser) {
 
 		if (sortedFlows == null || sortedFlows.isEmpty() || totalAmt <= 0) {
 			return partTranId;
@@ -11778,6 +11816,7 @@ public class BGLSRestController {
 			debitTrm.setEntry_time(new Date());
 			debitTrm.setModify_time(new Date());
 			debitTrm.setDel_flg("N");
+			debitTrm.setTran_rpt_code(globalAuthUser);
 
 			System.out.println("DEBIT PART_TRAN_ID: " + debitPartTranId);
 
@@ -11794,7 +11833,7 @@ public class BGLSRestController {
 	 */
 	private AtomicInteger allocateCreditEntry(String customerId, List<Map<String, Object>> custTransactions,
 			Object[] row, double allocatedAmt, Date transactionDate, String tranId, String userid, DecimalFormat df,
-			AtomicInteger partTranId) {
+			AtomicInteger partTranId,String globalAuthUser) {
 
 		for (Map<String, Object> data : custTransactions) {
 
@@ -11861,6 +11900,7 @@ public class BGLSRestController {
 			creditTrm.setEntry_time(new Date());
 			creditTrm.setModify_time(new Date());
 			creditTrm.setDel_flg("N");
+			creditTrm.setTran_rpt_code(globalAuthUser);
 
 			System.out.println("CREDIT PART_TRAN_ID: " + creditPartTranId);
 

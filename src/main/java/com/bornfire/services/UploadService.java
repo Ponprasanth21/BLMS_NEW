@@ -693,6 +693,14 @@ public class UploadService {
 	            try {
 	                MULTIPLE_TRANSACTION_ENTITY entity = new MULTIPLE_TRANSACTION_ENTITY();
 
+	             // 👉 GET FILE NAME
+	                String fileName = file.getOriginalFilename();
+	                if (fileName != null) {
+	                    fileName = fileName.replaceFirst("[.][^.]+$", "");
+	                }
+
+	                System.out.println("THE GETTING FILENAME IS "+fileName);
+	                
 	                entity.setTransaction_id(item.get(0));
 	                entity.setNames(item.get(1));
 
@@ -715,6 +723,7 @@ public class UploadService {
 	                entity.setEntry_user(userID);
 	                entity.setEntry_time(new Date());
 	                entity.setRef_transaction_id(null);
+	                entity.setAuth_user(fileName);
 
 	                multiple_TRANSACTION_REPO.save(entity);
 	                successCount++;
