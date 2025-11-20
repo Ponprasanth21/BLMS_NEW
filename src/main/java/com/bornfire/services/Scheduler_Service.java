@@ -40,8 +40,7 @@ public class Scheduler_Service {
 	@Autowired
 	BGLS_CONTROL_TABLE_REP bGLS_CONTROL_TABLE_REP;
 
-//	@Scheduled(cron = "0 1 0 * * ?") 
-//	@Scheduled(cron = "0 10 17 * * ?", zone = "Asia/Kolkata")
+//	@Scheduled(cron = "0 40 10 * * ?") 
 	public String ExecuteInterestDemand() throws SQLException, ParseException {
 		System.out.println("Enter into InterestDemand");
 		int values = tRAN_MAIN_TRM_WRK_REP.getResultindem();
@@ -68,8 +67,7 @@ public class Scheduler_Service {
 		return "Success";
 	}
 
-//	@Scheduled(cron = "0 2 0 * * ?")
-//	@Scheduled(cron = "0 15 17 * * ?", zone = "Asia/Kolkata")
+//	@Scheduled(cron = "0 41 10 * * ?") 
 	public String ExecutefeeDemand() throws SQLException, ParseException {
 		System.out.println("Enter into InterestDemand");
 		int values = tRAN_MAIN_TRM_WRK_REP.getResultfeedem();
@@ -98,8 +96,7 @@ public class Scheduler_Service {
 
 	}
 
-//	@Scheduled(cron = "0 3 0 * * ?")
-//	@Scheduled(cron = "0 20 17 * * ?", zone = "Asia/Kolkata")
+//	@Scheduled(cron = "0 42 10 * * ?") 
 	public void ExecutepenaltyDemand() throws SQLException, ParseException {
 
 		System.out.println("Enter into Penalty Demand");

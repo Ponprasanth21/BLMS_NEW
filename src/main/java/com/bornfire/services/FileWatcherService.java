@@ -31,7 +31,7 @@ public class FileWatcherService {
     private static final String USER_NAME = "SYSTEM";
 
     // 🔥 Runs every 10 seconds — must be a NO-ARG method
-//    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 10000)
     public void checkIncomingFiles() {
 
         try {
@@ -54,7 +54,6 @@ public class FileWatcherService {
             System.out.println("🔥 NEW FILES DETECTED:");
             Arrays.stream(files).forEach(f -> System.out.println("➡ " + f.getName()));
             System.out.println("==========================================================");
-
             for (File file : files) {
                 processFile(file);
             }
@@ -71,12 +70,20 @@ public class FileWatcherService {
             System.out.println("-----------------------------------------------------");
             System.out.println("🔥 PROCESSING FILE: " + file.getName());
 
+            String fileName = file.getName();
+            if (fileName != null) {
+                fileName = fileName.replaceFirst("[.][^.]+$", "");
+            }
+
+            System.out.println("THE GETTING FILENAME IS "+fileName);
             // Step 1: Import Excel
             Map<String, Object> response = excelService.importExcel(
-                    file.getAbsolutePath(), USER_ID, USER_NAME
+                    file.getAbsolutePath(), USER_ID, USER_NAME, fileName
             );
 
             String newFileName;
+            
+            
 
             if ("duplicate".equals(response.get("status"))) {
                 // 🔥 File contains duplicates → move as .duplicate

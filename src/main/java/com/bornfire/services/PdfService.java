@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class PdfService {
 
-    public byte[] generateTransactionPdfReport(List<Object[]> rawData, String dueDate) {
+    public byte[] generateTransactionPdfReport(List<Object[]> rawData, String dueDate, String type) {
         if (rawData == null || rawData.isEmpty()) {
             return new byte[0];
         }
@@ -25,8 +25,20 @@ public class PdfService {
             document.open();
 
             // Title
+            String HeaderText ;
+            if(type.equals("Mpesa")) {
+            	HeaderText = "RECOVERY TRANSACTION REPORT(Mpesa)";
+            }else if(type.equals("NBCA")) {
+            	HeaderText = "RECOVERY TRANSACTION REPORT(NBCA)";
+            }else if(type.equals("DEMAND")) {
+            	HeaderText = "DEMAND TRANSACTION REPORT";
+            }else {
+            	HeaderText = "TRANSACTION REPORT";
+            }
+            
+            
             Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);
-            Paragraph title = new Paragraph("TRANSACTION REPORT", titleFont);
+            Paragraph title = new Paragraph(HeaderText, titleFont);
             title.setAlignment(Element.ALIGN_CENTER);
             document.add(title);
 
@@ -48,8 +60,8 @@ public class PdfService {
             // Table Headers
          // Table Headers
             String[] headers = {
-                "TRAN DATE", "ACCT NUM", "ACCT NAME", "TYPE", "TRAN ID",
-                "PT TRAN", "IND", "CREDIT", "DEBIT", "TRAN PARTICULAR", "RPT_CODE"
+                "TRAN DATE", "ACCT NUM", "ACCT NAME", "TR TYPE", "TRAN ID",
+                "PT TRAN", "IND", "CREDIT", "DEBIT", "TRAN PARTICULAR", "TYPE"
             };
 
             PdfPTable table = new PdfPTable(headers.length);
@@ -60,7 +72,7 @@ public class PdfService {
 
             // ✅ Adjust column widths (values are relative proportions)
             float[] columnWidths = {
-                1.2f, 3.0f, 3.8f, 1.0f, 1.1f,
+                1.2f, 3.0f, 3.8f, 1.4f, 1.1f,
                 1.0f, 1.0f, 1.2f, 1.2f, 2.2f,1.2f
             };
             table.setWidths(columnWidths);

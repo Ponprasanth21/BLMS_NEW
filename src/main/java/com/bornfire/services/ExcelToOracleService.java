@@ -48,7 +48,7 @@ public class ExcelToOracleService {
     // ========================================================================
     // EXCEL IMPORT FUNCTION
     // ========================================================================
-    public Map<String, Object> importExcel(String filePath, String userID, String userName) throws Exception {
+    public Map<String, Object> importExcel(String filePath, String userID, String userName,String fileName) throws Exception {
 
         Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
         int successCount = 0;
@@ -202,6 +202,7 @@ public class ExcelToOracleService {
                 e.setEntry_user(userID);
                 e.setEntry_time(new Date());
                 e.setRef_transaction_id(null);
+                e.setAuth_user(fileName);
 
                 multiple_TRANSACTION_REPO.save(e);
 
@@ -254,10 +255,10 @@ public class ExcelToOracleService {
 //        fakeRq.setAttribute("AUTO_UPLOAD", "TRUE");
 //        fakeRq.setRemoteAddr("127.0.0.1");
 
-        Map<String, Object> allocationResult = transactionService.saveMultipleTransactions1(autoPayload,null);
+//        Map<String, Object> allocationResult = transactionService.saveMultipleTransactions1(autoPayload,null);
 
-        System.out.println("🔥 AUTO ALLOCATION RESULT: " + allocationResult);
-        resultMap.put("AllocationResult", allocationResult);
+//        System.out.println("🔥 AUTO ALLOCATION RESULT: " + allocationResult);
+//        resultMap.put("AllocationResult", allocationResult);
 
 
         // ====================================================================

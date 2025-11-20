@@ -12730,9 +12730,9 @@ public class BGLSRestController {
 	@GetMapping("/TransactionPDFReportDownload")
 	public ResponseEntity<byte[]> TransactionReportDownloadpdf(@RequestParam("dueDate") String dueDate) {
 		List<Object[]> rawData = chart_Acc_Rep.getTransactionReportByDate(dueDate);
-
+		String type = "TRANSACTION";
 		// ✅ Call the non-static method through the injected bean
-		byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate);
+		byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate, type);
 
 		if (pdfData == null || pdfData.length == 0) {
 			return ResponseEntity.noContent().build();
@@ -12969,8 +12969,16 @@ public class BGLSRestController {
 		}else {
 			rawData = chart_Acc_Rep.getTransactionReportNCBAByDate(dueDate);
 		}
+		String type ;
+		if(reportType.equals("Mpesa")) {
+			rawData = chart_Acc_Rep.getTransactionReportMpesaByDate(dueDate);
+			type = "Mpesa";
+		}else {
+			rawData = chart_Acc_Rep.getTransactionReportNCBAByDate(dueDate);
+			type = "NBCA";
+		}
 		// ✅ Call the non-static method through the injected bean
-		byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate);
+		byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate, type);
 
 		if (pdfData == null || pdfData.length == 0) {
 			return ResponseEntity.noContent().build();
@@ -12994,9 +13002,9 @@ public class BGLSRestController {
 	@GetMapping("/TransactionPDFReport3Download")
 	public ResponseEntity<byte[]> TransactionPDFReport3Download(@RequestParam("dueDate") String dueDate) {
 		List<Object[]> rawData = chart_Acc_Rep.getTransactionReport3ByDate(dueDate);
-
+		String type = "DEMAND";
 		// ✅ Call the non-static method through the injected bean
-		byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate);
+		byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate, type);
 
 		if (pdfData == null || pdfData.length == 0) {
 			return ResponseEntity.noContent().build();
