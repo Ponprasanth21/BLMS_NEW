@@ -279,20 +279,18 @@ input:hover+.password-info {
 </style>
 <!--  model style-->
 <style>
-#datacancel, #datacancel * {
-	box-sizing: content-box !important;
+/* 2nd modal should float above everything */
+#alert.modal {
+    z-index: 2000 !important;
 }
 
-#SuccesPopUp, #SuccesPopUp * {
-	box-sizing: content-box !important;
+#alert .modal-dialog {
+    z-index: 2001 !important;
 }
 
-#datacancel .modal-dialog-centered.modal-dialog-scrollable {
-	justify-content: flex-start !important;
-}
-
-#SuccesPopUp .modal-dialog-centered.modal-dialog-scrollable {
-	justify-content: flex-start !important;
+/* The backdrop created for 2nd modal */
+.modal-backdrop.show:nth-of-type(2) {
+    z-index: 1999 !important;
 }
 </style>
 <script>
@@ -324,11 +322,13 @@ function openTab(evt, tabName) {
     }
     // 👉 When Tab2 opens → load ALL automatically
     if (tabName === "tab2") {
-    	$('.fa-search').hide();  
+    	$('.fa-search').hide(); 
+    	$("#rebuildBtn").hide();
     	fetchTrmVsCoaTotals();
     }
     if (tabName === "tab3") {
     	$('.fa-search').hide();
+    	$("#rebuildBtn1").hide();
     	fetchTrmVsDabTotals();
     }
 }
@@ -610,9 +610,11 @@ function handleFilterChange(page = 1) {
     if (filterValue === "ALL") {
     	$('#selectedAccount').hide();
         $('.fa-search').hide();   
+        $("#rebuildBtn").hide();
         fetchTrmVsCoaTotals(page);   // Call for ALL
     } 
     else if (filterValue === "ACCOUNT") {
+    	$("#rebuildBtn").show();
     	searchData1(page);              // Call for Account
     }
 }
@@ -801,22 +803,26 @@ function handleFilter(page = 1) {
 
     if (filterValue === "ALL_ACCT") {
     	$('#selectedAccountDAB').hide(); 
-    	$('.fa-search').hide();  
+    	$('.fa-search').hide(); 
+    	$("#rebuildBtn1").hide();
     	$('#dabDate1').hide();
     	fetchTrmVsDabTotals(page);   // Call for ALL
     } 
     else if (filterValue === "ACCOUNT") {
     	$('#dabDate1').hide();
+    	$("#rebuildBtn1").hide();
         searchData2(page, "ACCOUNT");
     }
     else if (filterValue === "ALL_DATE") {
     	$('#selectedAccountDAB').hide(); 
     	$('.fa-search').hide();
+    	$("#rebuildBtn1").hide();
     	 $('#dabDate1').show();   
     	fetchByAllDate(page);              // Call for All date
     }
     else if (filterValue === "TRAN_DATE") {
-    	$('#dabDate1').hide();
+    	$('#dabDate1').hide();	
+    	$("#rebuildBtn1").show();
         searchData2(page, "TRAN_DATE");
     }
 }
@@ -838,7 +844,7 @@ function fetchTrmVsDabTotals() {
             <tr>
                 <td>Open</td>
                 <td style="text-align:right">0.00</td>
-                <td style="text-align:right">${fmt(data.dab_opening_bal)}</td>
+                <td style="text-align:right"></td>
                 <td style="text-align:right">0.00</td>
             </tr>
             <!-- Credit -->
@@ -866,7 +872,7 @@ function fetchTrmVsDabTotals() {
             <tr>
                 <td><strong>Close</strong></td>
                 <td style="text-align:right"><strong>0.00</strong></td>
-                <td style="text-align:right"><strong>${fmt(data.dab_date_balance)}</strong></td>
+                <td style="text-align:right"><strong></strong></td>
                 <td style="text-align:right"><strong>0.00</strong></td>
             </tr>
         `);
@@ -929,6 +935,7 @@ function searchData2(page, mode) {
 }
 //✅ When a radio button is clicked
 function handleSelect2(acctNum, acctName, mode) {
+	   selectedAcctNum = acctNum;
     // ---------------- TRAN_DATE MODE ----------------
     if (mode === "TRAN_DATE") {
         let selectedDate = document.getElementById("dabDate").value;
@@ -1125,6 +1132,48 @@ function findByDate() {
         }
     });
 }
+function rebuildDabbal() {
+    // 1. Check if account is selected
+    if (!selectedAcctNum) {
+        $("#alertmsg").text("Please select an account first before rebuilding.");
+        $('#alert').modal("toggle");
+        return;
+    }
+    // 2. Get selected date
+    let selectedDate = document.getElementById("dabDate")?.value;
+    if (!selectedDate || selectedDate.trim() === "") {
+        $("#alertmsg").text("Please select a transaction date.");
+        $('#alert').modal("toggle");
+        return;
+    }
+    // 3. Convert yyyy-mm-dd → dd-mm-yyyy
+    let parts = selectedDate.split("-");
+    let formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`; // dd-mm-yyyy
+    // 4. Call API
+    $.ajax({
+        url: './rebuildDabbal',
+        type: 'POST',
+        data: {
+            acctNum: selectedAcctNum,
+            tranDate: formattedDate
+        },
+        success: function (response) {
+
+            $("#alertmsg").text("DAB balance updated successfully!");
+            $('#alert').modal("toggle");
+
+            // Refresh UI
+            if (typeof fetchAccountDetails === "function") {
+                fetchAccountDetails(selectedAcctNum);
+            }
+        },
+        error: function (xhr) {
+            let err = xhr.responseJSON?.error || "Unknown error";
+            $("#alertmsg").text("Error rebuilding loan balance: " + err);
+            $('#alert').modal("toggle");
+        }
+    });
+}
 </script>
 </head>
 <title>ASPIRA</title>
@@ -1242,7 +1291,7 @@ function findByDate() {
 								</div>
 								<div class="card-footer text-center">
 									<button class="btn-primary big-btn" onclick="home();">Home</button>
-									<button class="btn-primary big-btn"
+									<button class="btn-primary big-btn"  id="rebuildBtn"
 										onclick="rebuildCoabal()">Rebuild</button>
 									<button class="btn-primary big-btn" onclick="back()">Back</button>
 								</div>
@@ -1300,7 +1349,7 @@ function findByDate() {
 							</div>
 						<div class="card-footer text-center">
 							<button class="btn-primary big-btn" onclick="home();">Home</button>
-							<button class="btn-primary big-btn" onclick="">Rebuild</button>
+							<button class="btn-primary big-btn" id="rebuildBtn1" onclick="rebuildDabbal()">Rebuild</button>
 							<button class="btn-primary big-btn" onclick="back()">Back</button>
 						</div>
 						</div>
@@ -1411,18 +1460,19 @@ function findByDate() {
   </div>
 </div>
 <!-------------------------------------------------------------------------------- Modal ------------------------------------------------>
-<div class="modal fade" data-backdrop="false" data-keyboard="false" style="padding-right: 850px" id="alert">
-		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
-			<div class="modal-content" style="margin-left: 121%;height: 16%">
-				<div class="modal-body" style="text-align: center">
+	<div class="modal fade" id="alert" data-bs-backdrop="static" data-bs-keyboard="false" style="height:10%">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content" style="z-index: 100000;">
+				<div class="modal-body text-center">
 					<p id="alertmsg"></p>
 				</div>
-				<div class="text-center">
-				<button type="button" class="btn-primary big-btn" onclick="$('#alert').modal('hide')">Close</button>
+				<div class="text-center pb-3">
+					<button type="button" class="btn-primary big-btn"
+						onclick="$('#alert').modal('hide')">Close</button>
 				</div>
 			</div>
 		</div>
-</div>
-<!-------------------------------------------------------------------------------- End ------------------------------------------------>
+	</div>
+	<!-------------------------------------------------------------------------------- End ------------------------------------------------>
 </body>
 </html>

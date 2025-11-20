@@ -13490,6 +13490,20 @@ public ResponseEntity<List<Map<String, Object>>> getAccountsByDate(@RequestParam
     }
     return ResponseEntity.status(HttpStatus.OK).body(list);
 }
+@PostMapping("/rebuildDabbal")
+public ResponseEntity<Map<String, String>> rebuildDabbal(@RequestParam String acctNum,String tranDate) {
+    try {
+        chart_Acc_Rep.updateDabByAcct(tranDate,acctNum);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "DAB balance updated successfully.");
+        return ResponseEntity.ok(response);
+    } catch (Exception e) {
+        e.printStackTrace();
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Error while rebuilding loan balance.");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+}
 /* End */
 	@RequestMapping(value = "rest_password", method = RequestMethod.POST)
 	@ResponseBody

@@ -548,6 +548,11 @@ public interface Chart_Acc_Rep extends JpaRepository<Chart_Acc_Entity, String> {
 	@Query(value = "SELECT DISTINCT acct_num, acct_name, tran_date " + "FROM BGLS_TRM_WRK_TRANSACTIONS "
 			+ "WHERE tran_date = :tranDate", nativeQuery = true)
 	List<Object[]> findAccountsByDate(@Param("tranDate") String tranDate);
+	
+	@Modifying
+	@Transactional
+	@Query(value = "CALL UPDATE_DAB_BY_ACCT_DATE(:tranDate,:acct_num)", nativeQuery = true)
+	void updateDabByAcct(@Param("tranDate") String tranDate,@Param("acct_num") String acct_num);
 	/* End */
 	
 	@Query(value = "SELECT " + "b.tran_date, " + "a.acct_num, " + "a.acct_name, "
