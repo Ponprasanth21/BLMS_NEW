@@ -307,6 +307,7 @@ document.getElementById("RECONDate").max = new Date().toISOString().split("T")[0
 function downloadReport(type) {
 	document.getElementById('loadingModal').style.display = 'flex';
     const dueDate = document.getElementById("DUEDate").value;
+	var DType = $('#filterselect').val();
 
     if (!dueDate) {
     	document.getElementById('loadingModal').style.display = 'none';
@@ -326,7 +327,7 @@ function downloadReport(type) {
     $.ajax({
         url: './TransactionPDFReport2Download',
         type: 'GET',
-        data: { dueDate: formattedDate, reportType: type },
+        data: { dueDate: formattedDate, reportType: type,DType: DType },
         xhrFields: {
             responseType: 'blob'  // For Excel download
         },
@@ -454,11 +455,11 @@ document.addEventListener('DOMContentLoaded', function () {
 							style="background-color: #f5f5f5; border-bottom: 1px solid #ddd;">
 							<h5 class="mb-0 fw-semibold text-dark">Recovery - Reports</h5>
 
-							<!-- <select class="form-control-sm bg-white mr-2 w-100 float-right" id="filterselect"
+							<select class="form-control-sm bg-white mr-2 w-100 float-right" id="filterselect"
 								style="background-color: #e3e3e4;max-width: 200px;">
-								<option value="Mpesa" selected>Mpesa</option>
-								<option value="NCPA">NCPA</option>
-							</select> -->
+								<option value="EXCEL" selected>Excel</option>
+								<option value="PDF">PDF</option>
+							</select>
 						</div>
 						
 

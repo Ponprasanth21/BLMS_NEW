@@ -180,6 +180,9 @@ input:hover+.password-info {
 		var act = document.getElementById("accountLedger");
 		act.classList.remove("active");
 
+		var act = document.getElementById("TransactionsAccounts");
+		act.classList.remove("active");
+
 		location.href = './refCodeMain?formmode=list';
 	}
 
@@ -198,6 +201,9 @@ input:hover+.password-info {
 		chart.classList.remove("active");
 
 		var act = document.getElementById("accountLedger");
+		act.classList.remove("active");
+
+		var act = document.getElementById("TransactionsAccounts");
 		act.classList.remove("active");
 
 		location.href = './glcode';
@@ -220,6 +226,9 @@ input:hover+.password-info {
 		var act = document.getElementById("accountLedger");
 		act.classList.remove("active");
 
+		var act = document.getElementById("TransactionsAccounts");
+		act.classList.remove("active");
+
 		location.href = './Parameter';
 	}
 
@@ -238,6 +247,9 @@ input:hover+.password-info {
 		chart.classList.add("active");
 
 		var act = document.getElementById("accountLedger");
+		act.classList.remove("active");
+
+		var act = document.getElementById("TransactionsAccounts");
 		act.classList.remove("active");
 
 		location.href = './chartOfAccounts';
@@ -260,8 +272,34 @@ input:hover+.password-info {
 		var act = document.getElementById("accountLedger");
 		act.classList.add("active");
 
+		var act = document.getElementById("TransactionsAccounts");
+		act.classList.remove("active");
+
 		location.href = './accountLedger';
 	}
+
+	function TransactionAccount(a) {
+	event.preventDefault();
+	var ref = document.getElementById("RefButton");
+	ref.classList.remove("active");
+
+	var gl = document.getElementById("GLButton");
+	gl.classList.remove("active");
+
+	var scheme = document.getElementById("param");
+	scheme.classList.remove("active");
+
+	var chart = document.getElementById("chartOfAccounts");
+	chart.classList.remove("active");
+
+	var act = document.getElementById("accountLedger");
+	act.classList.remove("active");
+
+	var act = document.getElementById("TransactionsAccounts");
+	act.classList.add("active");
+
+	location.href = './TransactionsAccounts';
+}
 
 	function updateTypeDescription() {
 		const selectedValue = $('#ref_type').val();
@@ -286,6 +324,7 @@ input:hover+.password-info {
 		});
 
 	}
+
 	
 	function Submit() {
 
@@ -812,24 +851,27 @@ document.addEventListener("DOMContentLoaded", function () {
 							<!-- Tab buttons -->
 							<button class="tablinks active rounded-pill" id="RefButton"
 								onclick="RefCode(this);"
-								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 18%;">Reference
+								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 15%;">Reference
 								Code Maintenance</button>
 							<button class="tablinks rounded-pill" id="GLButton"
 								onclick="GLStruct(this);"
-								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 18%;">GL
+								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 15%;">GL
 								Structure</button>
 							<button class="tablinks rounded-pill" id="param"
 								onclick="SchemeCode(this);"
-								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 18%;">Scheme
+								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 15%;">Scheme
 								Codes</button>
 							<button class="tablinks rounded-pill" id="chartOfAccounts"
 								onclick="Chart(this);"
-								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 18%;">Chart
+								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 15%;">Chart
 								of Accounts</button>
 							<button class="tablinks rounded-pill" id="accountLedger"
 								onclick="Account(this);"
-								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 18%;">Account
+								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 15%;">Account
 								Ledger</button>
+
+							<button class="tablinks rounded-pill" id="TransactionAccount" onclick="TransactionAccount(this);"
+								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 15%;">Transaction Accounts</button>
 						</div>
 
 						<div class="card-body"     style="overflow-y: auto; border: 1px solid #ddd;">

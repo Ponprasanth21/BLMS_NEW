@@ -12962,7 +12962,9 @@ public class BGLSRestController {
 	}
 
 	@GetMapping("/TransactionPDFReport2Download")
-	public ResponseEntity<byte[]> TransactionPDFReport2Download(@RequestParam("dueDate") String dueDate,@RequestParam("reportType") String reportType) {
+	public ResponseEntity<byte[]> TransactionPDFReport2Download(@RequestParam("dueDate") String dueDate,
+			@RequestParam("reportType") String reportType, @RequestParam("DType") String DType) {
+		
 		List<Object[]> rawData ;
 		if(reportType.equals("Mpesa")) {
 			rawData = chart_Acc_Rep.getTransactionReportMpesaByDate(dueDate);
@@ -12979,20 +12981,37 @@ public class BGLSRestController {
 		}
 		// ✅ Call the non-static method through the injected bean
 //		byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate, type);
-		byte[] pdfData = exelDownloadService.generateRecoveryTransactionExcelReport(rawData, dueDate, type);
+		
+		byte[] pdfData;
+		if (DType.equals("EXCEL")){
+			System.out.println("EXCEL");
+			System.out.println(DType);
+			pdfData = exelDownloadService.generateRecoveryTransactionExcelReport(rawData, dueDate, type);
+		}else {
+			System.out.println("PDF");
+			System.out.println(DType);
+			pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate, type);
+		}
 
 		if (pdfData == null || pdfData.length == 0) {
 			return ResponseEntity.noContent().build();
 		}
 
-		String fileName;
+//		String fileName;
+//		
+//		if(reportType.equals("Mpesa")) {
+//			fileName = "RECOVERY_REPORT_Mpesa" + dueDate + ".xlsx";
+//		}else {
+//			fileName = "RECOVERY_REPORT_NCBA" + dueDate + ".xlsx";
+//		}
 		
-		if(reportType.equals("Mpesa")) {
-			fileName = "RECOVERY_REPORT_Mpesa" + dueDate + ".xlsx";
-		}else {
-			fileName = "RECOVERY_REPORT_NCBA" + dueDate + ".xlsx";
-		}
-		
+		String filePrefix = reportType.equalsIgnoreCase("Mpesa")
+		        ? "RECOVERY_REPORT_Mpesa"
+		        : "RECOVERY_REPORT_NCBA";
+
+		String fileName = filePrefix + dueDate + 
+                (DType.equalsIgnoreCase("EXCEL") ? ".xlsx" : ".pdf");
+
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
 		headers.setContentType(MediaType.APPLICATION_PDF);
@@ -13005,7 +13024,7 @@ public class BGLSRestController {
 		List<Object[]> rawData = chart_Acc_Rep.getTransactionReport3ByDate(dueDate);
 		String type = "DEMAND";
 		// ✅ Call the non-static method through the injected bean
-		byte[] pdfData = pdfService.generateTransactionPdfReport(rawData, dueDate, type);
+		byte[] pdfData = pdfService.generateDemandTransactionPdfReport(rawData, dueDate, type);
 
 		if (pdfData == null || pdfData.length == 0) {
 			return ResponseEntity.noContent().build();

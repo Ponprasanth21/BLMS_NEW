@@ -395,6 +395,136 @@ function Update() {
 
     </script>
 
+    <script>
+        		
+function RefCode(a) {
+	event.preventDefault();
+	var ref = document.getElementById("RefButton");
+	ref.classList.add("active");
+
+	var gl = document.getElementById("GLButton");
+	gl.classList.remove("active");
+
+	 var scheme = document.getElementById("param");
+	scheme.classList.remove("active"); 
+
+	var chart = document.getElementById("chartOfAccounts");
+	chart.classList.remove("active");
+
+	var act = document.getElementById("accountLedger");
+	act.classList.remove("active");
+
+	location.href = './refCodeMain?formmode=list';
+}
+
+function GLStruct(a) {
+	event.preventDefault();
+	var ref = document.getElementById("RefButton");
+	ref.classList.remove("active");
+
+	var gl = document.getElementById("GLButton");
+	gl.classList.add("active");
+
+	 var scheme = document.getElementById("param");
+	scheme.classList.remove("active"); 
+
+	var chart = document.getElementById("chartOfAccounts");
+	chart.classList.remove("active");
+
+	var act = document.getElementById("accountLedger");
+	act.classList.remove("active");
+
+	location.href = './glcode';
+}
+
+function SchemeCode(a) {
+	event.preventDefault();
+	var ref = document.getElementById("RefButton");
+	ref.classList.remove("active");
+
+	var gl = document.getElementById("GLButton");
+	gl.classList.remove("active");
+
+	var scheme = document.getElementById("param");
+	scheme.classList.add("active"); 
+
+	var chart = document.getElementById("chartOfAccounts");
+	chart.classList.remove("active");
+
+	var act = document.getElementById("accountLedger");
+	act.classList.remove("active");
+
+	location.href = './Parameter';
+}
+
+function Chart(a) {
+	event.preventDefault();
+	var ref = document.getElementById("RefButton");
+	ref.classList.remove("active");
+
+	var gl = document.getElementById("GLButton");
+	gl.classList.remove("active");
+
+	var scheme = document.getElementById("param");
+	scheme.classList.remove("active");
+
+	var chart = document.getElementById("chartOfAccounts");
+	chart.classList.add("active");
+
+	var act = document.getElementById("accountLedger");
+	act.classList.remove("active");
+
+	location.href = './chartOfAccounts';
+}
+
+function Account(a) {
+	event.preventDefault();
+	var ref = document.getElementById("RefButton");
+	ref.classList.remove("active");
+
+	var gl = document.getElementById("GLButton");
+	gl.classList.remove("active");
+
+	var scheme = document.getElementById("param");
+	scheme.classList.remove("active");
+
+	var chart = document.getElementById("chartOfAccounts");
+	chart.classList.remove("active");
+
+	var act = document.getElementById("accountLedger");
+	act.classList.add("active");
+
+	location.href = './accountLedger';
+}
+
+
+function TransactionAccount(a) {
+	event.preventDefault();
+	var ref = document.getElementById("RefButton");
+	ref.classList.remove("active");
+
+	var gl = document.getElementById("GLButton");
+	gl.classList.remove("active");
+
+	var scheme = document.getElementById("param");
+	scheme.classList.remove("active");
+
+	var chart = document.getElementById("chartOfAccounts");
+	chart.classList.remove("active");
+
+	var act = document.getElementById("accountLedger");
+	act.classList.remove("active");
+
+	var act = document.getElementById("TransactionsAccounts");
+	act.classList.add("active");
+
+	location.href = './TransactionsAccounts';
+}
+
+
+
+	</script>
+
 </head>
 
 
@@ -421,10 +551,35 @@ function Update() {
                             </div>
                             <div class="float-right">
                                 <!-- <button class="btn-primary big-btn" onclick="addparam()">Add</button> -->
-                                <button class="btn-primary big-btn" onclick="Add()">Add</button>
                                 <button class="btn-primary big-btn btn-filter">Filter</button>
+                                <button class="btn-primary big-btn" onclick="Add()">Add</button>
                             </div>
                         </div>
+
+
+                        <div class="mt-3"
+							style="padding: 4px 4px; position: relative; display: flex; justify-content: space-around; width: 100%;">
+							<!-- Tab buttons -->
+							<button class="tablinks rounded-pill" id="RefButton" onclick="RefCode(this);"
+								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 15%;">Reference
+								Code Maintenance</button>
+							<button class="tablinks rounded-pill" id="GLButton" onclick="GLStruct(this);"
+								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 15%;">GL
+								Structure</button>
+							<button class="tablinks rounded-pill" id="param" onclick="SchemeCode(this);"
+								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 15%;">Scheme
+								Codes</button>
+							<button class="tablinks rounded-pill" id="chartOfAccounts" onclick="Chart(this);"
+								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 15%;">Chart
+								of Accounts</button>
+							<button class="tablinks rounded-pill" id="accountLedger" onclick="Account(this);"
+								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 15%;">Account
+								Ledger</button>
+
+							<button class="tablinks active rounded-pill" id="TransactionAccount" onclick="TransactionAccount(this);"
+								style="font-size: 16px; padding: 4px 8px; height: 40%; width: 15%;">Transaction Accounts</button>
+
+						</div>
 
                         <div class="card-body" style="overflow-y: auto; border: 1px solid #ddd;">
                             <div class="table-responsive" id="cardBody">

@@ -1339,12 +1339,12 @@ public class ExelDownloadService {
             // ==============================
             Row header = sheet.createRow(3);
             String[] headers = {
-                "ACCOUNT_STATE", "ACTIVATION_DATE","CUSTOMER_ID", "CUSTOMER_NAME", "ID", "TOTAL_PRODUCT_PRICE", "LOAN_AMOUNT",
-                "INTEREST_RATE", "REPAYMENT_INSTALLMENTS", "PRINCIPAL_BALANCE", "INTEREST_BALANCE",
-                "FEE_BALANCE", "PENALTY_BALANCE", "TOTAL_BALANCE", "ACCT_BAL",
-                "PRINCIPAL_PAID", "INTEREST_PAID", "FEE_PAID", "PENALTY_PAID",
-                "DAYS_LATE", "TOTAL_PRINCIPAL_PAID", "TOTAL_INTEREST_PAID",
-                "TOTAL_FEE_PAID", "TOTAL_PENALTY_PAID", "LAST_PAID_DATE", 
+                "ACCOUNT STATE", "ACTIVATION DATE","CUSTOMER ID", "CUSTOMER NAME", "ID", "TOTAL PRODUCT PRICE", "LOAN AMOUNT",
+                "INTEREST RATE", "REPAYMENT INSTALLMENTS", "PRINCIPAL BALANCE", "INTEREST BALANCE",
+                "FEE BALANCE", "PENALTY BALANCE", "TOTAL BALANCE", "ACCT BAL",
+                "PRINCIPAL PAID", "INTEREST PAID", "FEE PAID", "PENALTY PAID",
+                "DAYS LATE", "TOTAL PRINCIPAL PAID", "TOTAL INTEREST PAID",
+                "TOTAL FEE PAID", "TOTAL PENALTY PAID", "LAST PAID DATE", 
                 "LAST PRINCIPAL PAID", "LAST INTEREST PAID", "LAST FEE PAID", "LAST PENALTY PAID",
                 "PAYMENT AMOUNT","PRODUCT",
             };
@@ -1649,8 +1649,8 @@ public class ExelDownloadService {
             // 3️⃣ Header Row
             Row header = sheet.createRow(3);
             String[] headers = {
-                "TRAN_DATE", "ACCT_NUM", "ACCT_NAME", "TRAN_TYPE", "TRAN_ID",
-                "PART_TRAN_ID", "PART_TRAN_TYPE", "CREDIT", "DEBIT", "TRAN_PARTICULAR"
+                "TRAN DATE", "ACCT NUM", "ACCT NAME", "TRAN TYPE", "TRAN ID",
+                "PART TRAN ID", "PART TRAN TYPE", "CREDIT", "DEBIT", "TRAN PARTICULAR"
             };
 
             CellStyle headerStyle = workbook.createCellStyle();
@@ -2667,8 +2667,8 @@ public byte[] generateEndOfMonthExcel(List<Object[]> rawData, String dueDate) {
 
             // ======== 3️⃣ HEADER ROW ========
             String[] headers = {
-                "TRAN_DATE", "ACCT_NUM", "ACCT_NAME", "TRAN_TYPE", "TRAN_ID",
-                "PART_TRAN_ID", "IND", "CREDIT", "DEBIT", "TRAN_PARTICULAR", "TYPE"
+                "TRAN DATE", "ACCT NUM", "ACCT NAME", "TRAN TYPE", "TRAN ID",
+                "PART TRAN ID", "IND", "CREDIT", "DEBIT", "TRAN PARTICULAR", "TYPE"
             };
 
             Row headerRow = sheet.createRow(4);
@@ -2794,18 +2794,6 @@ public byte[] generateEndOfMonthExcel(List<Object[]> rawData, String dueDate) {
     }
 
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
 }
