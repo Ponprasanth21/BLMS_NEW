@@ -58,6 +58,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.bornfire.entities.Access_Role_Repo;
 import com.bornfire.entities.Account_Ledger_Entity;
 import com.bornfire.entities.Account_Ledger_Rep;
+import com.bornfire.entities.AcctDTO;
 import com.bornfire.entities.Assosiate_Profile_Entity;
 import com.bornfire.entities.Assosiate_Profile_Repo;
 import com.bornfire.entities.BACP_CUS_PROFILE_REPO;
@@ -3498,13 +3499,8 @@ public class BGLSNavigationController {
         }
 
         return "Account_Balances.html";
-    }
-
-
-
-
-
-
+    } 
+    
     /* Praveen */
     @RequestMapping(value = "LeaseOperaions", method = { RequestMethod.GET, RequestMethod.POST })
     public String LeaseOperaions(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
@@ -5573,7 +5569,71 @@ public class BGLSNavigationController {
 
            return "TransactionPointing.html";
        }
+       
+       @RequestMapping(value = "Daily_Account_Balance", method = { RequestMethod.GET, RequestMethod.POST })
+       public String Daily_Balances(@RequestParam(required = false) String formmode, 
+                                    Model model,
+                                    HttpServletRequest request) {
 
+           // 🔹 1. Get TRANDATE from session
+           Date TRANDATE = (Date) request.getSession().getAttribute("TRANDATE");
+           System.out.println(TRANDATE + " TRANDATE");
+
+           // 🔹 2. Load main list (existing code)
+           if (formmode == null || formmode.equals("List")) {
+
+               model.addAttribute("formmode", "List");
+
+               // Main data for table
+               model.addAttribute("leaseaccount", dAB_Repo.getLeaseBalTran(TRANDATE));
+               System.out.println(dAB_Repo.getLeaseBalTran(TRANDATE));
+
+               // Pass selected date to UI
+               model.addAttribute("TRANDATE", TRANDATE);
+
+               // -----------------------------------------------------------
+               // 🔹 3. FETCH ACCOUNT NUMBER + ACCOUNT NAME FOR DROPDOWN
+               // -----------------------------------------------------------
+               List<Object[]> rows = dAB_Repo.getAccountList(TRANDATE);  // <-- Your new query
+
+               List<AcctDTO> acctList = rows.stream()
+                       .map(r -> new AcctDTO((String) r[0], (String) r[1]))
+                       .toList();
+
+               // Send to UI
+               model.addAttribute("acctList", acctList);
+           }
+
+           return "Daily_Balances.html";
+       }
+       
+       @RequestMapping(value = "Daily_Account_Balance_Details", method = RequestMethod.GET) 
+       public String Daily_Account_Balance_Details(@RequestParam("acctNum") String acctNum,
+                                                   HttpServletRequest request,
+                                                   Model model) {
+
+           // Get TRANDATE from session
+           Date trandate = (Date) request.getSession().getAttribute("TRANDATE");
+           
+           System.out.println("Enter Into Daily_Account_Balance_Details");
+
+           // Fetch filtered account details for that date
+           List<DAB_Entity> details = dAB_Repo.getAccountDetails(acctNum);
+           
+           
+           System.out.println("details"+details.toString());
+
+           // Send to UI
+           model.addAttribute("acctNum", acctNum);
+           model.addAttribute("detailsList", details);
+           model.addAttribute("TRANDATE", trandate);
+           
+           System.out.println("acctNum = " + acctNum);
+           System.out.println("TRANDATE from session = " + trandate);
+           
+           return "Daily_Account_Balance_Details.html"; 
+
+       }
        
        @RequestMapping(value = "TransactionValidation", method = { RequestMethod.GET, RequestMethod.POST })
        public String TransactionValidation(@RequestParam(required = false) String formmode, Model md, HttpServletRequest req) {
@@ -5584,4 +5644,6 @@ public class BGLSNavigationController {
            return "TransactionValidation";
        }
 
+
+      
 }

@@ -17,6 +17,26 @@ public interface DAB_Repo extends CrudRepository<DAB_Entity, String> {
 
 	@Query(value = "SELECT * FROM BGLS_DAILY_ACCT_BAL WHERE ACCT_NUM IN (:accountNumbers)", nativeQuery = true)
 	List<DAB_Entity> get_transaction_acc_num(@Param("accountNumbers") List<String> accountNumbers);
+	
+	@Query(value = "SELECT * FROM  BGLS_DAILY_ACCT_BAL  "
+            + "WHERE TRUNC(TRAN_DATE) = TRUNC(:trandate)",
+      nativeQuery = true)
+List<DAB_Entity> getLeaseBalTran(@Param("trandate") Date trandate); 
+
+	
+	
+@Query(value = "SELECT ACCT_NUM, ACCT_NAME " +
+        "FROM BGLS_DAILY_ACCT_BAL " +
+        "WHERE TRUNC(TRAN_DATE) = TRUNC(:trandate) " +
+        "ORDER BY ACCT_NUM",
+nativeQuery = true)
+List<Object[]> getAccountList(@Param("trandate") Date trandate); 
+
+@Query(value = "SELECT * FROM BGLS_DAILY_ACCT_BAL " +
+        "WHERE ACCT_NUM = :acctNum ",
+nativeQuery = true)
+List<DAB_Entity> getAccountDetails(@Param("acctNum") String acctNum);  
+
 
 	/*
 	 * Original SQL Server: DATEADD(day, -1, CAST(?2 AS DATE))

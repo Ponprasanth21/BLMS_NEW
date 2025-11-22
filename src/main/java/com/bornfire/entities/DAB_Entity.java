@@ -160,6 +160,16 @@ public class DAB_Entity {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	@Override
+	public String toString() {
+		return "DAB_Entity [gl_code=" + gl_code + ", gl_desc=" + gl_desc + ", glsh_code=" + glsh_code + ", glsh_desc="
+				+ glsh_desc + ", acct_num=" + acct_num + ", acct_name=" + acct_name + ", acct_crncy=" + acct_crncy
+				+ ", tran_dr_bal=" + tran_dr_bal + ", tran_cr_bal=" + tran_cr_bal + ", tran_date_bal=" + tran_date_bal
+				+ ", tran_date=" + tran_date + ", tran_tot_net=" + tran_tot_net + ", end_tran_date=" + end_tran_date
+				+ ", entry_user_id=" + entry_user_id + ", entry_time=" + entry_time + ", del_flg=" + del_flg
+				+ ", opening_bal=" + opening_bal + "]";
+	}
+	
 	
 	
 }

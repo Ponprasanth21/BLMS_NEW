@@ -1,0 +1,134 @@
+<!DOCTYPE html> 
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Daily Account Balance - Details</title>
+
+    <style>
+        .container-manager {
+            width: 83%;
+            margin-left: 17%;
+            margin-top: 80px;
+        }
+        .table thead th {
+            background: #e9ecef;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        .big-btn {
+            font-size: 16px;
+        }
+    </style>
+
+    <script>
+        function back() { window.history.back(); }
+        function home() { location.href = 'Dashboard'; }
+    </script>
+</head>
+
+<body>
+
+<div class="col-sm-2">
+    <div th:insert="BGLSHeaderMenu :: header"></div>
+</div>
+
+<div class="container-manager">
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 style="font-size: 1.3rem;">DAILY ACCOUNT BALANCE - VIEW</h4>
+        </div>
+
+        <div class="card-body">
+            <!-- DETAIL TABLE -->
+            <div class="table-responsive" style="max-height:600px;">
+				<table class="table table-bordered table-hover table-sm">
+				    <thead class="thead-light">
+				    <tr>
+				        <th width="5%">S.No</th>
+				        <th width="15%">Acc Num</th>
+				        <th width="20%">Acc Name</th>
+				        <th width="12%">Tran Date</th>
+				        <th width="10%" style="text-align:right;">Tran Debit</th>
+				        <th width="10%" style="text-align:right;">Tran Credit</th>
+				        <th width="12%" style="text-align:right;">Total Net</th>
+				        <th width="9%" style="text-align:right;">Tran Date Bal</th>
+				        <th width="12%" style="text-align:right;">Opening Bal</th>
+				    </tr>
+				    </thead>
+
+				    <tbody>
+
+				    <!-- If empty -->
+				    <tr th:if="${#lists.isEmpty(detailsList)}">
+				        <td colspan="9" class="text-center text-danger">
+				            No Transaction Records Found
+				        </td>
+				    </tr>
+
+				    <!-- Table Rows -->
+				    <tr th:each="d, iter : ${detailsList}">
+
+				        <!-- 1. S.No -->
+				        <td th:text="${iter.index + 1}"></td>
+
+				        <!-- 2. Acc Num -->
+				        <td th:text="${d.acct_num}"></td>
+
+				        <!-- 3. Acc Name -->
+				        <td th:text="${d.acct_name}"></td>
+
+				        <!-- 4. Tran Date -->
+				        <td th:text="${#dates.format(d.tran_date, 'dd-MM-yyyy')}"></td>
+
+						<td style="text-align:right;"
+						    th:text="${d.tran_dr_bal != null ?
+						             #numbers.formatDecimal(d.tran_dr_bal, 1, 'COMMA', 2, 'POINT') : '0.00'}">
+						</td>
+
+
+
+						<td style="text-align:right;"
+						    th:text="${d.tran_cr_bal != null ?
+						             #numbers.formatDecimal(d.tran_cr_bal, 1, 'COMMA', 2, 'POINT') : '0.00'}">
+						</td>
+
+
+						<td style="text-align:right;"
+						    th:text="${d.tran_tot_net != null ?
+						             #numbers.formatDecimal(d.tran_tot_net, 1, 'COMMA', 2, 'POINT') : '0.00'}">
+						</td>
+
+
+						<td style="text-align:right;"
+						    th:text="${d.tran_date_bal != null ?
+						             #numbers.formatDecimal(d.tran_date_bal, 1, 'COMMA', 2, 'POINT') : '0.00'}">
+						</td>
+
+
+						<td style="text-align:right;"
+						    th:text="${d.opening_bal != null ?
+						             #numbers.formatDecimal(d.opening_bal, 1, 'COMMA', 2, 'POINT') : '0.00'}">
+						</td>
+
+
+				    </tr>
+
+				    </tbody>
+				</table> 
+            </div>
+
+        </div>
+
+        <div class="card-footer text-center">
+            <button class="btn-primary big-btn" onclick="home()">Home</button>
+            <button class="btn-primary big-btn" onclick="back()">Back</button>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>  
